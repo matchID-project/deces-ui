@@ -1,0 +1,29 @@
+upstream elasticsearch {
+  server <ES_HOST>:<ES_PORT>;
+}
+
+server {
+  listen 80 default_server;
+
+  location / {
+    limit_req zone=app burst=10 nodelay;
+    limit_req_status 429;
+    alias /usr/share/nginx/html/;
+  }
+
+  location ~ "^<ES_PROXY_PATH>.*" {
+    if ($request_method != POST) {
+       return 405;
+    }
+    add_header Access-Control-Allow-Origin '$http_origin';
+    limit_req zone=api burst=<API_USER_BURST>;
+    limit_req zone=server burst=<API_GLOBAL_BURST>;
+    limit_req_status 429;
+    rewrite "^<ES_PROXY_PATH>/?(\?.*)?$" /<ES_INDEX>/_search$1 break;
+    proxy_pass http://elasticsearch;
+    proxy_redirect off;
+    proxy_buffering off;
+    proxy_http_version 1.1;
+  }
+
+}
