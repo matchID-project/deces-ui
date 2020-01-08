@@ -59,15 +59,15 @@ services:
     image: ${DOCKER_USERNAME}/${DC_PREFIX}-frontend-development:${APP_VERSION}
     container_name: ${DC_PREFIX}-frontend-development
     environment:
-      - APP
-      - PORT
-      - ES_PROXY_PATH
+      APP: ${APP}
+      PORT: ${FRONTEND_DEV_PORT}
+      HOST: 0.0.0.0
+      ES_PROXY_PATH: ${ES_PROXY_PATH}
     volumes:
       - ${FRONTEND}/public:/${APP}/public
       - ${FRONTEND}/.eslintrc.js:/${APP}/.eslintrc.js
       - ${FRONTEND}/rollup.config.js:/${APP}/rollup.config.js
       - ${FRONTEND}/src:/${APP}/src/
-      - ${FRONTEND}/dist-build:/${APP}/build/
       - /${APP}/node_modules
 
 networks:

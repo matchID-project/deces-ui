@@ -13,11 +13,11 @@ export USE_TTY := $(shell test -t 1 && USE_TTY="-t")
 export PORT=8083
 
 #base paths
-export APP = personnes-decedees-search-ui
+export APP = personnes-decedees-search-ui-svelte
 export APP_PATH := $(shell pwd)
 export FRONTEND := ${APP_PATH}
 export FRONTEND_DEV_HOST = frontend-development
-export FRONTEND_DEV_PORT = 5000
+export FRONTEND_DEV_PORT = ${PORT}
 export NGINX = ${APP_PATH}/nginx
 export API_USER_LIMIT_RATE=1r/s
 export API_USER_BURST=20 nodelay
