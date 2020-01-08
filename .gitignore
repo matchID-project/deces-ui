@@ -12,7 +12,8 @@ personnes-decedees-search-ui-*
 /coverage
 
 # production
-build
+public/build
+bundle.*
 
 # misc
 .DS_Store
