@@ -1,5 +1,5 @@
 {
-  "name": "personnes-decedees-search-ui",
+  "name": "personnes-decedees-search-ui-svelte",
   "version": "0.0.1",
   "scripts": {
     "build": "rollup -c",
