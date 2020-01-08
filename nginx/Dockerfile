@@ -1,7 +1,7 @@
 #######################
 # Step 1: Base target #
 #######################
-FROM nginx:latest as base
+FROM nginx:alpine as base
 ARG app_name
 ARG app_ver
 
