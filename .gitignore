@@ -1,8 +1,6 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 artifacts
 .lastcommit
-dist
-dist-build
 personnes-decedees-search-ui-*
 
 # dependencies
@@ -14,7 +12,7 @@ personnes-decedees-search-ui-*
 /coverage
 
 # production
-/build
+build
 
 # misc
 .DS_Store
