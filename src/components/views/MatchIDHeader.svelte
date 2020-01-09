@@ -50,6 +50,69 @@
     </div>
 </nav>
 
+<div class="modal" class:is-active={modalState}>
+    <div class="modal-background" on:click={toggleModal}></div>
+    <div class="modal-card">
+        <header class="modal-card-head" on:close={toggleModal}>
+            <div class="modal-card-title">
+                À propos de ce service
+            </div>
+            <button class="delete" aria-label="close" on:click={toggleModal}></button>
+        </header>
+        <section class="modal-card-body">
+            <div class="content">
+                <p><strong>Conditions d'usage et garanties (version alpha)</strong></p>
+                    <p>
+                        Ce service est financé sur fonds personnels et est donc offert sans garantie.
+                        L'usage est limité à une requête par seconde afin de préserver un service pour tous. Selon
+                        l'affluence et les retours, nous envisagerons de le consolider. Contactez nous
+                        sur <a href="mailto:matchid.project@gmail.com">matchid-project@gmail.com</a> pour
+                        toute question ou signaler un problème.
+                    </p>
+                    <p><strong>Fichier des personnes décédées</strong></p>
+                    <p>
+                        Ce service vise à permettre la recherche directe de personnes décédées. Il exploite la base opendata
+                        délivrée par l'<a href="https://www.insee.fr/fr/information/4190491">INSEE</a> et
+                        diffusée par <a href="https://www.data.gouv.fr/fr/datasets/fichier-des-personnes-decedees/">data.gouv.fr</a>.
+                    </p>
+                    <p>
+                        Ce service utilise l'intégralité des données INSEE, soit environ 25 millions d'enregistrements.
+                        Il concerne les déclarations de décès retransmises vers l'INSEE depuis 1970 jusqu'au mois précédent.
+                        Seules les personnes ayant eu un numéro INSEE et ayant fait l'objet d'une déclaration de décès, en mairie ou
+                        en consulat sont enregistrées. Le délai de déclaration et de transmission peut être variable (personnes disparues, ou
+                        recherches historiques e.g. identifications tardives après guerre).
+                    </p>
+                    <p><strong>Traitement des données avec matchID</strong></p>
+                    <p>
+                        Les données sont traitées avec l'outil opensource <a href="https://matchid.io">matchID</a> (Python/Pandas). Les traitements, disponibles
+                        disponibles <a href="https://github.com/matchid-project/personnes-decedees_search">ici</a>,
+                        consistent en une mise en forme (capitalisation, réconciliation avec les noms de pays et commune
+                        selon les référentiels INSEE) puis une indexation. Les données sont actualisées chaque mois, après chaque diffusion sur le
+                        site <a href="https://www.data.gouv.fr/fr/datasets/fichier-des-personnes-decedees/">data.gouv.fr</a>.
+                    </p>
+                    <p>La recherche et l'indexation reposent sur <a href="https://elastic.co">Elasticsearch</a>
+                    qui repose sur le moteur de recherche Lucène, qui apporte le bénéfice
+                    des <a href="https://wikipedia.org/wiki/Recherche_approximative">recherches floues</a> à
+                    large échelle. La visualisation est basée
+                    sur <a href="https://swiftype.com/search-ui">Search-UI</a>.
+                    Le code source est accessible sur <a href="https://github.com/matchid-project/personnes-decedees_search-ui">Github</a>.
+                    </p>
+                    <p><strong>Qui sommes nous ?</strong></p>
+                    <p>
+                        Le projet matchID a été initié au ministère de l'Intérieur dans le contexte des
+                        challenges d'<a href="https://entrepreneur-interet-general.etalab.gouv.fr/defis/2017/mi-matchid.html">Entrepreneur d'intérêt général</a>.
+                        La réconciliation des personnes décédées avec le permis de conduire a été le premier cas d'usage réalisé avec
+                        matchID. Le projet a été libéré et mis en opensource. Nous avons créé de service
+                        en complément qui semblait d'utilité notamment pour la lutte contre la fraude.
+                        Pour en savoir plus sur le projet matchID, suivez ce <a href="https://matchid.io">lien</a>.
+                    </p>
+            </div>
+        </section>
+        <footer class="modal-card-foot">
+        </footer>
+    </div>
+</div>
+
 <script>
 
     import FontAwesomeIcon from './FontAwesomeIcon.svelte'
@@ -81,68 +144,68 @@
 
 </script>
 
-<!-- <Modal show={modalState} onClose={toggleModal}>
-    <Modal.Card>
-        <Modal.Card.Head onClose={toggleModal}>
-            <Modal.Card.Title>
-                À propos de ce service
-            </Modal.Card.Title>
-        </Modal.Card.Head>
-        <Modal.Card.Body>
-            <Content>
-            <p><strong>Conditions d'usage et garanties (version alpha)</strong></p>
-                <p>
-                    Ce service est financé sur fonds personnels et est donc offert sans garantie.
-                    L'usage est limité à une requête par seconde afin de préserver un service pour tous. Selon
-                    l'affluence et les retours, nous envisagerons de le consolider. Contactez nous
-                    sur <a href="mailto:matchid.project@gmail.com">matchid-project@gmail.com</a> pour
-                    toute question ou signaler un problème.
-                </p>
-                <p><strong>Fichier des personnes décédées</strong></p>
-                <p>
-                    Ce service vise à permettre la recherche directe de personnes décédées. Il exploite la base opendata
-                    délivrée par l'<a href="https://www.insee.fr/fr/information/4190491">INSEE</a> et
-                    diffusée par <a href="https://www.data.gouv.fr/fr/datasets/fichier-des-personnes-decedees/">data.gouv.fr</a>.
-                </p>
-                <p>
-                    Ce service utilise l'intégralité des données INSEE, soit environ 25 millions d'enregistrements.
-                    Il concerne les déclarations de décès retransmises vers l'INSEE depuis 1970 jusqu'au mois précédent.
-                    Seules les personnes ayant eu un numéro INSEE et ayant fait l'objet d'une déclaration de décès, en mairie ou
-                    en consulat sont enregistrées. Le délai de déclaration et de transmission peut être variable (personnes disparues, ou
-                    recherches historiques e.g. identifications tardives après guerre).
-                </p>
-                <p><strong>Traitement des données avec matchID</strong></p>
-                <p>
-                    Les données sont traitées avec l'outil opensource <a href="https://matchid.io">matchID</a> (Python/Pandas). Les traitements, disponibles
-                    disponibles <a href="https://github.com/matchid-project/personnes-decedees_search">ici</a>,
-                    consistent en une mise en forme (capitalisation, réconciliation avec les noms de pays et commune
-                    selon les référentiels INSEE) puis une indexation. Les données sont actualisées chaque mois, après chaque diffusion sur le
-                    site <a href="https://www.data.gouv.fr/fr/datasets/fichier-des-personnes-decedees/">data.gouv.fr</a>.
-                </p>
-                <p>La recherche et l'indexation reposent sur <a href="https://elastic.co">Elasticsearch</a>
-                qui repose sur le moteur de recherche Lucène, qui apporte le bénéfice
-                des <a href="https://wikipedia.org/wiki/Recherche_approximative">recherches floues</a> à
-                large échelle. La visualisation est basée
-                sur <a href="https://swiftype.com/search-ui">Search-UI</a>.
-                Le code source est accessible sur <a href="https://github.com/matchid-project/personnes-decedees_search-ui">Github</a>.
-                </p>
-                <p><strong>Qui sommes nous ?</strong></p>
-                <p>
-                    Le projet matchID a été initié au ministère de l'Intérieur dans le contexte des
-                    challenges d'<a href="https://entrepreneur-interet-general.etalab.gouv.fr/defis/2017/mi-matchid.html">Entrepreneur d'intérêt général</a>.
-                    La réconciliation des personnes décédées avec le permis de conduire a été le premier cas d'usage réalisé avec
-                    matchID. Le projet a été libéré et mis en opensource. Nous avons créé de service
-                    en complément qui semblait d'utilité notamment pour la lutte contre la fraude.
-                    Pour en savoir plus sur le projet matchID, suivez ce <a href="https://matchid.io">lien</a>.
-                </p>
-            </Content>
-        </Modal.Card.Body>
-        <Modal.Card.Foot>
-        </Modal.Card.Foot>
-    </Modal.Card>
-</Modal> -->
-
 <style>
+
+    .delete {
+        -moz-appearance:none;
+        -webkit-appearance:none;
+        background-color:rgba(10,10,10,.2);
+        border:none;
+        border-radius:290486px;
+        cursor:pointer;
+        pointer-events:auto;
+        display:inline-block;
+        flex-grow:0;
+        flex-shrink:0;
+        font-size:0;
+        height:20px;
+        max-height:20px;
+        max-width:20px;
+        min-height:20px;
+        min-width:20px;
+        outline:none;
+        position:relative;
+        vertical-align:top;
+        width:20px
+    }
+    .delete:after,
+    .delete:before {
+        background-color:#fff;
+        content:"";
+        display:block;
+        left:50%;
+        position:absolute;
+        top:50%;
+        transform:translateX(-50%) translateY(-50%) rotate(45deg);
+        transform-origin:center center
+    }
+    .delete:before {
+        height:2px;
+        width:50%
+    }
+    .delete:after {
+        height:50%;
+        width:2px
+    }
+    .delete:focus,
+    .delete:hover {
+        background-color:rgba(10,10,10,.3)
+    }
+
+    @media print,screen and (min-width:769px) {
+        .logo {
+        margin-top: -8px;
+        margin-bottom: -8px;
+        margin-left: -12px;
+        }
+    }
+    @media print,screen and (max-width:768px) {
+        .logo {
+        margin-top: -8px;
+        margin-bottom: -15px;
+        margin-left: -12px;
+        }
+    }
 
     img {
         height: auto;
@@ -535,9 +598,109 @@
     }
     }
 
-.navbar.is-white .navbar-start .navbar-link::after {
-    border-color:
-    #0a0a0a;
-}
+    .navbar.is-white .navbar-start .navbar-link::after {
+        border-color:
+        #0a0a0a;
+    }
+
+
+    .modal,
+    .modal-background {
+    bottom:0;
+    left:0;
+    position:absolute;
+    right:0;
+    top:0
+    }
+    .modal {
+    align-items:center;
+    display:none;
+    flex-direction:column;
+    justify-content:center;
+    overflow:hidden;
+    position:fixed;
+    z-index:40
+    }
+    .modal.is-active {
+    display:flex
+    }
+    .modal-background {
+    background-color:rgba(10,10,10,.86)
+    }
+    .modal-card,
+    .modal-content {
+    margin:0 20px;
+    max-height:calc(100vh - 160px);
+    overflow:auto;
+    position:relative;
+    width:100%
+    }
+    @media print,screen and (min-width:769px) {
+    .modal-card,
+    .modal-content {
+        margin:0 auto;
+        max-height:calc(100vh - 40px);
+        width:640px
+    }
+    }
+    .modal-close {
+        background:none;
+        height:40px;
+        position:fixed;
+        right:20px;
+        top:20px;
+        width:40px
+    }
+    .modal-card {
+        display:flex;
+        flex-direction:column;
+        max-height:calc(100vh - 40px);
+        overflow:hidden;
+        -ms-overflow-y:visible
+    }
+    .modal-card-foot,
+    .modal-card-head {
+        align-items:center;
+        background-color:#f5f5f5;
+        display:flex;
+        flex-shrink:0;
+        justify-content:flex-start;
+        padding: 20px;
+        position:relative
+    }
+    .modal-card-head {
+        border-bottom:1px solid #dbdbdb;
+        border-top-left-radius:6px;
+        border-top-right-radius:6px;
+    /* padding: 0px 20px 0px 20px; */
+    }
+    .modal-card-title {
+        color:#363636;
+        flex-grow:1;
+        flex-shrink:0;
+        font-size:1.5rem;
+        line-height:1
+    }
+    .modal-card-foot {
+        border-bottom-left-radius:6px;
+        border-bottom-right-radius:6px;
+        border-top:1px solid #dbdbdb
+    }
+    .modal-card-foot .button:not(:last-child) {
+        margin-right:.5em
+    }
+    .modal-card-body {
+        -webkit-overflow-scrolling:touch;
+        background-color:#fff;
+        flex-grow:1;
+        flex-shrink:1;
+        overflow:auto;
+        padding:20px
+    }
+    .modal-container {
+        z-index:100;
+        position:fixed
+    }
+
 
 </style>
