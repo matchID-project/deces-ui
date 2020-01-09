@@ -1,18 +1,34 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-	<meta charset='utf-8'>
-	<meta name='viewport' content='width=device-width,initial-scale=1'>
+<html lang="fr" class="has-navbar-fixed-top">
+	<head>
+		<meta charset="utf-8" />
+		<link rel="icon" href="/favicon.svg" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta name="theme-color" content="#000000" />
+		<link rel="manifest" href="/manifest.json" />
 
-	<title>Svelte app</title>
+		<title>matchID - moteur de recherche des personnes décédées</title>
+		<meta name="description" content="Moteur de recherche gratuit des personnes décédées, basé sur la source des fichiers de décès INSEE (1970 à aujourd'hui)" />
+		<link rel="canonical" href="https://personnes-decedees.matchid.io" />
+	  </head>
+		<link rel='stylesheet' href='/global.css'>
+		<link rel='stylesheet' href='/build/bundle.css'>
 
-	<link rel='icon' type='image/png' href='/favicon.png'>
-	<link rel='stylesheet' href='/global.css'>
-	<link rel='stylesheet' href='/build/bundle.css'>
-
-	<script defer src='/build/bundle.js'></script>
-</head>
+		<script defer src='/build/bundle.js'></script>
+	</head>
 
 <body>
+		<noscript>
+				<h1>Moteur de recherche des décès</h1>
+				Ce service permet la recherche des personnes décédées, gratuitement, rapidement et intuitivement.
+				Il exploite l'intégralité de la base opendata délivrée par l'INSEE et diffusée par data.gouv.fr.
+				Il comporte nom, prénoms, lieux et dates de naissance et de décès de 25 millions de personnes décédées depuis 1970.
+				<h1>A qui s'adresse le service ?</h1>
+				Généalogistes, professionnels ou particuliers, services publics de lutte contre la fraude.
+				<h1>Qui sommes nous ?</h1>
+				Le projet matchID a été initié au ministère de l'Intérieur dans le contexte des challenges d'Entrepreneur d'intérêt général.
+				La réconciliation du fichier des personnes décédées avec le permis de conduire a été le premier cas d'usage réalisé avec matchID.
+				matchID est un logiciel opensource et gratuit qui permet de croiser des fichiers de plusieurs dizaines de millions d'enregistrements.
+		</noscript>
 </body>
 </html>
