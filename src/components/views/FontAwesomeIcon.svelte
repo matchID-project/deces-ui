@@ -19,8 +19,8 @@
 
 <style>
   .fa-svelte {
-    width: 1.125em;
-    height: 1.125em;
+    width: 1rem;
+    height: 1rem;
     vertical-align: -0.125em;
     overflow: visible;
     display: inline-block;

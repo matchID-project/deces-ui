@@ -702,5 +702,10 @@
         position:fixed
     }
 
+    *, ::after, ::before {
+
+    box-sizing: inherit;
+
+}
 
 </style>

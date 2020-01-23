@@ -1,133 +1,308 @@
-import React from "react";
 
-import {
-  Button,
-  Columns,
-  Container
-} from 'react-bulma-components';
+  <div class="container column is-6" style="margin-top: -15px;">
+    <div class="columns is-vcentered is-multiline">
+      <div class="column is-9">
+        <div>
+          <div>
+              <input
+                autoComplete="off"
+                placeholder="prénom, nom, date de naissance ou de décès ... e.g Georges Pompidou"
+                class="is-size-5 is-fullwidth"
+              />
+          </div>
+        </div>
+      </div>
+      <div class="column is-3">
+        <button
+          class="button is-size-5 is-fullwidth is-info"
+        >
+          Recherche
+        </button>
+      </div>
+    </div>
+    <!-- <Autocomplete/> -->
+  </div>
 
-import { SearchBox } from "@elastic/react-search-ui";
-import CustomAutocompleteView from "./CustomAutocompleteView";
 
-const gatherSearchTerm = (id, searchParams) => {
-  let searchTerm = searchParams.inputs.map((input) => {
-    const value = document.getElementById(`${id}-${input.field}`)
-                ? document.getElementById(`${id}-${input.field}`).value
-                : "";
-    return (input.field === "fullText")
-           ? value
-           : `${input.field}:${value.replace(/\s+/,"_")}`
-  }).join(" ");
-  return searchTerm;
-}
+<script>
+  // import {
+  //   Button,
+  //   Columns,
+  //   Container
+  // } from 'react-bulma-components';
 
-const updateSearchTerm = (id, field, value) => {
-  let searchTerm = document.getElementById(id) ? document.getElementById(id).value : ""
-  let query = parseSearchTerm(searchTerm)
-  query[field] = value
-  return Object.keys(query).map((key) => (key === "fullText")
-                                  ? query[key]
-                                  : (query[key]
-                                    ? `${key}:${query[key].replace(/\s+/,"_")}`
-                                    : "")
-                                ).join(" ");
-}
+  // import { SearchBox } from "@elastic/react-search-ui";
+  // import CustomAutocompleteView from "./CustomAutocompleteView";
 
-const parseSearchTerm = (searchTerm) => {
-  let query = {
-    fullText: searchTerm.split(/\s+/).filter(s => !s.includes(":")).join(" ")
+  // const gatherSearchTerm = (id, searchParams) => {
+  //   let searchTerm = searchParams.inputs.map((input) => {
+  //     const value = document.getElementById(`${id}-${input.field}`)
+  //                 ? document.getElementById(`${id}-${input.field}`).value
+  //                 : "";
+  //     return (input.field === "fullText")
+  //           ? value
+  //           : `${input.field}:${value.replace(/\s+/,"_")}`
+  //   }).join(" ");
+  //   return searchTerm;
+  // }
+
+  // const updateSearchTerm = (id, field, value) => {
+  //   let searchTerm = document.getElementById(id) ? document.getElementById(id).value : ""
+  //   let query = parseSearchTerm(searchTerm)
+  //   query[field] = value
+  //   return Object.keys(query).map((key) => (key === "fullText")
+  //                                   ? query[key]
+  //                                   : (query[key]
+  //                                     ? `${key}:${query[key].replace(/\s+/,"_")}`
+  //                                     : "")
+  //                                 ).join(" ");
+  // }
+
+  // const parseSearchTerm = (searchTerm) => {
+  //   let query = {
+  //     fullText: searchTerm.split(/\s+/).filter(s => !s.includes(":")).join(" ")
+  //   }
+  //   searchTerm.split(/\s+/).filter(s => s.includes(":")).map((s) => {
+  //     s = s.split(':')
+  //     query[s[0]] = s[1].replace(/_/," ")
+  //   })
+  //   return query
+  // }
+
+  // const dispatchSearchTerm = (id, searchTerm) => {
+  //   const query = parseSearchTerm(searchTerm)
+  //   Object.keys(query).map((key)=> {
+  //     try {
+  //       document.getElementById(`${id}-${key}`).value = query[key]
+  //     } catch (e) {
+  //       console.log(`Error while dispatching ${key}`, e)
+  //     }
+  //   })
+  // }
+
+  // export default function CustomSearchBox({searchParams, setSearchTerm}) {
+  //     return (
+  //     <div class="SearchBox"
+  //         focus={true}
+  //         autocompleteMinimumCharacters={3}
+  //         autocompleteSuggestions={true}
+  //         autocompleteView={CustomAutocompleteView}
+  //         inputView={({ openMenu, getAutocomplete, getInputProps }) => {
+  //           const { onChange, id } = getInputProps();
+  //           let query = {};
+  //           searchParams.inputs.forEach((input) => {
+  //             query[input.field] = "";
+  //           });
+  //           if (document.getElementById(id)) {
+  //             dispatchSearchTerm(id, document.getElementById(id).value)
+  //           }
+  //           return(
+  //           )
+  //         }
+  //       }
+  //         onSelectAutocomplete={(selection) => {
+  //           setSearchTerm(selection.PRENOM.raw + " " + selection.NOM.raw + " " +
+  //             selection.DATE_NAISSANCE.raw.replace(/(\d{4})(\d{2})(\d{2})/,"$3/$2/$1")
+  //           )
+  //         }}
+  //     />
+  //   )}
+</script>
+
+<style>
+
+  input {
+    height: 2.35em;
+    width: 100%;
   }
-  searchTerm.split(/\s+/).filter(s => s.includes(":")).map((s) => {
-    s = s.split(':')
-    query[s[0]] = s[1].replace(/_/," ")
-  })
-  return query
-}
 
-const dispatchSearchTerm = (id, searchTerm) => {
-  const query = parseSearchTerm(searchTerm)
-  Object.keys(query).map((key)=> {
-    try {
-      document.getElementById(`${id}-${key}`).value = query[key]
-    } catch (e) {
-      console.log(`Error while dispatching ${key}`, e)
+  .container {
+    flex-grow: 1;
+    margin: 0 auto;
+    position: relative;
+    width: auto;
+  }
+
+  @media screen and (min-width:1024px) {
+    .container {
+      max-width: 960px;
     }
-  })
-}
+  }
 
-export default function CustomSearchBox({searchParams, setSearchTerm}) {
-    return (
-    <SearchBox
-        focus={true}
-        autocompleteMinimumCharacters={3}
-        autocompleteSuggestions={true}
-        autocompleteView={CustomAutocompleteView}
-        inputView={({ openMenu, getAutocomplete, getInputProps }) => {
-          const { onChange, id } = getInputProps();
-          let query = {};
-          searchParams.inputs.forEach((input) => {
-            query[input.field] = "";
-          });
-          if (document.getElementById(id)) {
-            dispatchSearchTerm(id, document.getElementById(id).value)
-          }
-          return(
-            <Container className="column is-6" style={{marginTop: "-15px"}}>
-              <Columns className="is-vcentered">
-                <Columns.Column size={9}>
-                  <input
-                      {...getInputProps({})}
-                      onChange ={(e) => {
-                        // dispatchSearchTerm(id, e.currentTarget.value);
-                        onChange(e)
-                        }}
-                      className="is-size-5 is-fullwidth"
-                      style={{display: "block", height: "2.35em", width:"100%"}}
-                  />
-                  <Columns>
-                  { !!searchParams.inputs
-                    && searchParams.inputs.map((input) => {
-                      return (
-                        <Columns.Column
-                          key={`${id}-${input.field}`}
-                          size={input.size}
-                        >
-                                  <input
-                                    autoComplete="off"
-                                    id={`${id}-${input.field}`}
-                                    placeholder= {input.placeholder}
-                                    onChange={(e) => {
-                                      setSearchTerm(e.currentTarget.value, {autocompleteSuggestions: true, refresh: false})
-                                      openMenu();
-                                    }}
+  @media screen and (min-width:1216px) {
+    .container {
+      max-width: 1152px;
+    }
+  }
 
-                                    className={`is-size-5 is-fullwidth`}
-                                    style={{height: "2.35em",width:"100%"}}
-                                 />
-                        </Columns.Column>
-                    )}
-                  )
-                  }
-                  </Columns>
-                </Columns.Column>
-                <Columns.Column size={3}>
-                {getAutocomplete()}
-                  <Button
-                    className="is-size-5 is-fullwidth"
-                    color="info"
-                  >
-                    Recherche
-                  </Button>
-                </Columns.Column>
-              </Columns>
-            </Container>
-          )
-        }
-      }
-        onSelectAutocomplete={(selection) => {
-          setSearchTerm(selection.PRENOM.raw + " " + selection.NOM.raw + " " +
-            selection.DATE_NAISSANCE.raw.replace(/(\d{4})(\d{2})(\d{2})/,"$3/$2/$1")
-          )
-        }}
-    />
-  )}
+  @media screen and (min-width:1408px) {
+    .container {
+      max-width: 1344px;
+    }
+  }
+
+  .column {
+    display: block;
+    flex-basis: 0;
+    flex-grow: 1;
+    flex-shrink: 1;
+    padding: .75rem;
+  }
+
+  .is-size-5 {
+    font-size: 1.25rem!important;
+  }
+
+  .button {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    align-items: center;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    box-shadow: none;
+    display: inline-flex;
+    font-size: 1rem;
+    height: 2.25em;
+    line-height: 1.5;
+    position: relative;
+    vertical-align: top;
+    background-color: #fff;
+    border-color: #dbdbdb;
+    border-width: 1px;
+    color: #363636;
+    cursor: pointer;
+    justify-content: center;
+    padding: calc(.375em - 1px) .75em;
+    text-align: center;
+    white-space: nowrap;
+    box-sizing: border-box;
+  }
+
+  .button:active,.button:focus {
+    outline: 0;
+  }
+
+  .button:hover {
+    border-color: #b5b5b5;
+    color: #363636;
+  }
+
+  .button:focus {
+    border-color: #3273dc;
+    color: #363636;
+  }
+
+  .button:focus:not(:active) {
+    box-shadow: 0 0 0 .125em rgba(50,115,220,.25);
+  }
+
+  .button:active {
+    border-color: #4a4a4a;
+    color: #363636;
+  }
+
+  .button.is-info,.button.is-info:hover {
+    background-color: #209cee;
+    border-color: transparent;
+    color: #fff;
+  }
+
+  .button.is-info:hover {
+    background-color: #1496ed;
+  }
+
+  .button.is-info:focus {
+    border-color: transparent;
+    color: #fff;
+  }
+
+  .button.is-info:focus:not(:active) {
+    box-shadow: 0 0 0 .125em rgba(32,156,238,.25);
+  }
+
+  .button.is-info:active {
+    background-color: #118fe4;
+    border-color: transparent;
+    color: #fff;
+  }
+
+  .button.is-fullwidth {
+    display: flex;
+    width: 100%;
+  }
+
+
+  .columns.is-mobile>.column.is-3 {
+    flex: none;
+    width: 25%;
+  }
+
+  .columns.is-mobile>.column.is-9 {
+    flex: none;
+    width: 75%;
+  }
+
+  @media print,screen and (min-width:769px) {
+    .column.is-3 {
+      flex: none;
+      width: 25%;
+    }
+
+    .column.is-6 {
+      flex: none;
+      width: 50%;
+    }
+
+    .column.is-9 {
+      flex: none;
+      width: 75%;
+    }
+
+    .column.is-12 {
+      flex: none;
+      width: 100%;
+    }
+  }
+
+  .columns {
+    margin-left: -.75rem;
+    margin-right: -.75rem;
+    margin-top: -.75rem;
+  }
+
+  .columns:last-child {
+    margin-bottom: -.75rem;
+  }
+
+  .columns:not(:last-child) {
+    margin-bottom: .75rem;
+  }
+
+  .columns.is-mobile {
+    display: flex;
+  }
+
+  .columns.is-multiline {
+    flex-wrap: wrap;
+  }
+
+  .columns.is-vcentered {
+    align-items: center;
+  }
+
+  @media print,screen and (min-width:769px) {
+    .columns:not(.is-desktop) {
+      display: flex;
+    }
+  }
+
+  *, ::after, ::before {
+    box-sizing: inherit;
+  }
+
+</style>
