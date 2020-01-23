@@ -6,7 +6,7 @@
           <div>
               <input
                 autoComplete="off"
-                placeholder="prénom, nom, date de naissance ou de décès ... e.g Georges Pompidou"
+                placeholder="prénom, nom, date de naissance ou de décès, ... e.g. Georges Pompidou"
                 class="is-size-5 is-fullwidth"
               />
           </div>
