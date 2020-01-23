@@ -1,0 +1,27 @@
+version: '2'
+
+networks:
+  default:
+    external:
+      name: ${DC_NETWORK}
+
+services:
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch-oss:${ES_VERSION}
+    container_name: ${DC_PREFIX}-elasticsearch
+    environment:
+      - cluster.name=matchid-cluster
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms%M -Xmx%M"
+      - discovery.type=single-node
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    # mem_limit: %MM
+    volumes:
+      - ${ES_DATA}/node1:/usr/share/elasticsearch/data
+    # ports:
+    #   - 9200:9200
+
+
