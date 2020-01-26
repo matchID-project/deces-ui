@@ -64,6 +64,9 @@
       $autocompleteResults=state.results;
       autocompleteDisplay = ($autocompleteResults.length > 0) &&
         Object.keys(searchInput).some(key => searchInput[key].focus)
+    } else {
+      $autocompleteResults = []
+      autocompleteDisplay = false
     }
   }
 
