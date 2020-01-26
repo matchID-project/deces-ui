@@ -73,6 +73,7 @@
 <style>
   .autocomplete-container {
     font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+    z-index: 1;
     display: flex;
     flex-direction: column;
     left: 0;
