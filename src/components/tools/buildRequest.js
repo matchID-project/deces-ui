@@ -1,3 +1,24 @@
+
+import {
+  current,
+  filters,
+  resultsPerPage,
+  sortDirection,
+  sortField
+} from './stores.js';
+
+let myCurrent;
+let myFilters;
+let myResultsPerPage;
+let mySortDirection;
+let mySortField;
+
+const c = current.subscribe((value) => { myCurrent=value })
+const cf = filters.subscribe((value) => { myFilters=value })
+const cr = resultsPerPage.subscribe((value) => { myResultsPerPage=value })
+const csd = sortDirection.subscribe((value) => { mySortDirection=value })
+const csf = sortField.subscribe((value) => { mySortField=value })
+
 import buildRequestFilter from "./buildRequestFilter";
 
 function buildFrom(current, resultsPerPage) {
@@ -11,20 +32,11 @@ function buildSort(sortDirection, sortField) {
   }
 }
 
-const parseSearchTerm = (searchTerm) => {
-  let query = {
-    fullText: searchTerm.split(/\s+/).filter(s => !s.includes(":")).join(" ")
-  }
-  searchTerm.split(/\s+/).filter(s => s.includes(":")).map((s) => {
-    s = s.split(':')
-    query[s[0]] = s[1].replace(/_/," ")
-  })
-  return query
-}
 
-function buildMatch(searchTerm, autocomplete) {
-  let query = parseSearchTerm(searchTerm);
-  searchTerm = query.fullText.normalize('NFKD').replace(/[\u0300-\u036f]/g, "").split(/\s+/)
+
+function buildMatch(searchInput) {
+  let query = searchInput.fullText.value;
+  let searchTerm = query.normalize('NFKD').replace(/[\u0300-\u036f]/g, "").split(/\s+/)
   let date = searchTerm.filter( x => x.match(/^\d{2}\/\d{2}\/\d{4}$/)).map( x => x.replace(/(\d{2})\/(\d{2})\/(\d{4})/,"$3$2$1"));
   date = date.length ? date[0] : null;
   let names = searchTerm.filter( x => x.match(/[a-z]+/)).filter( x => !x.match(/^(el|d|le|de|la|los)$/))
@@ -257,21 +269,13 @@ function buildMatch(searchTerm, autocomplete) {
 
   We then do similar things for searchTerm, filters, sort, etc.
 */
-export default function buildRequest(state) {
-  const {
-    current,
-    filters,
-    resultsPerPage,
-    searchTerm,
-    sortDirection,
-    sortField
-  } = state;
 
-  const sort = buildSort(sortDirection, sortField);
-  const match = buildMatch(searchTerm);
-  const size = resultsPerPage;
-  const from = buildFrom(current, resultsPerPage);
-  const filter = buildRequestFilter(filters);
+export default function buildRequest(searchInput) {
+  const sort = buildSort(mySortDirection, mySortField);
+  const match = buildMatch(searchInput);
+  const size = myResultsPerPage;
+  const from = buildFrom(myCurrent, myResultsPerPage);
+  const filter = buildRequestFilter(myFilters);
 
   const body = {
     // Static query Configuration

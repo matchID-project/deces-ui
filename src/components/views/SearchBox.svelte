@@ -1,14 +1,19 @@
 
-  <div class="container column is-6" style="margin-top: -15px;">
+  <div class="container autocomplete column is-6" style="margin-top: -15px;">
     <div class="columns is-vcentered is-multiline">
       <div class="column is-9">
         <div>
           <div>
-              <input
-                autoComplete="off"
-                placeholder="prénom, nom, date de naissance ou de décès, ... e.g. Georges Pompidou"
-                class="is-size-5 is-fullwidth"
-              />
+            {#each Object.keys($searchInput) as key}
+              {#if isActive(key)}
+                <input
+                  autoComplete="off"
+                  placeholder={$searchInput[key].placeholder}
+                  class="is-size-5 is-fullwidth"
+                  bind:value={$searchInput[key].value}
+                />
+              {/if}
+            {/each}
           </div>
         </div>
       </div>
@@ -19,12 +24,29 @@
           Recherche
         </button>
       </div>
+      <Autocomplete/>
     </div>
-    <!-- <Autocomplete/> -->
+
   </div>
 
 
 <script>
+  import { searchInput, searchCanvas } from '../tools/stores.js';
+  import Autocomplete from './Autocomplete.svelte';
+
+  const isActive = (key) => {
+    let path = $searchInput[key].path ? $searchInput[key].path.replace(/\..*/,"") : undefined
+    let subPath = $searchInput[key].path ? $searchInput[key].path.replace(/(^[^\.]*$|.*\.(.*)$)/,"$2") : ""
+    subPath = subPath ?
+                ( path ?
+                  ( ( $searchCanvas[path] && $searchCanvas[path][subPath] ) ?
+                      $searchCanvas[path][subPath].active
+                      : false )
+                  : false )
+              : true
+    path = path ? ( $searchCanvas[path] ? $searchCanvas[path].active : false ) : true
+    return path && subPath
+  }
   // import {
   //   Button,
   //   Columns,
