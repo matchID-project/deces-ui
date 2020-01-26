@@ -5,7 +5,7 @@
     </h1>
     <h1 class="subtitle has-text-white">
       <span class="is-hidden-mobile">
-            recherche gratuite parmi
+        recherche gratuite parmi
       </span>
       <span> <b>25 millions</b> de décès depuis 1970
         <br/>

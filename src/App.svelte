@@ -1,14 +1,16 @@
-<MatchIDHeader />
-<SearchHeader />
-<h1>Hello {$searchInput.fullText.value}!</h1>
+<MatchIDHeader/>
+<SearchHeader/>
+<!-- <h1>Hello {$searchInput.fullText.value}!</h1>
 <p>Visit the <a href="https://svelte.dev/tutorial">Svelte tutorial</a> to learn how to build Svelte apps.</p>
-<p>curent querystring is {JSON.stringify(query)}</p>
+<p>curent querystring is {JSON.stringify(query)}</p> -->
+<Results/>
 
 <script>
 	import { querystring } from 'svelte-spa-router'
 	import { searchInput } from './components/tools/stores.js'
 	import MatchIDHeader from './components/views/MatchIDHeader.svelte';
 	import SearchHeader from './components/views/SearchHeader.svelte';
+	import Results from './components/views/Results.svelte';
 
 	export let query;
 	$: query = $querystring.split('&')
