@@ -1,11 +1,14 @@
 {#if autocompleteDisplay}
-  <div class="autocomplete-container">
+  <div class="autocomplete-container"
+      on:mouseenter={() => {autocompleteHover = true}}
+      on:mouseleave={() => {autocompleteHover = false}}
+  >
     <div class="container is-widescreen" style="margin-left: 15px; margin-top:-20px;">
       <span class="is-uppercase is-size-7 is-small has-text-grey">
         Résultats
       </span>
 
-      <table class="table is-narrow is-striped ">
+      <table class="table is-narrow is-striped">
         <thead>
           <tr class="is-uppercase has-text-grey">
             <td class="is-size-7 is-small has-text-grey"> Prénom Nom </td>
@@ -14,8 +17,11 @@
           </tr>
         </thead>
         <tbody>
-          {#each $autocompleteResults as result}
-            <tr class="is-size-7 is-hoverable">
+          {#each $autocompleteResults as result, index}
+            <tr
+              class="is-size-7 is-hoverable"
+              on:click={onSelectAutocomplete(result)}
+            >
               <td>
                 {result.PRENOM.raw} {result.NOM.raw}
               </td>
@@ -47,27 +53,41 @@
   </div>
 {/if}
 
+
 <script>
-  import { searchInput, autocompleteResults } from '../tools/stores.js';
+  import { searchInput, autocompleteResults, searchResults } from '../tools/stores.js';
   import buildRequest from "../tools/buildRequest.js";
   import runRequest from "../tools/runRequest.js";
   import buildState from "../tools/buildState.js";
 
   let autocompleteDisplay = false;
+  let autocompleteHover = false;
 
   const onAutocomplete = async (searchInput) => {
     if (searchInput.fullText.value.length > 1) {
       const requestBody = buildRequest(searchInput);
       const json = await runRequest(requestBody);
       const state = buildState(json);
-      // console.log(state.results);
       $autocompleteResults=state.results;
-      autocompleteDisplay = ($autocompleteResults.length > 0) &&
-        Object.keys(searchInput).some(key => searchInput[key].focus)
+      autocompleteDisplay = autocompleteHover || (($autocompleteResults.length > 0) &&
+        Object.keys(searchInput).some(key => searchInput[key].focus))
     } else {
       $autocompleteResults = []
       autocompleteDisplay = false
     }
+  }
+
+  const onSelectAutocomplete = async (selection) => {
+    searchInput.update( v => {
+      v.fullText.value = selection.PRENOM.raw + " " + selection.NOM.raw + " " +
+        selection.DATE_NAISSANCE.raw.replace(/(\d{4})(\d{2})(\d{2})/,"$3/$2/$1")
+      return v
+    })
+    autocompleteHover = false;
+    const requestBody = buildRequest($searchInput);
+    const json = await runRequest(requestBody);
+    const state = buildState(json);
+    searchResults.update( v => state.results );
   }
 
   $: onAutocomplete($searchInput);
