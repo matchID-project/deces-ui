@@ -1,4 +1,4 @@
-{#if $autocompleteResults.length > 0 }
+{#if autocompleteDisplay}
   <div class="autocomplete-container">
     <div class="container is-widescreen" style="margin-left: 15px; margin-top:-20px;">
       <span class="is-uppercase is-size-7 is-small has-text-grey">
@@ -53,12 +53,17 @@
   import runRequest from "../tools/runRequest.js";
   import buildState from "../tools/buildState.js";
 
+  let autocompleteDisplay = false;
+
   const onAutocomplete = async (searchInput) => {
+    // console.log(searchInput)
     const requestBody = buildRequest(searchInput);
     const json = await runRequest(requestBody);
     const state = buildState(json);
-    console.log(state.results)
-    $autocompleteResults=state.results
+    // console.log(state.results);
+    $autocompleteResults=state.results;
+    autocompleteDisplay = ($autocompleteResults.length > 0) &&
+      Object.keys(searchInput).some(key => searchInput[key].focus)
   }
 
   $: onAutocomplete($searchInput);

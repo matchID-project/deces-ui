@@ -11,6 +11,8 @@
                   placeholder={$searchInput[key].placeholder}
                   class="is-size-5 is-fullwidth"
                   bind:value={$searchInput[key].value}
+                  on:focus={searchInput.update( json => { json[key].focus=true; return json})}
+                  on:focusout={searchInput.update( json => { json[key].focus=false; return json})}
                 />
               {/if}
             {/each}
