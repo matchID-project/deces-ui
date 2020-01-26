@@ -56,14 +56,15 @@
   let autocompleteDisplay = false;
 
   const onAutocomplete = async (searchInput) => {
-    // console.log(searchInput)
-    const requestBody = buildRequest(searchInput);
-    const json = await runRequest(requestBody);
-    const state = buildState(json);
-    // console.log(state.results);
-    $autocompleteResults=state.results;
-    autocompleteDisplay = ($autocompleteResults.length > 0) &&
-      Object.keys(searchInput).some(key => searchInput[key].focus)
+    if (searchInput.fullText.value.length > 1) {
+      const requestBody = buildRequest(searchInput);
+      const json = await runRequest(requestBody);
+      const state = buildState(json);
+      // console.log(state.results);
+      $autocompleteResults=state.results;
+      autocompleteDisplay = ($autocompleteResults.length > 0) &&
+        Object.keys(searchInput).some(key => searchInput[key].focus)
+    }
   }
 
   $: onAutocomplete($searchInput);
