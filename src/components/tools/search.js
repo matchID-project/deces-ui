@@ -46,10 +46,14 @@ export const searchSubmit = async (newCurrent) => {
 export const searchURLUpdate = async () => {
     updateURL.update(v => true);
     const params = new URLSearchParams(location.search);
-    if (mySearchInput.fullText.value) { params.set('q', mySearchInput.fullText.value) };
-    if (myCurrent > 1) { params.set('current', `n_${myCurrent}_n`) };
-    params.set('size', `n_${myResultsPerPage}_n`);
-    console.log("params",JSON.stringify(params))
-    window.history.replaceState({}, '', `${location.pathname}?${params}`);
-    updateURL.update(v => false);
+    if (mySearchInput.fullText.value) {
+        params.set('q', mySearchInput.fullText.value);
+        params.set('size', `n_${myResultsPerPage}_n`);
+        if (myCurrent > 1) {
+            params.set('current', `n_${myCurrent}_n`)
+        };
+        window.history.replaceState({}, '', `${location.pathname}?${params}`);
+        updateURL.update(v => false);
+    };
+
 }
