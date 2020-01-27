@@ -2,7 +2,7 @@
 
 <script>
   import Layout from './components/views/Layout.svelte';
-  import { searchInput, current, resultsPerPage, updateURL, searchTyping } from './components/tools/stores.js';
+  import { searchInput, current, resultsPerPage, updateURL } from './components/tools/stores.js';
   import { searchSubmit } from './components/tools/search.js';
   $: URLSearchSubmit(new URLSearchParams(location.search));
 
@@ -13,7 +13,6 @@
 			const myQuery = urlParams.get('q')
 
 			if (myQuery) {
-	            searchTyping.update(v => false);
 				if (myResultsPerPage) { resultsPerPage.update(v => myResultsPerPage) }
 				searchInput.update( v => {
 					v.fullText.value = myQuery;
