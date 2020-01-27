@@ -1,25 +1,30 @@
-<MatchIDHeader/>
-<SearchHeader/>
-<!-- <h1>Hello {$searchInput.fullText.value}!</h1>
-<p>Visit the <a href="https://svelte.dev/tutorial">Svelte tutorial</a> to learn how to build Svelte apps.</p>
-<p>curent querystring is {JSON.stringify(query)}</p> -->
-<Results/>
+<Layout/>
+    <!-- lala {$searchInput.fullText.value} {$current} {$resultsPerPage} -->
 
 <script>
-	import { querystring } from 'svelte-spa-router'
-	import { searchInput } from './components/tools/stores.js'
-	import MatchIDHeader from './components/views/MatchIDHeader.svelte';
-	import SearchHeader from './components/views/SearchHeader.svelte';
-	import Results from './components/views/Results.svelte';
+  import Layout from './components/views/Layout.svelte';
+  import { searchInput, current, resultsPerPage, updateURL, searchTyping } from './components/tools/stores.js';
+  import { searchSubmit } from './components/tools/search.js';
+  $: URLSearchSubmit(new URLSearchParams(location.search));
 
-	export let query;
-	$: query = $querystring.split('&')
-						  .map(s => decodeURI(s).split("="))
-						  .reduce( (a,b) => {
-												  a = Array.isArray(a) ? {[a[0]]: a[1]} : a
-												  b = {[b[0]]: b[1]};
-												  return {...a, ...b}
-											})
+  const URLSearchSubmit = (urlParams) => {
+        if (!$updateURL) {
+			const myCurrent = urlParams.get('current') ? urlParams.get('current').replace(/n_(.*)_n/,"$1") : undefined;
+			const myResultsPerPage =urlParams.get('size') ? urlParams.get('size').replace(/n_(.*)_n/,"$1") : undefined;
+			const myQuery = urlParams.get('q')
+
+			if (myQuery) {
+	            searchTyping.update(v => false);
+				if (myResultsPerPage) { resultsPerPage.update(v => myResultsPerPage) }
+				searchInput.update( v => {
+					v.fullText.value = myQuery;
+					return v;
+				});
+				searchSubmit(myCurrent);
+			}
+        }
+    }
+
 </script>
 
 
