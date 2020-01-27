@@ -7,7 +7,8 @@ import {
     current,
     updateURL,
     resultsPerPage,
-    autocompleteDisplay
+    autocompleteDisplay,
+    wasSearched
 } from './stores.js'
 
 import buildRequest from "./buildRequest.js";
@@ -38,7 +39,8 @@ export const searchSubmit = async (newCurrent) => {
     totalResults.update(v => state.totalResults);
     totalPages.update(v => state.totalPages);
     facets.update(v => state.facets);
-    autocompleteDisplay.update(v => false)
+    autocompleteDisplay.update(v => false);
+    wasSearched.update(v => true);
 }
 
 export const searchURLUpdate = async () => {
