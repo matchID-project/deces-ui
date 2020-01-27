@@ -55,7 +55,7 @@
 
 <script>
   import { searchInput, autocompleteResults, searchTyping, autocompleteDisplay } from '../tools/stores.js';
-  import { search, searchSubmit } from '../tools/search.js';
+  import { search, searchSubmit, searchURLUpdate } from '../tools/search.js';
 
   const onSelectAutocomplete = async (selection) => {
     searchInput.update( v => {
@@ -64,6 +64,7 @@
       return v
     })
     searchSubmit();
+    searchURLUpdate();
   }
 
 </script>
