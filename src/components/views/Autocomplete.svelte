@@ -54,7 +54,7 @@
 
 
 <script>
-  import { searchInput, autocompleteResults, searchTyping, autocompleteDisplay } from '../tools/stores.js';
+  import { searchInput, autocompleteResults, autocompleteDisplay } from '../tools/stores.js';
   import { search, searchSubmit, searchURLUpdate } from '../tools/search.js';
 
   const onSelectAutocomplete = async (selection) => {

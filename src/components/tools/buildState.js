@@ -38,7 +38,6 @@ function buildResults(hits) {
     return { raw: value, ...(snippet && { snippet }) };
   };
 
-  // console.log("hits:",hits);
   return hits.map(enrichRecord).map(record => {
     return Object.entries(record._source)
       .map(([fieldName, fieldValue]) => [

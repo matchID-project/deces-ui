@@ -50,7 +50,6 @@
     $: to = Math.min($totalResults, $current * $resultsPerPage);
     $: query = $searchInput.fullText.value;
 
-    $: console.log(query,from,to,$totalResults, $totalPages);
     $: pages = computePages($current, $totalPages)
 
     const computePages = (index,total) => {
@@ -62,13 +61,11 @@
             pages = [...Array(index+1).keys()].map(n => n+1)
             pages.push('.')
             pages.push(total)
-            console.log('ici', pages)
         } else if (index < (total - 3)) {
             pages = [1,'.',index-1,index,index+1,'.',total]
         } else {
             pages = [1,'.'].concat([...Array(total-index+2).keys()].map(n => n+index-1))
         }
-        console.log(pages)
         return pages;
     }
 

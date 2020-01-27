@@ -1,5 +1,4 @@
 <Layout/>
-    <!-- lala {$searchInput.fullText.value} {$current} {$resultsPerPage} -->
 
 <script>
   import Layout from './components/views/Layout.svelte';

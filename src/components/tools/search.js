@@ -24,7 +24,7 @@ const c = current.subscribe((value) => { myCurrent=value })
 const r = resultsPerPage.subscribe((value) => { myResultsPerPage=value })
 
 export const search = async (searchInput, newCurrent) => {
-    console.log(JSON.stringify(searchInput.fullText))
+    // console.log(JSON.stringify(searchInput.fullText))
     if (newCurrent) { current.update(v => newCurrent) }
     else { current.update(v => 1) }
     const requestBody = buildRequest(searchInput);
