@@ -22,7 +22,7 @@
 <style>
 
   .results-body {
-      max-width: 1300px;
+      max-width: 1235px;
       margin-left: auto;
       margin-right: auto;
       display: flex;
@@ -38,7 +38,7 @@
   }
 
   .margin {
-      padding: 32px 0px 32px 32px;
+      padding: 24px 0px 32px 32px;
   }
 
   @media (max-width: 800px) {
