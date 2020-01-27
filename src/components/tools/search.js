@@ -28,7 +28,7 @@ export const search = async (searchInput, newCurrent) => {
     else { current.update(v => 1) }
     const requestBody = buildRequest(searchInput);
     const json = await runRequest(requestBody);
-    const state = buildState(json);
+    const state = buildState(json, myResultsPerPage);
     return state;
 }
 
