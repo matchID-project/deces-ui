@@ -2,7 +2,7 @@
   <div class="container autocomplete column is-6" style="margin-top: -15px;">
     <form
       class="columns is-vcentered is-multiline"
-      on:submit|preventDefault={searchSubmit}
+      on:submit|preventDefault={handleSubmit}
     >
       <div class="column is-9">
         <div>
@@ -14,8 +14,7 @@
                   placeholder={$searchInput[key].placeholder}
                   class="is-size-5 is-fullwidth"
                   bind:value={$searchInput[key].value}
-                  on:input={searchInput.update( json => { json[key].focus=true; return json})}
-                  on:focusout={searchInput.update( json => { json[key].focus=false; return json})}
+                  on:keydown={autocomplete}
                 />
               {/if}
             {/each}
@@ -37,8 +36,8 @@
 
 
 <script>
-  import { searchInput, searchCanvas } from '../tools/stores.js';
-  import { searchSubmit } from '../tools/search.js';
+  import { searchInput, searchCanvas, searchTyping, autocompleteResults, autocompleteDisplay } from '../tools/stores.js';
+  import { search, searchSubmit, searchURLUpdate } from '../tools/search.js';
   import Autocomplete from './Autocomplete.svelte';
 
   const isActive = (key) => {
@@ -53,6 +52,22 @@
               : true
     path = path ? ( $searchCanvas[path] ? $searchCanvas[path].active : false ) : true
     return path && subPath
+  }
+
+  const handleSubmit = () => {
+    searchSubmit();
+    searchURLUpdate();
+  }
+
+  const autocomplete = async () => {
+    if ($searchInput.fullText.value.length > 1) {
+      const state = await search($searchInput);
+      $autocompleteResults = state.results;
+      $autocompleteDisplay = ($autocompleteResults.length > 0)
+    } else {
+      $autocompleteResults = []
+      $autocompleteDisplay = false
+    }
   }
 
 </script>

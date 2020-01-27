@@ -1,8 +1,5 @@
-{#if autocompleteDisplay}
-  <div class="autocomplete-container"
-      on:mouseenter={() => {autocompleteHover = true}}
-      on:mouseleave={() => {autocompleteHover = false}}
-  >
+{#if $autocompleteDisplay}
+  <div class="autocomplete-container">
     <div class="container is-widescreen" style="margin-left: 15px; margin-top:-20px;">
       <span class="is-uppercase is-size-7 is-small has-text-grey">
         Résultats
@@ -57,23 +54,8 @@
 
 
 <script>
-  import { searchInput, autocompleteResults } from '../tools/stores.js';
+  import { searchInput, autocompleteResults, searchTyping, autocompleteDisplay } from '../tools/stores.js';
   import { search, searchSubmit } from '../tools/search.js';
-
-  let autocompleteDisplay = false;
-  let autocompleteHover = false;
-
-  const onAutocomplete = async (searchInput) => {
-    if (searchInput.fullText.value.length > 1) {
-      const state = await search(searchInput);
-      $autocompleteResults = state.results;
-      autocompleteDisplay = autocompleteHover || (($autocompleteResults.length > 0) &&
-        Object.keys(searchInput).some(key => searchInput[key].focus))
-    } else {
-      $autocompleteResults = []
-      autocompleteDisplay = false
-    }
-  }
 
   const onSelectAutocomplete = async (selection) => {
     searchInput.update( v => {
@@ -81,11 +63,8 @@
         selection.DATE_NAISSANCE.raw.replace(/(\d{4})(\d{2})(\d{2})/,"$3/$2/$1")
       return v
     })
-    autocompleteHover = false;
-    searchSubmit();;
+    searchSubmit();
   }
-
-  $: onAutocomplete($searchInput);
 
 </script>
 
