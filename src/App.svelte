@@ -9,8 +9,8 @@
 
   const URLSearchSubmit = (urlParams) => {
         if (!$updateURL) {
-			const myCurrent = urlParams.get('current') ? urlParams.get('current').replace(/n_(.*)_n/,"$1") : undefined;
-			const myResultsPerPage =urlParams.get('size') ? urlParams.get('size').replace(/n_(.*)_n/,"$1") : undefined;
+			const myCurrent = urlParams.get('current') ? parseInt(urlParams.get('current').replace(/n_(.*)_n/,"$1")) : undefined;
+			const myResultsPerPage = urlParams.get('size') ? parseInt(urlParams.get('size').replace(/n_(.*)_n/,"$1")) : undefined;
 			const myQuery = urlParams.get('q')
 
 			if (myQuery) {
