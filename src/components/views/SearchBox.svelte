@@ -14,7 +14,9 @@
                   placeholder={$searchInput[key].placeholder}
                   class="is-size-5 is-fullwidth"
                   bind:value={$searchInput[key].value}
-                  on:keydown={autocomplete}
+                  on:input={autocomplete}
+                  on:blur={focusInput(key,false)}
+                  on:focus={focusInput(key,true)}
                 />
               {/if}
             {/each}
@@ -36,9 +38,11 @@
 
 
 <script>
-  import { searchInput, searchCanvas, searchTyping, autocompleteResults, autocompleteDisplay } from '../tools/stores.js';
+  import { searchInput, searchCanvas, searchTyping, autocompleteResults, autocompleteDisplay, searchInputFocus } from '../tools/stores.js';
   import { search, searchSubmit, searchURLUpdate } from '../tools/search.js';
   import Autocomplete from './Autocomplete.svelte';
+
+  $: $autocompleteDisplay=Object.keys($searchInputFocus).some(key => $searchInputFocus.focus);
 
   const isActive = (key) => {
     let path = $searchInput[key].path ? $searchInput[key].path.replace(/\..*/,"") : undefined
@@ -52,6 +56,15 @@
               : true
     path = path ? ( $searchCanvas[path] ? $searchCanvas[path].active : false ) : true
     return path && subPath
+  }
+
+  const focusInput = (key, value) => {
+    setTimeout(() => {
+      searchInputFocus.update(v => {
+        v[key]=value;
+        return v
+      })
+    }, 300);
   }
 
   const handleSubmit = () => {

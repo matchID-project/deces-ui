@@ -18,7 +18,7 @@
             {#if index < 10}
               <tr
                 class="is-size-7 is-hoverable"
-                on:click={onSelectAutocomplete(result)}
+                on:click|preventDefault={onSelectAutocomplete(result)}
               >
                 <td>
                   {result.PRENOM.raw} {result.NOM.raw}
