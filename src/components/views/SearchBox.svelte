@@ -38,7 +38,7 @@
 
 
 <script>
-  import { searchInput, searchCanvas, searchTyping, autocompleteResults, autocompleteDisplay, searchInputFocus } from '../tools/stores.js';
+  import { searchInput, searchCanvas, autocompleteResults, autocompleteDisplay, searchInputFocus } from '../tools/stores.js';
   import { search, searchSubmit, searchURLUpdate } from '../tools/search.js';
   import Autocomplete from './Autocomplete.svelte';
 
