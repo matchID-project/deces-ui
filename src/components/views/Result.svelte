@@ -54,7 +54,7 @@
                     <div class="columns">
                         <div class="column is-6">
                             <span class="is-grey is-uppercase is-small">Naissance</span>
-                            <table class="table is-narrow">
+                            <table class="table is-narrow is-striped">
                                 <tbody>
                                     <tr>
                                         <td>Nom</td>
@@ -86,7 +86,7 @@
                         </div>
                         <div class="column is-6">
                             <span class="is-grey is-uppercase is-small">Décès</span>
-                            <table class="table is-narrow">
+                            <table class="table is-narrow is-striped">
                                 <tbody>
                                     <tr>
                                         <td>Date</td>
