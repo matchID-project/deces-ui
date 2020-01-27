@@ -2,7 +2,7 @@
   <div class="container autocomplete column is-6" style="margin-top: -15px;">
     <form
       class="columns is-vcentered is-multiline"
-      on:submit|preventDefault={handleSubmit}
+      on:submit|preventDefault={searchSubmit}
     >
       <div class="column is-9">
         <div>
@@ -37,11 +37,9 @@
 
 
 <script>
-  import { searchInput, searchResults, searchCanvas } from '../tools/stores.js';
+  import { searchInput, searchCanvas } from '../tools/stores.js';
+  import { searchSubmit } from '../tools/search.js';
   import Autocomplete from './Autocomplete.svelte';
-  import buildRequest from "../tools/buildRequest.js";
-  import runRequest from "../tools/runRequest.js";
-  import buildState from "../tools/buildState.js";
 
   const isActive = (key) => {
     let path = $searchInput[key].path ? $searchInput[key].path.replace(/\..*/,"") : undefined
@@ -57,13 +55,6 @@
     return path && subPath
   }
 
-  const handleSubmit = async (event) => {
-    const requestBody = buildRequest($searchInput);
-    const json = await runRequest(requestBody);
-    const state = buildState(json);
-    searchResults.update( v => state.results );
-    // console.log($searchResults);
-  }
 </script>
 
 <style>

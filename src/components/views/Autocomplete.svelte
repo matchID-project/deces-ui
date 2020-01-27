@@ -57,20 +57,16 @@
 
 
 <script>
-  import { searchInput, autocompleteResults, searchResults } from '../tools/stores.js';
-  import buildRequest from "../tools/buildRequest.js";
-  import runRequest from "../tools/runRequest.js";
-  import buildState from "../tools/buildState.js";
+  import { searchInput, autocompleteResults } from '../tools/stores.js';
+  import { search, searchSubmit } from '../tools/search.js';
 
   let autocompleteDisplay = false;
   let autocompleteHover = false;
 
   const onAutocomplete = async (searchInput) => {
     if (searchInput.fullText.value.length > 1) {
-      const requestBody = buildRequest(searchInput);
-      const json = await runRequest(requestBody);
-      const state = buildState(json);
-      $autocompleteResults=state.results;
+      const state = await search(searchInput);
+      $autocompleteResults = state.results;
       autocompleteDisplay = autocompleteHover || (($autocompleteResults.length > 0) &&
         Object.keys(searchInput).some(key => searchInput[key].focus))
     } else {
@@ -86,10 +82,7 @@
       return v
     })
     autocompleteHover = false;
-    const requestBody = buildRequest($searchInput);
-    const json = await runRequest(requestBody);
-    const state = buildState(json);
-    searchResults.update( v => state.results );
+    searchSubmit();;
   }
 
   $: onAutocomplete($searchInput);
