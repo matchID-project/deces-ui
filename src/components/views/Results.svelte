@@ -1,6 +1,7 @@
 <div class="results-body">
   <div class="container">
     <div class="margin">
+      <ResultsHeader/>
       <div class="columns">
         {#each $searchResults as result}
           <Result result={result}/>
@@ -12,6 +13,7 @@
 
 <script>
   import { searchResults } from '../tools/stores.js';
+  import ResultsHeader from './ResultsHeader.svelte';
   import Result from "./Result.svelte";
 </script>
 
