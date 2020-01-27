@@ -27,9 +27,7 @@
 
     $: from = Math.min($totalResults, 1 + ($current - 1) * $resultsPerPage);
     $: to = Math.min($totalResults, $current * $resultsPerPage);
-    $: query = $searchInput.fullText.value;
-
-    $: console.log(query,from,to,$totalResults, $totalPages);
+    $: query = $wasSearched;
 
     $: updateResultsPerPage($resultsPerPage);
 

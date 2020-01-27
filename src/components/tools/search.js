@@ -40,7 +40,7 @@ export const searchSubmit = async (newCurrent) => {
     totalPages.update(v => state.totalPages);
     facets.update(v => state.facets);
     autocompleteDisplay.update(v => false);
-    wasSearched.update(v => true);
+    wasSearched.update(v => mySearchInput.fullText.value);
 }
 
 export const searchURLUpdate = async () => {
