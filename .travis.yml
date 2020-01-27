@@ -28,7 +28,7 @@ before_script:
   - docker version
 
 script:
-  - git fetch --unshallow && git tag -l
+  - git fetch && git describe --tags
   - make build
 
 after_success:
