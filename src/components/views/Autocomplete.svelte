@@ -18,34 +18,36 @@
         </thead>
         <tbody>
           {#each $autocompleteResults as result, index}
-            <tr
-              class="is-size-7 is-hoverable"
-              on:click={onSelectAutocomplete(result)}
-            >
-              <td>
-                {result.PRENOM.raw} {result.NOM.raw}
-              </td>
-              <td>
-                {result.DATE_NAISSANCE.raw.replace(/(\d{4})(\d{2})(\d{2})/,"$3/$2/$1")
-                } {
-                result.COMMUNE_NAISSANCE
-                ? "- " + result.COMMUNE_NAISSANCE.raw
-                : result.PAYS_NAISSANCE
-                  ? "- " + result.PAYS_NAISSANCE.raw
-                  : ""
-                }
-              </td>
-              <td>
-                {result.DATE_DECES.raw.replace(/(\d{4})(\d{2})(\d{2})/,"$3/$2/$1")
-                } {
-                  result.COMMUNE_DECES
-                  ? "- " + result.COMMUNE_DECES.raw
-                  : result.PAYS_DECES
-                    ? "- " + result.PAYS_DECES.raw
+            {#if index < 10}
+              <tr
+                class="is-size-7 is-hoverable"
+                on:click={onSelectAutocomplete(result)}
+              >
+                <td>
+                  {result.PRENOM.raw} {result.NOM.raw}
+                </td>
+                <td>
+                  {result.DATE_NAISSANCE.raw.replace(/(\d{4})(\d{2})(\d{2})/,"$3/$2/$1")
+                  } {
+                  result.COMMUNE_NAISSANCE
+                  ? "- " + result.COMMUNE_NAISSANCE.raw
+                  : result.PAYS_NAISSANCE
+                    ? "- " + result.PAYS_NAISSANCE.raw
                     : ""
                   }
-              </td>
-            </tr>
+                </td>
+                <td>
+                  {result.DATE_DECES.raw.replace(/(\d{4})(\d{2})(\d{2})/,"$3/$2/$1")
+                  } {
+                    result.COMMUNE_DECES
+                    ? "- " + result.COMMUNE_DECES.raw
+                    : result.PAYS_DECES
+                      ? "- " + result.PAYS_DECES.raw
+                      : ""
+                    }
+                </td>
+              </tr>
+            {/if}
           {/each}
         </tbody>
       </table>
