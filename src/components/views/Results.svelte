@@ -7,6 +7,7 @@
           <Result result={result}/>
         {/each}
       </div>
+      <Pagination/>
     </div>
   </div>
 </div>
@@ -15,6 +16,7 @@
   import { searchResults } from '../tools/stores.js';
   import ResultsHeader from './ResultsHeader.svelte';
   import Result from "./Result.svelte";
+  import Pagination from './Pagination.svelte';
 </script>
 
 <style>
