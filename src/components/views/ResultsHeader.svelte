@@ -23,7 +23,7 @@
 
     let resultsPerPageList;
 
-    $: resultsPerPageList = $resultsPerPage === 20 ? [20,40,60] : [$resultsPerPage,20,40,60]
+    $: resultsPerPageList = [20,40,60].includes($resultsPerPage) ? [20,40,60] : [$resultsPerPage,20,40,60].sort()
 
     $: from = Math.min($totalResults, 1 + ($current - 1) * $resultsPerPage);
     $: to = Math.min($totalResults, $current * $resultsPerPage);
@@ -151,10 +151,6 @@
         padding-right: calc(.75em - 1px);
         position: relative;
         vertical-align: top;
-    }
-
-    select {
-        font-family: BlinkMacSystemFont,-apple-system,"Segoe UI",Roboto,Oxygen,Ubuntu,Cantarell,"Fira Sans","Droid Sans","Helvetica Neue",Helvetica,Arial,sans-serif;
     }
 
 </style>
