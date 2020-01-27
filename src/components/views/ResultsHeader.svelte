@@ -25,7 +25,7 @@
 
     $: resultsPerPageList = $resultsPerPage === 20 ? [20,40,60] : [$resultsPerPage,20,40,60]
 
-    $: from = 1 + ($current - 1) * $resultsPerPage;
+    $: from = Math.min($totalResults, 1 + ($current - 1) * $resultsPerPage);
     $: to = Math.min($totalResults, $current * $resultsPerPage);
     $: query = $searchInput.fullText.value;
 
