@@ -26,15 +26,30 @@ before_script:
   - uname -a
   - type -a docker-compose && docker-compose version
   - docker version
+  - echo "$SSHENC" | base64 -d | gpg -d --passphrase $SSHPWD --batch > /tmp/id_rsa_matchID
+  - eval "$(ssh-agent -s)"
+  - chmod 600 /tmp/id_rsa_matchID
+  - ssh-add /tmp/id_rsa_matchID
+  - echo "Host * !""$BASTION_HOST" > ~/.ssh/config
+  - echo "   ProxyCommand ssh -o StrictHostKeyChecking=no $BASTION_USER@$BASTION_HOST nc %h %p" >> ~/.ssh/config
+  - cat ~/.ssh/config
 
 script:
-  - git fetch --unshallow && git tag -l
-  - make build
-
-after_success:
-  - if [[ "$TRAVIS_BRANCH" == "master" ]]; then
-      make docker-push ;
+  - git fetch && git describe --tags
+  - make config build
+  - if [[ ( "$TRAVIS_BRANCH" == "dev" ) || ( "$TRAVIS_BRANCH" == "master" ) ]]; then
+      make docker-push GIT_BRANCH="$TRAVIS_BRANCH";
+      make deploy-local FILES_TO_PROCESS=deces-1970.txt.gz;
+    fi
+  - if [[ ( "$TRAVIS_PULL_REQUEST" = "false" ) && ( "$TRAVIS_BRANCH" == "dev" ) ]]; then
+      make deploy-remote FILES_TO_PROCESS=deces-1970.txt.gz GIT_BRANCH="$TRAVIS_BRANCH" NGINX_USER=$NGINX_USER NGINX_HOST=$NGINX_HOST remote_http_proxy=$REMOTE_HTTP_PROXY remote_https_proxy=$REMOTE_HTTP_PROXY remote_no_proxy=localhost NQ_TOKEN=$NQ_TOKEN;
+    fi
+  - if [[ ( "$TRAVIS_PULL_REQUEST" = "false" ) && ( "$TRAVIS_BRANCH" == "master" ) ]]; then
+      make deploy-remote GIT_BRANCH="$TRAVIS_BRANCH" ES_MEM=8192m SCW_IMAGE_ID=f974feac-abae-4365-b988-8ec7d1cec10d SCW_FLAVOR=C2M NGINX_USER=$NGINX_USER NGINX_HOST=$NGINX_HOST remote_http_proxy=$REMOTE_HTTP_PROXY remote_https_proxy=$REMOTE_HTTP_PROXY remote_no_proxy=localhost NQ_TOKEN=$NQ_TOKEN;
     fi
 
-after_script:
-  - make build-dir-clean
+after_failure:
+  - make clean
+
+after_success:
+  - make clean-local

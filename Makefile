@@ -16,7 +16,7 @@ export PORT=8083
 export APP = personnes-decedees_search-ui_svelte
 export APP_GROUP = matchID
 export APP_PATH := $(shell pwd)
-export APP_DNS=deces.matchid.io
+export APP_DNS=sv-deces.matchid.io
 export FRONTEND := ${APP_PATH}
 export FRONTEND_DEV_HOST = frontend-development
 export FRONTEND_DEV_PORT = ${PORT}
@@ -333,7 +333,7 @@ deploy-delete-old:
 	@make -C ${APP_PATH}/${GIT_TOOLS} cloud-instance-down-invalid\
 		APP=${APP} APP_VERSION=${APP_VERSION} GIT_BRANCH=${GIT_BRANCH} ${MAKEOVERRIDES}
 
-deploy-remote: config deploy-remote-instance deploy-remote-services deploy-remote-publish deploy-delete-old
+deploy-monitor:
+	@make -C ${APP_PATH}/${GIT_TOOLS} remote-install-monitor-nq NQ_TOKEN=${NQ_TOKEN}
 
-
-
+deploy-remote: config deploy-remote-instance deploy-remote-services deploy-remote-publish deploy-delete-old deploy-monitor
