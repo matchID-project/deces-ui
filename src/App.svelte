@@ -18,7 +18,6 @@
 					v.fullText.value = myQuery;
 					return v;
 				});
-				searchSubmit(myCurrent);
 			}
         }
     }
