@@ -61,7 +61,7 @@
                                         <td>{result.NOM.raw}</td>
                                     </tr>
                                     <tr>
-                                        <td>Prénoms</td>
+                                        <td>Prénom(s)</td>
                                         <td>{result.PRENOMS.raw}</td>
                                     </tr>
                                     <tr>
@@ -71,13 +71,20 @@
                                     <tr>
                                         <td>Lieu</td>
                                         <td>
-                                            {result.COMMUNE_NAISSANCE
-                                            ? result.PAYS_NAISSANCE
-                                                ? result.COMMUNE_NAISSANCE.raw + ", " + result.PAYS_NAISSANCE.raw
-                                                : result.COMMUNE_NAISSANCE
-                                            : result.PAYS_NAISSANCE
-                                                ? result.PAYS_NAISSANCE.raw
-                                                : "ND"
+                                            {
+                                                result.COMMUNE_NAISSANCE
+                                                ? ( Array.isArray(result.COMMUNE_NAISSANCE.raw)
+                                                    ? result.COMMUNE_NAISSANCE.raw[0]
+                                                    : result.COMMUNE_NAISSANCE.raw)
+                                                + ( result.DEPARTEMENT_NAISSANCE
+                                                    ? " (" + result.DEPARTEMENT_NAISSANCE.raw + ")"
+                                                    : "" )
+                                                + ( result.PAYS_NAISSANCE
+                                                    ? ", " + result.PAYS_NAISSANCE.raw
+                                                    : "" )
+                                                : (result.PAYS_NAISSANCE
+                                                    ? result.PAYS_NAISSANCE.raw
+                                                    : "ND")
                                             }
                                         </td>
                                     </tr>
@@ -96,13 +103,29 @@
                                         <td>Lieu</td>
                                         <td>
                                             {
-                                            result.COMMUNE_DECES
-                                            ? ( result.PAYS_DECES
-                                                ? result.COMMUNE_DECES.raw + ", " + result.PAYS_DECES.raw
-                                                : result.COMMUNE_DECES.raw )
-                                            : (result.PAYS_DECES
-                                                ? result.PAYS_DECES.raw
-                                                : "ND")
+                                                result.COMMUNE_DECES
+                                                ? ( Array.isArray(result.COMMUNE_DECES.raw)
+                                                    ? result.COMMUNE_DECES.raw[0]
+                                                    : result.COMMUNE_DECES.raw)
+                                                + ( result.DEPARTEMENT_DECES
+                                                    ? " (" + result.DEPARTEMENT_DECES.raw + ")"
+                                                    : "" )
+                                                + ( result.PAYS_DECES
+                                                    ? ", " + result.PAYS_DECES.raw
+                                                    : "" )
+                                                : (result.PAYS_DECES
+                                                    ? result.PAYS_DECES.raw
+                                                    : "ND")
+                                            }
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Acte n°</td>
+                                        <td>
+                                            {
+                                                result.NUM_DECES && result.NUM_DECES.raw
+                                                ? result.NUM_DECES.raw
+                                                : "ND"
                                             }
                                         </td>
                                     </tr>
