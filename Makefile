@@ -333,7 +333,7 @@ deploy-delete-old:
 	@make -C ${APP_PATH}/${GIT_TOOLS} cloud-instance-down-invalid\
 		APP=${APP} APP_VERSION=${APP_VERSION} GIT_BRANCH=${GIT_BRANCH} ${MAKEOVERRIDES}
 
-deploy-remote: config deploy-remote-instance deploy-remote-services deploy-remote-publish deploy-delete-old
+deploy-monitor:
+	@make -C ${APP_PATH}/${GIT_TOOLS} remote-install-monitor-nq NQ_TOKEN=${NQ_TOKEN}
 
-
-
+deploy-remote: config deploy-remote-instance deploy-remote-services deploy-remote-publish deploy-delete-old deploy-monitor
