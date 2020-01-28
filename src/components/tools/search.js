@@ -34,13 +34,15 @@ export const search = async (searchInput, newCurrent) => {
 }
 
 export const searchSubmit = async (newCurrent) => {
-    const state = await search(mySearchInput, newCurrent);
-    searchResults.update( v => state.results );
-    totalResults.update(v => state.totalResults);
-    totalPages.update(v => state.totalPages);
-    facets.update(v => state.facets);
-    autocompleteDisplay.update(v => false);
-    wasSearched.update(v => mySearchInput.fullText.value);
+    if (mySearchInput.fullText.value) {
+        const state = await search(mySearchInput, newCurrent);
+        searchResults.update( v => state.results );
+        totalResults.update(v => state.totalResults);
+        totalPages.update(v => state.totalPages);
+        facets.update(v => state.facets);
+        autocompleteDisplay.update(v => false);
+        wasSearched.update(v => mySearchInput.fullText.value);
+    }
 }
 
 export const searchURLUpdate = async () => {
