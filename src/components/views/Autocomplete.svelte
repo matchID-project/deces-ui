@@ -1,4 +1,4 @@
-{#if $autocompleteDisplay}
+{#if $autocompleteDisplay && !error}
   <div class="autocomplete-container">
     <div class="container is-widescreen" style="margin-left: 15px; margin-top:-20px;">
       <span class="is-uppercase is-size-7 is-small has-text-grey">
@@ -15,7 +15,7 @@
         </thead>
         <tbody>
           {#each $autocompleteResults as result, index}
-            {#if index < 10}
+            {#if index < 10 && !result.error}
               <tr
                 class="is-size-7 is-hoverable"
                 on:click|preventDefault={onSelectAutocomplete(result)}
@@ -52,10 +52,13 @@
   </div>
 {/if}
 
-
 <script>
   import { searchInput, autocompleteResults, autocompleteDisplay } from '../tools/stores.js';
   import { search, searchSubmit, searchURLUpdate } from '../tools/search.js';
+
+  let error;
+
+  $: error = $autocompleteResults.some(r => r.error)
 
   const onSelectAutocomplete = async (selection) => {
     searchInput.update( v => {

@@ -236,3 +236,5 @@ export const current = writable(1);
 export const updateURL = writable(false);
 
 export const autocompleteDisplay = writable(false);
+
+export const searchTyping = writable(0);
