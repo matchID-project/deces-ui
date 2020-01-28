@@ -14,7 +14,7 @@
                   placeholder={$searchInput[key].placeholder}
                   class="is-size-5 is-fullwidth"
                   bind:value={$searchInput[key].value}
-                  on:input={autocomplete}
+                  on:input={handleInput}
                   on:blur={focusInput(key,false)}
                   on:focus={focusInput(key,true)}
                 />
@@ -38,7 +38,7 @@
 
 
 <script>
-  import { searchInput, searchCanvas, autocompleteResults, autocompleteDisplay, searchInputFocus } from '../tools/stores.js';
+  import { searchInput, searchCanvas, autocompleteResults, autocompleteDisplay, searchInputFocus, searchTyping } from '../tools/stores.js';
   import { search, searchSubmit, searchURLUpdate } from '../tools/search.js';
   import Autocomplete from './Autocomplete.svelte';
 
@@ -70,6 +70,23 @@
   const handleSubmit = () => {
     searchSubmit();
     searchURLUpdate();
+  }
+
+
+  const startDate = new Date().getTime();
+
+  const date = () => {
+    return Math.round(new Date().getTime() - startDate);
+  }
+
+  const handleInput = () => {
+    $searchTyping = date() + 350;
+    setTimeout(() => {
+      if (date() > $searchTyping) {
+        autocomplete();
+      } else {
+        console.log("key input limiter")
+      } }, 355);
   }
 
   const autocomplete = async () => {
