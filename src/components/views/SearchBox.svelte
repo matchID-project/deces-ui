@@ -1,46 +1,49 @@
-
-  <div class="container autocomplete column is-6" style="margin-top: -15px;">
-    <form
-      class="columns is-vcentered is-multiline"
-      on:submit|preventDefault={handleSubmit}
-    >
-      <div class="column is-9">
+<GoogleAnalytics ga={ga} trackingId={'UA-156429702-1'}/>
+<div class="container autocomplete column is-6" style="margin-top: -15px;">
+  <form
+    class="columns is-vcentered is-multiline"
+    on:submit|preventDefault={handleSubmit}
+  >
+    <div class="column is-9">
+      <div>
         <div>
-          <div>
-            {#each Object.keys($searchInput) as key}
-              {#if isActive(key)}
-                <input
-                  autoComplete="off"
-                  placeholder={$searchInput[key].placeholder}
-                  class="is-size-5 is-fullwidth"
-                  bind:value={$searchInput[key].value}
-                  on:input={handleInput}
-                  on:blur={focusInput(key,false)}
-                  on:focus={focusInput(key,true)}
-                />
-              {/if}
-            {/each}
-          </div>
+          {#each Object.keys($searchInput) as key}
+            {#if isActive(key)}
+              <input
+                autoComplete="off"
+                placeholder={$searchInput[key].placeholder}
+                class="is-size-5 is-fullwidth"
+                bind:value={$searchInput[key].value}
+                on:input={handleInput}
+                on:blur={focusInput(key,false)}
+                on:focus={focusInput(key,true)}
+              />
+            {/if}
+          {/each}
         </div>
       </div>
-      <div class="column is-3">
-        <button
-          type="submit"
-          class="button is-size-5 is-fullwidth is-info"
-        >
-          Recherche
-        </button>
-      </div>
-      <Autocomplete/>
-    </form>
+    </div>
+    <div class="column is-3">
+      <button
+        type="submit"
+        class="button is-size-5 is-fullwidth is-info"
+      >
+        Recherche
+      </button>
+    </div>
+    <Autocomplete/>
+  </form>
 
-  </div>
+</div>
 
 
 <script>
+  import GoogleAnalytics from '../tools/GoogleAnalytics.svelte';
   import { searchInput, searchCanvas, autocompleteResults, autocompleteDisplay, searchInputFocus, searchTyping } from '../tools/stores.js';
   import { search, searchSubmit, searchURLUpdate } from '../tools/search.js';
   import Autocomplete from './Autocomplete.svelte';
+
+  let ga;
 
   $: $autocompleteDisplay=Object.keys($searchInputFocus).some(key => $searchInputFocus.focus);
 
@@ -70,6 +73,12 @@
   const handleSubmit = () => {
     searchSubmit();
     searchURLUpdate();
+    ga.query('someevent', {
+      hitType: 'event',
+      eventCategory: 'recherche',
+      eventAction: 'button',
+      eventLabel: $searchInput.fullText.value
+    })
   }
 
 
