@@ -76,8 +76,11 @@
   const handleSubmit = () => {
     searchSubmit();
     searchURLUpdate();
-    gtag('config', 'UA-156429702-1');
-    gtag('event', 'recherche', { 'fullText': $searchInput.fullText.value });
+    // gtag('config', 'UA-156429702-1');
+    gtag('event', 'button', {
+      event_category: 'recherche',
+      event_label: $searchInput.fullText.value
+    });
   }
 
 
