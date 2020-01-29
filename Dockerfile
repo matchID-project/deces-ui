@@ -71,7 +71,6 @@ ARG app_path
 ARG app_name
 ARG app_ver
 ARG FRONTEND_DEV_PORT
-ENV ES_PROXY_PATH ${ES_PATH}
 
 VOLUME /$app_path/src
 VOLUME /$app_path/public
@@ -90,13 +89,16 @@ ARG no_proxy
 ARG npm_registry
 ARG sass_registry
 ARG MIRROR_DEBIAN
+ARG ES_PROXY_PATH
 ARG app_path
 ARG app_name
 ARG app_ver
 ENV APP ${app_name}
 ENV APP_VERSION ${app_ver}
-
+ENV ES_PROXY_PATH ${ES_PROXY_PATH}
 # VOLUME /$app_path/build
+
+RUN echo API ${ES_PROXY_PATH}
 
 COPY ${APP}-${APP_VERSION}-frontend.tar.gz .
 

@@ -65,6 +65,16 @@
                             <p>
                                 Généalogistes, professionnels ou particuliers, services publics de lutte contre la fraude.
                             </p>
+                        <p><strong>Un bug, une question ?</strong></p>
+                            <p>
+                                Le service est encore en version bêta (cf conditions d'utilisation).
+                                Des bugs peuvent subsister. En cas de doute commencez par actualiser l'application (touche F5),
+                                certaines mises à jours du service nécessitent un rechargement.
+                                En cas de doute sollicitez nous à <a href="mailto:matchid.project@gmail.com">matchid.project@gmail.com</a>, en mentionnant la référence de version ci-dessous:
+                            </p>
+                            <p>
+                                __APP__ version __APP_VERSION__
+                            </p>
                         <p><strong>Evolutions à venir</strong></p>
                             <p>
                                 Deux évolutions sont prévues dans les prochaines semaines:

@@ -10,7 +10,7 @@ export default async function runRequest(body) {
   if (myCachedResponses[hash]) {
     return myCachedResponses[hash];
   }
-  const response = await fetch(`/personnes-decedees-search-ui-svelte/api/v0/search`, {
+  const response = await fetch('__ES_PROXY_PATH__', {
     method: "POST",
     headers: { "content-type": "application/json" },
     body: JSON.stringify(body)

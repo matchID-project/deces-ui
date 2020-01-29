@@ -20,6 +20,7 @@ services:
         NPM_LATEST: ${NPM_LATEST}
         NPM_GIT: ${NPM_GIT}
         NPM_VERBOSE: ${NPM_VERBOSE}
+        ES_PROXY_PATH: ${ES_PROXY_PATH}
     image: ${DOCKER_USERNAME}/${DC_PREFIX}-frontend-build:${APP_VERSION}
     container_name: ${DC_PREFIX}-frontend-build
     environment:
