@@ -144,7 +144,6 @@
         border-radius: 4px;
         box-shadow: none;
         display: inline-flex;
-        height: 1.5em;
         justify-content: flex-start;
         line-height: 1.5;
         padding-left: calc(.75em - 1px);

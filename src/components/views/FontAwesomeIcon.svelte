@@ -25,4 +25,12 @@
     overflow: visible;
     display: inline-block;
   }
+
+  .is-48 {
+      margin-top: 8px;
+      width: 48px;
+      height: 48px;
+  }
+
+
 </style>
