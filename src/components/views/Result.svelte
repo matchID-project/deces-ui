@@ -8,9 +8,9 @@
                             <FontAwesomeIcon icon={faExclamationTriangle} class="is-pulled-left is-huge"/>
                         </div>
                         <div class="column is-6">
-                            <h1 className="has-text-white has-text-centered">Erreur {result.status}</h1>
+                            <h1 className="has-text-white has-text-centered">Erreur {result.status.raw}</h1>
                             <h1 subtitle className="has-text-white has-text-centered">
-                                {result.statusText}
+                                {result.statusText.raw}
                             </h1>
                         </div>
                     </div>
