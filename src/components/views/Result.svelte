@@ -1,18 +1,17 @@
 {#if (result) && (result.error) }
     <div class="column is-12">
-        <div class="card">
+        <div class="card has-text-centered">
             <div class="card-header has-background-danger">
-                <div class="container is-fluid">
-                    <div class="columns is-vcentered is-multiline">
-                        <div class="column is-3">
-                            <FontAwesomeIcon icon={faExclamationTriangle} class="is-pulled-left is-huge"/>
-                        </div>
-                        <div class="column is-6">
-                            <h1 className="has-text-white has-text-centered">Erreur {result.status.raw}</h1>
-                            <h1 subtitle className="has-text-white has-text-centered">
-                                {result.statusText.raw}
-                            </h1>
-                        </div>
+                <div class="columns is-vcentered is-mobile is-multiline">
+                    <div class="column is-3">
+                        <figure class="image is-64x64">
+                            <FontAwesomeIcon icon={faExclamationTriangle} class="is-48 is-vcentered"/>
+                    </div>
+                    <div class="column is-9">
+                        <h1 class="title is-4 has-text-white">Erreur {result.status.raw}</h1>
+                        <h1 subtitle class="subtitle is-6 has-text-white">
+                            {result.statusText.raw}
+                        </h1>
                     </div>
                 </div>
             </div>
@@ -166,14 +165,22 @@
         background-color: #00d1b2!important;
     }
 
+    .has-background-danger {
+        background-color: hsl(348, 100%, 61%)!important;
+    }
+
     figure, h1, html, li, ul {
         margin: 0;
         padding: 0;
     }
 
+    .is-vcentered {
+        align-items: center;
+    }
+
     .image.is-64x64 {
-    height: 64px;
-    width: 64px;
+        height: 64px;
+        width: 64px;
     }
 
     .image img {
