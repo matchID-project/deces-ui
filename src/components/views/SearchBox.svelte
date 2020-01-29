@@ -1,4 +1,4 @@
-<GoogleAnalytics ga={ga} trackingId={'UA-156429702-1'}/>
+<!-- <GoogleAnalytics ga={ga} trackingId={'UA-156429702-1'}/> -->
 <div class="container autocomplete column is-6" style="margin-top: -15px;">
   <form
     class="columns is-vcentered is-multiline"
@@ -38,12 +38,12 @@
 
 
 <script>
-  import GoogleAnalytics from '../tools/GoogleAnalytics.svelte';
+  // import GoogleAnalytics from '../tools/GoogleAnalytics.svelte';
   import { searchInput, searchCanvas, autocompleteResults, autocompleteDisplay, searchInputFocus, searchTyping } from '../tools/stores.js';
   import { search, searchSubmit, searchURLUpdate } from '../tools/search.js';
   import Autocomplete from './Autocomplete.svelte';
 
-  let ga;
+  // let ga;
 
   $: $autocompleteDisplay=Object.keys($searchInputFocus).some(key => $searchInputFocus.focus);
 
