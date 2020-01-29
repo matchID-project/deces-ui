@@ -133,9 +133,7 @@
                             La recherche et l'indexation reposent sur <a href="https://elastic.co">Elasticsearch</a>
                             qui repose sur le moteur de recherche Lucène, qui apporte le bénéfice
                             des <a href="https://wikipedia.org/wiki/Recherche_approximative">recherches floues</a> à
-                            large échelle. La visualisation est basée
-                            sur <a href="https://swiftype.com/search-ui">Search-UI</a>.
-                            Le code source est accessible sur <a href="https://github.com/matchid-project/personnes-decedees_search-ui">Github</a>.
+                            large échelle. Le code source de la visualisation est accessible sur <a href="https://github.com/matchid-project/personnes-decedees_search-ui_svelte">Github</a>.
                         </p>
                         <p><strong>Qui sommes nous ?</strong></p>
                         <p>
@@ -144,7 +142,7 @@
                             La réconciliation des personnes décédées avec le permis de conduire a été le premier cas d'usage réalisé avec
                             matchID. Le projet a été libéré et mis en opensource. Nous avons créé de service
                             en complément qui semblait d'utilité notamment pour la lutte contre la fraude.
-                            Pour en savoir plus sur le projet matchID, suivez ce <a href="https://matchid.io">lien</a>.
+                            Pour en savoir plus sur le projet matchID, suivez ce <a href="https://www.matchid.io">lien</a>.
                         </p>
             </div>
         </section>
