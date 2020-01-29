@@ -218,7 +218,7 @@ function buildMatch(searchInput) {
           {
             match: {
               DATE_DECES: {
-                query: names[1],
+                query: date,
                 fuzziness: "auto"
               }
             }
