@@ -1,4 +1,5 @@
 import svelte from 'rollup-plugin-svelte';
+import replace from '@rollup/plugin-replace';
 import resolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import livereload from 'rollup-plugin-livereload';
@@ -24,7 +25,11 @@ export default {
 				css.write('public/build/bundle.css');
 			}
 		}),
-
+		replace({
+			// you're right, you shouldn't be injecting this
+			// into a client script :)
+			__ES_PROXY_PATH__: process.env.ES_PROXY_PATH
+		  }),
 		// If you have external dependencies installed from
 		// npm, you'll most likely need these plugins. In
 		// some cases you'll need additional configuration —
