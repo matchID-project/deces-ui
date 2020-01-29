@@ -28,7 +28,9 @@ export default {
 		replace({
 			// you're right, you shouldn't be injecting this
 			// into a client script :)
-			__ES_PROXY_PATH__: process.env.ES_PROXY_PATH
+			__ES_PROXY_PATH__: process.env.ES_PROXY_PATH,
+			__APP__: process.env.APP,
+			__APP_VERSION__: process.env.APP_VERSION
 		  }),
 		// If you have external dependencies installed from
 		// npm, you'll most likely need these plugins. In
