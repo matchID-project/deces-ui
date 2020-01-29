@@ -38,12 +38,15 @@
 
 
 <script>
-  // import GoogleAnalytics from '../tools/GoogleAnalytics.svelte';
   import { searchInput, searchCanvas, autocompleteResults, autocompleteDisplay, searchInputFocus, searchTyping } from '../tools/stores.js';
   import { search, searchSubmit, searchURLUpdate } from '../tools/search.js';
   import Autocomplete from './Autocomplete.svelte';
 
-  // let ga;
+  let gtag;
+
+  const gtagFail = () => {console.log("GA not loaded")}
+
+  $: gtag = window.gtag || gtagFail;
 
   $: $autocompleteDisplay=Object.keys($searchInputFocus).some(key => $searchInputFocus.focus);
 
@@ -73,12 +76,8 @@
   const handleSubmit = () => {
     searchSubmit();
     searchURLUpdate();
-    ga.query('someevent', {
-      hitType: 'event',
-      eventCategory: 'recherche',
-      eventAction: 'button',
-      eventLabel: $searchInput.fullText.value
-    })
+    gtag('config', 'UA-156429702-1');
+    gtag('event', 'recherche', { 'fullText': $searchInput.fullText.value });
   }
 
 
