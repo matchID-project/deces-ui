@@ -13,7 +13,7 @@ export USE_TTY := $(shell test -t 1 && USE_TTY="-t")
 export PORT=8083
 
 #base paths
-export APP = personnes-decedees_search-ui_svelte
+export APP = deces-ui
 export APP_GROUP = matchID
 export APP_PATH := $(shell pwd)
 export APP_DNS=sv-deces.matchid.io
