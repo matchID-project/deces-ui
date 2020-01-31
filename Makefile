@@ -42,7 +42,7 @@ export DC := /usr/local/bin/docker-compose
 export GIT_ORIGIN=origin
 export GIT_BRANCH := $(shell git branch | grep '*' | awk '{print $$2}')
 export GIT_BRANCH_MASTER=master
-export GIT_DATAPREP = personnes-decedees_search
+export GIT_DATAPREP = deces-dataprep
 export GIT_ROOT = https://github.com/matchid-project
 export GIT_TOOLS = tools
 
