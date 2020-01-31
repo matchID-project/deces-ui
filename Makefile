@@ -13,10 +13,10 @@ export USE_TTY := $(shell test -t 1 && USE_TTY="-t")
 export PORT=8083
 
 #base paths
-export APP = personnes-decedees_search-ui_svelte
+export APP = deces-ui
 export APP_GROUP = matchID
 export APP_PATH := $(shell pwd)
-export APP_DNS=sv-deces.matchid.io
+export APP_DNS=deces.matchid.io
 export FRONTEND := ${APP_PATH}
 export FRONTEND_DEV_HOST = frontend-development
 export FRONTEND_DEV_PORT = ${PORT}
@@ -34,7 +34,7 @@ export DC_DIR=${APP_PATH}
 export DC_FILE=${DC_DIR}/docker-compose
 export DC_PREFIX := $(shell echo ${APP} | tr '[:upper:]' '[:lower:]' | tr '_' '-')
 export DC_IMAGE_NAME = ${DC_PREFIX}
-export API_PATH = ${DC_PREFIX}
+export API_PATH = deces
 export DC_NETWORK := $(shell echo ${APP} | tr '[:upper:]' '[:lower:]')
 export DC_BUILD_ARGS = --pull --no-cache
 
@@ -42,7 +42,7 @@ export DC := /usr/local/bin/docker-compose
 export GIT_ORIGIN=origin
 export GIT_BRANCH := $(shell git branch | grep '*' | awk '{print $$2}')
 export GIT_BRANCH_MASTER=master
-export GIT_DATAPREP = personnes-decedees_search
+export GIT_DATAPREP = deces-dataprep
 export GIT_ROOT = https://github.com/matchid-project
 export GIT_TOOLS = tools
 
