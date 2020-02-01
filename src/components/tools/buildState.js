@@ -29,13 +29,13 @@ function getHighlight(hit, fieldName) {
 }
 
 function buildResults(hits) {
-  const addEachKeyValueToObject = (acc, [key, value]) => ({
-    ...acc,
-    [key]: value
-  });
+  const addEachKeyValueToObject = (acc, [key, value]) => {
+    acc[key] = value;
+    return acc;
+  };
 
   const toObject = (value, snippet) => {
-    return { raw: value, ...(snippet && { snippet }) };
+    return { raw: value, snippet: snippet };
   };
 
   return hits.map(enrichRecord).map(record => {
@@ -71,6 +71,6 @@ export default function buildState(response, resultsPerPage) {
     results,
     totalPages,
     totalResults,
-    ...(facets && { facets })
+    facets: facets
   };
 }
