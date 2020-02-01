@@ -44,8 +44,8 @@ function getRangeFilter(filter) {
           filter.values.map(filterValue => ({
             range: {
               [filter.field]: {
-                ...(filterValue.to && { lt: filterValue.to }),
-                ...(filterValue.to && { gt: filterValue.from })
+                lt: filterValue.to,
+                gt: filterValue.from
               }
             }
           }))

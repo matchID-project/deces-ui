@@ -314,14 +314,14 @@ export default function buildRequest(searchInput) {
     query: {
       bool: {
         must: [match],
-        ...(filter && { filter })
+        filter: filter
       }
     },
     // https://www.elastic.co/guide/en/elasticsearch/reference/7.x/search-request-sort.html
-    ...(sort && { sort }),
+    sort: sort,
     // https://www.elastic.co/guide/en/elasticsearch/reference/7.x/search-request-from-size.html
-    ...(size && { size }),
-    ...(from && { from })
+    size: size,
+    from: from
   };
 
   return body;

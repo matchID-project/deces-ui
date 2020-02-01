@@ -1,12 +1,12 @@
 import sum from 'hash-sum';
-import { cachedResponses } from './stores.js'
+import { cachedResponses } from './stores.js';
 
 let myCachedResponses;
 
-let r = cachedResponses.subscribe((value) => { myCachedResponses = value })
+let r = cachedResponses.subscribe((value) => { myCachedResponses = value });
 
 export default async function runRequest(body) {
-  let hash = sum(body)
+  let hash = sum(body);
   if (myCachedResponses[hash]) {
     return myCachedResponses[hash];
   }
@@ -34,8 +34,8 @@ export default async function runRequest(body) {
       }
     };
   } else {
-    let json = response.json()
+    let json = response.json();
     cachedResponses.update(v => { v[hash]=json; return v } );
     return json;
   }
-}
+};
