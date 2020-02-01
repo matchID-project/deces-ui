@@ -54,10 +54,10 @@ export default function buildStateFacets(aggregations) {
   const acres = getRangeFacet(aggregations, "acres");
 
   const facets = {
-    ...(states && { states }),
-    ...(world_heritage_site && { world_heritage_site }),
-    ...(visitors && { visitors }),
-    ...(acres && { acres })
+    states: states,
+    world_heritage_site: world_heritage_site,
+    visitors: visitors,
+    acres: acres
   };
 
   if (Object.keys(facets).length > 0) {
