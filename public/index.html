@@ -22,6 +22,21 @@
 			gtag('config', 'UA-156429702-1');
 		</script>
 		<script defer src='/build/bundle.js'></script>
+		<script>
+			setTimeout(function(){
+			  var tmp = document.getElementById("infoNotWorking")
+			  if (tmp) {
+				tmp.style.display = "block";
+			  }
+			}, 5000);
+		  </script>
+		  <style>
+			#infoNotWorking {
+			  text-align: center;
+			  font-size: 1em;
+			  display: none;
+			}
+		  </style>
 	</head>
 
 <body>
@@ -37,5 +52,11 @@
 			La réconciliation du fichier des personnes décédées avec le permis de conduire a été le premier cas d'usage réalisé avec matchID.
 			matchID est un logiciel opensource et gratuit qui permet de croiser des fichiers de plusieurs dizaines de millions d'enregistrements.
 	</noscript>
+	<div id="infoNotWorking">
+		Si vous voyez ce message, c'est que que votre navigateur est incompatible, ou bien que la connexion a posé
+		problème.
+		<br>
+		Les navigateurs supportés sont : Edge >= 17, Chrome >= 55, Firefox >= 52, Safari >=10.1, Opera >= 42
+	</div>
 </body>
 </html>

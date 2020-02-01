@@ -6,6 +6,9 @@
   import { searchSubmit } from './components/tools/search.js';
   $: URLSearchSubmit(new URLSearchParams(location.search));
 
+  $: element = document.getElementById('infoNotWorking')
+  $: element.parentNode  && element.parentNode.removeChild(element);
+
   const URLSearchSubmit = (urlParams) => {
         if (!$updateURL) {
 			const myCurrent = urlParams.get('current') ? parseInt(urlParams.get('current').replace(/n_(.*)_n/,"$1")) : undefined;
