@@ -123,8 +123,7 @@ export const searchInput = writable({
         query: "prefix",
         placeholder: "1974 ND",
         size: "1-5",
-        active: true,
-        disabled: true
+        active: true
     },
     // deathYearRange: {
     //     path: "death.date",
