@@ -42,6 +42,14 @@
       </div>
       <div class="column is-2">
         <div class="columns is-mobile">
+          <div class="column is-desktop12 is-mobile-6">
+            <button
+              type="submit"
+              class="button is-size-5 is-fullwidth is-info"
+            >
+              Recherche
+            </button>
+          </div>
           <div class="column is-6 is-hidden-desktop">
             <button
               type="reset"
@@ -50,14 +58,6 @@
               title={ $advancedSearch ? "retour à la recherche simple" : "activer la recherche avancée" }
             >
               <FontAwesomeIcon icon={ $advancedSearch ? faMinus : faPlus }/>
-            </button>
-          </div>
-          <div class="column is-desktop12 is-mobile-6">
-            <button
-              type="submit"
-              class="button is-size-5 is-fullwidth is-info"
-            >
-              Recherche
             </button>
           </div>
         </div>
