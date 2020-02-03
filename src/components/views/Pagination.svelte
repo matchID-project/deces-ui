@@ -42,13 +42,13 @@
 
 <script>
     import { current, totalResults, totalPages, resultsPerPage, searchInput, wasSearched } from '../tools/stores.js'
-    import { searchSubmit, searchURLUpdate } from '../tools/search.js'
+    import { searchString, searchSubmit, searchURLUpdate } from '../tools/search.js'
 
     let from, to, query;
 
     $: from = 1 + ($current - 1) * $resultsPerPage;
     $: to = Math.min($totalResults, $current * $resultsPerPage);
-    $: query = $searchInput.fullText.value;
+    $: query = searchString($searchInput);
 
     $: pages = computePages($current, $totalPages)
 

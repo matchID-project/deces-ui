@@ -4,15 +4,18 @@ import {
   filters,
   resultsPerPage,
   sortDirection,
-  sortField
+  sortField,
+  advancedSearch
 } from './stores.js';
 
+let myAdvancedSearch;
 let myCurrent;
 let myFilters;
 let myResultsPerPage;
 let mySortDirection;
 let mySortField;
 
+const a = advancedSearch.subscribe((value) => { myAdvancedSearch=value })
 const c = current.subscribe((value) => { myCurrent=value })
 const cf = filters.subscribe((value) => { myFilters=value })
 const cr = resultsPerPage.subscribe((value) => { myResultsPerPage=value })
@@ -32,9 +35,61 @@ function buildSort(sortDirection, sortField) {
   }
 }
 
-
-
 function buildMatch(searchInput) {
+  if (myAdvancedSearch) {
+    return buildAvancedMatch(searchInput)
+  } else {
+    return buildSimpleMatch(searchInput)
+  }
+}
+
+function buildAvancedMatch(searchInput) {
+  return {
+    function_score: {
+      query: {
+        bool: {
+          must: Object.keys(searchInput).map(key => {
+            if (searchInput[key].value) {
+              return {
+                bool: searchInput[key].query
+                  ? {
+                      must: [
+                        {
+                          [searchInput[key].query]: {
+                            [searchInput[key].field]: searchInput[key].value
+                          }
+                        }
+                      ]
+                    }
+                  : {
+                      must: [
+                        {
+                          match: {
+                            [searchInput[key].field]: {
+                              query: searchInput[key].value,
+                              fuzziness: 2
+                            }
+                          }
+                        }
+                      ],
+                      should: [
+                        {
+                          match: {
+                            [searchInput[key].field]: searchInput[key].value
+                          }
+                        }
+                      ]
+                    }
+              }
+            }
+          }).filter(x => x),
+        }
+      }
+    }
+  }
+}
+
+function buildSimpleMatch(searchInput) {
   let query = searchInput.fullText.value;
   let searchTerm = query.normalize('NFKD').replace(/[\u0300-\u036f]/g, "").split(/\s+/)
   let date = searchTerm.filter( x => x.match(/^\d{2}\/\d{2}\/\d{4}$/)).map( x => x.replace(/(\d{2})\/(\d{2})\/(\d{4})/,"$3$2$1"));
@@ -281,15 +336,15 @@ export default function buildRequest(searchInput) {
     // Static query Configuration
     // --------------------------
     // https://www.elastic.co/guide/en/elasticsearch/reference/7.x/search-request-highlighting.html
-    min_score: 5,
-    highlight: {
-      fragment_size: 200,
-      number_of_fragments: 1,
-      fields: {
-        title: {},
-        description: {}
-      }
-    },
+    min_score: ( myAdvancedSearch ? 0 : 5 ),
+    // highlight: {
+    //   fragment_size: 200,
+    //   number_of_fragments: 1,
+    //   fields: {
+    //     title: {},
+    //     description: {}
+    //   }
+    // },
     //https://www.elastic.co/guide/en/elasticsearch/reference/7.x/search-request-source-filtering.html#search-request-source-filtering
     _source: [
       "CODE_INSEE_DECES","CODE_INSEE_NAISSANCE",
@@ -301,12 +356,12 @@ export default function buildRequest(searchInput) {
       "PAYS_DECES","PAYS_DECES_CODEISO3",
       "PAYS_NAISSANCE","PAYS_NAISSANCE_CODEISO3",
       "SEXE","UID"],
-    aggs: {
-      COMMUNE_NAISSANCE: { terms: { field: "COMMUNE_NAISSANCE.keyword", size: 30 } },
-      PAYS_NAISSANCE: {
-        terms: { field: "PAYS_NAISSANCE.keyword" }
-      }
-    },
+    // aggs: {
+    //   COMMUNE_NAISSANCE: { terms: { field: "COMMUNE_NAISSANCE.keyword", size: 30 } },
+    //   PAYS_NAISSANCE: {
+    //     terms: { field: "PAYS_NAISSANCE.keyword" }
+    //   }
+    // },
 
     // Dynamic values based on current Search UI state
     // --------------------------

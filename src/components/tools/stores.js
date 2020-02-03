@@ -3,134 +3,171 @@ import { writable } from 'svelte/store';
 export const searchInput = writable({
     fullText: {
         path: "fullText",
+        url: "q",
         value: "",
         field: "fullText",
         placeholder: "prénom, nom, date de naissance ou de décès, ... e.g. Georges Pompidou",
+        title: "saisissez en recherche libre nom, prénom, date de naissance ou de décès",
         size: 12,
-        active: true,
-    },
-    lastName: {
-        path: "name",
-        value: "",
-        field: "NOM",
-        placeholder: "Pompidou",
-        size: 7,
         active: true,
     },
     firstName: {
         path: "name",
+        url: "fn",
         value: "",
+        section:"prénoms/nom",
         field: "PRENOM",
         placeholder: "Georges",
-        size: 5,
+        title: "saisissez le prénom",
+        size: 4,
+        active: true,
+    },
+    lastName: {
+        path: "name",
+        url: "ln",
+        value: "",
+        field: "NOM",
+        placeholder: "Pompidou",
+        title: "saisissez le nom",
+        size: 6,
         active: true,
     },
     birthDate: {
         path: "birth.date",
+        url: "bd",
         before: "le",
+        section:"naissance",
         value: "",
         field: "ANNEE_NAISSANCE",
         placeholder: "05/07/1911",
-        size: 1,
+        title:"saisissez la date de naissance",
+        size: 2,
         active: false,
     },
     birthYear: {
         path: "birth.date",
+        url: "by",
         before: "en",
+        section:"naissance",
         value: "",
-        field: "ANNEE_NAISSANCE",
+        field: "DATE_NAISSANCE",
+        query: "prefix",
         placeholder: "1911",
-        size: 1,
+        title:"saisissez l'année de naissance",
+        size: "1-5",
         active: true,
     },
-    birthYearRange: {
-        path: "birth.date",
-        before: ["entre", "et"],
-        value: ["", ""],
-        field: "ANNEE_NAISSANCE",
-        placeholder: ["1910", "1920"],
-        size: 1,
-        active: false,
-    },
-    birtCity: {
+    // birthYearRange: {
+    //     path: "birth.date",
+    //     url: "byr",
+    //     before: ["entre", "et"],
+    //     section:"naissance",
+    //     value: ["", ""],
+    //     field: "ANNEE_NAISSANCE",
+    //     placeholder: ["1910", "1920"],
+    //     size: 1,
+    //     active: false,
+    // },
+    birthCity: {
         path: "birth.location",
+        url: "bc",
         before: "à",
         value: "",
         field: "COMMUNE_NAISSANCE",
-        placeholder: "Montboudif",
+        placeholder: "commune: Montboudif",
+        title:"saisissez la commune de naissance",
         size: 4,
         active: true,
     },
     birthDepartment: {
         path: "birth.location",
+        url: "bdep",
         before: "dans le",
         value: "",
         field: "DEP_NAISSANCE",
-        placeholder: "15",
-        size: 1,
+        placeholder: "dépt: 15",
+        title:"saisissez le département de naissance",
+        size: "1-5",
         active: true,
     },
     birthCountry: {
         path: "birth.location",
+        url: "bco",
         before: "en/au",
         value: "",
         field: "PAYS_NAISSANCE",
-        placeholder: "France",
-        size: 2,
+        title:"saisissez le pays de naissance",
+        placeholder: "pays: France",
+        size: 3,
         active: true,
     },
     deathDate: {
         path: "death.date",
+        url: "dd",
+        section:"décès",
         before: "le",
         value: "",
-        field: "ANNEE_NAISSANCE",
+        field: "DATE_DECES",
+        title:"recherche par date de décès bientôt disponible",
         placeholder: "05/07/1911",
         size: 1,
         active: false,
     },
     deathYear: {
         path: "death.date",
+        url: "dy",
+        section:"décès",
         before: "en",
         value: "",
-        field: "ANNEE_NAISSANCE",
-        placeholder: "1911",
-        size: 1,
+        field: "DATE_DECES",
+        query: "prefix",
+        placeholder: "1974 ND",
+        size: "1-5",
         active: true,
+        disabled: true
     },
-    deathYearRange: {
-        path: "death.date",
-        before: ["entre", "et"],
-        value: ["", ""],
-        field: "ANNEE_NAISSANCE",
-        placeholder: ["1910", "1920"],
-        size: 1,
-        active: false,
-    },
+    // deathYearRange: {
+    //     path: "death.date",
+    //     url: "dyr",
+    //     section:"décès",
+    //     before: ["entre", "et"],
+    //     value: ["", ""],
+    //     field: "DATE_DECES",
+    //     placeholder: ["1911", "1974"],
+    //     size: 1,
+    //     active: false,
+    // },
     deathCity: {
         path: "death.location",
+        url: "dc",
         before: "à",
         value: "",
-        field: "COMMUNE_NAISSANCE",
-        placeholder: "Montboudif",
+        field: "COMMUNE_DECES",
+        title:"saisissez la commune de décès",
+        placeholder: "commune: Paris",
         size: 4,
         active: true,
     },
     deathDepartment: {
         path: "death.location",
+        url: "ddep",
         before: "dans le",
         value: "",
-        field: "DEP_NAISSANCE",
-        placeholder: "15",
-        size: 1,
+        field: "DEP_DECES",
+        placeholder: "dépt: 75",
+        title:"saisissez le département de décès",
+        size: "1-5",
         active: true,
     },
     deathCountry: {
         path: "death.location",
+        url: "dco",
         before: "en/au",
         value: "",
-        field: "PAYS_NAISSANCE",
-        placeholder: "France",
-        size: 2,
+        field: "PAYS_DECES",
+        placeholder: "pays: France",
+        title:"saisissez le pays de décès",
+        size: 3,
         active: true,
     }
 });
@@ -151,9 +188,9 @@ export const searchInputFocus = writable({
     birthYear: {
         focus: false
     },
-    birthYearRange: {
-        focus: false
-    },
+    // birthYearRange: {
+    //     focus: false
+    // },
     birtCity: {
         focus: false
     },
@@ -169,9 +206,9 @@ export const searchInputFocus = writable({
     deathYear: {
         focus: false
     },
-    deathYearRange: {
-        focus: false
-    },
+    // deathYearRange: {
+    //     focus: false
+    // },
     deathCity: {
         focus: false
     },
@@ -182,15 +219,19 @@ export const searchInputFocus = writable({
         focus: false
     }
 })
+
 export const searchCanvas = writable({
     fullText: {
-        active: true
+        active: true,
+        advanced: false
     },
     name: {
-        active: false
+        active: false,
+        advanced: true
     },
     birth: {
         active: false,
+        advanced: true,
         date: {
             active: true
         },
@@ -200,6 +241,7 @@ export const searchCanvas = writable({
     },
     death: {
         active: false,
+        advanced: true,
         date: {
             active: true
         },
@@ -212,6 +254,13 @@ export const searchCanvas = writable({
 export const cachedResponses = writable({})
 
 export const autocompleteResults = writable([]);
+
+export const autocompleteMinLength = writable(2);
+
+export const searchMinLength = writable(1);
+
+
+export const advancedSearch = writable(false);
 
 export const wasSearched = writable(false);
 
@@ -230,6 +279,8 @@ export const sortField = writable(false);
 export const filters = writable(false);
 
 export const resultsPerPage = writable(20);
+
+export const resultsPerPageDefault = 20;
 
 export const current = writable(1);
 
