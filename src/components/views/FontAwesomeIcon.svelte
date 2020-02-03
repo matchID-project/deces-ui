@@ -32,5 +32,21 @@
       height: 48px;
   }
 
+  .is-36 {
+      margin-top: 4px!important;
+      width: 36px;
+      height: 36px;
+  }
+
+  .is-24 {
+      margin-top: 2px!important;
+      width: 24px;
+      height: 24px;
+  }
+
+  .is-info {
+    color:#209cee;
+  }
+
 
 </style>

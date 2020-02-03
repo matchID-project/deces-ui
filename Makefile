@@ -287,8 +287,8 @@ ${GIT_DATAPREP}:
 
 ${DATAPREP_VERSION_FILE}: ${GIT_DATAPREP}
 	@cat \
-		${GIT_DATAPREP}/projects/personnes-decedees_search/recipes/dataprep_personnes-dedecees_search.yml\
-		${GIT_DATAPREP}/projects/personnes-decedees_search/datasets/personnes-decedees_index.yml\
+		${GIT_DATAPREP}/projects/deces-dataprep/recipes/deces_dataprep.yml\
+		${GIT_DATAPREP}/projects/deces-dataprep/datasets/deces_index.yml\
 	| sha1sum | awk '{print $1}' | cut -c-8 > ${DATAPREP_VERSION_FILE}
 
 ${DATA_VERSION_FILE}:

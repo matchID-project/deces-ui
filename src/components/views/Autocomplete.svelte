@@ -53,7 +53,7 @@
 {/if}
 
 <script>
-  import { searchInput, autocompleteResults, autocompleteDisplay } from '../tools/stores.js';
+  import { searchInput, autocompleteResults, autocompleteDisplay, advancedSearch } from '../tools/stores.js';
   import { search, searchSubmit, searchURLUpdate } from '../tools/search.js';
 
   let error;
@@ -62,8 +62,14 @@
 
   const onSelectAutocomplete = async (selection) => {
     searchInput.update( v => {
-      v.fullText.value = selection.PRENOM.raw + " " + selection.NOM.raw + " " +
-        selection.DATE_NAISSANCE.raw.replace(/(\d{4})(\d{2})(\d{2})/,"$3/$2/$1")
+      if ($advancedSearch) {
+        v.lastName.value = selection.NOM.raw;
+        v.firstName.value = selection.PRENOM.raw;
+        v.birthYear.value = selection.DATE_NAISSANCE.raw.substring(0, 4)
+      } else {
+        v.fullText.value = selection.PRENOM.raw + " " + selection.NOM.raw + " " +
+          selection.DATE_NAISSANCE.raw.replace(/(\d{4})(\d{2})(\d{2})/,"$3/$2/$1")
+      }
       return v
     })
     searchSubmit();
