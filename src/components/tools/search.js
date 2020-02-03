@@ -51,7 +51,7 @@ export const searchString = (searchInput) => {
         if (searchInput[key].value.length >= 1) {
           return ( key === "fullText" )
             ? searchInput[key].value
-            : `${key}:${searchInput[key].value}`
+            : `${searchInput[key].field}: ${searchInput[key].value}`
         }
       }).join(' ')
 }
@@ -73,7 +73,7 @@ export const searchSubmit = async (newCurrent) => {
         totalPages.update(v => state.totalPages);
         facets.update(v => state.facets);
         autocompleteDisplay.update(v => false);
-        wasSearched.update(v => mySearchInput.fullText.value);
+        wasSearched.update(v => searchString(mySearchInput));
     }
 }
 
