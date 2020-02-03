@@ -21,7 +21,6 @@
 			if ( urlParams.get('advanced') === 'true' ) { toggleAdvancedSearch() };
 
 			if (myQuery) {
-				console.log(myQuery)
 				if (myResultsPerPage) { resultsPerPage.update(v => myResultsPerPage) }
 				searchInput.update( v => {
 					myQuery.map(q => {
