@@ -1,68 +1,116 @@
 <!-- <GoogleAnalytics ga={ga} trackingId={'UA-156429702-1'}/> -->
-<div class="container autocomplete column is-6" style="margin-top: -15px;">
-  <form
-    class="columns is-vcentered is-multiline"
-    on:submit|preventDefault={handleSubmit}
-  >
-    <div class="column is-9">
-      <div>
-        <div>
-          {#each Object.keys($searchInput) as key}
-            {#if isActive(key)}
-              <input
-                autoComplete="off"
-                placeholder={$searchInput[key].placeholder}
-                class="is-size-5 is-fullwidth"
-                bind:value={$searchInput[key].value}
-                on:input={handleInput}
-                on:blur={focusInput(key,false)}
-                on:focus={focusInput(key,true)}
-              />
-            {/if}
-          {/each}
+<div
+  class={"container autocomplete column " + ($advancedSearch ? "is-10" : "is-8")}
+  style="margin-top: -15px;"
+>
+    <form
+       class="columns is-vcentered is-multiline"
+      on:submit|preventDefault={handleSubmit}
+    >
+      <div class="column is-1 is-hidden-mobile">
+        <button
+          type="reset"
+          class="button is-size-5 is-info"
+          on:click|preventDefault={ toggleAdvancedSearch }
+          title={ $advancedSearch ? "retour à la recherche simple" : "activer la recherche avancée" }
+        >
+          <FontAwesomeIcon icon={ $advancedSearch ? faMinus : faPlus }/>
+        </button>
+      </div>
+
+      <div class="column is-9">
+          <div class="columns is-multiline is-mobile">
+            {#each inputsKeys as key}
+              {#if isActive[key]}
+                {#if $searchInput[key].section}
+                  <span class="column is-size-5 is-2 is-mobile-fullwidth is-left">{$searchInput[key].section}</span>
+                {/if}
+                <input
+                  autoComplete="off"
+                  placeholder={$searchInput[key].placeholder}
+                  class={"is-size-5 column is-" + $searchInput[key].size}
+                  bind:value={$searchInput[key].value}
+                  title={$searchInput[key].title}
+                  on:input={handleInput}
+                  on:blur={focusInput(key,false)}
+                  on:focus={focusInput(key,true)}
+                  disabled={$searchInput[key].disabled}
+                />
+              {/if}
+            {/each}
+          </div>
+      </div>
+      <div class="column is-2">
+        <div class="columns is-mobile">
+          <div class="column is-desktop12 is-mobile-6">
+            <button
+              type="submit"
+              class="button is-size-5 is-fullwidth is-info"
+            >
+              Recherche
+            </button>
+          </div>
+          <div class="column is-6 is-hidden-desktop">
+            <button
+              type="reset"
+              class="button is-size-5 is-info is-fullwidth"
+              on:click|preventDefault={ toggleAdvancedSearch }
+              title={ $advancedSearch ? "retour à la recherche simple" : "activer la recherche avancée" }
+            >
+              <FontAwesomeIcon icon={ $advancedSearch ? faMinus : faPlus }/>
+            </button>
+          </div>
         </div>
       </div>
-    </div>
-    <div class="column is-3">
-      <button
-        type="submit"
-        class="button is-size-5 is-fullwidth is-info"
-      >
-        Recherche
-      </button>
-    </div>
-    <Autocomplete/>
-  </form>
-
+      <Autocomplete/>
+    </form>
 </div>
 
 
 <script>
-  import { searchInput, searchCanvas, autocompleteResults, autocompleteDisplay, searchInputFocus, searchTyping } from '../tools/stores.js';
-  import { search, searchSubmit, searchURLUpdate } from '../tools/search.js';
+  import FontAwesomeIcon from './FontAwesomeIcon.svelte'
+
+  import { advancedSearch, searchInput, searchCanvas, autocompleteResults, autocompleteDisplay, searchInputFocus, searchTyping } from '../tools/stores.js';
+  import { search, searchString, searchAutocompleteTrigger, searchSubmit, searchURLUpdate, toggleAdvancedSearch } from '../tools/search.js';
   import Autocomplete from './Autocomplete.svelte';
 
-  let gtag;
+  import {
+      faMinus,
+      faPlus
+  } from '@fortawesome/free-solid-svg-icons';
 
+  let gtag;
   const gtagFail = () => {console.log("GA not loaded")}
 
   $: gtag = window.gtag || gtagFail;
 
+  let inputKeys;
+
+  $: inputsKeys = Object.keys($searchInput);
+
   $: $autocompleteDisplay=Object.keys($searchInputFocus).some(key => $searchInputFocus.focus);
 
-  const isActive = (key) => {
+  let isActive;
+
+  $: isActive = Object.keys($searchInput).map((key) => {
     let path = $searchInput[key].path ? $searchInput[key].path.replace(/\..*/,"") : undefined
     let subPath = $searchInput[key].path ? $searchInput[key].path.replace(/(^[^\.]*$|.*\.(.*)$)/,"$2") : ""
     subPath = subPath ?
                 ( path ?
                   ( ( $searchCanvas[path] && $searchCanvas[path][subPath] ) ?
-                      $searchCanvas[path][subPath].active
+                      $searchCanvas[path][subPath].active && $searchInput[key].active
                       : false )
                   : false )
               : true
     path = path ? ( $searchCanvas[path] ? $searchCanvas[path].active : false ) : true
-    return path && subPath
+    return [ key, path && subPath ]
+  }).reduce((a, b) => {
+    a = Array.isArray(a) ? { [a[0]]: a[1] } : a;
+    a[b[0]]=b[1];
+    return a;
   }
+
+  );
 
   const focusInput = (key, value) => {
     setTimeout(() => {
@@ -79,7 +127,7 @@
     // gtag('config', 'UA-156429702-1');
     gtag('event', 'button', {
       event_category: 'recherche',
-      event_label: $searchInput.fullText.value
+      event_label: searchString($searchInput)
     });
   }
 
@@ -101,7 +149,7 @@
   }
 
   const autocomplete = async () => {
-    if ($searchInput.fullText.value.length > 1) {
+    if (searchAutocompleteTrigger($searchInput)) {
       const state = await search($searchInput);
       $autocompleteResults = state.results;
       $autocompleteDisplay = ($autocompleteResults.length > 0)
@@ -241,20 +289,35 @@
   }
 
 
-  .columns.is-mobile>.column.is-3 {
-    flex: none;
-    width: 25%;
-  }
-
-  .columns.is-mobile>.column.is-9 {
-    flex: none;
-    width: 75%;
-  }
-
   @media print,screen and (min-width:769px) {
+    .column.is-1 {
+      flex: none;
+      width: 8%;
+    }
+
+    .column.is-1-5 {
+      flex: none;
+      width: 12.5%;
+    }
+
+    .column.is-2 {
+      flex: none;
+      width: 17%;
+    }
+
     .column.is-3 {
       flex: none;
       width: 25%;
+    }
+
+    .column.is-4 {
+      flex: none;
+      width: 33%;
+    }
+
+    .column.is-5 {
+      flex: none;
+      width: 42%;
     }
 
     .column.is-6 {
@@ -262,15 +325,30 @@
       width: 50%;
     }
 
+    .column.is-7 {
+      flex: none;
+      width: 58%;
+    }
+
+    .column.is-8 {
+      flex: none;
+      width: 67%;
+    }
+
     .column.is-9 {
       flex: none;
       width: 75%;
     }
 
-    .column.is-12 {
+    .column.is-12,
+    .column.is-desktop-12 {
       flex: none;
       width: 100%;
     }
+  }
+
+  .is-left {
+    text-align: left!important;
   }
 
   .columns {
@@ -299,7 +377,43 @@
     align-items: center;
   }
 
+  @media print,screen and (max-width:768px) {
+    .is-hidden-mobile {
+      display: none;
+    }
+
+  .columns.is-mobile>.column.is-1,
+  .columns.is-mobile>.column.is-1-5,
+  .columns.is-mobile>.column.is-2,
+  .columns.is-mobile>.column.is-3,
+  .columns.is-mobile>.column.is-4,
+  .columns.is-mobile>.column.is-5,
+  .columns.is-mobile>.column.is-6,
+  .columns.is-mobile>.column.is-mobile-6,
+  .columns.is-mobile>.column.is-7
+   {
+    flex: none;
+    width: 50%;
+  }
+
+  .columns.is-mobile>.column.is-8,
+  .columns.is-mobile>.column.is-9,
+  .columns.is-mobile>.column.is-10,
+  .columns.is-mobile>.column.is-11,
+  .columns.is-mobile>.column.is-12,
+  .columns.is-mobile>.column.is-mobile-fullwidth
+  {
+    flex: none;
+    width: 100%;
+  }
+
+
+  }
+
   @media print,screen and (min-width:769px) {
+    .is-hidden-desktop {
+      display: none;
+    }
     .columns:not(.is-desktop) {
       display: flex;
     }

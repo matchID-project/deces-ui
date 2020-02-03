@@ -3,22 +3,25 @@
     <h1 class="title has-text-white">
       fichier des décès
     </h1>
-    <h1 class="subtitle has-text-white">
-      <span class="is-hidden-mobile">
-        recherche gratuite parmi
-      </span>
-      <span> <b>25 millions</b> de décès depuis 1970
-        <br/>
-      </span>
-      <a
-        href="https://www.data.gouv.fr/fr/datasets/fichier-des-personnes-decedees/"
-      > source INSEE </a>
-    </h1>
+    {#if !$advancedSearch}
+      <h1 class="subtitle has-text-white">
+        <span class="is-hidden-mobile">
+          recherche gratuite parmi
+        </span>
+        <span> <b>25 millions</b> de décès depuis 1970
+          <br/>
+        </span>
+        <a
+          href="https://www.data.gouv.fr/fr/datasets/fichier-des-personnes-decedees/"
+        > source INSEE </a>
+      </h1>
+    {/if}
     <SearchBox/>
   </div>
 </section>
 
 <script>
+  import { advancedSearch } from '../tools/stores.js';
   import SearchBox from "./SearchBox.svelte";
 </script>
 
