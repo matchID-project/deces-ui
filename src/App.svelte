@@ -2,8 +2,8 @@
 
 <script>
   import Layout from './components/views/Layout.svelte';
-  import { searchInput, current, resultsPerPage, updateURL, advancedSearch } from './components/tools/stores.js';
-  import { searchSubmit, toggleAdvancedSearch } from './components/tools/search.js';
+  import { searchInput, searchCanvas, current, resultsPerPage, updateURL, advancedSearch } from './components/tools/stores.js';
+  import { searchSubmit } from './components/tools/search.js';
   $: URLSearchSubmit(new URLSearchParams(location.search));
 
   $: element = document.getElementById('infoNotWorking')
@@ -18,7 +18,15 @@
 				if (q) { return [key, q] }
 			}).filter(x => x);
 
-			if ( urlParams.get('advanced') === 'true' ) { toggleAdvancedSearch() };
+			if ( urlParams.get('advanced') === 'true' ) {
+				$advancedSearch = true;
+				searchCanvas.update(v => {
+					Object.keys(v).map(key => {
+						v[key].active = !v[key].active;
+					});
+					return v
+				});
+			};
 
 			if (myQuery) {
 				if (myResultsPerPage) { resultsPerPage.update(v => myResultsPerPage) }
