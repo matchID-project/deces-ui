@@ -68,27 +68,31 @@
                         <p><strong>Un bug, une question ?</strong></p>
                             <p>
                                 Le service est encore en version bêta (cf conditions d'utilisation).
-                                Des bugs peuvent subsister. En cas de doute commencez par actualiser l'application (touche F5),
+                                Des bugs peuvent subsister. En cas de doute commencez par actualiser l'application (touche Ctrl + F5),
                                 certaines mises à jours du service nécessitent un rechargement.
                                 En cas de doute sollicitez nous à <a href="mailto:matchid.project@gmail.com">matchid.project@gmail.com</a>, en mentionnant la référence de version ci-dessous:
                             </p>
                             <p>
                                 __APP__ version __APP_VERSION__
                             </p>
-                        <p><strong>Evolutions à venir</strong></p>
+                        <p><strong>Evolutions récentes</strong></p>
                             <p>
-                                Deux évolutions sont prévues dans les prochaines semaines:
+                                Nous avons mis récemment à jour l'application pour favoriser les recherches approfondies:
                                 <br/>
-                                - une recherche avancée (par lieu/année de naissance/décès)
+                                - une recherche avancée (bouton '+')
                                 <br/>
-                                - la possibilité de télécharger les fichiers source restreints aux années et départements
-                                pour favoriser les recherches approfondies
+                                - dans cette dernière version, l'indexation des communes et pays
+                            </p>
+                        <p><strong>Evolutions futures</strong></p>
+                            <p>
+                                Nous prévoyons prochainement la possibilité de télécharger les fichiers source restreints aux années et départements
+                                pour favoriser les recherches approfondies.
                             </p>
                         <p><strong>Fichier des décès de l'INSEE</strong></p>
                             <p>
                                 Ce service vise à permettre la recherche directe de personnes décédées. Il repose sur la base opendata
-                                délivrée par l'<a href="https://www.insee.fr/fr/information/4190491">INSEE</a> et
-                                diffusée par <a href="https://www.data.gouv.fr/fr/datasets/fichier-des-personnes-decedees/">data.gouv.fr</a>.
+                                délivrée par l'<a href="https://www.insee.fr/fr/information/4190491" target="_blank">INSEE</a> et
+                                diffusée par <a href="https://www.data.gouv.fr/fr/datasets/fichier-des-personnes-decedees/" target="_blank">data.gouv.fr</a>.
                             </p>
                             <p>
                                 La recherche utilise l'intégralité des données INSEE, soit environ 25 millions d'enregistrements.
@@ -98,7 +102,15 @@
                                 recherches historiques e.g. identifications tardives après guerre).
                             </p>
                             <p>
-                                Les données INSEE sont sous <a href="https://www.etalab.gouv.fr/licence-ouverte-open-licence">Licence Ouverte / Open Licence version 2.0</a>.
+                                Quelques références sur le fichier RNIPP, duquel découle le fichier de décès :<br/>
+                                - <a href="https://www.cnil.fr/fr/rnipp-repertoire-national-didentification-des-personnes-physiques-0" target="_blank">Le RNIPP vu par la CNIL</a><br/>
+                                - les formulaires de <a href=" https://www.insee.fr/fr/information/1303477" target="_blank">déclaration de décès</a> des communes vers l'INSEE<br/>
+                                Ces sites témoignent que le processus centralisé n'est pas simple et a pu manquer d'exhaustivité dans les années antérieures
+                                à l'informatisation des systèmes. En cas de doute, n'hésitez pas à nous solliciter, nous répondrons
+                                dans la limite de nos connaissances.
+                            </p>
+                            <p>
+                                Les données INSEE sont sous <a href="https://www.etalab.gouv.fr/licence-ouverte-open-licence" target="_blank">Licence Ouverte / Open Licence version 2.0</a>.
                                 L’INSEE et donc ce service ne peuvent garantir que les fichiers des personnes décédées sont exempts d’omissions ou d’erreurs.
                                 Ce service et l'INSEE ne sauraient encourir aucune responsabilité quant à l’utilisation faite des informations contenues dans ces fichiers.
                                 En particulier, les informations contenues dans ces fichiers ne peuvent en aucun cas être utilisées dans un but de certification
@@ -112,8 +124,8 @@
                                 toute question, signalement ou tout avis sur le service.
                             </p>
                             <p>
-                                Le code source de ce site est disponible sur <a href="https://github.com/matchid-project/personnes-decedees_search-ui">GitHub</a>.
-                                Il est diffusé sous la licence libre <a href="https://spdx.org/licenses/LGPL-3.0.html#licenseText" >LGPL 3.0</a>.
+                                Le code source de ce site est disponible sur <a href="https://github.com/matchid-project/deces-ui" target="_blank">GitHub</a>.
+                                Il est diffusé sous la licence libre <a href="https://spdx.org/licenses/LGPL-3.0.html#licenseText" target="_blank">LGPL 3.0</a>.
                             </p>
                         <p><strong>Utilisation des cookies</strong></p>
                             <p>
@@ -123,26 +135,26 @@
                             </p>
                         <p><strong>Traitement des données avec matchID</strong></p>
                         <p>
-                            Les données sont traitées avec l'outil opensource <a href="https://matchid.io">matchID</a> (Python/Pandas). Les traitements, disponibles
-                            disponibles <a href="https://github.com/matchid-project/personnes-decedees_search">ici</a>,
+                            Les données sont traitées avec l'outil opensource <a href="https://www.matchid.io" target="_blank">matchID</a> (Python/Pandas). Les traitements, disponibles
+                            disponibles <a href="https://github.com/matchid-project/deces-dataprep" target="_blank">ici</a>,
                             consistent en une mise en forme (capitalisation, réconciliation avec les noms de pays et commune
                             selon les référentiels INSEE) puis une indexation. Les données sont actualisées chaque mois, après chaque diffusion sur le
-                            site <a href="https://www.data.gouv.fr/fr/datasets/fichier-des-personnes-decedees/">data.gouv.fr</a>.
+                            site <a href="https://www.data.gouv.fr/fr/datasets/fichier-des-personnes-decedees/" target="_blank">data.gouv.fr</a>.
                         </p>
                         <p>
-                            La recherche et l'indexation reposent sur <a href="https://elastic.co">Elasticsearch</a>
+                            La recherche et l'indexation reposent sur <a href="https://elastic.co" target="_blank">Elasticsearch</a>
                             qui repose sur le moteur de recherche Lucène, qui apporte le bénéfice
-                            des <a href="https://wikipedia.org/wiki/Recherche_approximative">recherches floues</a> à
-                            large échelle. Le code source de la visualisation est accessible sur <a href="https://github.com/matchid-project/personnes-decedees_search-ui_svelte">Github</a>.
+                            des <a href="https://wikipedia.org/wiki/Recherche_approximative" target="_blank">recherches floues</a> à
+                            large échelle. Le code source de la visualisation est accessible sur <a href="https://github.com/matchid-project/deces-ui" target="_blank">Github</a>.
                         </p>
                         <p><strong>Qui sommes nous ?</strong></p>
                         <p>
                             Le projet matchID a été initié au ministère de l'Intérieur dans le contexte des
-                            challenges d'<a href="https://entrepreneur-interet-general.etalab.gouv.fr/defis/2017/mi-matchid.html">Entrepreneur d'intérêt général</a>.
+                            challenges d'<a href="https://entrepreneur-interet-general.etalab.gouv.fr/defis/2017/mi-matchid.html" target="_blank">Entrepreneur d'intérêt général</a>.
                             La réconciliation des personnes décédées avec le permis de conduire a été le premier cas d'usage réalisé avec
                             matchID. Le projet a été libéré et mis en opensource. Nous avons créé de service
                             en complément qui semblait d'utilité notamment pour la lutte contre la fraude.
-                            Pour en savoir plus sur le projet matchID, suivez ce <a href="https://www.matchid.io">lien</a>.
+                            Pour en savoir plus sur le projet matchID, suivez ce <a href="https://www.matchid.io" target="_blank">lien</a>.
                         </p>
             </div>
         </section>
