@@ -46,6 +46,11 @@
                     </div>
                 </div>
             </div>
+            <div class="navbar-end">
+                <a class="navbar-item" href="javascript:void(0);">
+                    <div class="fb-like" data-href="https://deces.matchid.io" data-width="" data-layout="button_count" data-action="recommend" data-size="large" data-share="true"></div>
+                </a>
+            </div>
         </div>
     </div>
 </nav>
@@ -373,6 +378,16 @@
     right: 0;
     z-index: 30;
     top: 0;
+    }
+
+    .navbar-end {
+        justify-content: flex-end;
+        margin-left: auto;
+    }
+
+    .navbar, .navbar-menu, .navbar-start, .navbar-end {
+        align-items: stretch;
+        display: flex;
     }
 
     html.has-navbar-fixed-top {
