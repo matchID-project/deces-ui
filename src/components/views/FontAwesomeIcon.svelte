@@ -13,18 +13,19 @@
   let classes = "";
   let viewBox = "";
   $: viewBox = "0 0 " + icon.icon[0] + " " + icon.icon[1];
-  $: classes = "fa-svelte " + ($$props.class ? $$props.class : "");
+  $: classes = "fa " + ($$props.class ? $$props.class : "");
   $: path = icon.icon[4];
 </script>
 
 <style>
-  .fa-svelte {
-    width: 1rem;
-    height: 1rem;
-    vertical-align: -0.125em;
-    overflow: visible;
-    display: inline-block;
-  }
+
+.fa {
+ align-items:center;
+ display:inline-flex;
+ justify-content:center;
+ height:1.25rem;
+ width:1.25rem
+}
 
   .is-48 {
       margin-top: 8px;
@@ -39,7 +40,7 @@
   }
 
   .is-24 {
-      margin-top: 2px!important;
+      vertical-align: -0.35em;
       width: 24px;
       height: 24px;
   }
@@ -47,6 +48,5 @@
   .is-info {
     color:#209cee;
   }
-
 
 </style>
