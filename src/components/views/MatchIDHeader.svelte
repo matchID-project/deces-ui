@@ -27,29 +27,66 @@
                 </a>
                 <div class="navbar-item has-dropdown is-hoverable">
                     <div class="navbar-link">
-                        <FontAwesomeIcon icon={faLightbulb} class="icon is-small"/>
-                        &nbsp; références
+                        <span class="icon">
+                            <FontAwesomeIcon icon={faLightbulb} class="icon is-small"/>
+                        </span>
+                        <span>
+                            références
+                        </span>
                     </div>
                     <div class="navbar-dropdown">
                         <a class="navbar-item" href="https://www.matchid.io/">
-                            <FontAwesomeIcon icon={faFlask} className="icon is-small"/>
-                            &nbsp; &nbsp; matchID
+                            <span class="icon">
+                              <FontAwesomeIcon icon={faFlask} className="icon is-small"/>
+                            </span>
+                            <span>
+                                matchID
+                            </span>
                         </a>
                         <a class="navbar-item" href="https://www.insee.fr/fr/information/4190491">
-                            <FontAwesomeIcon icon={faDatabase} className="icon is-small"/>
-                            &nbsp; &nbsp; source INSEE
+                            <span class="icon">
+                                <FontAwesomeIcon icon={faDatabase} className="icon is-small"/>
+                            </span>
+                            <span>
+                                source INSEE
+                            </span>
                         </a>
                         <a class="navbar-item" href="https://www.data.gouv.fr/fr/datasets/fichier-des-personnes-decedees/">
+                        <span class="icon">
                             <FontAwesomeIcon icon={faTable} className="icon is-small"/>
-                            &nbsp; &nbsp; référence data.gouv
+                        </span>
+                        <span>
+                            référence data.gouv
+                        </span>
                         </a>
                     </div>
                 </div>
             </div>
             <div class="navbar-end">
-                <a class="navbar-item" href="javascript:void(0);">
-                    <div class="fb-like" data-href="https://deces.matchid.io" data-width="" data-layout="button_count" data-action="recommend" data-size="large" data-share="true"></div>
-                </a>
+                <div class="navbar-item">
+                    <a
+                        class="button is-info"
+                        href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURI(window.location)}`}
+                        on:click|preventDefault={shareOn.bind(this,'facebook')}
+                        target="_blank"
+                        title="Partager sur Facebook"
+                    >
+                        <span class="icon"><FontAwesomeIcon class="is-24" icon={faFacebook}/></span>
+                        <span>Facebook</span>
+                    </a>
+                </div>
+                <div class="navbar-item">
+                    <a
+                        class="button is-info"
+                        href={`https://twitter.com/share?url=${encodeURI(window.location)}&via=fabien_antoine&text=${"#genealogistes, utilisez le moteur de recherche #matchID, basé sur le fichier des décès INSEE"}`}
+                        on:click|preventDefault={shareOn.bind(this,'twitter')}
+                        target="_blank"
+                        title="Partager sur Twitter"
+                    >
+                        <span class="icon"><FontAwesomeIcon class="is-24" icon={faTwitter}/></span>
+                        <span>Twitter</span>
+                    </a>
+                </div>
             </div>
         </div>
     </div>
@@ -177,6 +214,12 @@
     } from '@fortawesome/free-regular-svg-icons';
 
     import {
+        faFacebook,
+        faTwitter
+    } from '@fortawesome/free-brands-svg-icons';
+
+
+    import {
         faDatabase,
         faFlask,
         faTable
@@ -190,11 +233,30 @@
     let modalState = false;
 
     function toggleModal() {
-        modalState = !modalState
+        modalState= !modalState
+        console.log(modalState)
     }
 
     function toggleBurger() {
         burgerState = !burgerState
+    }
+
+    const socialURL = (social) => {
+        const text='genealogistes, utilisez le moteur de recherche matchID, basé sur le fichier des décès INSEE';
+        const url = {
+            facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURI(window.location)}`,
+            twitter: `https://twitter.com/share?url=${encodeURI(window.location)}&via=fabien_antoine&text=${text}&hashtags=matchID,genealogistes`
+        };
+        return url[social]
+    }
+
+    const shareOn = (social) => {
+        let h = 300;
+        let w = 600;
+        const y = window.top.outerHeight / 2 + window.top.screenY - ( h / 2);
+        const x = window.top.outerWidth / 2 + window.top.screenX - ( w / 2);
+        const options = `menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=${h},width=${w},top=${y},left=${x}`;
+        window.open(socialURL(social),'',options);
     }
 
 </script>
@@ -767,10 +829,91 @@
         position:fixed
     }
 
+  .button {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    align-items: center;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    box-shadow: none;
+    display: inline-flex;
+    font-size: 1rem;
+    height: 2.25em;
+    line-height: 1.5;
+    position: relative;
+    vertical-align: top;
+    background-color: #fff;
+    border-color: #dbdbdb;
+    border-width: 1px;
+    color: #363636;
+    cursor: pointer;
+    justify-content: center;
+    padding: calc(.375em - 1px) .75em;
+    text-align: center;
+    white-space: nowrap;
+    box-sizing: border-box;
+  }
+
+  .button:active,.button:focus {
+    outline: 0;
+  }
+
+  .button:hover {
+    border-color: #b5b5b5;
+    color: #363636;
+  }
+
+  .button:focus {
+    border-color: #3273dc;
+    color: #363636;
+  }
+
+  .button:focus:not(:active) {
+    box-shadow: 0 0 0 .125em rgba(50,115,220,.25);
+  }
+
+  .button:active {
+    border-color: #4a4a4a;
+    color: #363636;
+  }
+
+  .button.is-info,.button.is-info:hover {
+    background-color: #209cee;
+    border-color: transparent;
+    color: #fff;
+  }
+
+  .button.is-info:hover {
+    background-color: #1496ed;
+  }
+
+  .button.is-info:focus {
+    border-color: transparent;
+    color: #fff;
+  }
+
+  .button.is-info:focus:not(:active) {
+    box-shadow: 0 0 0 .125em rgba(32,156,238,.25);
+  }
+
+  .button.is-info:active {
+    background-color: #118fe4;
+    border-color: transparent;
+    color: #fff;
+  }
+
+ .icon {
+    margin-right: 8px
+ }
+
+
     *, ::after, ::before {
-
-    box-sizing: inherit;
-
-}
+        box-sizing: inherit;
+    }
 
 </style>

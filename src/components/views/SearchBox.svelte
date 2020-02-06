@@ -288,7 +288,6 @@
     width: 100%;
   }
 
-
   @media print,screen and (min-width:769px) {
     .column.is-1 {
       flex: none;
