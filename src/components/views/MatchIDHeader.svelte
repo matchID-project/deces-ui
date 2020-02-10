@@ -62,7 +62,7 @@
                     </div>
                 </div>
             </div>
-            <div class="navbar-end">
+            <div class="navbar-end is-hidden-mobile">
                 <div class="navbar-item">
                     <a
                         class="button is-info"
@@ -75,7 +75,7 @@
                         <span>Facebook</span>
                     </a>
                 </div>
-                <div class="navbar-item">
+                <div class="navbar-item is-hidden-mobile">
                     <a
                         class="button is-info"
                         href={`https://twitter.com/share?url=${encodeURI(window.location)}&via=fabien_antoine&text=${"#genealogistes, utilisez le moteur de recherche #matchID, basé sur le fichier des décès INSEE"}`}
@@ -911,6 +911,11 @@
     margin-right: 8px
  }
 
+    @media print,screen and (max-width:768px) {
+        .is-hidden-mobile {
+            display: none!important;
+        }
+    }
 
     *, ::after, ::before {
         box-sizing: inherit;
