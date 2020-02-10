@@ -32,7 +32,7 @@
     $: updateResultsPerPage($resultsPerPage);
 
     const updateResultsPerPage = () => {
-        searchSubmit(1);
+        searchSubmit($current);
         searchURLUpdate();
     }
 
