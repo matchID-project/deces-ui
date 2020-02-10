@@ -62,32 +62,34 @@
                     </div>
                 </div>
             </div>
-            <div class="navbar-end is-hidden-mobile">
-                <div class="navbar-item">
-                    <a
-                        class="button is-info"
-                        href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURI(window.location)}`}
-                        on:click|preventDefault={shareOn.bind(this,'facebook')}
-                        target="_blank"
-                        title="Partager sur Facebook"
-                    >
-                        <span class="icon"><FontAwesomeIcon class="is-24" icon={faFacebook}/></span>
-                        <span>Facebook</span>
-                    </a>
+            {#if socialIcons}
+                <div class="navbar-end is-hidden-mobile">
+                    <div class="navbar-item">
+                        <a
+                            class="button is-info"
+                            href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURI(window.location)}`}
+                            on:click|preventDefault={shareOn.bind(this,'facebook')}
+                            target="_blank"
+                            title="Partager sur Facebook"
+                        >
+                            <span class="icon"><FontAwesomeIcon class="is-24" icon={faFacebook}/></span>
+                            <span>Facebook</span>
+                        </a>
+                    </div>
+                    <div class="navbar-item">
+                        <a
+                            class="button is-info"
+                            href={`https://twitter.com/share?url=${encodeURI(window.location)}&via=fabien_antoine&text=${"#genealogistes, utilisez le moteur de recherche #matchID, basé sur le fichier des décès INSEE"}`}
+                            on:click|preventDefault={shareOn.bind(this,'twitter')}
+                            target="_blank"
+                            title="Partager sur Twitter"
+                        >
+                            <span class="icon"><FontAwesomeIcon class="is-24" icon={faTwitter}/></span>
+                            <span>Twitter</span>
+                        </a>
+                    </div>
                 </div>
-                <div class="navbar-item is-hidden-mobile">
-                    <a
-                        class="button is-info"
-                        href={`https://twitter.com/share?url=${encodeURI(window.location)}&via=fabien_antoine&text=${"#genealogistes, utilisez le moteur de recherche #matchID, basé sur le fichier des décès INSEE"}`}
-                        on:click|preventDefault={shareOn.bind(this,'twitter')}
-                        target="_blank"
-                        title="Partager sur Twitter"
-                    >
-                        <span class="icon"><FontAwesomeIcon class="is-24" icon={faTwitter}/></span>
-                        <span>Twitter</span>
-                    </a>
-                </div>
-            </div>
+            {/if}
         </div>
     </div>
 </nav>
@@ -206,7 +208,7 @@
 </div>
 
 <script>
-
+    import { socialIcons } from '../tools/stores.js'
     import FontAwesomeIcon from './FontAwesomeIcon.svelte'
 
     import {

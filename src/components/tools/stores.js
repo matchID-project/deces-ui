@@ -260,7 +260,6 @@ export const autocompleteMinLength = writable(2);
 
 export const searchMinLength = writable(1);
 
-
 export const advancedSearch = writable(false);
 
 export const wasSearched = writable(false);
@@ -290,3 +289,5 @@ export const updateURL = writable(false);
 export const autocompleteDisplay = writable(false);
 
 export const searchTyping = writable(0);
+
+export const socialIcons = false;
