@@ -30,6 +30,7 @@
 
 			if (myQuery) {
 				if (myResultsPerPage) { resultsPerPage.update(v => myResultsPerPage) }
+				if (myCurrent) { current.update(v => myCurrent) }
 				searchInput.update( v => {
 					myQuery.map(q => {
 						v[q[0]].value = q[1]

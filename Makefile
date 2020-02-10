@@ -62,7 +62,7 @@ export ES_VERSION = 7.5.0
 export ES_BACKUP_BASENAME := esdata
 export DATAPREP_VERSION_FILE = .dataprep.sha1
 export DATA_VERSION_FILE = .data.sha1
-export FILES_TO_PROCESS=deces-[0-9]{4}.txt.gz
+export FILES_TO_PROCESS=deces-([0-9]{4}|2020-m[0-9]{2}).txt.gz
 
 vm_max_count            := $(shell cat /etc/sysctl.conf | egrep vm.max_map_count\s*=\s*262144 && echo true)
 
@@ -112,7 +112,8 @@ config:
 
 
 clean-data: elasticsearch-clean backup-dir-clean
-	@sudo rm -rf ${DATA_VERSION_FILE} ${DATAPREP_VERSION_FILE} > /dev/null 2>&1 || true
+	@sudo rm -rf ${DATA_VERSION_FILE} ${DATAPREP_VERSION_FILE}\
+		${DATA_VERSION_FILE}.list > /dev/null 2>&1 || true
 
 clean-frontend: build-dir-clean frontend-clean-dist frontend-clean-dist-archive
 
@@ -223,7 +224,7 @@ backup-dir:
 	@if [ ! -d "$(BACKUP_DIR)" ] ; then mkdir -p $(BACKUP_DIR) ; fi
 
 backup-dir-clean:
-	@if [ -d "$(BACKUP_DIR)" ] ; then (rm -rf $(BACKUP_DIR) > /dev/null 2>&1) ; fi
+	@if [ -d "$(BACKUP_DIR)" ] ; then (rm -rf $(BACKUP_DIR) > /dev/null 2>&1 || true) ; fi
 
 elasticsearch-s3-pull: backup-dir ${DATAPREP_VERSION_FILE} ${DATA_VERSION_FILE}
 	@\

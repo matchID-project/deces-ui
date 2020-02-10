@@ -3,7 +3,17 @@
     <div class="margin">
       <ResultsHeader/>
       <div class="columns">
-        {#each $searchResults as result}
+        {#each $searchResults as result, index}
+          {#if (index === 1) && adsbygoogle }
+            <ins
+              class="adsbygoogle column is-12"
+              style="display:block"
+              data-ad-client="ca-pub-6277851622494904"
+              data-ad-slot="9615515197"
+              data-ad-format="auto"
+              data-full-width-responsive="true">
+            </ins>
+          {/if}
           <Result result={result}/>
         {/each}
       </div>
@@ -17,6 +27,8 @@
   import ResultsHeader from './ResultsHeader.svelte';
   import Result from "./Result.svelte";
   import Pagination from './Pagination.svelte';
+  let adsbygoogle;
+  $: (adsbygoogle = window.adsbygoogle || []).push({});
 </script>
 
 <style>
