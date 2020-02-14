@@ -3,8 +3,7 @@ import {
   current,
   filters,
   resultsPerPage,
-  sortDirection,
-  sortField,
+  sortInput,
   advancedSearch
 } from './stores.js';
 
@@ -12,15 +11,13 @@ let myAdvancedSearch;
 let myCurrent;
 let myFilters;
 let myResultsPerPage;
-let mySortDirection;
-let mySortField;
+let mySortInput;
 
 const a = advancedSearch.subscribe((value) => { myAdvancedSearch=value })
 const c = current.subscribe((value) => { myCurrent=value })
 const cf = filters.subscribe((value) => { myFilters=value })
 const cr = resultsPerPage.subscribe((value) => { myResultsPerPage=value })
-const csd = sortDirection.subscribe((value) => { mySortDirection=value })
-const csf = sortField.subscribe((value) => { mySortField=value })
+const ci = sortInput.subscribe((value) => { mySortInput=value })
 
 import buildRequestFilter from "./buildRequestFilter";
 
@@ -29,10 +26,10 @@ function buildFrom(current, resultsPerPage) {
   return (current - 1) * resultsPerPage;
 }
 
-function buildSort(sortDirection, sortField) {
-  if (sortDirection && sortField) {
-    return [{ [`${sortField}.keyword`]: sortDirection }];
-  }
+function buildSort(sortInput) {
+  return sortInput.filter(x => x.order).map(x => {
+      return { [x.field]: x.order }
+  });
 }
 
 function buildMatch(searchInput) {
@@ -326,7 +323,7 @@ function buildSimpleMatch(searchInput) {
 */
 
 export default function buildRequest(searchInput) {
-  const sort = buildSort(mySortDirection, mySortField);
+  const sort = buildSort(mySortInput);
   const match = buildMatch(searchInput);
   const size = myResultsPerPage;
   const from = buildFrom(myCurrent, myResultsPerPage);
