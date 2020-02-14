@@ -20,12 +20,16 @@
 <style>
 
 .fa {
- align-items:center;
- display:inline-flex;
- justify-content:center;
- height:1.25rem;
- width:1.25rem
+  align-items:center;
+  display:inline-flex;
+  justify-content:center;
+  height:1.25rem;
+  width:1.25rem;
 }
+
+  .is-low {
+      margin-bottom: -0.25rem;
+  }
 
   .is-48 {
       margin-top: 8px;
@@ -47,6 +51,15 @@
 
   .is-info {
     color:#209cee;
+  }
+
+  .is-small {
+      height: .75rem !important;
+      width: .75rem !important;
+  }
+
+  .is-small.is-low {
+      margin-bottom: -0.15rem!important;
   }
 
 </style>
