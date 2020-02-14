@@ -291,3 +291,53 @@ export const autocompleteDisplay = writable(false);
 export const searchTyping = writable(0);
 
 export const socialIcons = false;
+
+export const sortInput = writable([
+    {
+        label: "score",
+        field: "_score",
+        order: "desc"
+    },
+    {
+        label: "nom",
+        field: "NOM.raw",
+    },
+    {
+        label: "prénom",
+        field: "PRENOM.raw",
+    },
+    {
+        label: "naissance: date",
+        field: "DATE_NAISSANCE.raw"
+    },
+    {
+        label: "naissance: commune",
+        field: "COMMUNE_NAISSANCE.raw",
+    },
+    {
+        label: "naissance: département",
+        field: "DEPARTEMENT_NAISSANCE",
+    },
+    {
+        label: "naissance: pays",
+        field: "PAYS_NAISSANCE.raw",
+    },
+    {
+        label: "décès: date",
+        field: "DATE_DECES.raw"
+    },
+    {
+        label: "décès: commune",
+        field: "COMMUNE_DECES.raw",
+    },
+    {
+        label: "décès: département",
+        field: "DEPARTEMENT_DECES",
+    },
+    {
+        label: "décès: pays",
+        field: "PAYS_DECES.raw",
+    }
+])
+
+export const sortInputDisplay = writable(false)

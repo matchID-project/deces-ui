@@ -1,9 +1,38 @@
 
 {#if $wasSearched}
     <div class="columns is-vcentered is-mobile">
-        <div class="column is-6 is-size-7"><span>Résultats <strong>{from}</strong> à <strong>{to}</strong> parmi <strong>{$totalResults}</strong></span>
-        <span>pour: <i>{query}</i></span>  </div>
-        <div class="column is-6 has-text-right is-size-7">résultats par page
+        <div class="column is-4 is-size-7">
+            <span>Résultats <strong>{from}</strong> à <strong>{to}</strong> parmi <strong>{$totalResults}</strong></span>
+            <span>pour: <i>{query}</i></span>
+        </div>
+        <div
+            class="column is-4 is-size-7 has-text-centered"
+        >
+            <div
+                on:click={() => {$sortInputDisplay=!$sortInputDisplay}}
+                class="pointer"
+                title="cliquez pour paramétrer le tri"
+            >
+                <span>tri:</span>
+                <span>
+                {#if ($sortInput.filter(s => s.order).length) > 0}
+                    {#each $sortInput.filter(s => s.order) as t}
+                        <span>
+                            {t.label}
+                            {#if t.order === "desc"}
+                            ⬇️
+                            {:else}
+                            ⬆️
+                            {/if}
+                        </span>
+                    {/each}
+                {:else}
+                    aucun
+                {/if}
+                </span>
+            </div>
+        </div>
+        <div class="column is-4 has-text-right is-size-7">résultats par page
             <span class="select is-size-7">
                 <select bind:value={$resultsPerPage}>
                     {#each resultsPerPageList as option}
@@ -13,11 +42,17 @@
             </span>
         </div>
     </div>
+    <div class="columns">
+        <div class="column is-1"></div>
+        <div class="column is-10 is-vcentered has-text-centered"><SortInput/></div>
+        <div class="column is-1"></div>
+    </div>
 {/if}
 
 <script>
-    import { current, totalResults, totalPages, resultsPerPage, searchInput, wasSearched } from '../tools/stores.js'
+    import { current, sortInput, sortInputDisplay, updateURL, totalResults, totalPages, resultsPerPage, searchInput, wasSearched } from '../tools/stores.js'
     import { searchSubmit, searchURLUpdate } from '../tools/search.js'
+    import SortInput from './SortInput.svelte';
 
     let from, to, query;
 
@@ -29,9 +64,10 @@
     $: to = Math.min($totalResults, $current * $resultsPerPage);
     $: query = $wasSearched;
 
-    $: updateResultsPerPage($resultsPerPage);
+    $: updateResults($resultsPerPage);
+    $: updateResults($sortInput);
 
-    const updateResultsPerPage = () => {
+    const updateResults = () => {
         searchSubmit($current);
         searchURLUpdate();
     }
@@ -59,6 +95,15 @@
     }
 
     @media print,screen and (min-width:769px) {
+        .column.is-1 {
+            flex: none;
+            width: 8%;
+        }
+        .column.is-2 {
+            flex: none;
+            width: 17%;
+        }
+
         .column.is-3 {
             flex: none;
             width: 25%;
@@ -78,7 +123,14 @@
             flex: none;
             width: 75%;
         }
-
+        .column.is-8 {
+            flex: none;
+            width: 66%;
+        }
+        .column.is-10 {
+            flex: none;
+            width: 83%;
+        }
         .column.is-12 {
                 flex: none;
                 width: 100%;
@@ -107,7 +159,7 @@
         flex-wrap: wrap;
     }
 
-    .columns.is-vcentered {
+    .is-vcentered {
         align-items: center;
     }
 
@@ -119,6 +171,9 @@
 
     .has-text-right {
         text-align: right!important;
+    }
+    .has-text-centered {
+        text-align: center!important;
     }
     .is-size-7 {
         font-size: .75rem !important;
@@ -150,6 +205,10 @@
         padding-right: calc(.75em - 1px);
         position: relative;
         vertical-align: top;
+    }
+
+    .pointer {
+        cursor: pointer;
     }
 
 </style>
