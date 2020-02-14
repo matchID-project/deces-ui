@@ -1,4 +1,3 @@
-
 {#if $wasSearched}
     <div class="columns is-vcentered is-mobile">
         <div class="column is-4 is-size-7">
