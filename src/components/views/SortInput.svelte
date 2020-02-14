@@ -12,11 +12,13 @@
                 >
                     <div class="no-pointer-events">
                         {item.label}
+                        <span>
                         {#if item.order === "desc"}
-                            ⬇️
+                            <FontAwesomeIcon icon={faSortDown} class="is-low"/>
                         {:else if item.order === "asc"}
-                            ⬆️
+                            <FontAwesomeIcon icon={faSortUp} class="is-low"/>
                         {/if}
+                        </span>
                     </div>
                 </DraggableList>
             </div>
@@ -24,6 +26,8 @@
 {/if}
 
 <script>
+    import { faSortUp, faSortDown } from '@fortawesome/free-solid-svg-icons';
+    import FontAwesomeIcon from './FontAwesomeIcon.svelte'
     import { sortInput, sortInputDisplay } from '../tools/stores';
     import DraggableList from './DraggableList.svelte';
 </script>

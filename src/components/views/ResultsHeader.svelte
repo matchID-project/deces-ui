@@ -1,4 +1,3 @@
-
 {#if $wasSearched}
     <div class="columns is-vcentered is-mobile">
         <div class="column is-4 is-size-7">
@@ -19,11 +18,13 @@
                     {#each $sortInput.filter(s => s.order) as t}
                         <span>
                             {t.label}
-                            {#if t.order === "desc"}
-                            ⬇️
-                            {:else}
-                            ⬆️
-                            {/if}
+                            <span style="margin-left:-0.2rem">
+                                {#if t.order === "desc"}
+                                    <FontAwesomeIcon icon={faSortDown} class="is-small is-low"/>
+                                {:else}
+                                    <FontAwesomeIcon icon={faSortUp} class="is-small is-low"/>
+                                {/if}
+                            </span>
                         </span>
                     {/each}
                 {:else}
@@ -50,6 +51,8 @@
 {/if}
 
 <script>
+    import { faSortUp, faSortDown } from '@fortawesome/free-solid-svg-icons';
+    import FontAwesomeIcon from './FontAwesomeIcon.svelte'
     import { current, sortInput, sortInputDisplay, updateURL, totalResults, totalPages, resultsPerPage, searchInput, wasSearched } from '../tools/stores.js'
     import { searchSubmit, searchURLUpdate } from '../tools/search.js'
     import SortInput from './SortInput.svelte';
@@ -160,7 +163,8 @@
     }
 
     .is-vcentered {
-        align-items: center;
+        align-items: center!important;
+        justify-content: center!important;
     }
 
     @media print,screen and (min-width:769px) {
