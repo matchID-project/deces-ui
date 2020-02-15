@@ -254,6 +254,10 @@ export const searchCanvas = writable({
 
 export const cachedResponses = writable({})
 
+export const accordeonMode = writable(true);
+
+export const autocompleteBypass = writable(true);
+
 export const autocompleteResults = writable([]);
 
 export const autocompleteMinLength = writable(2);

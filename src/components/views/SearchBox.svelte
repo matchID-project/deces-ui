@@ -1,24 +1,26 @@
 <!-- <GoogleAnalytics ga={ga} trackingId={'UA-156429702-1'}/> -->
 <div
-  class={"container autocomplete column " + ($advancedSearch ? "is-10" : "is-8")}
+  class={`container autocomplete column ${($advancedSearch && !$autocompleteBypass) ? "is-10" : "is-8"}`}
   style="margin-top: -15px;"
 >
     <form
        class="columns is-vcentered is-multiline"
       on:submit|preventDefault={handleSubmit}
     >
-      <div class="column is-1 is-hidden-mobile">
-        <button
-          type="reset"
-          class="button is-size-5 is-info"
-          on:click|preventDefault={ toggleAdvancedSearch }
-          title={ $advancedSearch ? "retour à la recherche simple" : "activer la recherche avancée" }
-        >
-          <FontAwesomeIcon icon={ $advancedSearch ? faMinus : faPlus }/>
-        </button>
-      </div>
+      {#if !$autocompleteBypass}
+        <div class="column is-1 is-hidden-mobile">
+          <button
+            type="reset"
+            class="button is-size-5 is-info"
+            on:click|preventDefault={ toggleAdvancedSearch }
+            title={ $advancedSearch ? "retour à la recherche simple" : "activer la recherche avancée" }
+          >
+            <FontAwesomeIcon icon={ $advancedSearch ? faMinus : faPlus }/>
+          </button>
+        </div>
+      {/if}
 
-      <div class="column is-9">
+      <div class={`column ${$autocompleteBypass ? "is-11" : "is-9" }`}>
           <div class="columns is-multiline is-mobile">
             {#each inputsKeys as key}
               {#if isActive[key]}
@@ -40,29 +42,42 @@
             {/each}
           </div>
       </div>
-      <div class="column is-2">
-        <div class="columns is-mobile">
-          <div class="column is-desktop12 is-mobile-6">
-            <button
-              type="submit"
-              class="button is-size-5 is-fullwidth is-info"
-            >
-              Recherche
-            </button>
-          </div>
-          <div class="column is-6 is-hidden-desktop">
-            <button
-              type="reset"
-              class="button is-size-5 is-info is-fullwidth"
-              on:click|preventDefault={ toggleAdvancedSearch }
-              title={ $advancedSearch ? "retour à la recherche simple" : "activer la recherche avancée" }
-            >
-              <FontAwesomeIcon icon={ $advancedSearch ? faMinus : faPlus }/>
-            </button>
+      {#if !$autocompleteBypass}
+        <div class="column is-2">
+          <div class="columns is-mobile">
+            <div class="column is-desktop12 is-mobile-6">
+              <button
+                type="submit"
+                class="button is-size-5 is-fullwidth is-info"
+              >
+                Recherche
+              </button>
+            </div>
+            <div class="column is-6 is-hidden-desktop">
+              <button
+                type="reset"
+                class="button is-size-5 is-info is-fullwidth"
+                on:click|preventDefault={ toggleAdvancedSearch }
+                title={ $advancedSearch ? "retour à la recherche simple" : "activer la recherche avancée" }
+              >
+                <FontAwesomeIcon icon={ $advancedSearch ? faMinus : faPlus }/>
+              </button>
+            </div>
           </div>
         </div>
-      </div>
-      <Autocomplete/>
+        <Autocomplete/>
+      {:else}
+        <div class="column is-1 is-hidden-mobile">
+          <button
+            type="reset"
+            class="button is-size-5 is-info"
+            on:click|preventDefault={ toggleAdvancedSearch }
+            title={ $advancedSearch ? "retour à la recherche simple" : "activer la recherche avancée" }
+          >
+            <FontAwesomeIcon icon={ $advancedSearch ? faMinus : faPlus }/>
+          </button>
+        </div>
+      {/if}
     </form>
 </div>
 
@@ -70,7 +85,7 @@
 <script>
   import FontAwesomeIcon from './FontAwesomeIcon.svelte'
 
-  import { advancedSearch, searchInput, searchCanvas, autocompleteResults, autocompleteDisplay, searchInputFocus, searchTyping } from '../tools/stores.js';
+  import { advancedSearch, searchInput, searchCanvas, autocompleteBypass, autocompleteResults, autocompleteDisplay, searchInputFocus, searchTyping } from '../tools/stores.js';
   import { search, searchString, searchAutocompleteTrigger, searchSubmit, searchURLUpdate, toggleAdvancedSearch } from '../tools/search.js';
   import Autocomplete from './Autocomplete.svelte';
 
@@ -131,7 +146,6 @@
     });
   }
 
-
   const startDate = new Date().getTime();
 
   const date = () => {
@@ -142,7 +156,11 @@
     $searchTyping = date() + 350;
     setTimeout(() => {
       if (date() > $searchTyping) {
-        autocomplete();
+        if ($autocompleteBypass) {
+          handleSubmit();
+        } else {
+          autocomplete();
+        }
       } else {
         console.log("key input limiter")
       } }, 355);
@@ -337,6 +355,11 @@
     .column.is-9 {
       flex: none;
       width: 75%;
+    }
+
+    .column.is-11 {
+      flex: none;
+      width: 92%;
     }
 
     .column.is-12,
