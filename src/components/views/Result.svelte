@@ -2,17 +2,20 @@
     <div class="column is-12">
         <div class="card has-text-centered">
             <div class="card-header has-background-danger">
-                <div class="columns is-vcentered is-mobile is-multiline">
-                    <div class="column is-3">
-                        <figure class="image is-64x64">
-                            <FontAwesomeIcon icon={faExclamationTriangle} class="is-48 is-vcentered"/>
-                    </div>
-                    <div class="column is-9">
-                        <h1 class="title is-4 has-text-white">Erreur {result.status.raw}</h1>
-                        <h1 subtitle class="subtitle is-6 has-text-white">
-                            {result.statusText.raw}
-                        </h1>
-                    </div>
+                <div class="level is-mobile is-vcentered">
+                        <div class="level-left" style="margin-right:8px;margin-left:8px">
+                            <figure class="image is-64x64 has-text-white">
+                                <FontAwesomeIcon icon={faExclamationTriangle} class="is-48 is-vcentered"/>
+                            </figure>
+                        </div>
+                        <div class="level-item has-text-left">
+                            <div>
+                                <h1 class="title is-4 has-text-white">Erreur {result.status.raw}</h1>
+                                <h1 subtitle class="is-6 has-text-white">
+                                    {result.statusText.raw}
+                                </h1>
+                            </div>
+                        </div>
                 </div>
             </div>
             <div class="card-content">
@@ -28,126 +31,171 @@
 {:else if (result)}
     <div class="column is-12">
         <div class="card has-text-centered">
-            <div class="card-header has-background-primary">
-                <div class="columns is-vcentered is-mobile is-multiline">
-                    <div class="column is-3">
-                        <figure class="image is-64x64">
-                            <img
-                                alt="64x64"
-                                src={ result.SEXE.raw === 'M' ? '/male.svg' : '/female.svg' }
-                            />
-                        </figure>
-                    </div>
-                    <div class="column is-9">
-                        <h1 class="title is-4 has-text-white">{result.PRENOM.raw} {result.NOM.raw}</h1>
-                        <h1 class="subtitle is-6 has-text-white">
-                            {result.DATE_NAISSANCE.raw.replace(/(\d{4})(\d{2})(\d{2})/,"$3/$2/$1")}
-                            &nbsp; - &nbsp;
-                            {result.DATE_DECES.raw.replace(/(\d{4})(\d{2})(\d{2})/,"$3/$2/$1")}
-                        </h1>
-                    </div>
-                </div>
-            </div>
-            <div class="card-content">
-                <div class="content">
-                    <div class="columns">
-                        <div class="column is-6">
-                            <span class="is-grey is-uppercase is-small">Naissance</span>
-                            <table class="table is-narrow is-striped">
-                                <tbody>
-                                    <tr>
-                                        <td>Nom</td>
-                                        <td>{result.NOM.raw}</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Prénom(s)</td>
-                                        <td>{result.PRENOMS.raw}</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Date</td>
-                                        <td>{result.DATE_NAISSANCE.raw.replace(/(\d{4})(\d{2})(\d{2})/,"$3/$2/$1")}</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Lieu</td>
-                                        <td>
+            <div
+                class={`card-header has-background-${expand ? "primary" : "white"}`}
+                on:click={() => { expand=!expand }}
+            >
+                <div class="level is-mobile is-vcentered" style="min-width: 100%;">
+                    <div class="level-left">
+                        <div class="level is-mobile is-vcentered">
+                            <div class="level-left" style="margin-right:16px">
+                                <figure class="image is-64x64 has-background-primary">
+                                    <img
+                                        alt="64x64"
+                                        src={ result.SEXE.raw === 'M' ? '/male.svg' : '/female.svg' }
+                                    />
+                                </figure>
+                            </div>
+                            <div class="level-item has-text-left">
+                                <div>
+                                    <h1 class={`title is-size-4 has-text-${expand ? "white" : "primary"}`}>
+                                        {result.NOM.raw.toUpperCase()} {result.PRENOM.raw}
+                                    </h1>
+                                    <h1 class={`is-size-6 has-text-${expand ? "white" : "primary"}`}>
+                                        <span class="is-hidden-mobile">
                                             {
                                                 result.COMMUNE_NAISSANCE
-                                                ? ( Array.isArray(result.COMMUNE_NAISSANCE.raw)
-                                                    ? result.COMMUNE_NAISSANCE.raw[0]
-                                                    : result.COMMUNE_NAISSANCE.raw)
-                                                + ( result.DEPARTEMENT_NAISSANCE
-                                                    ? " (" + result.DEPARTEMENT_NAISSANCE.raw + ")"
-                                                    : "" )
-                                                + ( result.PAYS_NAISSANCE
-                                                    ? ", " + result.PAYS_NAISSANCE.raw
-                                                    : "" )
-                                                : (result.PAYS_NAISSANCE
-                                                    ? result.PAYS_NAISSANCE.raw
-                                                    : "ND")
+                                                    ? ( Array.isArray(result.COMMUNE_NAISSANCE.raw)
+                                                        ? result.COMMUNE_NAISSANCE.raw[0]
+                                                        : result.COMMUNE_NAISSANCE.raw)
+                                                    : ""
                                             }
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                        <div class="column is-6">
-                            <span class="is-grey is-uppercase is-small">Décès</span>
-                            <table class="table is-narrow is-striped">
-                                <tbody>
-                                    <tr>
-                                        <td>Date</td>
-                                        <td>{result.DATE_DECES.raw.replace(/(\d{4})(\d{2})(\d{2})/,"$3/$2/$1")}</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Lieu</td>
-                                        <td>
+                                        </span>
+                                        {result.DATE_NAISSANCE.raw.replace(/(\d{4})(\d{2})(\d{2})/,"$3/$2/$1")}
+                                        &nbsp; - &nbsp;
+                                                                        <span class="is-hidden-mobile">
                                             {
                                                 result.COMMUNE_DECES
-                                                ? ( Array.isArray(result.COMMUNE_DECES.raw)
-                                                    ? result.COMMUNE_DECES.raw[0]
-                                                    : result.COMMUNE_DECES.raw)
-                                                + ( result.DEPARTEMENT_DECES
-                                                    ? " (" + result.DEPARTEMENT_DECES.raw + ")"
-                                                    : "" )
-                                                + ( result.PAYS_DECES
-                                                    ? ", " + result.PAYS_DECES.raw
-                                                    : "" )
-                                                : (result.PAYS_DECES
-                                                    ? result.PAYS_DECES.raw
-                                                    : "ND")
+                                                    ? ( Array.isArray(result.COMMUNE_DECES.raw)
+                                                        ? result.COMMUNE_DECES.raw[0]
+                                                        : result.COMMUNE_DECES.raw)
+                                                    : ""
                                             }
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>Acte n°</td>
-                                        <td>
-                                            {
-                                                result.NUM_DECES && result.NUM_DECES.raw
-                                                ? result.NUM_DECES.raw
-                                                : "ND"
-                                            }
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                                        </span>
+                                        {result.DATE_DECES.raw.replace(/(\d{4})(\d{2})(\d{2})/,"$3/$2/$1")}
+                                    </h1>
+                                </div>
+                            </div>
                         </div>
+
+                    </div>
+                    <div
+                        class="level-right"
+                        title={expand ? "replier" : "plus de détail"}
+                    >
+                        <figure class={`image is-vcentered has-text-${expand ? "white" : "primary"}`} style="margin-right:16px">
+                            <FontAwesomeIcon icon={expand ? faMinus : faPlus} class="is-32"/>
+                        </figure>
                     </div>
                 </div>
             </div>
+            {#if expand}
+                <div class="card-content">
+                    <div class="content">
+                        <div class="columns">
+                            <div class="column is-6">
+                                <span class="is-grey is-uppercase is-small">Naissance</span>
+                                <table class="table is-narrow is-striped">
+                                    <tbody>
+                                        <tr>
+                                            <td>Nom</td>
+                                            <td>{result.NOM.raw}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Prénom(s)</td>
+                                            <td>{result.PRENOMS.raw}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Date</td>
+                                            <td>{result.DATE_NAISSANCE.raw.replace(/(\d{4})(\d{2})(\d{2})/,"$3/$2/$1")}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Lieu</td>
+                                            <td>
+                                                {
+                                                    result.COMMUNE_NAISSANCE
+                                                    ? ( Array.isArray(result.COMMUNE_NAISSANCE.raw)
+                                                        ? result.COMMUNE_NAISSANCE.raw[0]
+                                                        : result.COMMUNE_NAISSANCE.raw)
+                                                    + ( result.DEPARTEMENT_NAISSANCE
+                                                        ? " (" + result.DEPARTEMENT_NAISSANCE.raw + ")"
+                                                        : "" )
+                                                    + ( result.PAYS_NAISSANCE
+                                                        ? ", " + result.PAYS_NAISSANCE.raw
+                                                        : "" )
+                                                    : (result.PAYS_NAISSANCE
+                                                        ? result.PAYS_NAISSANCE.raw
+                                                        : "ND")
+                                                }
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="column is-6">
+                                <span class="is-grey is-uppercase is-small">Décès</span>
+                                <table class="table is-narrow is-striped">
+                                    <tbody>
+                                        <tr>
+                                            <td>Date</td>
+                                            <td>{result.DATE_DECES.raw.replace(/(\d{4})(\d{2})(\d{2})/,"$3/$2/$1")}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Lieu</td>
+                                            <td>
+                                                {
+                                                    result.COMMUNE_DECES
+                                                    ? ( Array.isArray(result.COMMUNE_DECES.raw)
+                                                        ? result.COMMUNE_DECES.raw[0]
+                                                        : result.COMMUNE_DECES.raw)
+                                                    + ( result.DEPARTEMENT_DECES
+                                                        ? " (" + result.DEPARTEMENT_DECES.raw + ")"
+                                                        : "" )
+                                                    + ( result.PAYS_DECES
+                                                        ? ", " + result.PAYS_DECES.raw
+                                                        : "" )
+                                                    : (result.PAYS_DECES
+                                                        ? result.PAYS_DECES.raw
+                                                        : "ND")
+                                                }
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Acte n°</td>
+                                            <td>
+                                                {
+                                                    result.NUM_DECES && result.NUM_DECES.raw
+                                                    ? result.NUM_DECES.raw
+                                                    : "ND"
+                                                }
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {/if}
         </div>
     </div>
 {/if}
 
 
 <script>
-
+    import { accordeonMode } from '../tools/stores.js'
     import FontAwesomeIcon from './FontAwesomeIcon.svelte'
 
     import {
-        faExclamationTriangle
+        faExclamationTriangle,
+        faMinus,
+        faPlus
     } from '@fortawesome/free-solid-svg-icons';
 
     export let result;
+    let expand = !$accordeonMode;
+
+    $: expand = !$accordeonMode;
 
 </script>
 
@@ -157,8 +205,20 @@
         text-align: center!important;
     }
 
+    .has-text-left {
+        text-align: left!important;
+    }
+
     .has-text-white {
         color: #fff!important;
+    }
+
+    .has-text-primary {
+        color: #00d1b2!important;
+    }
+
+    .has-background-white {
+        background-color: #fff!important;
     }
 
     .has-background-primary {
@@ -237,7 +297,7 @@
         margin-top: -1.25rem;
     }
 
-    .title.is-4 {
+    .title.is-size-4 {
         font-size: 1.5rem;
     }
 
@@ -248,7 +308,7 @@
         line-height: 1.25;
     }
 
-    .subtitle.is-6 {
+    .subtitle.is-size-6 {
         font-size: 1rem;
     }
 
@@ -308,6 +368,11 @@
         padding: .75rem;
     }
 
+    .columns.is-mobile>.column.is-1 {
+        flex: none;
+        width: 8%;
+    }
+
     .columns.is-mobile>.column.is-3 {
         flex: none;
         width: 25%;
@@ -318,7 +383,17 @@
         width: 75%;
     }
 
+    .columns.is-mobile>.column.is-11 {
+        flex: none;
+        width: 83%;
+    }
+
     @media print,screen and (min-width:769px) {
+        .column.is-1 {
+            flex: none;
+            width: 8%;
+        }
+
         .column.is-3 {
             flex: none;
             width: 25%;
@@ -332,6 +407,11 @@
         .column.is-9 {
             flex: none;
             width: 75%;
+        }
+
+        .column.is-11 {
+            flex: none;
+            width: 83%;
         }
 
         .column.is-12 {
@@ -372,5 +452,119 @@
         }
     }
 
+    .level {
+    align-items: center;
+    justify-content: space-between;
+    }
 
+    .level code {
+    border-radius: 4px;
+    }
+
+    .level img {
+    display: inline-block;
+    vertical-align: top;
+    }
+
+    .level.is-mobile {
+    display: flex;
+    }
+
+    .level.is-mobile .level-left,
+    .level.is-mobile .level-right {
+    display: flex;
+    }
+
+    .level.is-mobile .level-left + .level-right {
+    margin-top: 0;
+    }
+
+    .level.is-mobile .level-item:not(:last-child) {
+    margin-bottom: 0;
+    margin-right: 0.75rem;
+    }
+
+    .level.is-mobile .level-item:not(.is-narrow) {
+    flex-grow: 1;
+    }
+
+    @media screen and (min-width: 769px), print {
+    .level {
+        display: flex;
+    }
+    .level > .level-item:not(.is-narrow) {
+        flex-grow: 1;
+    }
+    }
+
+    .level-item {
+    align-items: center;
+    display: flex;
+    flex-basis: auto;
+    flex-grow: 0;
+    flex-shrink: 0;
+    justify-content: center;
+    }
+
+    .level-item .title,
+    .level-item .subtitle {
+    margin-bottom: 0;
+    }
+
+    @media screen and (max-width: 768px) {
+    .is-hidden-mobile {
+        display: none!important;
+    }
+
+    .level-item:not(:last-child) {
+        margin-bottom: 0.75rem;
+    }
+    }
+
+    .level-left,
+    .level-right {
+    flex-basis: auto;
+    flex-grow: 0;
+    flex-shrink: 0;
+    }
+
+    .level-left .level-item.is-flexible,
+    .level-right .level-item.is-flexible {
+    flex-grow: 1;
+    }
+
+    @media screen and (min-width: 769px), print {
+    .level-left .level-item:not(:last-child),
+    .level-right .level-item:not(:last-child) {
+        margin-right: 0.75rem;
+    }
+    }
+
+    .level-left {
+    align-items: center;
+    justify-content: flex-start;
+    }
+
+    @media screen and (max-width: 768px) {
+    .level-left + .level-right {
+        margin-top: 1.5rem;
+    }
+    }
+
+    @media screen and (min-width: 769px), print {
+    .level-left {
+        display: flex;
+    }
+    }
+
+    .level-right {
+    align-items: center;
+    justify-content: flex-end;
+    }
+
+    @media screen and (min-width: 769px), print {
+    .level-right {
+        display: flex;
+    }
+    }
 </style>
