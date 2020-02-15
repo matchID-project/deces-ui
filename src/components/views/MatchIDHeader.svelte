@@ -1,7 +1,7 @@
 <nav class="navbar is-fixed-top is-white" role="navigation" aria-label="main navigation">
     <div class="container">
         <div class="navbar-brand">
-            <div class="navbar-item logo" on:click={toggleModal}>
+            <div class="navbar-item logo" on:click={() => toggleModal('service')}>
                 <img src={"/matchID-logo.svg"} alt="matchID Logo" />
             </div>
             <div
@@ -22,13 +22,18 @@
             id="navMenu"
         >
             <div class="navbar-start">
-                <a class="navbar-item" on:click={toggleModal} href="javascript:void(0);">
-                        à propos de ce service
-                </a>
+                {#each Object.keys(modalMenu) as about}
+                    <a class="navbar-item" on:click={() => toggleModal(about)} href="javascript:void(0);">
+                        <span class="icon">
+                            <FontAwesomeIcon icon={modalMenu[about].icon} class="icon"/>
+                        </span>
+                        <span> {modalMenu[about].title} </span>
+                    </a>
+                {/each}
                 <div class="navbar-item has-dropdown is-hoverable">
                     <div class="navbar-link">
                         <span class="icon">
-                            <FontAwesomeIcon icon={faLightbulb} class="icon is-small"/>
+                            <FontAwesomeIcon icon={faLightbulb} class="icon"/>
                         </span>
                         <span>
                             références
@@ -94,122 +99,20 @@
     </div>
 </nav>
 
-<div class="modal" class:is-active={modalState}>
-    <div class="modal-background" on:click={toggleModal}></div>
-    <div class="modal-card">
-        <header class="modal-card-head" on:close={toggleModal}>
-            <div class="modal-card-title">
-                À propos de ce service
-            </div>
-            <button class="delete" aria-label="close" on:click={toggleModal}></button>
-        </header>
-        <section class="modal-card-body">
-            <div class="content">
-                        <p><strong>A qui s'adresse ce service</strong></p>
-                            <p>
-                                Généalogistes, professionnels ou particuliers, services publics de lutte contre la fraude.
-                            </p>
-                        <p><strong>Un bug, une question ?</strong></p>
-                            <p>
-                                Le service est encore en version bêta (cf conditions d'utilisation).
-                                Des bugs peuvent subsister. En cas de doute commencez par actualiser l'application (touche Ctrl + F5),
-                                certaines mises à jours du service nécessitent un rechargement.
-                                En cas de doute sollicitez nous à <a href="mailto:matchid.project@gmail.com">matchid.project@gmail.com</a>, en mentionnant la référence de version ci-dessous:
-                            </p>
-                            <p>
-                                __APP__ version __APP_VERSION__
-                            </p>
-                        <p><strong>Evolutions récentes</strong></p>
-                            <p>
-                                Nous avons mis récemment à jour l'application pour favoriser les recherches approfondies:
-                                <br/>
-                                - une recherche avancée (bouton '+')
-                                <br/>
-                                - dans cette dernière version, l'indexation des communes et pays
-                            </p>
-                        <p><strong>Evolutions futures</strong></p>
-                            <p>
-                                Nous prévoyons prochainement la possibilité de télécharger les fichiers source restreints aux années et départements
-                                pour favoriser les recherches approfondies.
-                            </p>
-                        <p><strong>Fichier des décès de l'INSEE</strong></p>
-                            <p>
-                                Ce service vise à permettre la recherche directe de personnes décédées. Il repose sur la base opendata
-                                délivrée par l'<a href="https://www.insee.fr/fr/information/4190491" target="_blank">INSEE</a> et
-                                diffusée par <a href="https://www.data.gouv.fr/fr/datasets/fichier-des-personnes-decedees/" target="_blank">data.gouv.fr</a>.
-                            </p>
-                            <p>
-                                La recherche utilise l'intégralité des données INSEE, soit environ 25 millions d'enregistrements.
-                                Elle concerne les déclarations de décès retransmises vers l'INSEE depuis 1970 jusqu'au mois précédent.
-                                Seules les personnes ayant eu un numéro INSEE et ayant fait l'objet d'une déclaration de décès, en mairie ou
-                                en consulat sont enregistrées. Le délai de déclaration et de transmission peut être variable (personnes disparues, ou
-                                recherches historiques e.g. identifications tardives après guerre).
-                            </p>
-                            <p>
-                                Quelques références sur le fichier RNIPP, duquel découle le fichier de décès :<br/>
-                                - <a href="https://www.cnil.fr/fr/rnipp-repertoire-national-didentification-des-personnes-physiques-0" target="_blank">Le RNIPP vu par la CNIL</a><br/>
-                                - les formulaires de <a href=" https://www.insee.fr/fr/information/1303477" target="_blank">déclaration de décès</a> des communes vers l'INSEE<br/>
-                                Ces sites témoignent que le processus centralisé n'est pas simple et a pu manquer d'exhaustivité dans les années antérieures
-                                à l'informatisation des systèmes. En cas de doute, n'hésitez pas à nous solliciter, nous répondrons
-                                dans la limite de nos connaissances.
-                            </p>
-                            <p>
-                                Les données INSEE sont sous <a href="https://www.etalab.gouv.fr/licence-ouverte-open-licence" target="_blank">Licence Ouverte / Open Licence version 2.0</a>.
-                                L’INSEE et donc ce service ne peuvent garantir que les fichiers des personnes décédées sont exempts d’omissions ou d’erreurs.
-                                Ce service et l'INSEE ne sauraient encourir aucune responsabilité quant à l’utilisation faite des informations contenues dans ces fichiers.
-                                En particulier, les informations contenues dans ces fichiers ne peuvent en aucun cas être utilisées dans un but de certification
-                                du statut vital des personnes.
-                            </p>
-                        <p><strong>Conditions d'usage et garanties (version bêta)</strong></p>
-                            <p>
-                                Ce service est gratuit, et financé sur fonds personnels. Il est offert sans garantie
-                                particulière. Etant donné l'affluence, nous avons choisi de consolider et maintenir ce service.
-                                Les retours sont les bienvenus, nous vous répondrons sur <a href="mailto:matchid.project@gmail.com">matchid.project@gmail.com</a> pour
-                                toute question, signalement ou tout avis sur le service.
-                            </p>
-                            <p>
-                                Le code source de ce site est disponible sur <a href="https://github.com/matchid-project/deces-ui" target="_blank">GitHub</a>.
-                                Il est diffusé sous la licence libre <a href="https://spdx.org/licenses/LGPL-3.0.html#licenseText" target="_blank">LGPL 3.0</a>.
-                            </p>
-                        <p><strong>Utilisation des cookies</strong></p>
-                            <p>
-                                Ce site utilise les service Cloudflare et Google Analytics qui déposent chacun un cookie pour connaitre la fréquentation et l'audience
-                                du site. Les informations sont anonymes (IP anonymisées). Vous pouvez vous désactiver l'enregistrement de cookies depuis sur site et sur d’autres.
-                                Le moyen le plus efficace consiste à désactiver les cookies dans votre navigateur, n'hésitez pas à consulter l'aide de votre navigateur.
-                            </p>
-                        <p><strong>Traitement des données avec matchID</strong></p>
-                        <p>
-                            Les données sont traitées avec l'outil opensource <a href="https://www.matchid.io" target="_blank">matchID</a> (Python/Pandas). Les traitements, disponibles
-                            disponibles <a href="https://github.com/matchid-project/deces-dataprep" target="_blank">ici</a>,
-                            consistent en une mise en forme (capitalisation, réconciliation avec les noms de pays et commune
-                            selon les référentiels INSEE) puis une indexation. Les données sont actualisées chaque mois, après chaque diffusion sur le
-                            site <a href="https://www.data.gouv.fr/fr/datasets/fichier-des-personnes-decedees/" target="_blank">data.gouv.fr</a>.
-                        </p>
-                        <p>
-                            La recherche et l'indexation reposent sur <a href="https://elastic.co" target="_blank">Elasticsearch</a>
-                            qui repose sur le moteur de recherche Lucène, qui apporte le bénéfice
-                            des <a href="https://wikipedia.org/wiki/Recherche_approximative" target="_blank">recherches floues</a> à
-                            large échelle. Le code source de la visualisation est accessible sur <a href="https://github.com/matchid-project/deces-ui" target="_blank">Github</a>.
-                        </p>
-                        <p><strong>Qui sommes nous ?</strong></p>
-                        <p>
-                            Le projet matchID a été initié au ministère de l'Intérieur dans le contexte des
-                            challenges d'<a href="https://entrepreneur-interet-general.etalab.gouv.fr/defis/2017/mi-matchid.html" target="_blank">Entrepreneur d'intérêt général</a>.
-                            La réconciliation des personnes décédées avec le permis de conduire a été le premier cas d'usage réalisé avec
-                            matchID. Le projet a été libéré et mis en opensource. Nous avons créé de service
-                            en complément qui semblait d'utilité notamment pour la lutte contre la fraude.
-                            Pour en savoir plus sur le projet matchID, suivez ce <a href="https://www.matchid.io" target="_blank">lien</a>.
-                        </p>
-            </div>
-        </section>
-        <footer class="modal-card-foot">
-        </footer>
-    </div>
-</div>
+<Modal bind:active={modalState} title={modalMenu[modalContent].title}>
+    {#if modalContent === 'service'}
+        <AboutService/>
+    {:else}
+        <AboutData/>
+    {/if}
+</Modal>
 
 <script>
     import { socialIcons } from '../tools/stores.js'
     import FontAwesomeIcon from './FontAwesomeIcon.svelte'
+    import Modal from './Modal.svelte'
+    import AboutService from './AboutService.svelte'
+    import AboutData from './AboutData.svelte'
 
     import {
         faLightbulb
@@ -224,6 +127,7 @@
     import {
         faDatabase,
         faFlask,
+        faSearch,
         faTable
     } from '@fortawesome/free-solid-svg-icons';
 
@@ -233,10 +137,21 @@
 
     let burgerState = false;
     let modalState = false;
+    let modalContent = 'service';
+    let modalMenu = {
+        service: {
+            icon: faSearch,
+            title:'à propos de ce service'
+        },
+        data: {
+            icon: faDatabase,
+            title: 'à propos des données INSEE'
+        }
+    }
 
-    function toggleModal() {
-        modalState= !modalState
-        console.log(modalState)
+    function toggleModal(page) {
+        modalState= !modalState;
+        modalContent = page;
     }
 
     function toggleBurger() {
@@ -265,51 +180,6 @@
 
 <style>
 
-    .delete {
-        -moz-appearance:none;
-        -webkit-appearance:none;
-        background-color:rgba(10,10,10,.2);
-        border:none;
-        border-radius:290486px;
-        cursor:pointer;
-        pointer-events:auto;
-        display:inline-block;
-        flex-grow:0;
-        flex-shrink:0;
-        font-size:0;
-        height:20px;
-        max-height:20px;
-        max-width:20px;
-        min-height:20px;
-        min-width:20px;
-        outline:none;
-        position:relative;
-        vertical-align:top;
-        width:20px
-    }
-    .delete:after,
-    .delete:before {
-        background-color:#fff;
-        content:"";
-        display:block;
-        left:50%;
-        position:absolute;
-        top:50%;
-        transform:translateX(-50%) translateY(-50%) rotate(45deg);
-        transform-origin:center center
-    }
-    .delete:before {
-        height:2px;
-        width:50%
-    }
-    .delete:after {
-        height:50%;
-        width:2px
-    }
-    .delete:focus,
-    .delete:hover {
-        background-color:rgba(10,10,10,.3)
-    }
 
     @media print,screen and (min-width:769px) {
         .logo {
@@ -447,11 +317,6 @@
     .navbar-end {
         justify-content: flex-end;
         margin-left: auto;
-    }
-
-    .navbar, .navbar-menu, .navbar-start, .navbar-end {
-        align-items: stretch;
-        display: flex;
     }
 
     html.has-navbar-fixed-top {
@@ -732,104 +597,6 @@
         #0a0a0a;
     }
 
-
-    .modal,
-    .modal-background {
-    bottom:0;
-    left:0;
-    position:absolute;
-    right:0;
-    top:0
-    }
-    .modal {
-    align-items:center;
-    display:none;
-    flex-direction:column;
-    justify-content:center;
-    overflow:hidden;
-    position:fixed;
-    z-index:40
-    }
-    .modal.is-active {
-    display:flex
-    }
-    .modal-background {
-    background-color:rgba(10,10,10,.86)
-    }
-    .modal-card,
-    .modal-content {
-    margin:0 20px;
-    max-height:calc(100vh - 160px);
-    overflow:auto;
-    position:relative;
-    width:100%
-    }
-    @media print,screen and (min-width:769px) {
-    .modal-card,
-    .modal-content {
-        margin:0 auto;
-        max-height:calc(100vh - 40px);
-        width:640px
-    }
-    }
-    .modal-close {
-        background:none;
-        height:40px;
-        position:fixed;
-        right:20px;
-        top:20px;
-        width:40px
-    }
-    .modal-card {
-        display:flex;
-        flex-direction:column;
-        max-height:calc(100vh - 40px);
-        overflow:hidden;
-        -ms-overflow-y:visible
-    }
-    .modal-card-foot,
-    .modal-card-head {
-        align-items:center;
-        background-color:#f5f5f5;
-        display:flex;
-        flex-shrink:0;
-        justify-content:flex-start;
-        padding: 20px;
-        position:relative
-    }
-    .modal-card-head {
-        border-bottom:1px solid #dbdbdb;
-        border-top-left-radius:6px;
-        border-top-right-radius:6px;
-    /* padding: 0px 20px 0px 20px; */
-    }
-    .modal-card-title {
-        color:#363636;
-        flex-grow:1;
-        flex-shrink:0;
-        font-size:1.5rem;
-        line-height:1
-    }
-    .modal-card-foot {
-        border-bottom-left-radius:6px;
-        border-bottom-right-radius:6px;
-        border-top:1px solid #dbdbdb
-    }
-    .modal-card-foot .button:not(:last-child) {
-        margin-right:.5em
-    }
-    .modal-card-body {
-        -webkit-overflow-scrolling:touch;
-        background-color:#fff;
-        flex-grow:1;
-        flex-shrink:1;
-        overflow:auto;
-        padding:20px
-    }
-    .modal-container {
-        z-index:100;
-        position:fixed
-    }
 
   .button {
     -webkit-touch-callout: none;
