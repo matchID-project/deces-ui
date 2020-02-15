@@ -50,7 +50,7 @@
   }
 
   .margin {
-      padding: 24px 0px 32px 32px;
+      padding: 24px 0px 32px 0px;
   }
 
   @media (max-width: 800px) {
