@@ -319,11 +319,6 @@
         margin-left: auto;
     }
 
-    .navbar, .navbar-menu, .navbar-start, .navbar-end {
-        align-items: stretch;
-        display: flex;
-    }
-
     html.has-navbar-fixed-top {
     padding-top: 3.25rem;
     }
