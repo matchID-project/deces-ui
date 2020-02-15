@@ -36,11 +36,11 @@
         <li>
             Seuls les personnes ayant eu un numéro INSEE sont inscrites au fichier. Un
             parcours de vie (e.g. naissance / décès à l'étranger)
-            peu expliquer l'absence du fichier.
+            peut expliquer l'absence du fichier.
         </li>
     </ul>
     <p>
-        Si vous avez l'assurance que la personne disposait d'un fichier INSEE, il est important
+        Si vous avez l'assurance que la personne concernée disposait d'un numéro INSEE, il est important
         de savoir que celle-ci figure peut être toujours au fichier RNIPP. Il est peut être
         alors nécessaire de contacter la mairie ou le consultat de décès pour vous assurer
         de la bonne transmission à l'INSEE.
@@ -57,24 +57,25 @@
         Nous ne sommes pas habilités à modifier les données de l'INSEE.
     </p>
     <p>
-        En cas d'erreur (e.g enregistrement du nom d'époux au lieu du nom de naissance), erreur
-        dans le nom, etc., seul la mairie ou le consultat de décès sont habilité à transmettre
+        En cas d'erreur (e.g enregistrement du nom d'époux au lieu du nom de naissance), seuls
+        la mairie et le consultat de décès sont habilités à transmettre
         un correctif à l'INSEE. Nous vous invitons donc à prendre contact avec le service
-        d'Etat civil de la mairie ou du consulat du décès.
+        d'État civil de la mairie ou du consulat du décès.
     </p>
 <p><strong>Références sur le RNIPP et le fichier des décès</strong></p>
     <ul>
         <li>
-            <a href="https://www.cnil.fr/fr/rnipp-repertoire-national-didentification-des-personnes-physiques-0" target="_blank">Le RNIPP vu par la CNIL</a>
+            <a href="https://www.cnil.fr/fr/rnipp-repertoire-national-didentification-des-personnes-physiques-0" target="_blank">le RNIPP vu par la CNIL</a>
         </li>
         <li>
-            formulaires de <a href="https://www.insee.fr/fr/information/1303477" target="_blank">déclaration de décès</a> des communes vers l'INSEE<br/>
+            formulaires de <a href="https://www.insee.fr/fr/information/1303477" target="_blank">déclaration
+            de décès</a> des communes vers l'INSEE
         </li>
         <li>
-            Démarches relatives au décès sur <a href="https://www.service-public.fr/particuliers/vosdroits/F16507" target="_blank">service-public.fr</a>
+            démarches relatives au décès sur <a href="https://www.service-public.fr/particuliers/vosdroits/F16507" target="_blank">service-public.fr</a>
         </li>
         <li>
-            Article wikipedia concernant le <a href="https://fr.wikipedia.org/wiki/R%C3%A9pertoire_national_d%27identification_des_personnes_physiques" target="_blank">RNIPP</a>
+            article wikipedia concernant le <a href="https://fr.wikipedia.org/wiki/R%C3%A9pertoire_national_d%27identification_des_personnes_physiques" target="_blank">RNIPP</a>
         </li>
     </ul>
 <p><strong>Garanties concernant les données</strong></p>
