@@ -1,11 +1,11 @@
 {#if $wasSearched}
     <div class="columns is-vcentered is-mobile">
-        <div class="column is-4 is-size-7">
+        <div class="column is-4 is-mobile-6 is-size-7">
             <span>Résultats <strong>{from}</strong> à <strong>{to}</strong> parmi <strong>{$totalResults}</strong></span>
             <span>pour: <i>{query}</i></span>
         </div>
         <div
-            class="column is-4 is-size-7 has-text-centered"
+            class="column is-4 is-mobile-3 is-size-7 has-text-centered"
         >
             <div
                 on:click={() => {$sortInputDisplay=!$sortInputDisplay}}
@@ -33,13 +33,21 @@
                 </span>
             </div>
         </div>
-        <div class="column is-4 has-text-right is-size-7">résultats par page
+        <div class="column is-4 is-mobile-3 has-text-right is-size-7 is-vcentered">
+            <span class="is-hidden-mobile">résultats </span>par page
             <span class="select is-size-7">
                 <select bind:value={$resultsPerPage}>
                     {#each resultsPerPageList as option}
                         <option>{option}</option>
                     {/each}
                 </select>
+            </span>
+            <span
+                class="has-text-primary expand-icon"
+                title={$accordeonMode ? "déplier tous les résultats" : "replier tous les résultats"}
+                on:click={() => {$accordeonMode=!$accordeonMode}}
+            >
+                <FontAwesomeIcon icon={$accordeonMode ? faPlus : faMinus} class="is-lower"/>
             </span>
         </div>
     </div>
@@ -51,9 +59,9 @@
 {/if}
 
 <script>
-    import { faSortUp, faSortDown } from '@fortawesome/free-solid-svg-icons';
+    import { faSortUp, faSortDown, faPlus, faMinus } from '@fortawesome/free-solid-svg-icons';
     import FontAwesomeIcon from './FontAwesomeIcon.svelte'
-    import { current, sortInput, sortInputDisplay, updateURL, totalResults, totalPages, resultsPerPage, searchInput, wasSearched } from '../tools/stores.js'
+    import { accordeonMode, current, sortInput, sortInputDisplay, updateURL, totalResults, totalPages, resultsPerPage, searchInput, wasSearched } from '../tools/stores.js'
     import { searchSubmit, searchURLUpdate } from '../tools/search.js'
     import SortInput from './SortInput.svelte';
 
@@ -87,14 +95,30 @@
         padding: 0rem 1rem 0rem 0.75rem;
     }
 
-    .columns.is-mobile>.column.is-3 {
-        flex: none;
-        width: 25%;
-    }
 
     .columns.is-mobile>.column.is-9 {
         flex: none;
         width: 75%;
+    }
+
+
+
+
+    @media print,screen and (max-width:768px) {
+        .columns>.column.is-mobile-3 {
+            flex: none;
+            width: 26%;
+        }
+
+        .columns>.column.is-mobile-6 {
+            flex: none;
+            width: 48%;
+        }
+
+        .columns.is-mobile>.column.is-3 {
+            flex: none;
+            width: 25%;
+        }
     }
 
     @media print,screen and (min-width:769px) {
@@ -167,10 +191,28 @@
         justify-content: center!important;
     }
 
+    .expand-icon {
+       margin-left:16px;
+       margin-right:10px;
+    }
+
+    @media print,screen and (max-width:768px) {
+        .is-hidden-mobile {
+            display: none!important;
+        }
+        .expand-icon {
+            line-height:2rem;
+        }
+    }
+
     @media print,screen and (min-width:769px) {
         .columns:not(.is-desktop) {
             display: flex;
         }
+    }
+
+    .has-text-primary {
+        color: #00d1b2!important;
     }
 
     .has-text-right {
@@ -208,7 +250,7 @@
         padding-left: calc(.75em - 1px);
         padding-right: calc(.75em - 1px);
         position: relative;
-        vertical-align: top;
+        vertical-align: center;
     }
 
     .pointer {
