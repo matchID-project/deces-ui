@@ -4,14 +4,14 @@
             <div class="card-header has-background-danger">
                 <div class="level is-mobile is-vcentered">
                         <div class="level-left" style="margin-right:8px;margin-left:8px">
-                            <figure class="image is-64x64 has-text-white">
+                            <figure class="image is-48x48 has-text-white">
                                 <FontAwesomeIcon icon={faExclamationTriangle} class="is-48 is-vcentered"/>
                             </figure>
                         </div>
                         <div class="level-item has-text-left">
                             <div>
-                                <h1 class="title is-4 has-text-white">Erreur {result.status.raw}</h1>
-                                <h1 subtitle class="is-6 has-text-white">
+                                <h1 class="title is-size-5 has-text-white">Erreur {result.status.raw}</h1>
+                                <h1 class="is-size-6-7 has-text-white">
                                     {result.statusText.raw}
                                 </h1>
                             </div>
@@ -29,7 +29,7 @@
         </div>
     </div>
 {:else if (result)}
-    <div class="column is-12">
+    <div class={`column block-flex ${expand ? "is-12" : "is-6"}`}>
         <div class="card has-text-centered">
             <div
                 class={`card-header has-background-${expand ? "primary" : "white"}`}
@@ -39,19 +39,19 @@
                     <div class="level-left">
                         <div class="level is-mobile is-vcentered">
                             <div class="level-left" style="margin-right:16px">
-                                <figure class="image is-64x64 has-background-primary">
+                                <figure class={`image is-${expand ? "64x64" : "48x48"} has-background-primary`}>
                                     <img
-                                        alt="64x64"
+                                        alt={ result.SEXE.raw }
                                         src={ result.SEXE.raw === 'M' ? '/male.svg' : '/female.svg' }
                                     />
                                 </figure>
                             </div>
                             <div class="level-item has-text-left">
                                 <div>
-                                    <h1 class={`title is-size-4 has-text-${expand ? "white" : "primary"}`}>
+                                    <h1 class={`title is-size-${expand ? "4" : "5"} has-text-${expand ? "white" : "primary"}`}>
                                         {result.NOM.raw.toUpperCase()} {result.PRENOM.raw}
                                     </h1>
-                                    <h1 class={`is-size-6 has-text-${expand ? "white" : "primary"}`}>
+                                    <h1 class={`is-size-${expand ? "6" : "6-7"} has-text-${expand ? "white" : "primary"}`}>
                                         <span class="is-hidden-mobile">
                                             {
                                                 result.COMMUNE_NAISSANCE
@@ -201,6 +201,11 @@
 
 <style>
 
+    .block-flex {
+        flex: none!important;
+        width: 100%;
+    }
+
     .has-text-centered {
         text-align: center!important;
     }
@@ -241,6 +246,11 @@
     .image.is-64x64 {
         height: 64px;
         width: 64px;
+    }
+
+    .image.is-48x48 {
+        height: 48px;
+        width: 48px;
     }
 
     .image img {
@@ -301,6 +311,10 @@
         font-size: 1.5rem;
     }
 
+    .title.is-size-5 {
+        font-size: 1.25rem;
+    }
+
     .subtitle {
         color: #4a4a4a;
         font-size: 1.25rem;
@@ -308,8 +322,16 @@
         line-height: 1.25;
     }
 
-    .subtitle.is-size-6 {
+    .is-size-6 {
         font-size: 1rem;
+    }
+
+    .is-size-6-7 {
+        font-size: 0.875rem;
+    }
+
+    .is-size-7 {
+        font-size: 0.75rem;
     }
 
     .table:not(:last-child) {

@@ -3,7 +3,7 @@
     <div class="container">
       <div class="margin">
         <ResultsHeader/>
-        <div class="columns">
+        <div class="columns is-vcentered is-multiline is-mobile">
           {#each $searchResults as result, index}
             {#if (index === 1) && adsbygoogle }
               <ins
@@ -96,6 +96,22 @@
 
   .columns.is-mobile {
     display: flex;
+  }
+
+  .columns:last-child {
+      margin-bottom: -.75rem;
+  }
+
+  .columns:not(:last-child) {
+      margin-bottom: .75rem;
+  }
+
+  .columns.is-multiline {
+      flex-wrap: wrap;
+  }
+
+  .columns.is-vcentered {
+      align-items: center;
   }
 
   *, ::after, ::before {
