@@ -67,10 +67,10 @@
         </div>
         <Autocomplete/>
       {:else}
-        <div class="column is-1 is-hidden-mobile">
+        <div class="column is-1">
           <button
             type="reset"
-            class="button is-size-5 is-info"
+            class="button is-fullwidth is-size-5 is-info"
             on:click|preventDefault={ toggleAdvancedSearch }
             title={ $advancedSearch ? "retour à la recherche simple" : "activer la recherche avancée" }
           >
