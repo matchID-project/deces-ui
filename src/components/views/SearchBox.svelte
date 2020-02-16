@@ -70,7 +70,7 @@
         <div class="column is-1">
           <button
             type="reset"
-            class="button is-fullwidth is-size-5 is-info"
+            class="button is-fullwidth is-size-5 is-info small-margin-mobile"
             on:click|preventDefault={ toggleAdvancedSearch }
             title={ $advancedSearch ? "retour à la recherche simple" : "activer la recherche avancée" }
           >
@@ -400,6 +400,11 @@
   }
 
   @media print,screen and (max-width:768px) {
+    .small-margin-mobile {
+      margin-top: 0.75rem!important;
+      margin-bottom:-1rem!important;
+    }
+
     .is-hidden-mobile {
       display: none;
     }
