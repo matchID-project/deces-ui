@@ -1,4 +1,4 @@
-{#if $autocompleteDisplay && !error}
+{#if !$autocompleteBypass && $autocompleteDisplay && !error}
   <div class="autocomplete-container">
     <div class="container is-widescreen" style="margin-left: 15px; margin-top:-20px;">
       <span class="is-uppercase is-size-7 is-small has-text-grey">
@@ -53,7 +53,7 @@
 {/if}
 
 <script>
-  import { searchInput, autocompleteResults, autocompleteDisplay, advancedSearch } from '../tools/stores.js';
+  import { searchInput, autocompleteBypass, autocompleteResults, autocompleteDisplay, advancedSearch } from '../tools/stores.js';
   import { search, searchSubmit, searchURLUpdate } from '../tools/search.js';
 
   let error;

@@ -10,6 +10,7 @@ import {
     updateURL,
     resultsPerPage,
     resultsPerPageDefault,
+    autocompleteBypass,
     autocompleteDisplay,
     autocompleteMinLength,
     advancedSearch,
@@ -24,6 +25,7 @@ let mySearchInput;
 let mySearchCanvas;
 let myCurrent;
 let myResultsPerPage;
+let myAutocompleteBypass;
 let myAutocompleteMinLength;
 let myAdvancedSearch;
 let mySearchMinLength;
@@ -35,7 +37,7 @@ const c = current.subscribe((value) => { myCurrent=value })
 const r = resultsPerPage.subscribe((value) => { myResultsPerPage=value })
 const a = autocompleteMinLength.subscribe((value) => { myAutocompleteMinLength=value })
 const av = advancedSearch.subscribe((value) => { myAdvancedSearch=value })
-
+const b = autocompleteBypass.subscribe((value) => { myAutocompleteBypass=value })
 
 export const searchAutocompleteTrigger = (searchInput) => {
     return Object.keys(searchInput).some(key => searchInput[key].value.length >= myAutocompleteMinLength);
@@ -44,7 +46,6 @@ export const searchAutocompleteTrigger = (searchInput) => {
 export const searchTrigger = (searchInput) => {
     return Object.keys(searchInput).some(key => searchInput[key].value.length >= mySearchMinLength);
 }
-
 
 export const searchString = (searchInput) => {
     return Object.keys(searchInput).map(key => {

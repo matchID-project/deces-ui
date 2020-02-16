@@ -31,6 +31,10 @@
       margin-bottom: -0.25rem;
   }
 
+  .is-lower {
+      margin-bottom: -0.35rem;
+  }
+
   .is-48 {
       margin-top: 8px;
       width: 48px;
