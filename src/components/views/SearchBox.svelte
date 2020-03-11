@@ -30,10 +30,10 @@
                 <input
                   autoComplete="off"
                   placeholder={$searchInput[key].placeholder}
-                  class={"is-size-5 column is-" + $searchInput[key].size}
+                  class={`is-size-5 column is-${$searchInput[key].size} ${isValid(key) ? "" : "is-danger"}`}
                   bind:value={$searchInput[key].value}
                   title={$searchInput[key].title}
-                  on:input={handleInput}
+                  on:input={() => handleInput(key)}
                   on:blur={focusInput(key,false)}
                   on:focus={focusInput(key,true)}
                   disabled={$searchInput[key].disabled}
@@ -99,9 +99,11 @@
 
   $: gtag = window.gtag || gtagFail;
 
-  let inputKeys;
+  let lastInput = {}
 
-  $: inputsKeys = Object.keys($searchInput);
+  let inputsKeys;
+
+  $: inputsKeys = Object.keys($searchInput)
 
   $: $autocompleteDisplay=Object.keys($searchInputFocus).some(key => $searchInputFocus.focus);
 
@@ -152,18 +154,34 @@
     return Math.round(new Date().getTime() - startDate);
   }
 
-  const handleInput = () => {
-    $searchTyping = date() + 350;
-    setTimeout(() => {
-      if (date() > $searchTyping) {
-        if ($autocompleteBypass) {
-          handleSubmit();
+  const isValid = (key) => {
+    if ($searchInput[key].mask && $searchInput[key].mask.validation) {
+      return $searchInput[key].mask.validation($searchInput[key].value);
+    } else {
+      return true;
+    }
+  }
+
+  const handleInput = (key) => {
+    if ($searchInput[key].mask && $searchInput[key].mask.typing) {
+      if (!$searchInput[key].mask.typing($searchInput[key].value)) {
+        $searchInput[key].value = lastInput[key] || '';
+      }
+      lastInput[key] = $searchInput[key].value
+    }
+    if (isValid(key)) {
+      $searchTyping = date() + 350;
+      setTimeout(() => {
+        if (date() > $searchTyping) {
+          if ($autocompleteBypass) {
+            handleSubmit();
+          } else {
+            autocomplete();
+          }
         } else {
-          autocomplete();
-        }
-      } else {
-        console.log("key input limiter")
-      } }, 355);
+          console.log("key input limiter")
+        } }, 355)
+    }
   }
 
   const autocomplete = async () => {
@@ -327,6 +345,11 @@
       width: 25%;
     }
 
+    .column.is-3-5 {
+      flex: none;
+      width: 28.5%;
+    }
+
     .column.is-4 {
       flex: none;
       width: 33%;
@@ -433,8 +456,6 @@
     flex: none;
     width: 100%;
   }
-
-
   }
 
   @media print,screen and (min-width:769px) {
@@ -444,6 +465,11 @@
     .columns:not(.is-desktop) {
       display: flex;
     }
+  }
+
+  .is-danger {
+    border: 3px solid hsl(348, 100%, 61%)!important;
+    border-radius: 4px;
   }
 
   *, ::after, ::before {

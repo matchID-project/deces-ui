@@ -46,38 +46,11 @@ function buildAvancedMatch(searchInput) {
       query: {
         bool: {
           must: Object.keys(searchInput).map(key => {
-            if (searchInput[key].value) {
-              return {
-                bool: searchInput[key].query
-                  ? {
-                      must: [
-                        {
-                          [searchInput[key].query]: {
-                            [searchInput[key].field]: searchInput[key].value
-                          }
-                        }
-                      ]
-                    }
-                  : {
-                      must: [
-                        {
-                          match: {
-                            [searchInput[key].field]: {
-                              query: searchInput[key].value,
-                              fuzziness: 2
-                            }
-                          }
-                        }
-                      ],
-                      should: [
-                        {
-                          match: {
-                            [searchInput[key].field]: searchInput[key].value
-                          }
-                        }
-                      ]
-                    }
-              }
+            let value = searchInput[key].mask && searchInput[key].mask.transform
+                        ? searchInput[key].mask.transform(searchInput[key].value)
+                        : searchInput[key].value;
+            if (value) {
+              return searchInput[key].query(searchInput[key].field, value, searchInput[key].fuzzy)
             }
           }).filter(x => x),
         }

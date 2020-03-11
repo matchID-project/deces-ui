@@ -25,9 +25,7 @@ export const dateRangeValidationMask = (dateRangeString) => {
 }
 
 export const dateTransformMask = (dateString) => {
-    let result = dateString.replace(/(\d{2})\/(\d{2})\/(\d{4})/,'$3$2$1');
-    console.log('la',result);
-    return result;
+    return dateString.replace(/(\d{2})\/(\d{2})\/(\d{4})/,'$3$2$1');
 }
 
 export const dateRangeTransformMask = (dateRangeString) => {
