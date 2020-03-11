@@ -43,7 +43,6 @@ export const fuzzyTermQuery = (field, value, fuzzy) => {
 };
 
 export const dateRangeStringQuery = (field, value, fuzzy) => {
-    console.log('dRSQ',value,Array.isArray(value),value.length);
     if (Array.isArray(value) && (value.length === 2)) {
         let min = (value[0] <= value[1]) ? value[0] : value[1];
         min = min.padEnd(8,'0');
