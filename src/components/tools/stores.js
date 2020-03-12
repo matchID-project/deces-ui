@@ -274,7 +274,9 @@ export const searchCanvas = writable({
     }
 });
 
-export const cachedResponses = writable({})
+export const cachedResponses = writable({});
+
+export const waitSearch = writable(false);
 
 export const accordeonMode = writable(true);
 

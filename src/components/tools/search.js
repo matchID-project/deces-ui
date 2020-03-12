@@ -14,7 +14,8 @@ import {
     autocompleteDisplay,
     autocompleteMinLength,
     advancedSearch,
-    wasSearched
+    wasSearched,
+    waitSearch
 } from './stores.js'
 
 import buildRequest from "./buildRequest.js";
@@ -29,6 +30,7 @@ let myAutocompleteBypass;
 let myAutocompleteMinLength;
 let myAdvancedSearch;
 let mySearchMinLength;
+let myWaitSearch;
 
 const s = searchInput.subscribe((value) => { mySearchInput=value })
 const sc = searchCanvas.subscribe((value) => { mySearchCanvas=value })
@@ -38,6 +40,7 @@ const r = resultsPerPage.subscribe((value) => { myResultsPerPage=value })
 const a = autocompleteMinLength.subscribe((value) => { myAutocompleteMinLength=value })
 const av = advancedSearch.subscribe((value) => { myAdvancedSearch=value })
 const b = autocompleteBypass.subscribe((value) => { myAutocompleteBypass=value })
+const w = waitSearch.subscribe((value) => { myWaitSearch=value })
 
 export const searchAutocompleteTrigger = (searchInput) => {
     return Object.keys(searchInput).some(key => searchInput[key].value.length >= myAutocompleteMinLength);
@@ -72,7 +75,8 @@ export const search = async (searchInput, newCurrent) => {
 }
 
 export const searchSubmit = async (newCurrent) => {
-    if (searchTrigger(mySearchInput)) {
+    if (searchTrigger(mySearchInput) && (!myWaitSearch)) {
+        waitSearch.update( v => true);
         const state = await search(mySearchInput, newCurrent);
         searchResults.update( v => state.results );
         totalResults.update(v => state.totalResults);
@@ -80,6 +84,7 @@ export const searchSubmit = async (newCurrent) => {
         facets.update(v => state.facets);
         autocompleteDisplay.update(v => false);
         wasSearched.update(v => searchString(mySearchInput));
+        waitSearch.update( v => false);
     }
 }
 
