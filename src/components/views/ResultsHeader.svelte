@@ -250,7 +250,6 @@
         padding-left: calc(.75em - 1px);
         padding-right: calc(.75em - 1px);
         position: relative;
-        vertical-align: center;
     }
 
     .pointer {

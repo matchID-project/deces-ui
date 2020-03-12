@@ -1,4 +1,15 @@
 import { writable } from 'svelte/store';
+import {
+    dateRangeTypingMask,
+    dateRangeValidationMask,
+    dateRangeTransformMask
+} from './masks.js';
+import {
+    prefixQuery,
+    dateRangeStringQuery,
+    fuzzyTermQuery,
+    matchQuery
+} from './queries.js'
 
 export const searchInput = writable({
     fullText: {
@@ -6,30 +17,34 @@ export const searchInput = writable({
         url: "q",
         value: "",
         field: "fullText",
-        placeholder: "prénom, nom, date de naissance ou de décès, ... e.g. Georges Pompidou",
+        placeholder: "nom, prénom, date de naissance ou de décès, ... e.g. Pompidou Georges",
         title: "saisissez en recherche libre nom, prénom, date de naissance ou de décès",
         size: 12,
-        active: true,
-    },
-    firstName: {
-        path: "name",
-        url: "fn",
-        value: "",
-        section:"prénoms/nom",
-        field: "PRENOM",
-        placeholder: "Georges",
-        title: "saisissez le prénom",
-        size: 4,
         active: true,
     },
     lastName: {
         path: "name",
         url: "ln",
         value: "",
+        section:"prénoms/nom",
         field: "NOM",
+        query: fuzzyTermQuery,
+        fuzzy: "auto",
         placeholder: "Pompidou",
         title: "saisissez le nom",
         size: 6,
+        active: true,
+    },
+    firstName: {
+        path: "name",
+        url: "fn",
+        value: "",
+        field: "PRENOM",
+        query: fuzzyTermQuery,
+        fuzzy: "auto",
+        placeholder: "Georges",
+        title: "saisissez le prénom",
+        size: 4,
         active: true,
     },
     birthDate: {
@@ -38,11 +53,18 @@ export const searchInput = writable({
         before: "le",
         section:"naissance",
         value: "",
-        field: "ANNEE_NAISSANCE",
-        placeholder: "05/07/1911",
-        title:"saisissez la date de naissance",
+        field: "DATE_NAISSANCE",
+        placeholder: "1910-1912 ou 1911 ou 05/07/1911",
+        query: dateRangeStringQuery,
+        fuzzy: "auto",
+        title:"saisissez la date de naissance: 05/07/1911 ou 1911 ou un intervalle : 1909-1915, 01/01/1911-01/09/1911",
+        mask: {
+            typing: dateRangeTypingMask,
+            validation: dateRangeValidationMask,
+            transform: dateRangeTransformMask
+        },
         size: 2,
-        active: false,
+        active: true
     },
     birthYear: {
         path: "birth.date",
@@ -51,32 +73,24 @@ export const searchInput = writable({
         section:"naissance",
         value: "",
         field: "DATE_NAISSANCE",
-        query: "prefix",
+        query: prefixQuery,
         placeholder: "1911",
+        fuzzy: false,
         title:"saisissez l'année de naissance",
         size: "1-5",
-        active: true,
+        active: false,
     },
-    // birthYearRange: {
-    //     path: "birth.date",
-    //     url: "byr",
-    //     before: ["entre", "et"],
-    //     section:"naissance",
-    //     value: ["", ""],
-    //     field: "ANNEE_NAISSANCE",
-    //     placeholder: ["1910", "1920"],
-    //     size: 1,
-    //     active: false,
-    // },
     birthCity: {
         path: "birth.location",
         url: "bc",
         before: "à",
         value: "",
         field: "COMMUNE_NAISSANCE",
+        query: fuzzyTermQuery,
+        fuzzy: "auto",
         placeholder: "commune: Montboudif",
         title:"saisissez la commune de naissance",
-        size: 4,
+        size: "3-5",
         active: true,
     },
     birthDepartment: {
@@ -84,8 +98,9 @@ export const searchInput = writable({
         url: "bdep",
         before: "dans le",
         value: "",
-        query: "match",
         field: "DEPARTEMENT_NAISSANCE",
+        query: matchQuery,
+        fuzzy: false,
         placeholder: "dépt: 15",
         title:"saisissez le département de naissance",
         size: "1-5",
@@ -97,6 +112,8 @@ export const searchInput = writable({
         before: "en/au",
         value: "",
         field: "PAYS_NAISSANCE",
+        query: fuzzyTermQuery,
+        fuzzy: "auto",
         title:"saisissez le pays de naissance",
         placeholder: "pays: France",
         size: 3,
@@ -105,14 +122,24 @@ export const searchInput = writable({
     deathDate: {
         path: "death.date",
         url: "dd",
-        section:"décès",
         before: "le",
+        section:"décès",
         value: "",
         field: "DATE_DECES",
-        title:"recherche par date de décès bientôt disponible",
-        placeholder: "05/07/1911",
-        size: 1,
-        active: false,
+        query: dateRangeStringQuery,
+        fuzzy: "auto",
+        placeholder: "1970-1980 ou 1974 ou 04/02/1974",
+        query: dateRangeStringQuery,
+        fuzzy: "auto",
+        multiQuery: "range",
+        title:"saisissez la date de décès: 04/02/1974 ou 1974 ou un intervalle : 1970-1980 ou 01/01/1974-01/06/1974",
+        mask: {
+            typing: dateRangeTypingMask,
+            validation: dateRangeValidationMask,
+            transform: dateRangeTransformMask
+        },
+        size: 2,
+        active: true,
     },
     deathYear: {
         path: "death.date",
@@ -121,31 +148,23 @@ export const searchInput = writable({
         before: "en",
         value: "",
         field: "DATE_DECES",
-        query: "prefix",
+        query: prefixQuery,
+        fuzzy: false,
         placeholder: "1974",
         size: "1-5",
-        active: true
+        active: false
     },
-    // deathYearRange: {
-    //     path: "death.date",
-    //     url: "dyr",
-    //     section:"décès",
-    //     before: ["entre", "et"],
-    //     value: ["", ""],
-    //     field: "DATE_DECES",
-    //     placeholder: ["1911", "1974"],
-    //     size: 1,
-    //     active: false,
-    // },
     deathCity: {
         path: "death.location",
         url: "dc",
         before: "à",
         value: "",
         field: "COMMUNE_DECES",
+        query: fuzzyTermQuery,
+        fuzzy: "auto",
         title:"saisissez la commune de décès",
         placeholder: "commune: Paris",
-        size: 4,
+        size: "3-5",
         active: true,
     },
     deathDepartment: {
@@ -154,7 +173,8 @@ export const searchInput = writable({
         before: "dans le",
         value: "",
         field: "DEPARTEMENT_DECES",
-        query: "match",
+        query: matchQuery,
+        fuzzy: false,
         placeholder: "dépt: 75",
         title:"saisissez le département de décès",
         size: "1-5",
@@ -166,6 +186,8 @@ export const searchInput = writable({
         before: "en/au",
         value: "",
         field: "PAYS_DECES",
+        query: fuzzyTermQuery,
+        fuzzy: "auto",
         placeholder: "pays: France",
         title:"saisissez le pays de décès",
         size: 3,
@@ -252,7 +274,9 @@ export const searchCanvas = writable({
     }
 });
 
-export const cachedResponses = writable({})
+export const cachedResponses = writable({});
+
+export const waitSearch = writable(false);
 
 export const accordeonMode = writable(true);
 
@@ -261,6 +285,8 @@ export const autocompleteBypass = writable(true);
 export const autocompleteResults = writable([]);
 
 export const autocompleteMinLength = writable(2);
+
+export const fuzzySearch = writable(true);
 
 export const searchMinLength = writable(1);
 
