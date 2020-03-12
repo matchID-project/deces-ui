@@ -57,7 +57,7 @@ export const searchInput = writable({
         placeholder: "1910-1912",
         query: dateRangeStringQuery,
         fuzzy: "auto",
-        title:"saisissez la date de naissance: 05/07/1911 ou 1911 ou 1909-1915",
+        title:"saisissez la date de naissance: 05/07/1911 ou 1911 ou un intervalle : 1909-1915, 01/01/1911-01/09/1911",
         mask: {
             typing: dateRangeTypingMask,
             validation: dateRangeValidationMask,
@@ -132,7 +132,7 @@ export const searchInput = writable({
         query: dateRangeStringQuery,
         fuzzy: "auto",
         multiQuery: "range",
-        title:"saisissez la date de naissance: 04/02/1974 ou 1974 ou 1970-1980",
+        title:"saisissez la date de décès: 04/02/1974 ou 1974 ou un intervalle : 1970-1980 ou 01/01/1974-01/06/1974",
         mask: {
             typing: dateRangeTypingMask,
             validation: dateRangeValidationMask,
