@@ -3,7 +3,7 @@
 <script>
   import Layout from './components/views/Layout.svelte';
   import { searchInput, searchCanvas, current, resultsPerPage, updateURL, advancedSearch } from './components/tools/stores.js';
-  import { searchSubmit } from './components/tools/search.js';
+  import { searchSubmit, toggleFuzzySearch } from './components/tools/search.js';
   $: URLSearchSubmit(new URLSearchParams(location.search));
 
   $: element = document.getElementById('infoNotWorking')
@@ -17,7 +17,9 @@
 				const q = urlParams.get($searchInput[key].url)
 				if (q) { return [key, q] }
 			}).filter(x => x);
-
+			if ( urlParams.get('fuzzy') === 'false' ) {
+				toggleFuzzySearch();
+			}
 			if ( urlParams.get('advanced') === 'true' ) {
 				$advancedSearch = true;
 				searchCanvas.update(v => {

@@ -45,7 +45,7 @@ script:
       make deploy-remote FILES_TO_PROCESS=deces-1970.txt.gz GIT_BRANCH="$TRAVIS_BRANCH" NGINX_USER=$NGINX_USER NGINX_HOST=$NGINX_HOST remote_http_proxy=$REMOTE_HTTP_PROXY remote_https_proxy=$REMOTE_HTTP_PROXY remote_no_proxy=localhost NQ_TOKEN=$NQ_TOKEN;
     fi
   - if [[ ( "$TRAVIS_PULL_REQUEST" = "false" ) && ( "$TRAVIS_BRANCH" == "master" ) ]]; then
-      make deploy-remote GIT_BRANCH="$TRAVIS_BRANCH" ES_MEM=4096m SCW_IMAGE_ID=f974feac-abae-4365-b988-8ec7d1cec10d SCW_FLAVOR=C2S NGINX_USER=$NGINX_USER NGINX_HOST=$NGINX_HOST remote_http_proxy=$REMOTE_HTTP_PROXY remote_https_proxy=$REMOTE_HTTP_PROXY remote_no_proxy=localhost NQ_TOKEN=$NQ_TOKEN;
+      make deploy-remote GIT_BRANCH="$TRAVIS_BRANCH" ES_MEM=$ES_MEM SCW_IMAGE_ID=$SCW_IMAGE_ID SCW_FLAVOR=$SCW_FLAVOR NGINX_USER=$NGINX_USER NGINX_HOST=$NGINX_HOST remote_http_proxy=$REMOTE_HTTP_PROXY remote_https_proxy=$REMOTE_HTTP_PROXY remote_no_proxy=localhost NQ_TOKEN=$NQ_TOKEN;
     fi
 
 after_failure:
