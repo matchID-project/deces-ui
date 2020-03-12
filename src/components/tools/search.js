@@ -15,7 +15,8 @@ import {
     autocompleteMinLength,
     advancedSearch,
     wasSearched,
-    waitSearch
+    waitSearch,
+    fuzzySearch
 } from './stores.js'
 
 import buildRequest from "./buildRequest.js";
@@ -31,20 +32,22 @@ let myAutocompleteMinLength;
 let myAdvancedSearch;
 let mySearchMinLength;
 let myWaitSearch;
+let myFuzzySearch;
 
-const s = searchInput.subscribe((value) => { mySearchInput=value })
-const sc = searchCanvas.subscribe((value) => { mySearchCanvas=value })
-const sm = searchMinLength.subscribe((value) => { mySearchMinLength=value })
-const c = current.subscribe((value) => { myCurrent=value })
-const r = resultsPerPage.subscribe((value) => { myResultsPerPage=value })
-const a = autocompleteMinLength.subscribe((value) => { myAutocompleteMinLength=value })
-const av = advancedSearch.subscribe((value) => { myAdvancedSearch=value })
-const b = autocompleteBypass.subscribe((value) => { myAutocompleteBypass=value })
-const w = waitSearch.subscribe((value) => { myWaitSearch=value })
+const s = searchInput.subscribe((value) => { mySearchInput=value });
+const sc = searchCanvas.subscribe((value) => { mySearchCanvas=value });
+const sm = searchMinLength.subscribe((value) => { mySearchMinLength=value });
+const c = current.subscribe((value) => { myCurrent=value });
+const r = resultsPerPage.subscribe((value) => { myResultsPerPage=value });
+const a = autocompleteMinLength.subscribe((value) => { myAutocompleteMinLength=value });
+const av = advancedSearch.subscribe((value) => { myAdvancedSearch=value });
+const b = autocompleteBypass.subscribe((value) => { myAutocompleteBypass=value });
+const w = waitSearch.subscribe((value) => { myWaitSearch=value });
+const f = fuzzySearch.subscribe((value) => {myFuzzySearch = value});
 
 export const searchAutocompleteTrigger = (searchInput) => {
     return Object.keys(searchInput).some(key => searchInput[key].value.length >= myAutocompleteMinLength);
-}
+};
 
 export const searchTrigger = (searchInput) => {
     return Object.keys(searchInput).some(key => searchInput[key].value.length >= mySearchMinLength) &&
@@ -53,7 +56,7 @@ export const searchTrigger = (searchInput) => {
             ? searchInput[key].mask.validation(searchInput[key].value)
             : true
            )
-}
+};
 
 export const searchString = (searchInput) => {
     return Object.keys(searchInput).map(key => {
@@ -63,7 +66,7 @@ export const searchString = (searchInput) => {
             : `${searchInput[key].field}: ${searchInput[key].value}`
         }
       }).join(' ')
-}
+};
 
 export const search = async (searchInput, newCurrent) => {
     if (newCurrent) { current.update(v => newCurrent) }
@@ -72,7 +75,7 @@ export const search = async (searchInput, newCurrent) => {
     const json = await runRequest(requestBody);
     const state = buildState(json, myResultsPerPage);
     return state;
-}
+};
 
 export const searchSubmit = async (newCurrent) => {
     if (searchTrigger(mySearchInput) && (!myWaitSearch)) {
@@ -86,7 +89,7 @@ export const searchSubmit = async (newCurrent) => {
         wasSearched.update(v => searchString(mySearchInput));
         waitSearch.update( v => false);
     }
-}
+};
 
 export const searchURLUpdate = async () => {
     updateURL.update(v => true);
@@ -95,6 +98,11 @@ export const searchURLUpdate = async () => {
         params.set('advanced',true)
     } else {
         params.delete('advanced')
+    }
+    if (!myFuzzySearch) {
+        params.set('fuzzy',false)
+    } else {
+        params.delete('fuzzy')
     }
     Object.keys(mySearchInput).map(key => {
         if (mySearchInput[key].value !== "") {
@@ -115,7 +123,7 @@ export const searchURLUpdate = async () => {
         window.history.replaceState({}, '', `${location.pathname}`);
     }
     updateURL.update(v => false);
-}
+};
 
 export const toggleAdvancedSearch = async () => {
     await searchCanvas.update(v => {
@@ -132,4 +140,20 @@ export const toggleAdvancedSearch = async () => {
     });
     await advancedSearch.update(v => Object.keys(mySearchCanvas).some(key => mySearchCanvas[key].active === mySearchCanvas[key].advanced))
     await searchURLUpdate();
-  }
+};
+
+export const toggleFuzzySearch = async () => {
+    await fuzzySearch.update(v => !v)
+    await searchInput.update(v => {
+        Object.keys(v).map(key => {
+          v[key].fuzzy = myFuzzySearch ? "auto" : false;
+        });
+        return v
+    });
+    searchSubmit();
+    searchURLUpdate();
+    gtag('event', 'button', {
+        event_category: 'recherche',
+        event_label: searchString($searchInput)
+      });
+};

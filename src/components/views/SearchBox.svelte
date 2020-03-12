@@ -25,7 +25,7 @@
             {#each inputsKeys as key}
               {#if isActive[key]}
                 {#if $searchInput[key].section}
-                  <span class="column is-size-5 is-2 is-mobile-fullwidth is-left">{$searchInput[key].section}</span>
+                  <span class="column is-size-5 is-2 is-mobile-fullwidth is-mobile-centered is-left">{$searchInput[key].section}</span>
                 {/if}
                 <input
                   autoComplete="off"
@@ -78,6 +78,19 @@
           </button>
         </div>
       {/if}
+      {#if $advancedSearch}
+        <div class="column is-12 is-size-5">
+          <div
+            class="field small-margin-mobile"
+            style="margin-bottom:-1rem!important;"
+            on:click|preventDefault={ toggleFuzzySearch }
+          >
+            <label for="switchRoundedInfo">recherche floue &nbsp;</label>
+            <input id="switchRoundedInfo" type="checkbox" name="switchRoundedInfo" class="switch is-rounded is-info is-unchecked-danger" bind:checked={$fuzzySearch}>
+            <label for="switchRoundedInfo"></label>
+          </div>
+        </div>
+      {/if}
     </form>
 </div>
 
@@ -85,8 +98,8 @@
 <script>
   import FontAwesomeIcon from './FontAwesomeIcon.svelte'
 
-  import { advancedSearch, searchInput, searchCanvas, autocompleteBypass, autocompleteResults, autocompleteDisplay, searchInputFocus, searchTyping } from '../tools/stores.js';
-  import { search, searchString, searchAutocompleteTrigger, searchSubmit, searchURLUpdate, toggleAdvancedSearch } from '../tools/search.js';
+  import { advancedSearch, searchInput, searchCanvas, autocompleteBypass, autocompleteResults, autocompleteDisplay, searchInputFocus, searchTyping, fuzzySearch } from '../tools/stores.js';
+  import { search, searchString, searchAutocompleteTrigger, searchSubmit, searchURLUpdate, toggleAdvancedSearch, toggleFuzzySearch } from '../tools/search.js';
   import Autocomplete from './Autocomplete.svelte';
 
   import {
@@ -204,6 +217,14 @@
     width: 100%;
   }
 
+  input[type="checkbox"], input[type="radio"] {
+      vertical-align: baseline;
+  }
+
+  button, input, select, textarea {
+      margin: 0;
+  }
+
   .container {
     flex-grow: 1;
     margin: 0 auto;
@@ -235,10 +256,6 @@
     flex-grow: 1;
     flex-shrink: 1;
     padding: .75rem;
-  }
-
-  .is-size-5 {
-    font-size: 1.25rem!important;
   }
 
   .button {
@@ -325,6 +342,10 @@
   }
 
   @media print,screen and (min-width:769px) {
+    .is-size-5 {
+      font-size: 1.25rem!important;
+    }
+
     .column.is-1 {
       flex: none;
       width: 8%;
@@ -336,6 +357,11 @@
     }
 
     .column.is-2 {
+      flex: none;
+      width: 17%;
+    }
+
+    .column.is-2-12 {
       flex: none;
       width: 17%;
     }
@@ -423,9 +449,37 @@
   }
 
   @media print,screen and (max-width:768px) {
+  .is-size-5 {
+    font-size: 1rem!important;
+  }
+
+  .info-footer {
+    color: #209cee;
+    z-index: 40;
+    width: 100%;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 5px;
+    background: rgba(255, 255, 255, 0.8);
+    border-top: solid 1px #209cee;
+    vertical-align: center;
+    justify-content: center;
+    display: inline-block;
+  }
+
     .small-margin-mobile {
       margin-top: 0.75rem!important;
       margin-bottom:-1rem!important;
+    }
+
+    [placeholder]{
+      text-align:center;
+    }
+
+    .is-mobile-centered {
+      text-align: center!important;
     }
 
     .is-hidden-mobile {
@@ -436,6 +490,7 @@
   .columns.is-mobile>.column.is-1-5,
   .columns.is-mobile>.column.is-2,
   .columns.is-mobile>.column.is-3,
+  .columns.is-mobile>.column.is-3-5,
   .columns.is-mobile>.column.is-4,
   .columns.is-mobile>.column.is-5,
   .columns.is-mobile>.column.is-6,
@@ -450,6 +505,7 @@
   .columns.is-mobile>.column.is-9,
   .columns.is-mobile>.column.is-10,
   .columns.is-mobile>.column.is-11,
+  .columns.is-mobile>.column.is-2-12,
   .columns.is-mobile>.column.is-12,
   .columns.is-mobile>.column.is-mobile-fullwidth
   {
@@ -470,6 +526,121 @@
   .is-danger {
     border: 3px solid hsl(348, 100%, 61%)!important;
     border-radius: 4px;
+  }
+
+  .field {
+    display: flex;
+    justify-content: center;
+  }
+
+  .switch[type="checkbox"] {
+    outline:0;
+    user-select:none;
+    display:inline-block;
+    position:absolute;
+    opacity:0;
+  }
+  .switch[type="checkbox"]:focus+label::before,
+  .switch[type="checkbox"]:focus+label:before,
+  .switch[type="checkbox"]:focus+label::after,
+  .switch[type="checkbox"]:focus+label:after {
+  outline:1px dotted #b5b5b5
+  }
+  .switch[type="checkbox"][disabled] {
+  cursor:not-allowed
+  }
+  .switch[type="checkbox"][disabled]+label {
+  opacity:0.5
+  }
+  .switch[type="checkbox"][disabled]+label::before,
+  .switch[type="checkbox"][disabled]+label:before {
+  opacity:0.5
+  }
+  .switch[type="checkbox"][disabled]+label::after,
+  .switch[type="checkbox"][disabled]+label:after {
+  opacity:0.5
+  }
+  .switch[type="checkbox"][disabled]+label:hover {
+  cursor:not-allowed
+  }
+  .switch[type="checkbox"]+label {
+  position:relative;
+  display:initial;
+  font-size:1rem;
+  line-height:initial;
+  padding-left:3.5rem;
+  padding-top:.2rem;
+  cursor:pointer
+  }
+  .switch[type="checkbox"]+label::before,
+  .switch[type="checkbox"]+label:before {
+  position:absolute;
+  display:block;
+  top:0;
+  left:0;
+  width:3rem;
+  height:1.5rem;
+  border:0.1rem solid transparent;
+  border-radius:4px;
+  background:#b5b5b5;
+  content:''
+  }
+  .switch[type="checkbox"]+label::after,
+  .switch[type="checkbox"]+label:after {
+  display:block;
+  position:absolute;
+  top:.25rem;
+  left:.25rem;
+  width:1rem;
+  height:1rem;
+  transform:translate3d(0, 0, 0);
+  border-radius:4px;
+  background:#fff;
+  transition:all 0.25s ease-out;
+  content:''
+  }
+  .switch[type="checkbox"]:checked+label::before,
+  .switch[type="checkbox"]:checked+label:before {
+  background:#00d1b2
+  }
+  .switch[type="checkbox"]:checked+label::after {
+  left:1.625rem
+  }
+  .switch[type="checkbox"].is-rounded+label::before,
+  .switch[type="checkbox"].is-rounded+label:before {
+  border-radius:24px
+  }
+  .switch[type="checkbox"].is-rounded+label::after,
+  .switch[type="checkbox"].is-rounded+label:after {
+  border-radius:50%
+  }
+
+  .switch[type="checkbox"].is-info:checked+label::before,
+  .switch[type="checkbox"].is-info:checked+label:before {
+  background:#209cee
+  }
+
+  .switch[type="checkbox"].is-unchecked-warning+label::before,
+  .switch[type="checkbox"].is-unchecked-warning+label:before {
+  background:#ffdd57
+  }
+
+  .switch[type="checkbox"].is-unchecked-danger+label::before,
+  .switch[type="checkbox"].is-unchecked-danger+label:before {
+  background:#ff3860
+  }
+  .switch[type="checkbox"].is-unchecked-danger.is-outlined+label::before,
+  .switch[type="checkbox"].is-unchecked-danger.is-outlined+label:before {
+  background-color:transparent;
+  border-color:#ff3860 !important
+  }
+  .switch[type="checkbox"].is-unchecked-danger.is-outlined+label::after,
+  .switch[type="checkbox"].is-unchecked-danger.is-outlined+label:after {
+  background:#ff3860
+  }
+
+  [placeholder]{
+      text-overflow:ellipsis;
   }
 
   *, ::after, ::before {

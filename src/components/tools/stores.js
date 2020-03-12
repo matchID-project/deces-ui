@@ -286,6 +286,8 @@ export const autocompleteResults = writable([]);
 
 export const autocompleteMinLength = writable(2);
 
+export const fuzzySearch = writable(true);
+
 export const searchMinLength = writable(1);
 
 export const advancedSearch = writable(false);
