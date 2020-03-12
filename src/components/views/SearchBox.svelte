@@ -93,7 +93,21 @@
       {/if}
     </form>
 </div>
-
+{#if infoDisplay}
+  <div
+    class="info-footer"
+    on:click={infoDisplay=false}
+  >
+      <p><FontAwesomeIcon icon={faQuestionCircle} class="is-lower"/></p>
+      <p>
+      {#each inputsKeys as key}
+        {#if $searchInputFocus[key] && $searchInputFocus[key].focus}
+          {$searchInput[key].title}
+        {/if}
+      {/each}
+      </p>
+  </div>
+{/if}
 
 <script>
   import FontAwesomeIcon from './FontAwesomeIcon.svelte'
@@ -104,7 +118,8 @@
 
   import {
       faMinus,
-      faPlus
+      faPlus,
+      faQuestionCircle
   } from '@fortawesome/free-solid-svg-icons';
 
   let gtag;
@@ -116,9 +131,12 @@
 
   let inputsKeys;
 
+  let infoDisplay;
+
   $: inputsKeys = Object.keys($searchInput)
 
-  $: $autocompleteDisplay=Object.keys($searchInputFocus).some(key => $searchInputFocus.focus);
+  $: $autocompleteDisplay=Object.keys($searchInputFocus).some(key => $searchInputFocus[key].focus);
+  $: infoDisplay=Object.keys($searchInputFocus).some(key => $searchInputFocus[key].focus);
 
   let isActive;
 
@@ -145,7 +163,7 @@
   const focusInput = (key, value) => {
     setTimeout(() => {
       searchInputFocus.update(v => {
-        v[key]=value;
+        v[key]={ focus : value };
         return v
       })
     }, 300);
@@ -515,6 +533,10 @@
   }
 
   @media print,screen and (min-width:769px) {
+    .info-footer {
+      display: none;
+    }
+
     .is-hidden-desktop {
       display: none;
     }
