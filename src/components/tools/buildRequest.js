@@ -325,7 +325,8 @@ export default function buildRequest(searchInput) {
       "NUM_DECES",
       "PAYS_DECES","PAYS_DECES_CODEISO3",
       "PAYS_NAISSANCE","PAYS_NAISSANCE_CODEISO3",
-      "SEXE","UID"],
+      "SEXE","UID",
+      "SOURCE"],
     // aggs: {
     //   COMMUNE_NAISSANCE: { terms: { field: "COMMUNE_NAISSANCE.keyword", size: 30 } },
     //   PAYS_NAISSANCE: {

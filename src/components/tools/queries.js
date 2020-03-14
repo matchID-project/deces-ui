@@ -42,6 +42,52 @@ export const fuzzyTermQuery = (field, value, fuzzy) => {
     }
 };
 
+export const firstNameQuery = (field, value, fuzzy) => {
+    if (fuzzy) {
+        return {
+            bool: {
+                must: [
+                    {
+                        match: {
+                            [field[1]]: {
+                                query: value,
+                                fuzziness: fuzzy
+                            }
+                        }
+                    }
+                ],
+                should: [
+                    {
+                        match: {
+                            [field[0]]: {
+                                query: value,
+                                boost: 4
+                            }
+                        }
+                    },
+                    {
+                        match: {
+                            [field[0]]: {
+                                query: value,
+                                fuzziness: fuzzy,
+                                boost: 2
+                            }
+                        }
+                    },
+                    {
+                        match: {
+                            [field[1]]: value
+                        }
+                    }
+                ]
+            }
+        };
+    } else {
+        return matchQuery(field[0], value, false);
+    }
+};
+
+
 export const dateRangeStringQuery = (field, value, fuzzy) => {
     if (Array.isArray(value) && (value.length === 2)) {
         let min = (value[0] <= value[1]) ? value[0] : value[1];

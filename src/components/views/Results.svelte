@@ -25,6 +25,8 @@
 {/if}
 
 <script>
+  import { onMount } from 'svelte';
+  import getDataGouvCatalog from '../tools/getDataGouvCatalog.js';
   import { searchResults, searchInput, autocompleteBypass } from '../tools/stores.js';
   import { searchTrigger } from '../tools/search.js';
   import ResultsHeader from './ResultsHeader.svelte';
@@ -32,6 +34,8 @@
   import Pagination from './Pagination.svelte';
   let adsbygoogle;
   $: (adsbygoogle = window.adsbygoogle || []).push({});
+  onMount(async () => { getDataGouvCatalog() });
+
 </script>
 
 <style>
