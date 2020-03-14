@@ -170,6 +170,18 @@
                                                 }
                                             </td>
                                         </tr>
+                                        <tr>
+                                            <td>Source INSEE</td>
+                                            <td>
+                                                {#if result.SOURCE && result.SOURCE.raw}
+                                                    <a target="_blank" href={$dataGouvCatalog[result.SOURCE.raw]}>
+                                                        fichier {result.SOURCE.raw}
+                                                    </a>
+                                                {:else}
+                                                    ND
+                                                {/if}
+                                            </td>
+                                        </tr>
                                     </tbody>
                                 </table>
                             </div>
@@ -183,8 +195,8 @@
 
 
 <script>
-    import { accordeonMode } from '../tools/stores.js'
-    import FontAwesomeIcon from './FontAwesomeIcon.svelte'
+    import { accordeonMode, dataGouvCatalog } from '../tools/stores.js';
+    import FontAwesomeIcon from './FontAwesomeIcon.svelte';
 
     import {
         faExclamationTriangle,

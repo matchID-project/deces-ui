@@ -7,6 +7,7 @@ import {
 import {
     prefixQuery,
     dateRangeStringQuery,
+    firstNameQuery,
     fuzzyTermQuery,
     matchQuery
 } from './queries.js'
@@ -26,7 +27,7 @@ export const searchInput = writable({
         path: "name",
         url: "ln",
         value: "",
-        section:"prénoms/nom",
+        section:"nom/prénoms",
         field: "NOM",
         query: fuzzyTermQuery,
         fuzzy: "auto",
@@ -39,8 +40,8 @@ export const searchInput = writable({
         path: "name",
         url: "fn",
         value: "",
-        field: "PRENOM",
-        query: fuzzyTermQuery,
+        field: ["PRENOM","PRENOMS"],
+        query: firstNameQuery,
         fuzzy: "auto",
         placeholder: "Georges",
         title: "saisissez le prénom",
@@ -371,3 +372,5 @@ export const sortInput = writable([
 ])
 
 export const sortInputDisplay = writable(false)
+
+export const dataGouvCatalog = writable(null)
