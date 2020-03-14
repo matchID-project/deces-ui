@@ -27,7 +27,7 @@ export const searchInput = writable({
         path: "name",
         url: "ln",
         value: "",
-        section:"prénoms/nom",
+        section:"nom/prénoms",
         field: "NOM",
         query: fuzzyTermQuery,
         fuzzy: "auto",
