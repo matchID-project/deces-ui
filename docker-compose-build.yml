@@ -27,6 +27,9 @@ services:
       - APP
       - PORT
       - ES_PROXY_PATH
+      - DATAGOUV_PROXY_PATH
+      - DATAGOUV_CATALOG_URL
+      - DATAGOUV_RESOURCES_URL
 
 
 

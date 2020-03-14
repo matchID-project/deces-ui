@@ -23,7 +23,11 @@ services:
       - ES_HOST
       - ES_INDEX
       - ES_PORT
+      - DATAGOUV_PROXY_PATH
+      - DATAGOUV_RESOURCES_HOST
+      - DATAGOUV_RESOURCES_PATH
       - API_USER_LIMIT_RATE
+      - API_DOWNLOAD_LIMIT_RATE
       - API_USER_BURST
       - API_USER_SCOPE
       - API_GLOBAL_LIMIT_RATE
@@ -64,6 +68,9 @@ services:
       PORT: ${FRONTEND_DEV_PORT}
       HOST: 0.0.0.0
       ES_PROXY_PATH: ${ES_PROXY_PATH}
+      DATAGOUV_PROXY_PATH: ${DATAGOUV_PROXY_PATH}
+      DATAGOUV_CATALOG_URL: ${DATAGOUV_CATALOG_URL}
+      DATAGOUV_RESOURCES_URL: ${DATAGOUV_RESOURCES_URL}
     volumes:
       - ${FRONTEND}/public:/${APP}/public
       - ${FRONTEND}/.eslintrc.js:/${APP}/.eslintrc.js
