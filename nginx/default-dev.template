@@ -57,8 +57,8 @@ server {
       return 405;
     }
     limit_req zone=download;
-    rewrite "^<DATAGOUV_PROXY_PATH>/?(.*)?$" /<DATAGOUV_RESOURCES_PATH>/$1 break;
-    proxy_pass <DATAGOUV_RESOURCES_HOST>;
+    rewrite "^<DATAGOUV_PROXY_PATH>/?(.*)?$" /<DATAGOUV_RESOURCES_REWRITE_PATH>/$1 break;
+    proxy_pass <DATAGOUV_RESOURCES_PROXY>;
     proxy_redirect off;
     proxy_buffering off;
     proxy_http_version 1.1;
