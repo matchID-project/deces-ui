@@ -371,3 +371,5 @@ export const sortInput = writable([
 ])
 
 export const sortInputDisplay = writable(false)
+
+export const dataGouvCatalog = writable(null)
