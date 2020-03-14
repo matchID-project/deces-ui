@@ -29,6 +29,9 @@ export default {
 			// you're right, you shouldn't be injecting this
 			// into a client script :)
 			__ES_PROXY_PATH__: process.env.ES_PROXY_PATH,
+			__DATAGOUV_PROXY_PATH__ : process.env.DATAGOUV_PROXY_PATH,
+			__DATAGOUV_CATALOG_URL__: process.env.DATAGOUV_CATALOG_URL,
+			__DATAGOUV_RESOURCES_URL__: process.env.DATAGOUV_RESOURCES_URL,
 			__APP__: process.env.APP,
 			__APP_VERSION__: process.env.APP_VERSION
 		  }),

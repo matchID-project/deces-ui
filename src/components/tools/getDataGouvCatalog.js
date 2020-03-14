@@ -4,15 +4,18 @@ let myDataGouvCatalog;
 
 let c = dataGouvCatalog.subscribe((value) => { myDataGouvCatalog = value });
 
-const apiDataGouvURL = 'https://www.data.gouv.fr/api/1/datasets';
-const dataset = 'fichier-des-personnes-decedees';
-const regexCatch = [/deces-(.*).txt/,'$1'];
+const dataGouvCatalogURL = '__DATAGOUV_CATALOG_URL__';
+const dataGouvRewrite = {
+    title: [/deces-(.*).txt/,'$1'],
+    url: ['__DATAGOUV_RESOURCES_URL__', '__DATAGOUV_PROXY_PATH__']
+};
+
 
 export default async function getDataGouvCatalog() {
     if (myDataGouvCatalog) {
       return myDataGouvCatalog;
     }
-    const response = await fetch(`${apiDataGouvURL}/${dataset}/`, {
+    const response = await fetch(dataGouvCatalogURL, {
       method: "GET"
     });
     if (response.status >= 300) {
@@ -20,12 +23,12 @@ export default async function getDataGouvCatalog() {
     } else {
         let json = await response.json();
         let resources = json.resources;
-        console.log(resources);
         if (resources) {
             let catalog = {};
             resources.map(r => {
                 if (r.url && r.title) {
-                    catalog[r.title.replace(regexCatch[0],regexCatch[1])] = r.url
+                    console.log(dataGouvRewrite)
+                    catalog[r.title.replace(dataGouvRewrite.title[0],dataGouvRewrite.title[1])] = r.url.replace(dataGouvRewrite.url[0], dataGouvRewrite.url[1])
                 }
             });
             await dataGouvCatalog.update(v => catalog);

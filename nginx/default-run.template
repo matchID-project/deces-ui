@@ -26,4 +26,16 @@ server {
     proxy_http_version 1.1;
   }
 
+  location ~ "^<DATAGOUV_PROXY_PATH>.*" {
+    if ($request_method != GET) {
+      return 405;
+    }
+    limit_req zone=download;
+    rewrite "^<DATAGOUV_PROXY_PATH>/?(.*)?$" /<DATAGOUV_RESOURCES_PATH>/$1 break;
+    proxy_pass <DATAGOUV_RESOURCES_HOST>;
+    proxy_redirect off;
+    proxy_buffering off;
+    proxy_http_version 1.1;
+  }
+
 }

@@ -14,6 +14,7 @@ export PORT=8083
 
 #base paths
 export APP = deces-ui
+export DATASET=fichier-des-personnes-decedees
 export APP_GROUP = matchID
 export APP_PATH := $(shell pwd)
 export APP_DNS=deces.matchid.io
@@ -23,6 +24,7 @@ export FRONTEND_DEV_PORT = ${PORT}
 export NGINX = ${APP_PATH}/nginx
 export NGINX_TIMEOUT = 30
 export API_USER_LIMIT_RATE=1r/s
+export API_DOWNLOAD_LIMIT_RATE=30r/m
 export API_USER_BURST=20 nodelay
 export API_USER_SCOPE=http_x_forwarded_for
 export API_GLOBAL_LIMIT_RATE=20r/s
@@ -49,6 +51,13 @@ export GIT_TOOLS = tools
 # backup dir
 export BACKUP_DIR = ${APP_PATH}/backup
 
+# datagouv paths for downloading files
+export DATAGOUV_PROXY_PATH = /${API_PATH}/api/v0/getDataGouvFile
+export DATAGOUV_CATALOG_URL = https://www.data.gouv.fr/api/1/datasets/${DATASET}/
+export DATAGOUV_RESOURCES_HOST = https://static.data.gouv.fr
+export DATAGOUV_RESOURCES_PATH = resources/${DATASET}
+export DATAGOUV_RESOURCES_URL = ${DATAGOUV_RESOURCES_HOST}/${DATAGOUV_RESOURCES_PATH}
+
 # elasticsearch defaut configuration
 export ES_HOST = elasticsearch
 export ES_PORT = 9200
@@ -73,7 +82,7 @@ vm_max_count            := $(shell cat /etc/sysctl.conf | egrep vm.max_map_count
 # to use within matchid backend, you have to add credential as env variables and declare configuration in a s3 connector
 # 	export aws_access_key_id=XXXXXXXXXXXXXXXXX
 # 	export aws_secret_access_key=XXXXXXXXXXXXXXXXXXXXXXXXXXX
-export S3_BUCKET=fichier-des-personnes-decedees
+export S3_BUCKET=${DATASET}
 export AWS=${APP_PATH}/aws
 
 dummy		    := $(shell touch artifacts)
