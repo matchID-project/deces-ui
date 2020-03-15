@@ -369,8 +369,10 @@ export const sortInput = writable([
         label: "décès: pays",
         field: "PAYS_DECES.raw",
     }
-])
+]);
 
-export const sortInputDisplay = writable(false)
+export const sortInputDisplay = writable(false);
 
-export const dataGouvCatalog = writable(null)
+export const dataGouvCatalog = writable(null);
+
+export const infoDisplayOption = writable(false);

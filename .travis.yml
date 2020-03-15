@@ -36,7 +36,8 @@ before_script:
 
 script:
   - git fetch && git describe --tags
-  - make config build
+  - make config
+  - make docker-check || make build
   - if [[ ( "$TRAVIS_BRANCH" == "dev" ) || ( "$TRAVIS_BRANCH" == "master" ) ]]; then
       make docker-push GIT_BRANCH="$TRAVIS_BRANCH";
       make deploy-local FILES_TO_PROCESS=deces-1970.txt.gz;
