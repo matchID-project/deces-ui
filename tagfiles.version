@@ -1,0 +1,13 @@
+docker-compose-build.yml
+docker-compose-dev.yml
+docker-compose-elasticsearch-huge.yml
+docker-compose-elasticsearch.yml
+docker-compose.yml
+Dockerfile
+Makefile
+nginx
+package.json
+public
+rollup.config.js
+src
+tagfiles.version
