@@ -174,7 +174,7 @@
                                             <td>Source INSEE</td>
                                             <td>
                                                 {#if result.SOURCE && result.SOURCE.raw}
-                                                    <a href={$dataGouvCatalog[result.SOURCE.raw]} target="_blank" download>
+                                                    <a href={$dataGouvCatalog[result.SOURCE.raw]} target="_blank">
                                                         fichier {result.SOURCE.raw}
                                                     </a>
                                                 {:else}
