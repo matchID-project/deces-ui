@@ -21,12 +21,11 @@ services:
         NPM_GIT: ${NPM_GIT}
         NPM_VERBOSE: ${NPM_VERBOSE}
         ES_PROXY_PATH: ${ES_PROXY_PATH}
+        DATAGOUV_PROXY_PATH: ${DATAGOUV_PROXY_PATH}
+        DATAGOUV_CATALOG_URL: ${DATAGOUV_CATALOG_URL}
+        DATAGOUV_RESOURCES_URL: ${DATAGOUV_RESOURCES_URL} 
     image: ${DOCKER_USERNAME}/${DC_PREFIX}-frontend-build:${APP_VERSION}
     container_name: ${DC_PREFIX}-frontend-build
-    environment:
-      - APP
-      - PORT
-      - ES_PROXY_PATH
 
 
 
