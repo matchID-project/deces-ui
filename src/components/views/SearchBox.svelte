@@ -112,7 +112,7 @@
 <script>
   import FontAwesomeIcon from './FontAwesomeIcon.svelte'
 
-  import { advancedSearch, searchInput, searchCanvas, autocompleteBypass, autocompleteResults, autocompleteDisplay, searchInputFocus, searchTyping, fuzzySearch } from '../tools/stores.js';
+  import { advancedSearch, searchInput, searchCanvas, autocompleteBypass, infoDisplayOption, autocompleteResults, autocompleteDisplay, searchInputFocus, searchTyping, fuzzySearch } from '../tools/stores.js';
   import { search, searchString, searchAutocompleteTrigger, searchSubmit, searchURLUpdate, toggleAdvancedSearch, toggleFuzzySearch } from '../tools/search.js';
   import Autocomplete from './Autocomplete.svelte';
 
@@ -136,7 +136,7 @@
   $: inputsKeys = Object.keys($searchInput)
 
   $: $autocompleteDisplay=Object.keys($searchInputFocus).some(key => $searchInputFocus[key].focus);
-  $: infoDisplay=Object.keys($searchInputFocus).some(key => $searchInputFocus[key].focus);
+  $: infoDisplay=$infoDisplayOption && Object.keys($searchInputFocus).some(key => $searchInputFocus[key].focus);
 
   let isActive;
 
