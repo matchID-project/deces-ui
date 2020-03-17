@@ -170,10 +170,13 @@ network-stop:
 network: config
 	@docker network create ${DC_NETWORK_OPT} ${DC_NETWORK} 2> /dev/null; true
 
-backend:
-	@echo Cloning backend
+backend-config:
 	@git clone https://github.com/matchID-project/deces-backend backend
+
+backend-dev:
 	@make -C backend dev
+
+backend: backend-config backend-dev
 
 frontend-update:
 	@cd ${FRONTEND}; git pull ${GIT_ORIGIN} ${GIT_BRANCH}
