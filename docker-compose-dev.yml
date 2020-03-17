@@ -19,6 +19,9 @@ services:
       - APP
       - FRONTEND_DEV_HOST
       - FRONTEND_DEV_PORT
+      - BACKEND_PROXY_PATH
+      - BACKEND_PORT
+      - BACKEND_DEV_HOST
       - ES_PROXY_PATH
       - ES_HOST
       - ES_INDEX
