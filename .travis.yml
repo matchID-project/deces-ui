@@ -26,13 +26,15 @@ before_script:
   - uname -a
   - type -a docker-compose && docker-compose version
   - docker version
-  - echo "$SSHENC" | base64 -d | gpg -d --passphrase $SSHPWD --batch > /tmp/id_rsa_matchID
-  - eval "$(ssh-agent -s)"
-  - chmod 600 /tmp/id_rsa_matchID
-  - ssh-add /tmp/id_rsa_matchID
-  - echo "Host * !""$BASTION_HOST" > ~/.ssh/config
-  - echo "   ProxyCommand ssh -o StrictHostKeyChecking=no $BASTION_USER@$BASTION_HOST nc %h %p" >> ~/.ssh/config
-  - cat ~/.ssh/config
+  - if [[ ( "$TRAVIS_PULL_REQUEST" = "false" ) && ( ( "$TRAVIS_BRANCH" == "dev" ) || ( "$TRAVIS_BRANCH" == "master" ) ) ]]; then
+      echo "$SSHENC" | base64 -d | gpg -d --passphrase $SSHPWD --batch > /tmp/id_rsa_matchID;
+      eval "$(ssh-agent -s)";
+      chmod 600 /tmp/id_rsa_matchID;
+      ssh-add /tmp/id_rsa_matchID;
+      echo "Host * !""$BASTION_HOST" > ~/.ssh/config;
+      echo "   ProxyCommand ssh -o StrictHostKeyChecking=no $BASTION_USER@$BASTION_HOST nc %h %p" >> ~/.ssh/config;
+      cat ~/.ssh/config;
+    fi
 
 script:
   - git fetch && git describe --tags
