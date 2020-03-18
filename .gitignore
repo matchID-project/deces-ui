@@ -5,6 +5,7 @@ dist
 dist-build
 personnes-decedees-search-ui-*
 personnes-decedees_search
+deces-backend
 docker-compose-elasticsearch-huge.yml
 backup
 esdata

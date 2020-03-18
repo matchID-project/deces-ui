@@ -51,6 +51,7 @@ export GIT_ORIGIN=origin
 export GIT_BRANCH := $(shell git branch | grep '*' | awk '{print $$2}')
 export GIT_BRANCH_MASTER=master
 export GIT_DATAPREP = deces-dataprep
+export GIT_BACKEND = deces-backend
 export GIT_ROOT = https://github.com/matchid-project
 export GIT_TOOLS = tools
 
@@ -174,10 +175,11 @@ network: config
 	@docker network create ${DC_NETWORK_OPT} ${DC_NETWORK} 2> /dev/null; true
 
 backend-config:
-	@git clone https://github.com/matchID-project/deces-backend backend
+	@git clone ${GIT_ROOT}/${GIT_BACKEND}
 
 backend-dev:
-	@make -C backend dev
+	@echo docker-compose up backend dev
+	@make -C ${GIT_BACKEND} backend-dev DC_NETWORK=${DC_NETWORK}
 
 backend: backend-config backend-dev
 
