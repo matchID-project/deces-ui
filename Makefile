@@ -9,6 +9,9 @@ SHELL=/bin/bash
 
 export USE_TTY := $(shell test -t 1 && USE_TTY="-t")
 
+#npm fix while minimist failure not updated in rollup-plugin-livereload
+export NPM_FIX=true
+
 #search-ui
 export PORT=8083
 
