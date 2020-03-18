@@ -24,6 +24,9 @@ export APP_DNS=deces.matchid.io
 export FRONTEND := ${APP_PATH}
 export FRONTEND_DEV_HOST = frontend-development
 export FRONTEND_DEV_PORT = ${PORT}
+export BACKEND_PORT=8080
+export BACKEND_DEV_HOST=backend
+export BACKEND_PROXY_PATH=/api/v0
 export NGINX = ${APP_PATH}/nginx
 export NGINX_TIMEOUT = 30
 export API_USER_LIMIT_RATE=1r/s
@@ -48,6 +51,7 @@ export GIT_ORIGIN=origin
 export GIT_BRANCH := $(shell git branch | grep '*' | awk '{print $$2}')
 export GIT_BRANCH_MASTER=master
 export GIT_DATAPREP = deces-dataprep
+export GIT_BACKEND = deces-backend
 export GIT_ROOT = https://github.com/matchid-project
 export GIT_TOOLS = tools
 
@@ -169,6 +173,15 @@ network-stop:
 
 network: config
 	@docker network create ${DC_NETWORK_OPT} ${DC_NETWORK} 2> /dev/null; true
+
+backend-config:
+	@git clone ${GIT_ROOT}/${GIT_BACKEND}
+
+backend-dev:
+	@echo docker-compose up backend dev
+	@make -C ${GIT_BACKEND} backend-dev DC_NETWORK=${DC_NETWORK}
+
+backend: backend-config backend-dev
 
 frontend-update:
 	@cd ${FRONTEND}; git pull ${GIT_ORIGIN} ${GIT_BRANCH}
