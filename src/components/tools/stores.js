@@ -130,8 +130,6 @@ export const searchInput = writable({
         query: dateRangeStringQuery,
         fuzzy: "auto",
         placeholder: "1970-1980 ou 1974 ou 04/02/1974",
-        query: dateRangeStringQuery,
-        fuzzy: "auto",
         multiQuery: "range",
         title:"saisissez la date de décès: 04/02/1974 ou 1974 ou un intervalle : 1970-1980 ou 01/01/1974-01/06/1974",
         mask: {
