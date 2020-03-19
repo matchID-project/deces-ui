@@ -210,7 +210,7 @@ frontend-dev-stop:
 
 dev: network frontend-stop elasticsearch backend-dev frontend-dev
 
-dev-stop: frontend-dev-stop
+dev-stop: frontend-dev-stop backend-dev-stop elasticsearch-stop
 
 build: frontend-build nginx-build
 
