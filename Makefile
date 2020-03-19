@@ -201,7 +201,7 @@ endif
 frontend-dev-stop:
 	${DC} -f ${DC_FILE}-dev.yml down
 
-dev: network frontend-stop frontend-dev
+dev: network frontend-stop elasticsearch frontend-dev backend-dev
 
 dev-stop: frontend-dev-stop
 
