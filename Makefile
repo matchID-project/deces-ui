@@ -181,6 +181,9 @@ backend-dev:
 	@echo docker-compose up backend dev
 	@make -C ${GIT_BACKEND} backend-dev DC_NETWORK=${DC_NETWORK}
 
+backend-dev-stop:
+	@make -C ${GIT_BACKEND} backend-dev-stop DC_NETWORK=${DC_NETWORK}
+
 backend: backend-config backend-dev
 
 frontend-update:
@@ -201,7 +204,7 @@ endif
 frontend-dev-stop:
 	${DC} -f ${DC_FILE}-dev.yml down
 
-dev: network frontend-stop elasticsearch frontend-dev backend-dev
+dev: network frontend-stop elasticsearch backend-dev frontend-dev
 
 dev-stop: frontend-dev-stop
 
