@@ -15,6 +15,10 @@ export NPM_FIX=true
 #search-ui
 export PORT=8083
 
+#AB-switch (in percent)
+#currently used for backend / no backend test
+export AB_THRESHOLD=10
+
 #base paths
 export APP = deces-ui
 export DATASET=fichier-des-personnes-decedees
@@ -25,7 +29,7 @@ export FRONTEND := ${APP_PATH}
 export FRONTEND_DEV_HOST = frontend-development
 export FRONTEND_DEV_PORT = ${PORT}
 export BACKEND_PORT=8080
-export BACKEND_DEV_HOST=backend
+export BACKEND_HOST=backend
 export BACKEND_PROXY_PATH=/api/v0
 export NGINX = ${APP_PATH}/nginx
 export NGINX_TIMEOUT = 30
@@ -181,6 +185,9 @@ backend-dev:
 	@echo docker-compose up backend dev
 	@make -C ${GIT_BACKEND} backend-dev DC_NETWORK=${DC_NETWORK}
 
+backend-dev-stop:
+	@make -C ${GIT_BACKEND} backend-dev-stop DC_NETWORK=${DC_NETWORK}
+
 backend: backend-config backend-dev
 
 frontend-update:
@@ -201,9 +208,9 @@ endif
 frontend-dev-stop:
 	${DC} -f ${DC_FILE}-dev.yml down
 
-dev: network frontend-stop frontend-dev
+dev: network frontend-stop elasticsearch backend-dev frontend-dev
 
-dev-stop: frontend-dev-stop
+dev-stop: frontend-dev-stop backend-dev-stop elasticsearch-stop
 
 build: frontend-build nginx-build
 
