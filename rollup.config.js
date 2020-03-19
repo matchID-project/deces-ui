@@ -28,6 +28,7 @@ export default {
 		replace({
 			// you're right, you shouldn't be injecting this
 			// into a client script :)
+			__AB_THRESHOLD__: process.env.AB_THRESHOLD,
 			__ES_PROXY_PATH__: process.env.ES_PROXY_PATH,
 			__BACKEND_PROXY_PATH__: process.env.BACKEND_PROXY_PATH,
 			__DATAGOUV_PROXY_PATH__ : process.env.DATAGOUV_PROXY_PATH,

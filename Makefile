@@ -15,6 +15,10 @@ export NPM_FIX=true
 #search-ui
 export PORT=8083
 
+#AB-switch (in percent)
+#currently used for backend / no backend test
+export AB_THRESHOLD=10
+
 #base paths
 export APP = deces-ui
 export DATASET=fichier-des-personnes-decedees
