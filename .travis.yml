@@ -54,8 +54,8 @@ script:
 after_failure:
   - make clean
   - if [[ ( "$TRAVIS_PULL_REQUEST" = "false" ) && (( "$TRAVIS_BRANCH" == "dev" ) || ( "$TRAVIS_BRANCH" == "master" ))]]; then
-    make clean-remote;
-  fi
+      make clean-remote;
+    fi
 
 after_success:
   - make clean-local
