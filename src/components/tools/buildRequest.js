@@ -305,7 +305,7 @@ export default function buildRequest(searchInput) {
   let body;
   if (myApiVersion === 'backend') {
     body = {
-      // fuzzy: myFuzzySearch, // wait for backend fix
+      fuzzy: `${myFuzzySearch}`,
       page: myCurrent,
       size: myResultsPerPage
     };

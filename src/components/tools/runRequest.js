@@ -12,7 +12,7 @@ const apiPath = () => {
 }
 
 export default async function runRequest(body) {
-  console.log(`AB_THRESHOLD=__AB_THRESHOLD__ runRequest to ${myApiVersion,JSON.stringify(body)});
+  console.log(`AB_THRESHOLD=__AB_THRESHOLD__ runRequest to ${myApiVersion} ${JSON.stringify(body)}`);
   let hash = sum(body);
   if (myCachedResponses[hash]) {
     return myCachedResponses[hash];
