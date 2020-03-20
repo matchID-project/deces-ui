@@ -27,12 +27,10 @@ export default async function getDataGouvCatalog() {
             let catalog = {};
             resources.map(r => {
                 if (r.url && r.title) {
-                    console.log(dataGouvRewrite)
                     catalog[r.title.replace(dataGouvRewrite.title[0],dataGouvRewrite.title[1])] = r.url.replace(dataGouvRewrite.url[0], dataGouvRewrite.url[1])
                 }
             });
             await dataGouvCatalog.update(v => catalog);
-            console.log(myDataGouvCatalog);
             return myDataGouvCatalog;
         } else {
             return null;
