@@ -10,6 +10,10 @@ upstream frontend-dev-reload {
   server <FRONTEND_DEV_HOST>:35729;
 }
 
+upstream backend {
+  server <BACKEND_HOST>:<BACKEND_PORT>;
+}
+
 server {
   listen 80 default_server;
   listen 35729;
@@ -62,6 +66,16 @@ server {
     proxy_redirect off;
     proxy_buffering off;
     proxy_http_version 1.1;
+  }
+
+  location ~ "^<BACKEND_PROXY_PATH>.*" {
+    proxy_pass http://backend;
+    # Allow protocol upgrade to websocket
+    proxy_http_version 1.1;
+    proxy_next_upstream off;
+    proxy_set_header Host $http_host;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection "upgrade";
   }
 
 }

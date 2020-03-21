@@ -16,7 +16,8 @@ import {
     advancedSearch,
     wasSearched,
     waitSearch,
-    fuzzySearch
+    fuzzySearch,
+    apiVersion
 } from './stores.js'
 
 import buildRequest from "./buildRequest.js";
@@ -33,6 +34,7 @@ let myAdvancedSearch;
 let mySearchMinLength;
 let myWaitSearch;
 let myFuzzySearch;
+let myApiVersion;
 
 const s = searchInput.subscribe((value) => { mySearchInput=value });
 const sc = searchCanvas.subscribe((value) => { mySearchCanvas=value });
@@ -44,6 +46,7 @@ const av = advancedSearch.subscribe((value) => { myAdvancedSearch=value });
 const b = autocompleteBypass.subscribe((value) => { myAutocompleteBypass=value });
 const w = waitSearch.subscribe((value) => { myWaitSearch=value });
 const f = fuzzySearch.subscribe((value) => {myFuzzySearch = value});
+const p = apiVersion.subscribe((value) => {myApiVersion = value});
 
 export const searchAutocompleteTrigger = (searchInput) => {
     return Object.keys(searchInput).some(key => searchInput[key].value.length >= myAutocompleteMinLength);
@@ -71,8 +74,8 @@ export const searchString = (searchInput) => {
 export const search = async (searchInput, newCurrent) => {
     if (newCurrent) { current.update(v => newCurrent) }
     else { current.update(v => 1) }
-    const requestBody = buildRequest(searchInput);
-    const json = await runRequest(requestBody);
+    const request = buildRequest(searchInput);
+    const json = await runRequest(request);
     const state = buildState(json, myResultsPerPage);
     return state;
 };
@@ -91,8 +94,7 @@ export const searchSubmit = async (newCurrent) => {
     }
 };
 
-export const searchURLUpdate = async () => {
-    updateURL.update(v => true);
+export const buildURLParams = () => {
     const params = new URLSearchParams(location.search);
     if (myAdvancedSearch) {
         params.set('advanced',true)
@@ -117,6 +119,12 @@ export const searchURLUpdate = async () => {
     if (myCurrent > 1) {
         params.set('current', `n_${myCurrent}_n`)
     }
+    return params
+}
+
+export const searchURLUpdate = async () => {
+    updateURL.update(v => true);
+    const params = buildURLParams();
     if (`${params}`) {
         window.history.replaceState({}, '', `${location.pathname}?${params}`);
     } else {

@@ -16,6 +16,7 @@ export const searchInput = writable({
     fullText: {
         path: "fullText",
         url: "q",
+        backendQuery: "q",
         value: "",
         field: "fullText",
         placeholder: "nom, prénom, date de naissance ou de décès, ... e.g. Pompidou Georges",
@@ -130,8 +131,6 @@ export const searchInput = writable({
         query: dateRangeStringQuery,
         fuzzy: "auto",
         placeholder: "1970-1980 ou 1974 ou 04/02/1974",
-        query: dateRangeStringQuery,
-        fuzzy: "auto",
         multiQuery: "range",
         title:"saisissez la date de décès: 04/02/1974 ou 1974 ou un intervalle : 1970-1980 ou 01/01/1974-01/06/1974",
         mask: {
@@ -376,3 +375,7 @@ export const sortInputDisplay = writable(false);
 export const dataGouvCatalog = writable(null);
 
 export const infoDisplayOption = writable(false);
+
+export const apiVersion = writable(
+    ((Math.floor(Math.random() * (101)) > parseInt('__AB_THRESHOLD__')) ? 'elasticsearch' : 'backend')
+);

@@ -9,8 +9,15 @@ SHELL=/bin/bash
 
 export USE_TTY := $(shell test -t 1 && USE_TTY="-t")
 
+#npm fix while minimist failure not updated in rollup-plugin-livereload
+export NPM_FIX=true
+
 #search-ui
 export PORT=8083
+
+#AB-switch (in percent)
+#currently used for backend / no backend test
+export AB_THRESHOLD=0
 
 #base paths
 export APP = deces-ui
@@ -21,6 +28,9 @@ export APP_DNS=deces.matchid.io
 export FRONTEND := ${APP_PATH}
 export FRONTEND_DEV_HOST = frontend-development
 export FRONTEND_DEV_PORT = ${PORT}
+export BACKEND_PORT=8080
+export BACKEND_HOST=backend
+export BACKEND_PROXY_PATH=/api/v0
 export NGINX = ${APP_PATH}/nginx
 export NGINX_TIMEOUT = 30
 export API_USER_LIMIT_RATE=1r/s
@@ -45,6 +55,7 @@ export GIT_ORIGIN=origin
 export GIT_BRANCH := $(shell git branch | grep '*' | awk '{print $$2}')
 export GIT_BRANCH_MASTER=master
 export GIT_DATAPREP = deces-dataprep
+export GIT_BACKEND = deces-backend
 export GIT_ROOT = https://github.com/matchid-project
 export GIT_TOOLS = tools
 
@@ -131,13 +142,15 @@ clean-data: elasticsearch-clean backup-dir-clean
 
 clean-frontend: build-dir-clean frontend-clean-dist frontend-clean-dist-archive
 
+clean-backend: backend-clean-dir
+
 clean-remote:
 	@make -C ${APP_PATH}/${GIT_TOOLS} remote-clean > /dev/null 2>&1 || true
 
 clean-config:
 	@rm -rf ${APP_PATH}/${GIT_TOOLS} ${APP_PATH}/aws config > /dev/null 2>&1 || true
 
-clean-local: clean-data clean-frontend clean-config
+clean-local: clean-data clean-frontend clean-backend clean-config
 
 clean: clean-remote clean-local
 
@@ -167,6 +180,22 @@ network-stop:
 network: config
 	@docker network create ${DC_NETWORK_OPT} ${DC_NETWORK} 2> /dev/null; true
 
+backend-config:
+	@cd ${APP_PATH};\
+	git clone ${GIT_ROOT}/${GIT_BACKEND}
+
+backend-dev:
+	@echo docker-compose up backend dev
+	@make -C ${APP_PATH}/${GIT_BACKEND} backend-dev DC_NETWORK=${DC_NETWORK}
+
+backend-dev-stop:
+	@make -C ${APP_PATH}/${GIT_BACKEND} backend-dev-stop DC_NETWORK=${DC_NETWORK}
+
+backend: backend-config backend-dev
+
+backend-clean-dir:
+	@sudo rm -rf ${APP_PATH}/${GIT_BACKEND}
+
 frontend-update:
 	@cd ${FRONTEND}; git pull ${GIT_ORIGIN} ${GIT_BRANCH}
 
@@ -185,9 +214,9 @@ endif
 frontend-dev-stop:
 	${DC} -f ${DC_FILE}-dev.yml down
 
-dev: network frontend-stop frontend-dev
+dev: network frontend-stop elasticsearch backend-dev frontend-dev
 
-dev-stop: frontend-dev-stop
+dev-stop: frontend-dev-stop backend-dev-stop elasticsearch-stop
 
 build: frontend-build nginx-build
 
@@ -313,7 +342,8 @@ down: stop
 restart: down up
 
 ${GIT_DATAPREP}:
-	@git clone ${GIT_ROOT}/${GIT_DATAPREP}
+	@cd ${APP_PATH};\
+	git clone ${GIT_ROOT}/${GIT_DATAPREP}
 
 ${DATAPREP_VERSION_FILE}: ${GIT_DATAPREP}
 	@cat \
