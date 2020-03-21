@@ -28,9 +28,6 @@ export APP_DNS=deces.matchid.io
 export FRONTEND := ${APP_PATH}
 export FRONTEND_DEV_HOST = frontend-development
 export FRONTEND_DEV_PORT = ${PORT}
-export BACKEND_PORT=8080
-export BACKEND_HOST=backend
-export BACKEND_PROXY_PATH=/api/v0
 export NGINX = ${APP_PATH}/nginx
 export NGINX_TIMEOUT = 30
 export API_USER_LIMIT_RATE=1r/s
@@ -49,6 +46,10 @@ export DC_IMAGE_NAME = ${DC_PREFIX}
 export API_PATH = deces
 export DC_NETWORK := $(shell echo ${APP} | tr '[:upper:]' '[:lower:]')
 export DC_BUILD_ARGS = --pull --no-cache
+
+export BACKEND_PORT=8080
+export BACKEND_HOST=backend
+export BACKEND_PROXY_PATH=/${API_PATH}/api/v1
 
 export DC := /usr/local/bin/docker-compose
 export GIT_ORIGIN=origin
