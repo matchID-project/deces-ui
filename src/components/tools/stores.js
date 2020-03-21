@@ -30,6 +30,7 @@ export const searchInput = writable({
         value: "",
         section:"nom/prénoms",
         field: "NOM",
+        sortField: "NOM.raw",
         query: fuzzyTermQuery,
         fuzzy: "auto",
         placeholder: "Pompidou",
@@ -42,6 +43,7 @@ export const searchInput = writable({
         url: "fn",
         value: "",
         field: ["PRENOM","PRENOMS"],
+        sortField: "PRENOM.raw",
         query: firstNameQuery,
         fuzzy: "auto",
         placeholder: "Georges",
@@ -56,6 +58,7 @@ export const searchInput = writable({
         section:"naissance",
         value: "",
         field: "DATE_NAISSANCE",
+        sortField: "DATE_NAISSANCE.raw",
         placeholder: "1910-1912 ou 1911 ou 05/07/1911",
         query: dateRangeStringQuery,
         fuzzy: "auto",
@@ -68,26 +71,13 @@ export const searchInput = writable({
         size: 2,
         active: true
     },
-    birthYear: {
-        path: "birth.date",
-        url: "by",
-        before: "en",
-        section:"naissance",
-        value: "",
-        field: "DATE_NAISSANCE",
-        query: prefixQuery,
-        placeholder: "1911",
-        fuzzy: false,
-        title:"saisissez l'année de naissance",
-        size: "1-5",
-        active: false,
-    },
     birthCity: {
         path: "birth.location",
         url: "bc",
         before: "à",
         value: "",
         field: "COMMUNE_NAISSANCE",
+        sortField: "COMMUNE_NAISSANCE.raw",
         query: fuzzyTermQuery,
         fuzzy: "auto",
         placeholder: "commune: Montboudif",
@@ -101,6 +91,7 @@ export const searchInput = writable({
         before: "dans le",
         value: "",
         field: "DEPARTEMENT_NAISSANCE",
+        sortField: "DEPARTEMENT_NAISSANCE",
         query: matchQuery,
         fuzzy: false,
         placeholder: "dépt: 15",
@@ -114,6 +105,7 @@ export const searchInput = writable({
         before: "en/au",
         value: "",
         field: "PAYS_NAISSANCE",
+        sortField: "PAYS_NAISSANCE.raw",
         query: fuzzyTermQuery,
         fuzzy: "auto",
         title:"saisissez le pays de naissance",
@@ -128,6 +120,7 @@ export const searchInput = writable({
         section:"décès",
         value: "",
         field: "DATE_DECES",
+        sortField: "DATE_DECES.raw",
         query: dateRangeStringQuery,
         fuzzy: "auto",
         placeholder: "1970-1980 ou 1974 ou 04/02/1974",
@@ -141,25 +134,13 @@ export const searchInput = writable({
         size: 2,
         active: true,
     },
-    deathYear: {
-        path: "death.date",
-        url: "dy",
-        section:"décès",
-        before: "en",
-        value: "",
-        field: "DATE_DECES",
-        query: prefixQuery,
-        fuzzy: false,
-        placeholder: "1974",
-        size: "1-5",
-        active: false
-    },
     deathCity: {
         path: "death.location",
         url: "dc",
         before: "à",
         value: "",
         field: "COMMUNE_DECES",
+        sortField: "COMMUNE_DECES.raw",
         query: fuzzyTermQuery,
         fuzzy: "auto",
         title:"saisissez la commune de décès",
@@ -173,6 +154,7 @@ export const searchInput = writable({
         before: "dans le",
         value: "",
         field: "DEPARTEMENT_DECES",
+        sortField: "DEPARTEMENT_DECES",
         query: matchQuery,
         fuzzy: false,
         placeholder: "dépt: 75",
@@ -186,6 +168,7 @@ export const searchInput = writable({
         before: "en/au",
         value: "",
         field: "PAYS_DECES",
+        sortField: "PAYS_DECES.raw",
         query: fuzzyTermQuery,
         fuzzy: "auto",
         placeholder: "pays: France",
@@ -325,48 +308,49 @@ export const socialIcons = false;
 export const sortInput = writable([
     {
         label: "score",
+        input: "score",
         field: "_score",
         order: "desc"
     },
     {
         label: "nom",
-        field: "NOM.raw",
+        input: "lastName",
     },
     {
         label: "prénom",
-        field: "PRENOM.raw",
+        input: "firstName",
     },
     {
         label: "naissance: date",
-        field: "DATE_NAISSANCE.raw"
+        input: "birthDate"
     },
     {
         label: "naissance: commune",
-        field: "COMMUNE_NAISSANCE.raw",
+        input: "birthCity",
     },
     {
         label: "naissance: département",
-        field: "DEPARTEMENT_NAISSANCE",
+        input: "birthDepartment",
     },
     {
         label: "naissance: pays",
-        field: "PAYS_NAISSANCE.raw",
+        input: "birthCountry",
     },
     {
         label: "décès: date",
-        field: "DATE_DECES.raw"
+        input: "deathDate"
     },
     {
         label: "décès: commune",
-        field: "COMMUNE_DECES.raw",
+        input: "deathCity",
     },
     {
         label: "décès: département",
-        field: "DEPARTEMENT_DECES",
+        input: "deathDepartment",
     },
     {
         label: "décès: pays",
-        field: "PAYS_DECES.raw",
+        input: "deathCountry",
     }
 ]);
 

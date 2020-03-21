@@ -32,9 +32,15 @@ function buildFrom(current, resultsPerPage) {
   return (current - 1) * resultsPerPage;
 }
 
-function buildSort(sortInput) {
+function buildSort(sortInput, searchInput) {
   return sortInput.filter(x => x.order).map(x => {
-      return { [x.field]: x.order }
+    let field;
+    if (myApiVersion === 'backend') {
+      field = x.input;
+    } else {
+      field = x.field ? x.field : searchInput[x.input].sortField;
+    }
+    return { [field]: x.order };
   });
 }
 
@@ -306,6 +312,7 @@ export default function buildRequest(searchInput) {
   if (myApiVersion === 'backend') {
     body = {
       fuzzy: `${myFuzzySearch}`,
+      sort: buildSort(mySortInput, searchInput),
       page: myCurrent,
       size: myResultsPerPage
     };
@@ -319,7 +326,7 @@ export default function buildRequest(searchInput) {
       }
     })
   } else {
-    const sort = buildSort(mySortInput);
+    const sort = buildSort(mySortInput, searchInput);
     const match = buildMatch(searchInput);
     const size = myResultsPerPage;
     const from = buildFrom(myCurrent, myResultsPerPage);
