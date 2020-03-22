@@ -206,6 +206,9 @@ backend-docker-check: backend-config
 backend: backend-config backend-docker-check
 	@make -C ${APP_PATH}/${GIT_BACKEND} backend-start DC_NETWORK=${DC_NETWORK}
 
+backend-stop:
+	@make -C ${APP_PATH}/${GIT_BACKEND} backend-stop DC_NETWORK=${DC_NETWORK}
+
 backend-clean-dir:
 	@sudo rm -rf ${APP_PATH}/${GIT_BACKEND}
 
@@ -285,7 +288,7 @@ frontend:
 	${DC} -f ${DC_RUN_NGINX_FRONTEND} up -d
 	@timeout=${NGINX_TIMEOUT} ; ret=1 ; until [ "$$timeout" -le 0 -o "$$ret" -eq "0"  ] ; do (curl -s --fail -XGET localhost:${PORT} > /dev/null) ; ret=$$? ; if [ "$$ret" -ne "0" ] ; then echo "waiting for nginx to start $$timeout" ; fi ; ((timeout--)); sleep 1 ; done ; exit $$ret
 
-stop: frontend-stop
+stop: frontend-stop backend-stop elasticsearch-stop
 	@echo all components stopped
 
 start: elasticsearch backend frontend
