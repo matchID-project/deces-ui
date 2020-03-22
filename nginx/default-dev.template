@@ -69,6 +69,9 @@ server {
   }
 
   location ~ "^<BACKEND_PROXY_PATH>.*" {
+    limit_req zone=api burst=<API_USER_BURST>;
+    limit_req zone=server burst=<API_GLOBAL_BURST>;
+    limit_req_status 429;
     proxy_pass http://backend;
     # Allow protocol upgrade to websocket
     proxy_http_version 1.1;
