@@ -56,6 +56,7 @@ export GIT_BRANCH := $(shell git branch | grep '*' | awk '{print $$2}')
 export GIT_BRANCH_MASTER=master
 export GIT_DATAPREP = deces-dataprep
 export GIT_BACKEND = deces-backend
+export GIT_BACKEND_BRANCH = build-backend
 export GIT_ROOT = https://github.com/matchid-project
 export GIT_TOOLS = tools
 
@@ -181,17 +182,32 @@ network: config
 	@docker network create ${DC_NETWORK_OPT} ${DC_NETWORK} 2> /dev/null; true
 
 backend-config:
-	@cd ${APP_PATH};\
-	git clone ${GIT_ROOT}/${GIT_BACKEND}
+	@if [ ! -d "${APP_PATH}/${GIT_BACKEND}" ]; then\
+		cd ${APP_PATH};\
+		git clone ${GIT_ROOT}/${GIT_BACKEND};\
+		cd ${GIT_BACKEND};\
+		git checkout ${GIT_BACKEND_BRANCH};\
+	fi
 
-backend-dev:
+backend-dev: backend-config
 	@echo docker-compose up backend dev
 	@make -C ${APP_PATH}/${GIT_BACKEND} backend-dev DC_NETWORK=${DC_NETWORK}
 
 backend-dev-stop:
 	@make -C ${APP_PATH}/${GIT_BACKEND} backend-dev-stop DC_NETWORK=${DC_NETWORK}
 
-backend: backend-config backend-dev
+backend-clean-version:
+	rm backend-version
+
+backend-docker-check: backend-config
+	@APP_VERSION=$(shell cd ${APP_PATH}/${GIT_BACKEND} && git describe --tags);\
+	make docker-check DC_IMAGE_NAME=deces-backend APP_VERSION=${GIT_BACKEND_BRANCH}
+
+backend: backend-config backend-docker-check
+	@make -C ${APP_PATH}/${GIT_BACKEND} backend-start DC_NETWORK=${DC_NETWORK} APP_VERSION=${GIT_BACKEND_BRANCH}
+
+backend-stop:
+	@make -C ${APP_PATH}/${GIT_BACKEND} backend-stop DC_NETWORK=${DC_NETWORK} APP_VERSION=${GIT_BACKEND_BRANCH}
 
 backend-clean-dir:
 	@sudo rm -rf ${APP_PATH}/${GIT_BACKEND}
@@ -272,10 +288,10 @@ frontend:
 	${DC} -f ${DC_RUN_NGINX_FRONTEND} up -d
 	@timeout=${NGINX_TIMEOUT} ; ret=1 ; until [ "$$timeout" -le 0 -o "$$ret" -eq "0"  ] ; do (curl -s --fail -XGET localhost:${PORT} > /dev/null) ; ret=$$? ; if [ "$$ret" -ne "0" ] ; then echo "waiting for nginx to start $$timeout" ; fi ; ((timeout--)); sleep 1 ; done ; exit $$ret
 
-stop: frontend-stop
+stop: frontend-stop backend-stop elasticsearch-stop
 	@echo all components stopped
 
-start: frontend
+start: elasticsearch backend frontend
 	@sleep 2 && docker-compose logs
 
 backup-dir:
