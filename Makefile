@@ -357,7 +357,7 @@ ${DATA_VERSION_FILE}:
 	@cat ${DATA_VERSION_FILE}.list | sed 's/\s*$$//g' | sha1sum | awk '{print $1}' |\
 		cut -c-8 > ${DATA_VERSION_FILE}
 
-deploy-local: config elasticsearch-s3-pull elasticsearch-restore elasticsearch docker-pull up backup-dir-clean local-test-api
+deploy-local: config elasticsearch-s3-pull elasticsearch-restore elasticsearch docker-check up backup-dir-clean local-test-api
 
 local-test-api:
 	@make -C ${APP_PATH}/${GIT_TOOLS} local-test-api \
