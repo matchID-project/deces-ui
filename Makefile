@@ -56,6 +56,7 @@ export GIT_BRANCH := $(shell git branch | grep '*' | awk '{print $$2}')
 export GIT_BRANCH_MASTER=master
 export GIT_DATAPREP = deces-dataprep
 export GIT_BACKEND = deces-backend
+export GIT_BACKEND_BRANCH = build-backend
 export GIT_ROOT = https://github.com/matchid-project
 export GIT_TOOLS = tools
 
