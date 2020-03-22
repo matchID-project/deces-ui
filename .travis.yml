@@ -39,10 +39,10 @@ before_script:
 script:
   - git fetch && git describe --tags
   - make config
-  - make docker-check || make build
+  - make docker-check || make build || || travis_terminate 1;
+  - make deploy-local FILES_TO_PROCESS=deces-1970.txt.gz || travis_terminate 1;
   - if [[ ( "$TRAVIS_PULL_REQUEST" = "false" ) ]]; then
-      make deploy-local FILES_TO_PROCESS=deces-1970.txt.gz;
-      make docker-push GIT_BRANCH="$TRAVIS_BRANCH";
+      make docker-push GIT_BRANCH="$TRAVIS_BRANCH" || travis_terminate 1;
     fi
   - if [[ ( "$TRAVIS_PULL_REQUEST" = "false" ) && ( "$TRAVIS_BRANCH" == "dev" ) ]]; then
       make deploy-remote FILES_TO_PROCESS=deces-1970.txt.gz GIT_BRANCH="$TRAVIS_BRANCH" NGINX_USER=$NGINX_USER NGINX_HOST=$NGINX_HOST remote_http_proxy=$REMOTE_HTTP_PROXY remote_https_proxy=$REMOTE_HTTP_PROXY remote_no_proxy=localhost NQ_TOKEN=$NQ_TOKEN;
