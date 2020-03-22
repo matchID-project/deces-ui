@@ -201,13 +201,13 @@ backend-clean-version:
 
 backend-docker-check: backend-config
 	@APP_VERSION=$(shell cd ${APP_PATH}/${GIT_BACKEND} && git describe --tags);\
-	make docker-check DC_IMAGE_NAME=deces-backend APP_VERSION=$${APP_VERSION}
+	make docker-check DC_IMAGE_NAME=deces-backend APP_VERSION=${GIT_BACKEND_BRANCH}
 
 backend: backend-config backend-docker-check
-	@make -C ${APP_PATH}/${GIT_BACKEND} backend-start DC_NETWORK=${DC_NETWORK}
+	@make -C ${APP_PATH}/${GIT_BACKEND} backend-start DC_NETWORK=${DC_NETWORK} APP_VERSION=${GIT_BACKEND_BRANCH}
 
 backend-stop:
-	@make -C ${APP_PATH}/${GIT_BACKEND} backend-stop DC_NETWORK=${DC_NETWORK}
+	@make -C ${APP_PATH}/${GIT_BACKEND} backend-stop DC_NETWORK=${DC_NETWORK} APP_VERSION=${GIT_BACKEND_BRANCH}
 
 backend-clean-dir:
 	@sudo rm -rf ${APP_PATH}/${GIT_BACKEND}
