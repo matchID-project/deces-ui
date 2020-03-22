@@ -1,15 +1,16 @@
+<svelte:window on:keydown={handleKeydown}/>
 <Layout/>
 
 <script>
   import Layout from './components/views/Layout.svelte';
-  import { searchInput, searchCanvas, current, resultsPerPage, updateURL, advancedSearch } from './components/tools/stores.js';
+  import { searchInput, searchCanvas, current, resultsPerPage, updateURL, advancedSearch, apiVersion } from './components/tools/stores.js';
   import { searchSubmit, toggleFuzzySearch } from './components/tools/search.js';
   $: URLSearchSubmit(new URLSearchParams(location.search));
 
   $: element = document.getElementById('infoNotWorking')
   $: element.parentNode  && element.parentNode.removeChild(element);
 
-  const URLSearchSubmit = (urlParams) => {
+	const URLSearchSubmit = (urlParams) => {
         if (!$updateURL) {
 			const myCurrent = urlParams.get('current') ? parseInt(urlParams.get('current').replace(/n_(.*)_n/,"$1")) : undefined;
 			const myResultsPerPage = urlParams.get('size') ? parseInt(urlParams.get('size').replace(/n_(.*)_n/,"$1")) : undefined;
@@ -42,6 +43,13 @@
 			}
         }
     }
+
+	const handleKeydown = async (event) => {
+		if (event.ctrlKey && event.altKey && event.key === 'b') {
+			await apiVersion.update(v => v === 'elasticsearch' ? 'backend' : 'elasticsearch');
+			console.log(`switch Api to ${$apiVersion}`);
+		}
+	}
 
 </script>
 
