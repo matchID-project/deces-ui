@@ -110,14 +110,16 @@ export const buildURLParams = () => {
         if (mySearchInput[key].value !== "") {
             params.set(mySearchInput[key].url, mySearchInput[key].value);
         } else {
-            params.delete(mySearchInput[key].url)
+            params.delete(mySearchInput[key].url);
         }
     })
     if (myResultsPerPage !== resultsPerPageDefault) {
         params.set('size', `n_${myResultsPerPage}_n`);
     }
     if (myCurrent > 1) {
-        params.set('current', `n_${myCurrent}_n`)
+        params.set('current', `n_${myCurrent}_n`);
+    } else {
+        params.delete('current');
     }
     return params
 }
