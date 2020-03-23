@@ -110,14 +110,18 @@ export const buildURLParams = () => {
         if (mySearchInput[key].value !== "") {
             params.set(mySearchInput[key].url, mySearchInput[key].value);
         } else {
-            params.delete(mySearchInput[key].url)
+            params.delete(mySearchInput[key].url);
         }
     })
     if (myResultsPerPage !== resultsPerPageDefault) {
         params.set('size', `n_${myResultsPerPage}_n`);
+    } else {
+        params.delete('size');
     }
     if (myCurrent > 1) {
-        params.set('current', `n_${myCurrent}_n`)
+        params.set('current', `n_${myCurrent}_n`);
+    } else {
+        params.delete('current');
     }
     return params
 }
@@ -151,7 +155,7 @@ export const toggleAdvancedSearch = async () => {
 };
 
 export const toggleFuzzySearch = async () => {
-    await fuzzySearch.update(v => !v)
+    await fuzzySearch.update(v => !v);
     await searchInput.update(v => {
         Object.keys(v).map(key => {
           v[key].fuzzy = myFuzzySearch ? "auto" : false;
@@ -162,6 +166,6 @@ export const toggleFuzzySearch = async () => {
     searchURLUpdate();
     gtag('event', 'button', {
         event_category: 'recherche',
-        event_label: searchString($searchInput)
+        event_label: searchString(mySearchInput)
       });
 };

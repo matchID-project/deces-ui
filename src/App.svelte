@@ -3,8 +3,8 @@
 
 <script>
   import Layout from './components/views/Layout.svelte';
-  import { searchInput, searchCanvas, current, resultsPerPage, updateURL, advancedSearch, apiVersion } from './components/tools/stores.js';
-  import { searchSubmit, toggleFuzzySearch } from './components/tools/search.js';
+  import { searchInput, searchCanvas, current, resultsPerPage, updateURL, advancedSearch, apiVersion, fuzzySearch } from './components/tools/stores.js';
+  import { searchSubmit } from './components/tools/search.js';
   $: URLSearchSubmit(new URLSearchParams(location.search));
 
   $: element = document.getElementById('infoNotWorking')
@@ -19,7 +19,7 @@
 				if (q) { return [key, q] }
 			}).filter(x => x);
 			if ( urlParams.get('fuzzy') === 'false' ) {
-				toggleFuzzySearch();
+				$fuzzySearch=false;
 			}
 			if ( urlParams.get('advanced') === 'true' ) {
 				$advancedSearch = true;
@@ -37,6 +37,9 @@
 				searchInput.update( v => {
 					myQuery.map(q => {
 						v[q[0]].value = q[1]
+					});
+					Object.keys(v).map(key => {
+						v[key].fuzzy = $fuzzySearch ? "auto" : false;
 					});
 					return v;
 				});
