@@ -10,7 +10,7 @@
         En cas de doute sollicitez nous à <a href="mailto:matchid.project@gmail.com">matchid.project@gmail.com</a>, en mentionnant la référence de version ci-dessous:
     </p>
     <p>
-        __APP__ version __APP_VERSION__
+        __APP__ version __APP_VERSION__-api/v{$apiVersion === 'backend' ? 1 : 0}
     </p>
 <p><strong>Evolutions récentes</strong></p>
     <p>
@@ -79,3 +79,6 @@
     Pour en savoir plus sur le projet matchID, suivez ce <a href="https://www.matchid.io" target="_blank">lien</a>.
 </p>
 
+<script>
+    import { apiVersion } from '../tools/stores.js';
+</script>
