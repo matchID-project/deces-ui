@@ -17,7 +17,7 @@ export PORT=8083
 
 #AB-switch (in percent)
 #currently used for backend / no backend test
-export AB_THRESHOLD=0
+export AB_THRESHOLD=10
 
 #base paths
 export APP = deces-ui
