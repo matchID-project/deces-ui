@@ -13,11 +13,11 @@ config
 tools
 .data.sha1
 .dataprep.sha1
+.data.sha1.list
 
 # dependencies
 /node_modules
-/.pnp
-.pnp.js
+
 
 # testing
 /coverage
