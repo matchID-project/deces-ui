@@ -115,6 +115,8 @@ export const buildURLParams = () => {
     })
     if (myResultsPerPage !== resultsPerPageDefault) {
         params.set('size', `n_${myResultsPerPage}_n`);
+    } else {
+        params.delete('size');
     }
     if (myCurrent > 1) {
         params.set('current', `n_${myCurrent}_n`);
