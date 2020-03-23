@@ -155,7 +155,7 @@ export const toggleAdvancedSearch = async () => {
 };
 
 export const toggleFuzzySearch = async () => {
-    await fuzzySearch.update(v => !v)
+    await fuzzySearch.update(v => !v);
     await searchInput.update(v => {
         Object.keys(v).map(key => {
           v[key].fuzzy = myFuzzySearch ? "auto" : false;
@@ -166,6 +166,6 @@ export const toggleFuzzySearch = async () => {
     searchURLUpdate();
     gtag('event', 'button', {
         event_category: 'recherche',
-        event_label: searchString($searchInput)
+        event_label: searchString(mySearchInput)
       });
 };
