@@ -363,3 +363,5 @@ export const infoDisplayOption = writable(false);
 export const apiVersion = writable(
     ((Math.floor(Math.random() * (101)) > parseInt('__AB_THRESHOLD__')) ? 'elasticsearch' : 'backend')
 );
+
+export const googleAnalyticsId=writable('__GOOGLE_ANALYTICS_ID__');
