@@ -1,9 +1,13 @@
 <svelte:window on:keydown={handleKeydown}/>
+{#if $googleAnalyticsId}
+	<GoogleAnalytics/>
+{/if}
 <Layout/>
 
 <script>
   import Layout from './components/views/Layout.svelte';
-  import { searchInput, searchCanvas, current, resultsPerPage, updateURL, advancedSearch, apiVersion, fuzzySearch } from './components/tools/stores.js';
+  import GoogleAnalytics from './components/views/GoogleAnalytics.svelte';
+  import { searchInput, searchCanvas, current, resultsPerPage, updateURL, advancedSearch, apiVersion, fuzzySearch, googleAnalyticsId } from './components/tools/stores.js';
   import { searchSubmit } from './components/tools/search.js';
   $: URLSearchSubmit(new URLSearchParams(location.search));
 
