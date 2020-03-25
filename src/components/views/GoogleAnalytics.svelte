@@ -1,18 +1,22 @@
 <script>
     import { liveConfig } from '../tools/stores.js'
     let googleAnalyticsId, configured, configuring;
-    export let tag;
+    export let command, commandParam, eventParam;
+    $: gtag(command,commandParam,eventParam);
 
-    $: gtag(tag);
 
-    window.dataLayer = window.dataLayer || [];
-
-    export const gtag = async () => {
+    const gtag = () => {
         if (!configured) {
-            await configure(async () => gtag(arguments));
+            configure(() => {
+                window.dataLayer = window.dataLayer || [];
+                function g(){dataLayer.push(arguments);}
+                g(command,commandParam,eventParam);
+            });
         } else {
             if ($liveConfig.googleAnalyticsId) {
-                dataLayer.push(arguments);
+                window.dataLayer = window.dataLayer || [];
+                function g(){dataLayer.push(arguments);}
+                g(command,commandParam,eventParam);
             }
         }
     };
@@ -63,12 +67,14 @@
 
     const register = async (callback) => {
         if ($liveConfig.googleAnalyticsId) {
-            await gtag('js', new Date());
-            await gtag('config', $liveConfig.googleAnalyticsId);
+            window.dataLayer = window.dataLayer || [];
+            function g(){dataLayer.push(arguments);}
+            g('js', new Date());
+            g('config', $liveConfig.googleAnalyticsId);
         }
         if (callback) {
-            await callback();
+            callback();
         }
-    }
+    };
 
 </script>
