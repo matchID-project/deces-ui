@@ -42,6 +42,11 @@ server {
     proxy_set_header Connection "upgrade";
   }
 
+  location /liveConfig.json {
+    default_type application/json;
+    return 200 '{"googleAnalyticsId": "<GOOGLE_ANALYTICS_ID>"}';
+  }
+
   location ~ "^<ES_PROXY_PATH>.*" {
     if ($request_method != POST) {
        return 405;

@@ -4,7 +4,6 @@
 <script>
   import Layout from './components/views/Layout.svelte';
   import { searchInput, searchCanvas, current, resultsPerPage, updateURL, advancedSearch, apiVersion, fuzzySearch } from './components/tools/stores.js';
-  import { searchSubmit } from './components/tools/search.js';
   $: URLSearchSubmit(new URLSearchParams(location.search));
 
   $: element = document.getElementById('infoNotWorking')

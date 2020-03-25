@@ -19,6 +19,9 @@ export PORT=8083
 #currently used for backend / no backend test
 export AB_THRESHOLD=100
 
+#google analytics disable by default
+export GOOGLE_ANALYTICS_ID=
+
 #base paths
 export APP = deces-ui
 export DATASET=fichier-des-personnes-decedees

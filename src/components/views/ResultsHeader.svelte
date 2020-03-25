@@ -75,14 +75,6 @@
     $: to = Math.min($totalResults, $current * $resultsPerPage);
     $: query = $wasSearched;
 
-    $: updateResults($resultsPerPage);
-    $: updateResults($sortInput);
-
-    const updateResults = () => {
-        searchSubmit($current);
-        searchURLUpdate();
-    }
-
 </script>
 
 <style>
