@@ -34,7 +34,6 @@ export default {
 			__DATAGOUV_PROXY_PATH__ : process.env.DATAGOUV_PROXY_PATH,
 			__DATAGOUV_CATALOG_URL__: process.env.DATAGOUV_CATALOG_URL,
 			__DATAGOUV_RESOURCES_URL__: process.env.DATAGOUV_RESOURCES_URL,
-			__GOOGLE_ANALYTICS_ID__: process.env.GOOGLE_ANALYTICS_ID,
 			__APP__: process.env.APP,
 			__APP_VERSION__: process.env.APP_VERSION
 		  }),
