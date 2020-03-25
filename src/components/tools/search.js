@@ -68,7 +68,7 @@ export const searchString = (searchInput) => {
             ? searchInput[key].value
             : `${searchInput[key].field}: ${searchInput[key].value}`
         }
-      }).join(' ')
+      }).filter(x => x).join(' ');
 };
 
 export const search = async (searchInput, newCurrent) => {

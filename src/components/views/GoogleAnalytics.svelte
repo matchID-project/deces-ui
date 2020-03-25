@@ -5,14 +5,16 @@
 
     $: gtag(tag);
 
-    window.dataLayer = window.dataLayer || [];
-
-    export const gtag = async () => {
+    export const gtag = async (args) => {
         if (!configured) {
-            await configure(async () => gtag(arguments));
+            await configure(async () => gtag(args));
         } else {
             if ($liveConfig.googleAnalyticsId) {
-                dataLayer.push(arguments);
+                if (args.length == 2) {
+                    window.dataLayer.push(args[0],args[1]);
+                } else {
+                    window.dataLayer.push(args[0],args[1],args[2]);
+                }
             }
         }
     };
@@ -63,8 +65,8 @@
 
     const register = async (callback) => {
         if ($liveConfig.googleAnalyticsId) {
-            await gtag('js', new Date());
-            await gtag('config', $liveConfig.googleAnalyticsId);
+            await gtag(['js', new Date()]);
+            await gtag(['config', $liveConfig.googleAnalyticsId]);
         }
         if (callback) {
             await callback();

@@ -170,17 +170,17 @@
     }, 300);
   }
 
-  const gtag = () => {
-    tag = arguments;
+  const gtag = (args) => {
+    tag = args;
   }
 
   const handleSubmit = async () => {
     searchSubmit();
     searchURLUpdate();
-    await gtag('event', 'button', {
+    await gtag(['event', 'button', {
       event_category: 'recherche',
       event_label: searchString($searchInput)
-    });
+    }]);
   }
 
   const startDate = new Date().getTime();
