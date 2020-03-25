@@ -1,4 +1,4 @@
-<GoogleAnalytics tag={tag}/>
+<GoogleAnalytics {...tag}/>
 <div
   class={`container autocomplete column ${($advancedSearch && !$autocompleteBypass) ? "is-10" : "is-8"}`}
   style="margin-top: -15px;"
@@ -125,7 +125,7 @@
 
   let lastInput = {}
 
-  let tag;
+  let tag={};
 
   let inputsKeys;
 
@@ -170,17 +170,17 @@
     }, 300);
   }
 
-  const gtag = (args) => {
-    tag = args;
-  }
-
   const handleSubmit = async () => {
     searchSubmit();
     searchURLUpdate();
-    await gtag(['event', 'button', {
-      event_category: 'recherche',
-      event_label: searchString($searchInput)
-    }]);
+    tag = {
+      command: 'event',
+      commandParam: 'button',
+      eventParam: {
+        event_category: 'recherche',
+        event_label: searchString($searchInput)
+      }
+    };
   }
 
   const startDate = new Date().getTime();
