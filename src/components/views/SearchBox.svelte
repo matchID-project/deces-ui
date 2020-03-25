@@ -1,4 +1,4 @@
-<!-- <GoogleAnalytics ga={ga} trackingId={'UA-156429702-1'}/> -->
+<GoogleAnalytics tag={tag}/>
 <div
   class={`container autocomplete column ${($advancedSearch && !$autocompleteBypass) ? "is-10" : "is-8"}`}
   style="margin-top: -15px;"
@@ -112,9 +112,10 @@
 <script>
   import FontAwesomeIcon from './FontAwesomeIcon.svelte'
 
-  import { advancedSearch, searchInput, searchCanvas, autocompleteBypass, infoDisplayOption, autocompleteResults, autocompleteDisplay, searchInputFocus, searchTyping, fuzzySearch } from '../tools/stores.js';
+  import { advancedSearch, searchInput, searchCanvas, autocompleteBypass, infoDisplayOption, sortInput, resultsPerPage, autocompleteResults, autocompleteDisplay, searchInputFocus, searchTyping, fuzzySearch } from '../tools/stores.js';
   import { search, searchString, searchAutocompleteTrigger, searchSubmit, searchURLUpdate, toggleAdvancedSearch, toggleFuzzySearch } from '../tools/search.js';
   import Autocomplete from './Autocomplete.svelte';
+  import GoogleAnalytics from './GoogleAnalytics.svelte';
 
   import {
       faMinus,
@@ -122,21 +123,21 @@
       faQuestionCircle
   } from '@fortawesome/free-solid-svg-icons';
 
-  let gtag;
-  const gtagFail = () => {console.log("GA not loaded")}
-
-  $: gtag = window.gtag || gtagFail;
-
   let lastInput = {}
+
+  let tag;
 
   let inputsKeys;
 
   let infoDisplay;
 
-  $: inputsKeys = Object.keys($searchInput)
+  $: inputsKeys = Object.keys($searchInput);
 
   $: $autocompleteDisplay=Object.keys($searchInputFocus).some(key => $searchInputFocus[key].focus);
   $: infoDisplay=$infoDisplayOption && Object.keys($searchInputFocus).some(key => $searchInputFocus[key].focus);
+
+  $: handleSubmit($resultsPerPage);
+  $: handleSubmit($sortInput);
 
   let isActive;
 
@@ -169,11 +170,14 @@
     }, 300);
   }
 
-  const handleSubmit = () => {
+  const gtag = () => {
+    tag = arguments;
+  }
+
+  const handleSubmit = async () => {
     searchSubmit();
     searchURLUpdate();
-    // gtag('config', 'UA-156429702-1');
-    gtag('event', 'button', {
+    await gtag('event', 'button', {
       event_category: 'recherche',
       event_label: searchString($searchInput)
     });

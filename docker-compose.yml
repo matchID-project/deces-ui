@@ -31,6 +31,7 @@ services:
       - API_USER_SCOPE
       - API_GLOBAL_LIMIT_RATE
       - API_GLOBAL_BURST
+      - GOOGLE_ANALYTICS_ID
     ports:
       - ${PORT}:80
     restart: always
