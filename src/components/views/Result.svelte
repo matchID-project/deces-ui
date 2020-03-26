@@ -107,27 +107,7 @@
                                         </tr>
                                         <tr>
                                             <td>Date</td>
-                                            <td>{result.DATE_NAISSANCE.raw.replace(/(\d{4})(\d{2})(\d{2})/,"$3/$2/$1")}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Lieu</td>
-                                            <td>
-                                                {
-                                                    result.COMMUNE_NAISSANCE
-                                                    ? ( Array.isArray(result.COMMUNE_NAISSANCE.raw)
-                                                        ? result.COMMUNE_NAISSANCE.raw[0]
-                                                        : result.COMMUNE_NAISSANCE.raw)
-                                                    + ( result.DEPARTEMENT_NAISSANCE
-                                                        ? " (" + result.DEPARTEMENT_NAISSANCE.raw + ")"
-                                                        : "" )
-                                                    + ( result.PAYS_NAISSANCE
-                                                        ? ", " + result.PAYS_NAISSANCE.raw
-                                                        : "" )
-                                                    : (result.PAYS_NAISSANCE
-                                                        ? result.PAYS_NAISSANCE.raw
-                                                        : "ND")
-                                                }
-                                            </td>
+                                            <td>{dateFormat(result.DATE_NAISSANCE.raw)}</td>
                                         </tr>
                                         <Place
                                             city={result.COMMUNE_NAISSANCE && result.COMMUNE_NAISSANCE.raw}
@@ -149,7 +129,12 @@
                                                 {dateFormat(result.DATE_DECES.raw)}
                                             </td>
                                         </tr>
-
+                                        {#if age>1}
+                                            <tr>
+                                                <td>Age</td>
+                                                <td>{age} ans</td>
+                                            </tr>
+                                        {/if}
                                         <Place
                                             city={result.COMMUNE_DECES && result.COMMUNE_DECES.raw}
                                             citycode={result.CODE_INSEE_DECES && result.CODE_INSEE_DECES.raw}
@@ -206,6 +191,24 @@
     let expand = !$accordeonMode;
 
     $: expand = !$accordeonMode;
+
+    const dateFormat = (dateString) => {
+        return dateString.replace(/(\d{4})(\d{2})(\d{2})/,"$3/$2/$1");
+    };
+
+    const toDate = (dateString) => {
+        return new Date(
+            dateString.substring(0,4),
+            dateString.substring(4,6) - 1,
+            dateString.substring(6,8)
+        );
+    };
+
+    let age;
+
+    $: age = Math.abs(
+            new Date(toDate(result.DATE_DECES.raw) - toDate(result.DATE_NAISSANCE.raw)).getUTCFullYear()
+            - 1970);
 
 </script>
 
@@ -291,14 +294,14 @@
         width: 100%;
     }
 
-    .content table td,.table td {
+    :global(.content table td,.table td) {
         border: solid #dbdbdb;
         border-width: 0 0 1px;
         padding: .5em .75em;
         vertical-align: top;
     }
 
-    .content table tbody tr:last-child td,.content table tbody tr:last-child th,.table tbody tr:last-child td,.table tbody tr:last-child th {
+    :global(.content table tbody tr:last-child td,.content table tbody tr:last-child th,.table tbody tr:last-child td,.table tbody tr:last-child th) {
         border-bottom-width: 0;
     }
 
@@ -361,12 +364,12 @@
         width: 100%;
     }
 
-    .table.is-narrow td {
+    :global(.table.is-narrow td) {
         padding: .25em .5em;
         text-align: left;
     }
 
-    .table.is-striped tbody tr:not(.is-selected):nth-child(2n) {
+    :global(.table.is-striped tbody tr:not(.is-selected):nth-child(2n)) {
         background-color: #fafafa;
     }
 
