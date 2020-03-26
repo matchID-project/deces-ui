@@ -129,6 +129,13 @@
                                                 }
                                             </td>
                                         </tr>
+                                        <Place
+                                            city={result.COMMUNE_NAISSANCE && result.COMMUNE_NAISSANCE.raw}
+                                            citycode={result.CODE_INSEE_NAISSANCE && result.CODE_INSEE_NAISSANCE.raw}
+                                            department={result.DEPARTEMENT_NAISSANCE && result.DEPARTEMENT_NAISSANCE.raw}
+                                            country={result.PAYS_NAISSANCE && result.PAYS_NAISSANCE.raw}
+                                            countrycode={result.PAYS_NAISSANCE_CODEISO3 && result.PAYS_NAISSANCE_CODEISO3.raw}
+                                        />
                                     </tbody>
                                 </table>
                             </div>
@@ -138,28 +145,18 @@
                                     <tbody>
                                         <tr>
                                             <td>Date</td>
-                                            <td>{result.DATE_DECES.raw.replace(/(\d{4})(\d{2})(\d{2})/,"$3/$2/$1")}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Lieu</td>
                                             <td>
-                                                {
-                                                    result.COMMUNE_DECES
-                                                    ? ( Array.isArray(result.COMMUNE_DECES.raw)
-                                                        ? result.COMMUNE_DECES.raw[0]
-                                                        : result.COMMUNE_DECES.raw)
-                                                    + ( result.DEPARTEMENT_DECES
-                                                        ? " (" + result.DEPARTEMENT_DECES.raw + ")"
-                                                        : "" )
-                                                    + ( result.PAYS_DECES
-                                                        ? ", " + result.PAYS_DECES.raw
-                                                        : "" )
-                                                    : (result.PAYS_DECES
-                                                        ? result.PAYS_DECES.raw
-                                                        : "ND")
-                                                }
+                                                {dateFormat(result.DATE_DECES.raw)}
                                             </td>
                                         </tr>
+
+                                        <Place
+                                            city={result.COMMUNE_DECES && result.COMMUNE_DECES.raw}
+                                            citycode={result.CODE_INSEE_DECES && result.CODE_INSEE_DECES.raw}
+                                            department={result.DEPARTEMENT_DECES && result.DEPARTEMENT_DECES.raw}
+                                            country={result.PAYS_DECES && result.PAYS_DECES.raw}
+                                            countrycode={result.PAYS_DECES_CODEISO3 && result.PAYS_DECES_CODEISO3.raw}
+                                        />
                                         <tr>
                                             <td>Acte n°</td>
                                             <td>
@@ -196,6 +193,7 @@
 
 <script>
     import { accordeonMode, dataGouvCatalog } from '../tools/stores.js';
+    import Place from './Place.svelte';
     import FontAwesomeIcon from './FontAwesomeIcon.svelte';
 
     import {
