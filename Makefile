@@ -298,6 +298,9 @@ stop: frontend-stop backend-stop elasticsearch-stop
 start: elasticsearch backend frontend
 	@sleep 2 && docker-compose logs
 
+log:
+	@make -C ${APP_PATH}/${GIT_TOOLS} docker-logs-to-API &
+
 backup-dir:
 	@if [ ! -d "$(BACKUP_DIR)" ] ; then mkdir -p $(BACKUP_DIR) ; fi
 
