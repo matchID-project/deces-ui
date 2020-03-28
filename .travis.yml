@@ -45,7 +45,7 @@ script:
       make docker-push GIT_BRANCH="$TRAVIS_BRANCH" || travis_terminate 1;
     fi
   - if [[ ( "$TRAVIS_PULL_REQUEST" = "false" ) && ( "$TRAVIS_BRANCH" == "dev" ) ]]; then
-      make deploy-remote FILES_TO_PROCESS=deces-1970.txt.gz GIT_BRANCH="$TRAVIS_BRANCH" NGINX_USER=$NGINX_USER NGINX_HOST=$NGINX_HOST remote_http_proxy=$REMOTE_HTTP_PROXY remote_https_proxy=$REMOTE_HTTP_PROXY remote_no_proxy=localhost NQ_TOKEN=$NQ_TOKEN GOOGLE_ANALYTICS_ID=$GOOGLE_ANALYTICS_ID;
+      make deploy-remote FILES_TO_PROCESS=deces-1970.txt.gz GIT_BRANCH="$TRAVIS_BRANCH" BACKEND_APP_VERSION=dev NGINX_USER=$NGINX_USER NGINX_HOST=$NGINX_HOST remote_http_proxy=$REMOTE_HTTP_PROXY remote_https_proxy=$REMOTE_HTTP_PROXY remote_no_proxy=localhost NQ_TOKEN=$NQ_TOKEN GOOGLE_ANALYTICS_ID=$GOOGLE_ANALYTICS_ID;
     fi
   - if [[ ( "$TRAVIS_PULL_REQUEST" = "false" ) && ( "$TRAVIS_BRANCH" == "master" ) ]]; then
       make deploy-remote GIT_BRANCH="$TRAVIS_BRANCH" ES_MEM=$ES_MEM SCW_IMAGE_ID=$SCW_IMAGE_ID SCW_FLAVOR=$SCW_FLAVOR NGINX_USER=$NGINX_USER NGINX_HOST=$NGINX_HOST remote_http_proxy=$REMOTE_HTTP_PROXY remote_https_proxy=$REMOTE_HTTP_PROXY remote_no_proxy=localhost NQ_TOKEN=$NQ_TOKEN GOOGLE_ANALYTICS_ID=$GOOGLE_ANALYTICS_ID;
