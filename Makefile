@@ -59,7 +59,7 @@ export GIT_BRANCH := $(shell git branch | grep '*' | awk '{print $$2}')
 export GIT_BRANCH_MASTER=master
 export GIT_DATAPREP = deces-dataprep
 export GIT_BACKEND = deces-backend
-export GIT_BACKEND_BRANCH = master
+export GIT_BACKEND_BRANCH = dev
 export GIT_ROOT = https://github.com/matchid-project
 export GIT_TOOLS = tools
 
@@ -207,10 +207,12 @@ backend-docker-check: backend-config
 	make docker-check DC_IMAGE_NAME=deces-backend APP_VERSION=$$BACKEND_APP_VERSION
 
 backend: backend-config backend-docker-check
-	@make -C ${APP_PATH}/${GIT_BACKEND} backend-start DC_NETWORK=${DC_NETWORK} APP_VERSION=${BACKEND_APP_VERSION}
+	@BACKEND_APP_VERSION=$(shell cd ${APP_PATH}/${GIT_BACKEND} && git describe --tags);\
+	make -C ${APP_PATH}/${GIT_BACKEND} backend-start DC_NETWORK=${DC_NETWORK} APP_VERSION=$$BACKEND_APP_VERSION
 
 backend-stop:
-	@make -C ${APP_PATH}/${GIT_BACKEND} backend-stop DC_NETWORK=${DC_NETWORK} APP_VERSION=${BACKEND_APP_VERSION}
+	@BACKEND_APP_VERSION=$(shell cd ${APP_PATH}/${GIT_BACKEND} && git describe --tags);\
+	make -C ${APP_PATH}/${GIT_BACKEND} backend-stop DC_NETWORK=${DC_NETWORK} APP_VERSION=$$BACKEND_APP_VERSION
 
 backend-clean-dir:
 	@sudo rm -rf ${APP_PATH}/${GIT_BACKEND}
