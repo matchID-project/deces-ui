@@ -34,7 +34,6 @@ export FRONTEND_DEV_PORT = ${PORT}
 export BACKEND_PORT=8080
 export BACKEND_HOST=backend
 export BACKEND_PROXY_PATH=/deces/api/v1
-export BACKEND_APP_VERSION=latest
 export NGINX = ${APP_PATH}/nginx
 export NGINX_TIMEOUT = 30
 export API_USER_LIMIT_RATE=1r/s
@@ -60,7 +59,7 @@ export GIT_BRANCH := $(shell git branch | grep '*' | awk '{print $$2}')
 export GIT_BRANCH_MASTER=master
 export GIT_DATAPREP = deces-dataprep
 export GIT_BACKEND = deces-backend
-export GIT_BACKEND_BRANCH = master
+export GIT_BACKEND_BRANCH = dev
 export GIT_ROOT = https://github.com/matchid-project
 export GIT_TOOLS = tools
 
@@ -204,14 +203,16 @@ backend-clean-version:
 	rm backend-version
 
 backend-docker-check: backend-config
-	@APP_VERSION=$(shell cd ${APP_PATH}/${GIT_BACKEND} && git describe --tags);\
-	make docker-check DC_IMAGE_NAME=deces-backend APP_VERSION=${BACKEND_APP_VERSION}
+	@BACKEND_APP_VERSION=$(shell cd ${APP_PATH}/${GIT_BACKEND} && git describe --tags);\
+	make docker-check DC_IMAGE_NAME=deces-backend APP_VERSION=$$BACKEND_APP_VERSION
 
 backend: backend-config backend-docker-check
-	@make -C ${APP_PATH}/${GIT_BACKEND} backend-start DC_NETWORK=${DC_NETWORK} APP_VERSION=${BACKEND_APP_VERSION}
+	@BACKEND_APP_VERSION=$(shell cd ${APP_PATH}/${GIT_BACKEND} && git describe --tags);\
+	make -C ${APP_PATH}/${GIT_BACKEND} backend-start DC_NETWORK=${DC_NETWORK} APP_VERSION=$$BACKEND_APP_VERSION
 
 backend-stop:
-	@make -C ${APP_PATH}/${GIT_BACKEND} backend-stop DC_NETWORK=${DC_NETWORK} APP_VERSION=${BACKEND_APP_VERSION}
+	@BACKEND_APP_VERSION=$(shell cd ${APP_PATH}/${GIT_BACKEND} && git describe --tags);\
+	make -C ${APP_PATH}/${GIT_BACKEND} backend-stop DC_NETWORK=${DC_NETWORK} APP_VERSION=$$BACKEND_APP_VERSION
 
 backend-clean-dir:
 	@sudo rm -rf ${APP_PATH}/${GIT_BACKEND}
@@ -297,6 +298,9 @@ stop: frontend-stop backend-stop elasticsearch-stop
 
 start: elasticsearch backend frontend
 	@sleep 2 && docker-compose logs
+
+log:
+	@make -C ${APP_PATH}/${GIT_TOOLS} docker-logs-to-API &
 
 backup-dir:
 	@if [ ! -d "$(BACKUP_DIR)" ] ; then mkdir -p $(BACKUP_DIR) ; fi
