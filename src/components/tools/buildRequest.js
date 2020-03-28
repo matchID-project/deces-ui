@@ -337,6 +337,7 @@ export default function buildRequest(searchInput) {
       // --------------------------
       // https://www.elastic.co/guide/en/elasticsearch/reference/7.x/search-request-highlighting.html
       min_score: ( myAdvancedSearch ? 0 : 5 ),
+      track_total_hits: true,
       // highlight: {
       //   fragment_size: 200,
       //   number_of_fragments: 1,
