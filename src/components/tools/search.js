@@ -83,14 +83,12 @@ export const search = async (searchInput, newCurrent) => {
     else { current.update(v => 1) }
     const request = buildRequest(searchInput);
     const json = await runRequest(request);
-    console.log('ici', request, json);
     let state;
     if (myApiVersion === 'elasticsearch') {
         state = buildResults(json, myResultsPerPage, myCurrent);
     } else {
         state = json;
     }
-    console.log(myApiVersion,json,state);
     return state && state.response;
 };
 
