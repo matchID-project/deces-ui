@@ -41,38 +41,26 @@
                             <div class="level-left" style="margin-right:16px">
                                 <figure class={`image is-${expand ? "64x64" : "48x48"} has-background-primary`}>
                                     <img
-                                        alt={ result.SEXE.raw }
-                                        src={ result.SEXE.raw === 'M' ? '/male.svg' : '/female.svg' }
+                                        alt={ result.sex }
+                                        src={ result.sex === 'M' ? '/male.svg' : '/female.svg' }
                                     />
                                 </figure>
                             </div>
                             <div class="level-item has-text-left">
                                 <div>
                                     <h1 class={`title is-size-${expand ? "4" : "5"} has-text-${expand ? "white" : "primary"}`}>
-                                        {result.NOM.raw.toUpperCase()} {result.PRENOM.raw}
+                                        {result.name.last.toUpperCase()} {result.name.first[0]}
                                     </h1>
                                     <h1 class={`is-size-${expand ? "6" : "6-7"} has-text-${expand ? "white" : "primary"}`}>
                                         <span class="is-hidden-mobile">
-                                            {
-                                                result.COMMUNE_NAISSANCE
-                                                    ? ( Array.isArray(result.COMMUNE_NAISSANCE.raw)
-                                                        ? result.COMMUNE_NAISSANCE.raw[0]
-                                                        : result.COMMUNE_NAISSANCE.raw)
-                                                    : ""
-                                            }
+                                            { cityString(result.birth.location.city) }
                                         </span>
-                                        {result.DATE_NAISSANCE.raw.replace(/(\d{4})(\d{2})(\d{2})/,"$3/$2/$1")}
+                                        { dateFormat(result.birth.date) }
                                         &nbsp; - &nbsp;
-                                                                        <span class="is-hidden-mobile">
-                                            {
-                                                result.COMMUNE_DECES
-                                                    ? ( Array.isArray(result.COMMUNE_DECES.raw)
-                                                        ? result.COMMUNE_DECES.raw[0]
-                                                        : result.COMMUNE_DECES.raw)
-                                                    : ""
-                                            }
+                                        <span class="is-hidden-mobile">
+                                            { cityString(result.death.location.city) }
                                         </span>
-                                        {result.DATE_DECES.raw.replace(/(\d{4})(\d{2})(\d{2})/,"$3/$2/$1")}
+                                        { dateFormat(result.death.date) }
                                     </h1>
                                 </div>
                             </div>
@@ -99,22 +87,22 @@
                                     <tbody>
                                         <tr>
                                             <td>Nom</td>
-                                            <td>{result.NOM.raw}</td>
+                                            <td>{result.name.last}</td>
                                         </tr>
                                         <tr>
                                             <td>Prénom(s)</td>
-                                            <td>{result.PRENOMS.raw}</td>
+                                            <td>{result.name.first.join(' ')}</td>
                                         </tr>
                                         <tr>
                                             <td>Date</td>
-                                            <td>{dateFormat(result.DATE_NAISSANCE.raw)}</td>
+                                            <td>{dateFormat(result.birth.date)}</td>
                                         </tr>
                                         <Place
-                                            city={result.COMMUNE_NAISSANCE && result.COMMUNE_NAISSANCE.raw}
-                                            citycode={result.CODE_INSEE_NAISSANCE && result.CODE_INSEE_NAISSANCE.raw}
-                                            department={result.DEPARTEMENT_NAISSANCE && result.DEPARTEMENT_NAISSANCE.raw}
-                                            country={result.PAYS_NAISSANCE && result.PAYS_NAISSANCE.raw}
-                                            countrycode={result.PAYS_NAISSANCE_CODEISO3 && result.PAYS_NAISSANCE_CODEISO3.raw}
+                                            city={result.birth.location.city}
+                                            cityCode={result.birth.location.cityCode}
+                                            department={result.birth.location.departmentCode}
+                                            country={result.birth.location.country}
+                                            countryCode={result.birth.location.countryCode}
                                         />
                                     </tbody>
                                 </table>
@@ -126,7 +114,7 @@
                                         <tr>
                                             <td>Date</td>
                                             <td>
-                                                {dateFormat(result.DATE_DECES.raw)}
+                                                {dateFormat(result.death.date)}
                                             </td>
                                         </tr>
                                         {#if age>1}
@@ -136,18 +124,18 @@
                                             </tr>
                                         {/if}
                                         <Place
-                                            city={result.COMMUNE_DECES && result.COMMUNE_DECES.raw}
-                                            citycode={result.CODE_INSEE_DECES && result.CODE_INSEE_DECES.raw}
-                                            department={result.DEPARTEMENT_DECES && result.DEPARTEMENT_DECES.raw}
-                                            country={result.PAYS_DECES && result.PAYS_DECES.raw}
-                                            countrycode={result.PAYS_DECES_CODEISO3 && result.PAYS_DECES_CODEISO3.raw}
+                                            city={result.death.location.city}
+                                            cityCode={result.death.location.cityCode}
+                                            department={result.death.location.departmentCode}
+                                            country={result.death.location.country}
+                                            countryCode={result.death.location.countryCode}
                                         />
                                         <tr>
                                             <td>Acte n°</td>
                                             <td>
                                                 {
-                                                    result.NUM_DECES && result.NUM_DECES.raw
-                                                    ? result.NUM_DECES.raw
+                                                    result.death.certificateId
+                                                    ? result.death.certificateId
                                                     : "ND"
                                                 }
                                             </td>
@@ -155,9 +143,9 @@
                                         <tr>
                                             <td>Source INSEE</td>
                                             <td>
-                                                {#if result.SOURCE && result.SOURCE.raw}
-                                                    <a href={$dataGouvCatalog[result.SOURCE.raw]} target="_blank">
-                                                        fichier {result.SOURCE.raw}
+                                                {#if result.source}
+                                                    <a href={$dataGouvCatalog[result.source]} target="_blank">
+                                                        fichier {result.source}
                                                     </a>
                                                 {:else}
                                                     ND
@@ -207,8 +195,18 @@
     let age;
 
     $: age = Math.abs(
-            new Date(toDate(result.DATE_DECES.raw) - toDate(result.DATE_NAISSANCE.raw)).getUTCFullYear()
+            new Date(toDate(result.death.date) - toDate(result.birth.date)).getUTCFullYear()
             - 1970);
+
+    const cityString = (city) => {
+        return city
+            ? ( Array.isArray(city)
+                ? (city.some(x => !x.match(/arrondissement/i))
+                    ? city.filter(x => !x.match(/arrondissement/i))[0]
+                    : city[0])
+                : city)
+            : ''
+    };
 
 </script>
 

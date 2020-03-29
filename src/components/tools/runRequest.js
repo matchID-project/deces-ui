@@ -42,9 +42,6 @@ export default async function runRequest(body) {
     };
   } else {
     let json = await response.json();
-    if (myApiVersion === 'backend') {
-      json = json.msg;
-    }
     cachedResponses.update(v => { v[hash]=json; return v } );
     return json;
   }

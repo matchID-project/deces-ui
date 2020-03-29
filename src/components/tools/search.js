@@ -22,6 +22,7 @@ import {
 
 import buildRequest from "./buildRequest.js";
 import runRequest from "./runRequest.js";
+import buildResults from "./buildResults.js";
 import buildState from "./buildState.js";
 
 let mySearchInput;
@@ -47,6 +48,12 @@ const b = autocompleteBypass.subscribe((value) => { myAutocompleteBypass=value }
 const w = waitSearch.subscribe((value) => { myWaitSearch=value });
 const f = fuzzySearch.subscribe((value) => {myFuzzySearch = value});
 const p = apiVersion.subscribe((value) => {myApiVersion = value});
+
+const computeTotalPages = (resultsPerPage, totalResults) => {
+    if (!resultsPerPage) return 0;
+    if (totalResults === 0) return 1;
+    return Math.ceil(totalResults / resultsPerPage);
+  }
 
 export const searchAutocompleteTrigger = (searchInput) => {
     return Object.keys(searchInput).some(key => searchInput[key].value.length >= myAutocompleteMinLength);
@@ -76,18 +83,23 @@ export const search = async (searchInput, newCurrent) => {
     else { current.update(v => 1) }
     const request = buildRequest(searchInput);
     const json = await runRequest(request);
-    const state = buildState(json, myResultsPerPage);
-    return state;
+    let state;
+    if (myApiVersion === 'elasticsearch') {
+        state = buildResults(json, myResultsPerPage, myCurrent);
+    } else {
+        state = json;
+    }
+    return state && state.response;
 };
 
 export const searchSubmit = async (newCurrent) => {
     if (searchTrigger(mySearchInput) && (!myWaitSearch)) {
         waitSearch.update( v => true);
         const state = await search(mySearchInput, newCurrent);
-        searchResults.update( v => state.results );
-        totalResults.update(v => state.totalResults);
-        totalPages.update(v => state.totalPages);
-        facets.update(v => state.facets);
+        searchResults.update( v => state.persons );
+        totalResults.update(v => state.total);
+        totalPages.update(v => computeTotalPages(state.size, state.total));
+        // facets.update(v => state.facets);
         autocompleteDisplay.update(v => false);
         wasSearched.update(v => searchString(mySearchInput));
         waitSearch.update( v => false);
