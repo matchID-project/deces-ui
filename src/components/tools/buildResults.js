@@ -8,6 +8,7 @@ export default function buildResults (response, resultsPerPage, current, ) {
           first: item._source.PRENOMS.split(' '),
           last: item._source.NOM
         },
+        sex: item._source.SEXE,
         birth: {
           date: item._source.DATE_NAISSANCE,
           location: {
@@ -20,6 +21,7 @@ export default function buildResults (response, resultsPerPage, current, ) {
         },
         death: {
           date: item._source.DATE_DECES,
+          certificateId: item._source.NUM_DECES,
           location: {
             city: item._source.COMMUNE_DECES, // str|str[]
             cityCode: item._source.CODE_INSEE_DECES,
