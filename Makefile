@@ -22,6 +22,9 @@ export AB_THRESHOLD=100
 #google analytics disable by default
 export GOOGLE_ANALYTICS_ID=
 
+export MAKEBIN = $(shell which make || echo make)
+export MAKE = ${MAKEBIN} --no-print-directory -s
+
 #base paths
 export APP = deces-ui
 export DATASET=fichier-des-personnes-decedees
@@ -86,21 +89,14 @@ export ES_NODES = 1
 export ES_MEM = 1024m
 export ES_VERSION = 7.6.1
 export ES_BACKUP_BASENAME := esdata
-export DATAPREP_VERSION_FILE = .dataprep.sha1
-export DATA_VERSION_FILE = .data.sha1
+export DATAPREP_VERSION_FILE = ${APP_PATH}/.dataprep.sha1
+export DATA_VERSION_FILE = ${APP_PATH}/.data.sha1
 export FILES_TO_PROCESS=deces-([0-9]{4}|2020-m[0-9]{2}).txt.gz
 
 vm_max_count            := $(shell cat /etc/sysctl.conf | egrep vm.max_map_count\s*=\s*262144 && echo true)
 
 
-# s3 conf
-# s3 conf has to be stored in two ways :
-# classic way (.aws/config and .aws/credentials) for s3 backups
-# to use within matchid backend, you have to add credential as env variables and declare configuration in a s3 connector
-# 	export aws_access_key_id=XXXXXXXXXXXXXXXXX
-# 	export aws_secret_access_key=XXXXXXXXXXXXXXXXXXXXXXXXXXX
-export S3_BUCKET=${DATASET}
-export AWS=${APP_PATH}/aws
+export STORAGE_BUCKET=${DATASET}
 
 dummy		    := $(shell touch artifacts)
 include ./artifacts
@@ -128,15 +124,14 @@ include /etc/os-release
 
 config:
 	# this proc relies on matchid/tools and works both local and remote
-	@sudo apt-get install make
+	@which make || sudo apt-get install make
 	@if [ -z "${TOOLS_PATH}" ];then\
 		git clone ${GIT_ROOT}/${GIT_TOOLS};\
-		make -C ${APP_PATH}/${GIT_TOOLS} config ${MAKEOVERRIDES};\
+		${MAKE} -C ${APP_PATH}/${GIT_TOOLS} config ${MAKEOVERRIDES};\
 	else\
 		ln -s ${TOOLS_PATH} ${APP_PATH}/${GIT_TOOLS};\
 	fi
 	cp artifacts ${APP_PATH}/${GIT_TOOLS}/
-	@ln -s ${APP_PATH}/${GIT_TOOLS}/aws ${APP_PATH}/aws
 	@touch config
 
 
@@ -149,7 +144,7 @@ clean-frontend: build-dir-clean frontend-clean-dist frontend-clean-dist-archive
 clean-backend: backend-clean-dir
 
 clean-remote:
-	@make -C ${APP_PATH}/${GIT_TOOLS} remote-clean ${MAKEOVERRIDES} > /dev/null 2>&1 || true
+	@${MAKE} -C ${APP_PATH}/${GIT_TOOLS} remote-clean ${MAKEOVERRIDES} > /dev/null 2>&1 || true
 
 clean-config:
 	@rm -rf ${APP_PATH}/${GIT_TOOLS} ${APP_PATH}/aws config > /dev/null 2>&1 || true
@@ -159,7 +154,7 @@ clean-local: clean-data clean-frontend clean-backend clean-config
 clean: clean-remote clean-local
 
 docker-push:
-	@make -C ${APP_PATH}/${GIT_TOOLS} docker-push DC_IMAGE_NAME=${DC_IMAGE_NAME} APP_VERSION=${APP_VERSION} ${MAKEOVERRIDES}
+	@${MAKE} -C ${APP_PATH}/${GIT_TOOLS} docker-push DC_IMAGE_NAME=${DC_IMAGE_NAME} APP_VERSION=${APP_VERSION} ${MAKEOVERRIDES}
 
 docker-pull:
 	docker pull ${DOCKER_USERNAME}/${DC_IMAGE_NAME}:${APP_VERSION}
@@ -194,25 +189,25 @@ backend-config:
 
 backend-dev: backend-config
 	@echo docker-compose up backend dev
-	@make -C ${APP_PATH}/${GIT_BACKEND} backend-dev DC_NETWORK=${DC_NETWORK} GIT_BRANCH=${GIT_BACKEND_BRANCH}
+	@${MAKE} -C ${APP_PATH}/${GIT_BACKEND} backend-dev DC_NETWORK=${DC_NETWORK} GIT_BRANCH=${GIT_BACKEND_BRANCH}
 
 backend-dev-stop:
-	@make -C ${APP_PATH}/${GIT_BACKEND} backend-dev-stop DC_NETWORK=${DC_NETWORK} GIT_BRANCH=${GIT_BACKEND_BRANCH}
+	@${MAKE} -C ${APP_PATH}/${GIT_BACKEND} backend-dev-stop DC_NETWORK=${DC_NETWORK} GIT_BRANCH=${GIT_BACKEND_BRANCH}
 
 backend-clean-version:
 	rm backend-version
 
 backend-docker-check: backend-config
 	@BACKEND_APP_VERSION=$(shell cd ${APP_PATH}/${GIT_BACKEND} && git describe --tags);\
-	make docker-check DC_IMAGE_NAME=deces-backend APP_VERSION=$$BACKEND_APP_VERSION GIT_BRANCH=${GIT_BACKEND_BRANCH}
+	${MAKE} docker-check DC_IMAGE_NAME=deces-backend APP_VERSION=$$BACKEND_APP_VERSION GIT_BRANCH=${GIT_BACKEND_BRANCH}
 
 backend: backend-config backend-docker-check
 	@BACKEND_APP_VERSION=$(shell cd ${APP_PATH}/${GIT_BACKEND} && git describe --tags);\
-	make -C ${APP_PATH}/${GIT_BACKEND} backend-start DC_NETWORK=${DC_NETWORK} APP_VERSION=$$BACKEND_APP_VERSION GIT_BRANCH=${GIT_BACKEND_BRANCH}
+	${MAKE} -C ${APP_PATH}/${GIT_BACKEND} backend-start DC_NETWORK=${DC_NETWORK} APP_VERSION=$$BACKEND_APP_VERSION GIT_BRANCH=${GIT_BACKEND_BRANCH}
 
 backend-stop:
 	@BACKEND_APP_VERSION=$(shell cd ${APP_PATH}/${GIT_BACKEND} && git describe --tags);\
-	make -C ${APP_PATH}/${GIT_BACKEND} backend-stop DC_NETWORK=${DC_NETWORK} APP_VERSION=$$BACKEND_APP_VERSION GIT_BRANCH=${GIT_BACKEND_BRANCH}
+	${MAKE} -C ${APP_PATH}/${GIT_BACKEND} backend-stop DC_NETWORK=${DC_NETWORK} APP_VERSION=$$BACKEND_APP_VERSION GIT_BRANCH=${GIT_BACKEND_BRANCH}
 
 backend-clean-dir:
 	@sudo rm -rf ${APP_PATH}/${GIT_BACKEND}
@@ -288,7 +283,7 @@ frontend-stop:
 	${DC} -f ${DC_FILE}.yml down
 
 frontend:
-	@echo docker-compose up ${APP} frontend
+	@echo docker-compose up ${APP_GROUP} ${APP}
 	@echo DATAGOUV PROXY: ${DATAGOUV_RESOURCES_PROXY}, RW: ${DATAGOUV_RESOURCES_REWRITE_PATH}
 	${DC} -f ${DC_RUN_NGINX_FRONTEND} up -d
 	@timeout=${NGINX_TIMEOUT} ; ret=1 ; until [ "$$timeout" -le 0 -o "$$ret" -eq "0"  ] ; do (curl -s --fail -XGET localhost:${PORT} > /dev/null) ; ret=$$? ; if [ "$$ret" -ne "0" ] ; then echo "waiting for nginx to start $$timeout" ; fi ; ((timeout--)); sleep 1 ; done ; exit $$ret
@@ -300,7 +295,7 @@ start: elasticsearch backend frontend
 	@sleep 2 && docker-compose logs
 
 log:
-	@make -C ${APP_PATH}/${GIT_TOOLS} docker-logs-to-API ${MAKEOVERRIDES} &
+	@${MAKE} -C ${APP_PATH}/${GIT_TOOLS} docker-logs-to-API ${MAKEOVERRIDES} &
 
 backup-dir:
 	@if [ ! -d "$(BACKUP_DIR)" ] ; then mkdir -p $(BACKUP_DIR) ; fi
@@ -308,21 +303,23 @@ backup-dir:
 backup-dir-clean:
 	@if [ -d "$(BACKUP_DIR)" ] ; then (rm -rf $(BACKUP_DIR) > /dev/null 2>&1 || true) ; fi
 
-elasticsearch-s3-pull: backup-dir ${DATAPREP_VERSION_FILE} ${DATA_VERSION_FILE}
+elasticsearch-storage-pull: backup-dir ${DATAPREP_VERSION_FILE} ${DATA_VERSION_FILE}
 	@\
 	DATAPREP_VERSION=$$(cat ${DATAPREP_VERSION_FILE});\
 	DATA_VERSION=$$(cat ${DATA_VERSION_FILE});\
-	ESBACKUPFILE=${ES_BACKUP_BASENAME}_$${DATAPREP_VERSION}_$${DATA_VERSION}.tar;\
+	ES_BACKUP_FILE=${ES_BACKUP_BASENAME}_$${DATAPREP_VERSION}_$${DATA_VERSION}.tar;\
 	if [ ! -f "${BACKUP_DIR}/$$ESBACKUPFILE" ];then\
-		echo pulling s3://${S3_BUCKET}/$$ESBACKUPFILE;\
-		${AWS} s3 cp s3://${S3_BUCKET}/$$ESBACKUPFILE ${BACKUP_DIR}/$$ESBACKUPFILE;\
+		echo pulling ${STORAGE_BUCKET}/$$ES_BACKUP_FILE;\
+		${MAKE} -C ${APP_PATH}/${GIT_TOOLS} storage-pull\
+			FILE=$$ES_BACKUP_FILE DATA_DIR=${BACKUP_DIR}\
+			STORAGE_BUCKET=${STORAGE_BUCKET} STORAGE_ACCESS_KEY=${STORAGE_ACCESS_KEY} STORAGE_SECRET_KEY=${STORAGE_SECRET_KEY};\
 	fi
 
 elasticsearch-stop:
 	@echo docker-compose down matchID elasticsearch
 	@if [ -f "${DC_FILE}-elasticsearch-huge.yml" ]; then ${DC} -f ${DC_FILE}-elasticsearch-huge.yml down;fi
 
-elasticsearch-restore: elasticsearch-stop elasticsearch-s3-pull
+elasticsearch-restore: elasticsearch-stop elasticsearch-storage-pull
 	@if [ -d "$(ES_DATA)" ] ; then (echo purging ${ES_DATA} && sudo rm -rf ${ES_DATA} && echo purge done) ; fi
 	@\
 	DATAPREP_VERSION=$$(cat ${DATAPREP_VERSION_FILE});\
@@ -376,27 +373,27 @@ ${DATAPREP_VERSION_FILE}: ${GIT_DATAPREP}
 	| sha1sum | awk '{print $1}' | cut -c-8 > ${DATAPREP_VERSION_FILE}
 
 ${DATA_VERSION_FILE}:
-	@${AWS} s3 ls ${S3_BUCKET} | egrep '${FILES_TO_PROCESS}' |\
-		awk '{print $$NF}' | sort > ${DATA_VERSION_FILE}.list
-	@cat ${DATA_VERSION_FILE}.list | sed 's/\s*$$//g' | sha1sum | awk '{print $1}' |\
-		cut -c-8 > ${DATA_VERSION_FILE}
+	@${MAKE} -C ${APP_PATH}/${GIT_TOOLS} catalog-tag CATALOG_TAG=${DATA_VERSION_FILE}\
+		DATAGOUV_DATASET=${DATASET} STORAGE_BUCKET=${STORAGE_BUCKET}\
+		STORAGE_ACCESS_KEY=${STORAGE_ACCESS_KEY} STORAGE_SECRET_KEY=${STORAGE_SECRET_KEY}\
+		FILES_PATTERN='${FILES_TO_PROCESS}'
 
-deploy-local: config elasticsearch-s3-pull elasticsearch-restore elasticsearch docker-check up backup-dir-clean local-test-api
+deploy-local: config elasticsearch-storage-pull elasticsearch-restore elasticsearch docker-check up backup-dir-clean local-test-api
 
 local-test-api:
-	@make -C ${APP_PATH}/${GIT_TOOLS} local-test-api \
+	@${MAKE} -C ${APP_PATH}/${GIT_TOOLS} local-test-api \
 		PORT=${PORT} \
 		API_TEST_PATH=${ES_PROXY_PATH} API_TEST_JSON_PATH=${API_TEST_JSON_PATH} API_TEST_DATA='${API_TEST_REQUEST}'\
 		${MAKEOVERRIDES}
 
 deploy-remote-instance: config backend-config
 	@BACKEND_APP_VERSION=$(shell cd ${APP_PATH}/${GIT_BACKEND} && git describe --tags);\
-	make -C ${APP_PATH}/${GIT_TOOLS} remote-config\
+	${MAKE} -C ${APP_PATH}/${GIT_TOOLS} remote-config\
 			APP=${APP} APP_VERSION=${APP_VERSION} CLOUD_TAG=ui:${APP_VERSION}-backend:$$BACKEND_APP_VERSION DC_IMAGE_NAME=${DC_PREFIX}\
 			GIT_BRANCH=${GIT_BRANCH} ${MAKEOVERRIDES}
 
 deploy-remote-services:
-	@make -C ${APP_PATH}/${GIT_TOOLS} remote-deploy remote-actions\
+	@${MAKE} -C ${APP_PATH}/${GIT_TOOLS} remote-deploy remote-actions\
 		APP=${APP} APP_VERSION=${APP_VERSION} DC_IMAGE_NAME=${DC_PREFIX}\
 		ACTIONS=deploy-local GIT_BRANCH=${GIT_BRANCH} ${MAKEOVERRIDES}
 
@@ -409,16 +406,16 @@ deploy-remote-publish:
 	else\
 		APP_DNS="${GIT_BRANCH}-${APP_DNS}";\
 	fi;\
-	make -C ${APP_PATH}/${GIT_TOOLS} remote-test-api-in-vpc nginx-conf-apply remote-test-api\
+	${MAKE} -C ${APP_PATH}/${GIT_TOOLS} remote-test-api-in-vpc nginx-conf-apply remote-test-api\
 		APP=${APP} APP_VERSION=${APP_VERSION} GIT_BRANCH=${GIT_BRANCH} PORT=${PORT}\
 		APP_DNS=$$APP_DNS API_TEST_PATH=${ES_PROXY_PATH} API_TEST_JSON_PATH=${API_TEST_JSON_PATH} API_TEST_DATA='${API_TEST_REQUEST}'\
 		${MAKEOVERRIDES}
 
 deploy-delete-old:
-	@make -C ${APP_PATH}/${GIT_TOOLS} cloud-instance-down-invalid\
+	@${MAKE} -C ${APP_PATH}/${GIT_TOOLS} cloud-instance-down-invalid\
 		APP=${APP} APP_VERSION=${APP_VERSION} GIT_BRANCH=${GIT_BRANCH} ${MAKEOVERRIDES}
 
 deploy-monitor:
-	@make -C ${APP_PATH}/${GIT_TOOLS} remote-install-monitor-nq NQ_TOKEN=${NQ_TOKEN} ${MAKEOVERRIDES}
+	@${MAKE} -C ${APP_PATH}/${GIT_TOOLS} remote-install-monitor-nq NQ_TOKEN=${NQ_TOKEN} ${MAKEOVERRIDES}
 
 deploy-remote: config deploy-remote-instance deploy-remote-services deploy-remote-publish deploy-delete-old deploy-monitor
