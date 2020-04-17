@@ -40,7 +40,7 @@ script:
   - git fetch && git describe --tags
   - make config
   - (make docker-check || make build) || travis_terminate 1;
-  - make deploy-local FILES_TO_PROCESS=deces-1970.txt.gz || travis_terminate 1;
+  - make deploy-local FILES_TO_PROCESS=deces-2020-m01.txt.gz || travis_terminate 1;
   - if [[ ( "$TRAVIS_PULL_REQUEST" = "false" ) ]]; then
       make docker-push GIT_BRANCH="$TRAVIS_BRANCH" || travis_terminate 1;
     fi
