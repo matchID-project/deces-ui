@@ -23,19 +23,20 @@ export default async function runRequest(body) {
       body: JSON.stringify(body)
     });
   if (response.status >= 400) {
+    let json;
+    try {
+       json = await response.json();
+    } catch {
+    }
     return {
-      hits: {
-        total: {
-          value: 1
-        },
-        hits: [
+      response: {
+        total: 1,
+        persons: [
           {
-            _id: 0,
-            _source: {
-              status: response.status,
-              statusText: response.statusText,
-              error: true
-            }
+            error: true,
+            status: response.status,
+            statusText: response.statusText,
+            msg: json && json.msg
           }
         ]
       }
