@@ -10,9 +10,9 @@
                         </div>
                         <div class="level-item has-text-left">
                             <div>
-                                <h1 class="title is-size-5 has-text-white">Erreur {result.status.raw}</h1>
+                                <h1 class="title is-size-5 has-text-white">Erreur {result.status}</h1>
                                 <h1 class="is-size-6-7 has-text-white">
-                                    {result.statusText.raw}
+                                    {result.statusText} {result.msg && result.msg}
                                 </h1>
                             </div>
                         </div>
@@ -200,7 +200,7 @@
 
     let age;
 
-    $: age = Math.abs(
+    $: age = result.error ? undefined : Math.abs(
             new Date(toDate(result.death.date) - toDate(result.birth.date)).getUTCFullYear()
             - 1970);
 
