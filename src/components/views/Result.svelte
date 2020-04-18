@@ -10,9 +10,9 @@
                         </div>
                         <div class="level-item has-text-left">
                             <div>
-                                <h1 class="title is-size-5 has-text-white">Erreur {result.status.raw}</h1>
+                                <h1 class="title is-size-5 has-text-white">Erreur {result.status}</h1>
                                 <h1 class="is-size-6-7 has-text-white">
-                                    {result.statusText.raw}
+                                    {result.statusText} {result.msg && result.msg}
                                 </h1>
                             </div>
                         </div>
@@ -49,7 +49,7 @@
                             <div class="level-item has-text-left">
                                 <div>
                                     <h1 class={`title is-size-${expand ? "4" : "5"} has-text-${expand ? "white" : "primary"}`}>
-                                        {result.name.last.toUpperCase()} {result.name.first[0]}
+                                        {result.name.last.toUpperCase()} { result.name.first ? result.name.first[0] : '' }
                                     </h1>
                                     <h1 class={`is-size-${expand ? "6" : "6-7"} has-text-${expand ? "white" : "primary"}`}>
                                         <span class="is-hidden-mobile">
@@ -91,7 +91,13 @@
                                         </tr>
                                         <tr>
                                             <td>Prénom(s)</td>
-                                            <td>{result.name.first.join(' ')}</td>
+                                            <td>
+                                                {
+                                                    result.name.first
+                                                        ? result.name.first.join(' ')
+                                                        : '(sans prénom)'
+                                                }
+                                            </td>
                                         </tr>
                                         <tr>
                                             <td>Date</td>
@@ -194,7 +200,7 @@
 
     let age;
 
-    $: age = Math.abs(
+    $: age = result.error ? undefined : Math.abs(
             new Date(toDate(result.death.date) - toDate(result.birth.date)).getUTCFullYear()
             - 1970);
 
