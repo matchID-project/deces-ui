@@ -136,7 +136,7 @@ config:
 
 
 clean-data: elasticsearch-clean backup-dir-clean
-	@sudo rm -rf ${DATA_VERSION_FILE} ${DATAPREP_VERSION_FILE}\
+	@sudo rm -rf ${APP_PATH}/${GIT_DATAPREP} ${DATA_VERSION_FILE} ${DATAPREP_VERSION_FILE}\
 		${DATA_VERSION_FILE}.list > /dev/null 2>&1 || true
 
 clean-frontend: build-dir-clean frontend-clean-dist frontend-clean-dist-archive
