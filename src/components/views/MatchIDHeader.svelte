@@ -1,9 +1,9 @@
 <nav class="navbar is-fixed-top is-white" role="navigation" aria-label="main navigation">
     <div class="container">
         <div class="navbar-brand">
-            <div class="navbar-item logo" on:click={() => toggleModal('service')}>
+            <a class="logo" href="/search">
                 <img src={"/matchID-logo.svg"} alt="matchID Logo" />
-            </div>
+            </a>
             <div
                 class="navbar-burger"
                 class:is-active={burgerState}
@@ -22,18 +22,58 @@
             id="navMenu"
         >
             <div class="navbar-start">
-                {#each Object.keys(modalMenu) as about}
-                    <a class="navbar-item" on:click={() => toggleModal(about)} href="javascript:void(0);">
-                        <span class="icon">
-                            <FontAwesomeIcon icon={modalMenu[about].icon} class="icon"/>
-                        </span>
-                        <span> {modalMenu[about].title} </span>
-                    </a>
-                {/each}
                 <div class="navbar-item has-dropdown is-hoverable">
                     <div class="navbar-link">
                         <span class="icon">
-                            <FontAwesomeIcon icon={faLightbulb} class="icon"/>
+                            <FontAwesomeIcon icon={faSearch} class="icon"/>
+                        </span>
+                        <span>
+                            recherche
+                        </span>
+                    </div>
+                    <div class="navbar-dropdown">
+                        <a class="navbar-item" href="/search">
+                            <span class="icon">
+                              <FontAwesomeIcon icon={faMagic} className="icon is-small"/>
+                            </span>
+                            <span>
+                                simple
+                            </span>
+                        </a>
+                        <a class="navbar-item" href="/search?advanced=true">
+                            <span class="icon">
+                                <FontAwesomeIcon icon={faThList} className="icon is-small"/>
+                            </span>
+                            <span>
+                                avancée
+                            </span>
+                        </a>
+                    </div>
+                </div>
+                <div class="navbar-item has-dropdown is-hoverable">
+                    <div class="navbar-link">
+                        <span class="icon">
+                            <FontAwesomeIcon icon={faQuestion} class="icon"/>
+                        </span>
+                        <span>
+                            à propos
+                        </span>
+                    </div>
+                    <div class="navbar-dropdown">
+                        {#each Object.keys(aboutMenu) as about}
+                            <a class="navbar-item" href={`/about/${about}`}>
+                                <span class="icon">
+                                    <FontAwesomeIcon icon={aboutMenu[about].icon} class="icon"/>
+                                </span>
+                                <span> {aboutMenu[about].title} </span>
+                            </a>
+                        {/each}
+                    </div>
+                </div>
+                <div class="navbar-item has-dropdown is-hoverable">
+                    <div class="navbar-link">
+                        <span class="icon">
+                            <FontAwesomeIcon icon={faLink} class="icon"/>
                         </span>
                         <span>
                             références
@@ -99,24 +139,16 @@
     </div>
 </nav>
 
-<Modal bind:active={modalState} title={modalMenu[modalContent].title}>
-    {#if modalContent === 'service'}
-        <AboutService/>
-    {:else}
-        <AboutData/>
-    {/if}
-</Modal>
-
 <script>
     import { socialIcons } from '../tools/stores.js'
     import FontAwesomeIcon from './FontAwesomeIcon.svelte'
-    import Modal from './Modal.svelte'
-    import AboutService from './AboutService.svelte'
-    import AboutData from './AboutData.svelte'
 
     import {
-        faLightbulb
-    } from '@fortawesome/free-regular-svg-icons';
+        faLink,
+        faMagic,
+        faQuestion,
+        faThList
+    } from '@fortawesome/free-solid-svg-icons';
 
     import {
         faFacebook,
@@ -138,20 +170,15 @@
     let burgerState = false;
     let modalState = false;
     let modalContent = 'service';
-    let modalMenu = {
+    let aboutMenu = {
         service: {
             icon: faSearch,
-            title:'à propos de ce service'
+            title:'le service'
         },
         data: {
             icon: faDatabase,
-            title: 'à propos des données INSEE'
+            title: 'les données INSEE'
         }
-    }
-
-    function toggleModal(page) {
-        modalState= !modalState;
-        modalContent = page;
     }
 
     function toggleBurger() {
@@ -181,19 +208,9 @@
 <style>
 
 
-    @media print,screen and (min-width:769px) {
-        .logo {
-        margin-top: -8px;
-        margin-bottom: -8px;
+    .logo {
+        margin-bottom: -5px;
         margin-left: -12px;
-        }
-    }
-    @media print,screen and (max-width:768px) {
-        .logo {
-        margin-top: -8px;
-        margin-bottom: -15px;
-        margin-left: -12px;
-        }
     }
 
     img {
