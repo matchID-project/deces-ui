@@ -19,10 +19,12 @@ server {
   listen 35729;
 
   # frontend (dev, npm server)
+
   location / {
     limit_req zone=app burst=10 nodelay;
     limit_req_status 429;
-  	proxy_pass http://frontend-dev;
+    rewrite "^/[a-zA-Z0-9\/]+$" / break;
+    proxy_pass http://frontend-dev;
     # Allow protocol upgrade to websocket
     proxy_http_version 1.1;
     proxy_next_upstream off;
