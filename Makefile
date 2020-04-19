@@ -220,7 +220,7 @@ update: frontend-update
 frontend-dev:
 ifneq "$(commit)" "$(lastcommit)"
 	@echo docker-compose up ${APP} frontend for dev after new commit ${APP_VERSION}
-	${DC} -f ${DC_FILE}-dev.yml up --build -d
+	${DC} -f ${DC_FILE}-dev.yml up -d
 	@echo "${commit}" > ${FRONTEND}/.lastcommit
 else
 	@echo docker-compose up ${APP} frontend for dev
