@@ -1,16 +1,41 @@
 <svelte:window on:keydown={handleKeydown}/>
-<Layout/>
+<MatchIDHeader/>
+{#each Object.keys(routes) as route, index}
+	{#if route === location.pathname}
+		<svelte:component this={routes[route].component} {...routes[route].props}/>
+	{/if}
+{/each}
 
 <script>
-  import Layout from './components/views/Layout.svelte';
-  import { searchInput, searchCanvas, current, resultsPerPage, updateURL, advancedSearch, apiVersion, fuzzySearch } from './components/tools/stores.js';
-  $: URLSearchSubmit(new URLSearchParams(location.search));
+	import { onMount } from 'svelte';
+	import MatchIDHeader from './components/views/MatchIDHeader.svelte';
+	import Search from './components/views/Search.svelte';
+	import About from './components/views/About.svelte';
+	import { searchInput, searchCanvas, current, resultsPerPage, updateURL, advancedSearch, apiVersion, fuzzySearch } from './components/tools/stores.js';
 
-  $: element = document.getElementById('infoNotWorking')
-  $: element.parentNode  && element.parentNode.removeChild(element);
+	let routes = {
+		'/': { component: Search },
+		'/search': { component: Search },
+		'/about/service': { component: About, props: { page: 'service'} },
+		'/about/data': { component: About, props: { page: 'data'} }
+	}
+
+	onMount(async () => {
+		if (location.pathname === '/') {
+			if (`${location.search}`) {
+				window.history.replaceState({}, '', `/search${location.search}`);
+			} else {
+				window.history.replaceState({}, '', `/search`);
+			}
+		}
+	})
+
+	$: URLSearchSubmit(new URLSearchParams(location.search));
+	$: element = document.getElementById('infoNotWorking');
+	$: element.parentNode  && element.parentNode.removeChild(element);
 
 	const URLSearchSubmit = (urlParams) => {
-        if (!$updateURL) {
+		if (!$updateURL) {
 			const myCurrent = urlParams.get('current') ? parseInt(urlParams.get('current').replace(/n_(.*)_n/,"$1")) : undefined;
 			const myResultsPerPage = urlParams.get('size') ? parseInt(urlParams.get('size').replace(/n_(.*)_n/,"$1")) : undefined;
 			const myQuery = Object.keys($searchInput).map(key => {
@@ -43,8 +68,8 @@
 					return v;
 				});
 			}
-        }
-    }
+		}
+	}
 
 	const handleKeydown = async (event) => {
 		if (event.ctrlKey && event.altKey && event.key === 'b') {
