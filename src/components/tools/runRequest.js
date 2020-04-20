@@ -26,7 +26,8 @@ export default async function runRequest(body) {
     let json;
     try {
        json = await response.json();
-    } catch {
+    } catch(error) {
+      console.log('response json error', error);
     }
     return {
       response: {
