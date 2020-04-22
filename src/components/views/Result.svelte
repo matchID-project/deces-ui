@@ -182,9 +182,11 @@
     } from '@fortawesome/free-solid-svg-icons';
 
     export let result;
-    let expand = !$accordeonMode;
+    export let forceExpand;
 
-    $: expand = !$accordeonMode;
+    let expand = forceExpand || !$accordeonMode;
+
+    $: expand = forceExpand || !$accordeonMode;
 
     const dateFormat = (dateString) => {
         return dateString.replace(/(\d{4})(\d{2})(\d{2})/,"$3/$2/$1");
