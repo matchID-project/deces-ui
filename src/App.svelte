@@ -8,16 +8,18 @@
 
 <script>
 	import { onMount } from 'svelte';
+	import About from './components/views/About.svelte';
 	import MatchIDHeader from './components/views/MatchIDHeader.svelte';
 	import Search from './components/views/Search.svelte';
-	import About from './components/views/About.svelte';
+	import Geo from './components/views/Geo.svelte';
 	import { searchInput, searchCanvas, current, resultsPerPage, updateURL, advancedSearch, apiVersion, fuzzySearch } from './components/tools/stores.js';
 
 	let routes = {
 		'/': { component: Search },
 		'/search': { component: Search },
 		'/about/service': { component: About, props: { page: 'service'} },
-		'/about/data': { component: About, props: { page: 'data'} }
+		'/about/data': { component: About, props: { page: 'data'} },
+		'/geo': { component: Geo }
 	}
 
 	onMount(async () => {
