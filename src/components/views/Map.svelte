@@ -250,9 +250,18 @@
     position: absolute;
   }
 
-  .result {
-    width: 95%;
-    display: flex;
+  @media print,screen and (max-width:768px) {
+    .result {
+        width: 100%;
+        display: flex;
+    }
+  }
+
+  @media print,screen and (min-width:769px) {
+    .result {
+        width: 95%;
+        display: flex;
+    }
   }
 
   .control {
@@ -264,6 +273,12 @@
     border-width: 1px;
     border: 1px solid;
     border-radius: 4px;
+  }
+
+@media print,screen and (max-width:768px) {
+    .hide-mobile {
+        display: None;
+    }
   }
 </style>
 
@@ -277,8 +292,8 @@
     </div>
   {/if}
   <slot />
-  <div class="search leaflet-top-of bottom">
-    <SearchBox />
+  <div class="search leaflet-top-of bottom hide-mobile">
+    <SearchBox/>
   </div>
   {#if showResult}
     <div
