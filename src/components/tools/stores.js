@@ -293,6 +293,10 @@ export const filters = writable(false);
 
 export const resultsPerPage = writable(20);
 
+export const maxResults = writable(__ES_MAX_RESULTS__);
+
+export const maxResultsPerPage = writable(__ES_MAX_RESULTS__);
+
 export const resultsPerPageDefault = 20;
 
 export const current = writable(1);

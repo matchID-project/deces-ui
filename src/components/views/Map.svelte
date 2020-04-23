@@ -3,7 +3,7 @@
 
   import { onMount, getContext } from "svelte";
   import { fade } from 'svelte/transition';
-  import { searchTyping, waitSearch } from "../tools/stores.js";
+  import { searchTyping, waitSearch, maxResultsPerPage } from "../tools/stores.js";
   import getDataGouvCatalog from "../tools/getDataGouvCatalog.js";
   import Result from "./Result.svelte";
   import SearchBox from "./SearchBox.svelte";
@@ -35,7 +35,7 @@
 
   onMount(() => {
     getDataGouvCatalog();
-    $resultsPerPage = 10000;
+    $resultsPerPage = $maxResultsPerPage;
     leafletMap = L.map(mapContainer, {
       svgSprite: false,
       preferCanvas: true,
