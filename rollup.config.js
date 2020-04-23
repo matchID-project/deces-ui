@@ -30,6 +30,7 @@ export default {
 			// into a client script :)
 			__AB_THRESHOLD__: process.env.AB_THRESHOLD,
 			__ES_PROXY_PATH__: process.env.ES_PROXY_PATH,
+			__ES_MAX_RESULTS__: process.env.ES_MAX_RESULTS,
 			__BACKEND_PROXY_PATH__: process.env.BACKEND_PROXY_PATH,
 			__DATAGOUV_PROXY_PATH__ : process.env.DATAGOUV_PROXY_PATH,
 			__DATAGOUV_CATALOG_URL__: process.env.DATAGOUV_CATALOG_URL,

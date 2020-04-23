@@ -41,7 +41,7 @@
 {/if}
 
 <script>
-    import { current, totalResults, totalPages, resultsPerPage, searchInput, wasSearched } from '../tools/stores.js'
+    import { current, totalResults, totalPages, resultsPerPage, maxResults, searchInput, wasSearched } from '../tools/stores.js'
     import { searchString, searchSubmit, searchURLUpdate } from '../tools/search.js'
 
     let from, to, query;
@@ -50,21 +50,21 @@
     $: to = Math.min($totalResults, $current * $resultsPerPage);
     $: query = searchString($searchInput);
 
-    $: pages = computePages($current, $totalPages)
+    $: pages = computePages($current, Math.min($totalPages, $maxResults / $resultsPerPage));
 
     const computePages = (index,total) => {
         if (total === 0) {return}
         let pages;
         if (total <= 5) {
-            pages = [...Array(total).keys()].map(n => n+1)
+            pages = [...Array(total).keys()].map(n => n+1);
         } else if (index <= 3) {
-            pages = [...Array(index+1).keys()].map(n => n+1)
-            pages.push('.')
-            pages.push(total)
+            pages = [...Array(index+1).keys()].map(n => n+1);
+            pages.push('.');
+            pages.push(total);
         } else if (index < (total - 3)) {
-            pages = [1,'.',index-1,index,index+1,'.',total]
+            pages = [1,'.',index-1,index,index+1,'.',total];
         } else {
-            pages = [1,'.'].concat([...Array(total-index+2).keys()].map(n => n+index-1))
+            pages = [1,'.'].concat([...Array(total-index+2).keys()].map(n => n+index-1));
         }
         return pages;
     }
