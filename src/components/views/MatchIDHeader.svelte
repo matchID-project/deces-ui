@@ -1,4 +1,4 @@
-<nav class="navbar is-fixed-top is-white" role="navigation" aria-label="main navigation">
+<nav class="ztop navbar is-fixed-top is-white" role="navigation" aria-label="main navigation">
     <div class="container">
         <div class="navbar-brand">
             <a class="logo" href="/search">
@@ -46,6 +46,14 @@
                             </span>
                             <span>
                                 avancée
+                            </span>
+                        </a>
+                        <a class="navbar-item" href="/geo?advanced=true">
+                            <span class="icon">
+                                <FontAwesomeIcon icon={faGlobeEurope} className="icon is-small"/>
+                            </span>
+                            <span>
+                                géographique
                             </span>
                         </a>
                     </div>
@@ -144,6 +152,7 @@
     import FontAwesomeIcon from './FontAwesomeIcon.svelte'
 
     import {
+        faGlobeEurope,
         faLink,
         faMagic,
         faQuestion,
@@ -207,6 +216,9 @@
 
 <style>
 
+    .ztop {
+        z-index: 1200 !important;
+    }
 
     .logo {
         margin-bottom: -5px;
@@ -266,7 +278,6 @@
     background-color: #fff;
     min-height: 3.25rem;
     position: relative;
-    z-index: 30;
     }
 
     .navbar.is-white {

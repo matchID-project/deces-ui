@@ -365,7 +365,7 @@
 
   @media print,screen and (min-width:769px) {
     .is-size-5 {
-      font-size: 1.25rem!important;
+      font-size: 1.15rem!important;
     }
 
     .column.is-1 {
