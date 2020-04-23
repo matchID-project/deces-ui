@@ -1,60 +1,70 @@
 {#if $wasSearched}
-    <div class="columns is-vcentered is-mobile">
-        <div class="column is-4 is-mobile-6 is-size-7">
-            <span>Résultats <strong>{from}</strong> à <strong>{to}</strong> parmi <strong>{$totalResults}</strong></span>
-            <span>pour: <i>{query}</i></span>
-        </div>
-        <div
-            class="column is-4 is-mobile-3 is-size-7 has-text-centered"
-        >
-            <div
-                on:click={() => {$sortInputDisplay=!$sortInputDisplay}}
-                class="pointer"
-                title="cliquez pour paramétrer le tri"
-            >
-                <span>tri:</span>
-                <span>
-                {#if ($sortInput.filter(s => s.order).length) > 0}
-                    {#each $sortInput.filter(s => s.order) as t}
-                        <span>
-                            {t.label}
-                            <span style="margin-left:-0.2rem">
-                                {#if t.order === "desc"}
-                                    <FontAwesomeIcon icon={faSortDown} class="is-small is-low"/>
-                                {:else}
-                                    <FontAwesomeIcon icon={faSortUp} class="is-small is-low"/>
-                                {/if}
-                            </span>
-                        </span>
-                    {/each}
-                {:else}
-                    aucun
-                {/if}
-                </span>
+    <div class="has-background-white">
+        <div class="columns is-vcentered is-mobile ">
+            <div class="column is-4 is-mobile-6 is-size-7">
+                <span>Résultats <strong>{from}</strong> à <strong>{to}</strong> parmi <strong>{$totalResults}</strong></span>
+                <span>pour: <i>{query}</i></span>
             </div>
+            {#if !blockInteractive}
+                <div
+                    class="column is-4 is-mobile-3 is-size-7 has-text-centered"
+                >
+                    <div
+                        on:click={() => {$sortInputDisplay=!$sortInputDisplay}}
+                        class="pointer"
+                        title="cliquez pour paramétrer le tri"
+                    >
+                        <span>tri:</span>
+                        <span>
+                        {#if ($sortInput.filter(s => s.order).length) > 0}
+                            {#each $sortInput.filter(s => s.order) as t}
+                                <span>
+                                    {t.label}
+                                    <span style="margin-left:-0.2rem">
+                                        {#if t.order === "desc"}
+                                            <FontAwesomeIcon icon={faSortDown} class="is-small is-low"/>
+                                        {:else}
+                                            <FontAwesomeIcon icon={faSortUp} class="is-small is-low"/>
+                                        {/if}
+                                    </span>
+                                </span>
+                            {/each}
+                        {:else}
+                            aucun
+                        {/if}
+                        </span>
+                    </div>
+                </div>
+                <div class="column is-4 is-mobile-3 has-text-right is-size-7 is-vcentered">
+                    <span class="is-hidden-mobile">résultats </span>par page
+                    <span class="select is-size-7">
+                        <select bind:value={$resultsPerPage}>
+                            {#each resultsPerPageList as option}
+                                <option>{option}</option>
+                            {/each}
+                        </select>
+                    </span>
+                    <span
+                        class="has-text-primary expand-icon"
+                        title={$accordeonMode ? "déplier tous les résultats" : "replier tous les résultats"}
+                        on:click={() => {$accordeonMode=!$accordeonMode}}
+                    >
+                        <FontAwesomeIcon icon={$accordeonMode ? faPlus : faMinus} class="is-lower"/>
+                    </span>
+                </div>
+            {:else}
+                <div class="column is-4 is-mobile-6 is-size-7 has-text-right">
+                    <slot></slot>
+                </div>
+            {/if}
         </div>
-        <div class="column is-4 is-mobile-3 has-text-right is-size-7 is-vcentered">
-            <span class="is-hidden-mobile">résultats </span>par page
-            <span class="select is-size-7">
-                <select bind:value={$resultsPerPage}>
-                    {#each resultsPerPageList as option}
-                        <option>{option}</option>
-                    {/each}
-                </select>
-            </span>
-            <span
-                class="has-text-primary expand-icon"
-                title={$accordeonMode ? "déplier tous les résultats" : "replier tous les résultats"}
-                on:click={() => {$accordeonMode=!$accordeonMode}}
-            >
-                <FontAwesomeIcon icon={$accordeonMode ? faPlus : faMinus} class="is-lower"/>
-            </span>
-        </div>
-    </div>
-    <div class="columns">
-        <div class="column is-1"></div>
-        <div class="column is-10 is-vcentered has-text-centered"><SortInput/></div>
-        <div class="column is-1"></div>
+        {#if !blockInteractive}
+            <div class="columns">
+                <div class="column is-1"></div>
+                <div class="column is-10 is-vcentered has-text-centered"><SortInput/></div>
+                <div class="column is-1"></div>
+            </div>
+        {/if}
     </div>
 {/if}
 
@@ -67,6 +77,8 @@
 
     let from, to, query;
 
+    export let blockInteractive;
+
     let resultsPerPageList;
 
     $: resultsPerPageList = [20,40,60].includes($resultsPerPage) ? [20,40,60] : [$resultsPerPage,20,40,60].sort()
@@ -78,7 +90,10 @@
 </script>
 
 <style>
-
+    .has-background-white {
+        background: rgba(255, 255, 255, 0.5);
+        margin-bottom: 12px;
+    }
     .column {
         display: block;
         flex-basis: 0;

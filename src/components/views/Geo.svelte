@@ -13,7 +13,6 @@
     <div class="results-body">
         <div class="container">
             <div class="margin">
-                <ResultsHeader/>
                 <div class="map-container">
                     <Map>
                         <TileLayer tileServer='cartodb.positron'/>
@@ -29,7 +28,6 @@
     import SearchBox from './SearchBox.svelte';
 	import Map from './Map.svelte';
     import TileLayer from './TileLayer.svelte';
-    import ResultsHeader from './ResultsHeader.svelte';
 
 </script>
 
