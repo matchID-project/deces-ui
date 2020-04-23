@@ -44,7 +44,9 @@
       zoom: zoom
     });
     leafletMap.doubleClickZoom.disable();
-
+    L.control.zoom({
+        position: 'topright'
+    }).addTo(leafletMap);
     resize();
   });
 
