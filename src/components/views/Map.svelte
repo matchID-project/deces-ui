@@ -22,6 +22,19 @@
   <div class="search leaflet-top-of bottom hide-mobile">
     <SearchBox/>
   </div>
+  <div
+    class="results-header leaflet-top-of bottom"
+    on:click|preventDefault={toggleFullScreen}
+  >
+        <ResultsHeader blockInteractive={true}>
+            {#if isFull}
+                Cliquez ici pour sortir du plein écran
+            {:else}
+                Cliquez ici pour le plein écran
+            {/if}
+        </ResultsHeader>
+  </div>
+
   {#if showResult}
     <div
       class="result leaflet-top-of"
@@ -42,6 +55,7 @@
   import { searchTyping, waitSearch, maxResultsPerPage } from "../tools/stores.js";
   import getDataGouvCatalog from "../tools/getDataGouvCatalog.js";
   import Result from "./Result.svelte";
+  import ResultsHeader from './ResultsHeader.svelte';
   import SearchBox from "./SearchBox.svelte";
   import FontAwesomeIcon from "./FontAwesomeIcon.svelte";
 
@@ -54,6 +68,7 @@
   let birthLayer;
   let deathLayer;
   let scale;
+  let isFull = false;
   const maxBase = 10000;
   const possibleLayers = {
       birth: 'naissance',
@@ -116,6 +131,34 @@
     });
     resize();
   });
+
+  const toggleFullScreen = () => {
+      if (isFull) {
+          exitFullscreen();
+      } else {
+          requestFullscreen()
+      }
+      isFull = !isFull
+  }
+
+  const requestFullscreen = () => {
+    const requestFS = (
+      mapContainer.requestFullscreen ||
+      mapContainer.mozRequestFullScreen ||
+      mapContainer.webkitRequestFullscreen ||
+      mapContainer.msRequestFullscreen ||
+      noop
+    ).bind(mapContainer);
+    requestFS();
+  };
+
+  const exitFullscreen = (
+    document.exitFullscreen ||
+    document.mozCancelFullScreen ||
+    document.webkitExitFullscreen ||
+    document.msExitFullscreen ||
+    noop
+  ).bind(document);
 
   const resize = () => {
     leafletMap.invalidateSize();
@@ -292,7 +335,11 @@
 
   .search {
     width: 100%;
-    bottom: 8px;
+    bottom: 28px;
+  }
+   .results-header {
+    width: 100%;
+    bottom: 0;
   }
 
   .leaflet-top-of {
