@@ -2,6 +2,11 @@
     <span slot="title">
       fichier des décès
     </span>
+    <span slot="content">
+        <div class="hide-desktop">
+            <SearchBox/>
+        </div>
+    </span>
 </Hero>
 
 <div class="geo-container">
@@ -21,6 +26,7 @@
 
 <script>
     import Hero from './Hero.svelte';
+    import SearchBox from './SearchBox.svelte';
 	import Map from './Map.svelte';
     import TileLayer from './TileLayer.svelte';
     import ResultsHeader from './ResultsHeader.svelte';
@@ -28,6 +34,13 @@
 </script>
 
 <style>
+
+  @media print,screen and (min-width:769px) {
+    .hide-desktop {
+        display: None;
+    }
+  }
+
   .results-body {
       max-width: 1235px;
       margin-left: auto;

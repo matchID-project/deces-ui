@@ -85,6 +85,7 @@ export ES_PORT = 9200
 export ES_TIMEOUT = 60
 export ES_PROXY_PATH = /${API_PATH}/api/v0/search
 export ES_INDEX = deces
+export ES_MAX_RESULTS = 10000
 export ES_DATA = ${APP_PATH}/esdata
 export ES_NODES = 1
 export ES_MEM = 1024m
