@@ -21,10 +21,14 @@
 
 <script>
   export let height="16rem";
-  const numHeight=height.replace(/^([0-9]+)(.*)$/,"$1");
-  const metric=height.replace(/^([0-9]+)(.*)$/,"$2");
-  const heroHeight=`${height}`;
-  const marginHeight=`${numHeight/2}${metric}`;
+  let numHeight;
+  let metric;
+  let heroHeight;
+  let marginHeight;
+  $: numHeight = height.replace(/^([0-9]+)(.*)$/,"$1");
+  $: metric=height.replace(/^([0-9]+)(.*)$/,"$2");
+  $: heroHeight=`${height}`;
+  $: marginHeight=`${numHeight/2}${metric}`;
 </script>
 
 <style>
