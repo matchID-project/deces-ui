@@ -301,6 +301,8 @@ export const resultsPerPageDefault = 20;
 
 export const current = writable(1);
 
+export const scrollId = writable(null);
+
 export const updateURL = writable(false);
 
 export const autocompleteDisplay = writable(false);
