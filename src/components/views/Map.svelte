@@ -6,7 +6,7 @@
             style={`color: ${layerParams[layer].color};`}
             on:click|preventDefault={(e) => {toggleLayer(layer)}}
         >
-            { displayLayers.includes(possibleLayers[layer]) ? '☑️':'☐' } {possibleLayers[layer]}
+            <input type="checkbox" checked={displayLayers.includes(possibleLayers[layer])}> {possibleLayers[layer]}
         </span>
         <br/>
     {/each}
