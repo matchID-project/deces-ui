@@ -347,7 +347,7 @@
 
   @media print,screen and (min-width:769px) {
     .result {
-        width: 95%;
+        width: calc(100% - 190px);
         display: flex;
     }
   }
@@ -355,17 +355,17 @@
   .control {
     top: 0;
     right: 0;
-    margin-right: 10px;
-    margin-top: 80px;
+    margin-top: 10px;
+    margin-right: 60px;
     position: absolute;
-    z-index: 1150;
+    z-index: 1100;
     padding: 6px 12px;
     border: 2px dotted #38f;
     background: rgba(255,255,255,0.5);
     color: #333;
     border-radius: 4px;
     pointer-events: visiblePainted; /* IE 9-10 doesn't have auto */
-	pointer-events: auto;
+    pointer-events: auto;
     font-size: 1rem;
     font-weight: 600;
     text-indent: 1px;
