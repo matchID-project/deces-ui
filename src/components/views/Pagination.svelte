@@ -41,16 +41,19 @@
 {/if}
 
 <script>
-    import { current, totalResults, totalPages, resultsPerPage, maxResults, searchInput, wasSearched } from '../tools/stores.js'
+    import { current, totalResults, totalPages, resultsPerPage, maxResults, searchInput, wasSearched, scrollId } from '../tools/stores.js'
     import { searchString, searchSubmit, searchURLUpdate } from '../tools/search.js'
 
-    let from, to, query;
+    let from, to, query, pages;
 
+    $: query = searchString($searchInput);
+    $: pages = computePages($current, $totalPages);
     $: from = 1 + ($current - 1) * $resultsPerPage;
     $: to = Math.min($totalResults, $current * $resultsPerPage);
-    $: query = searchString($searchInput);
 
-    $: pages = computePages($current, Math.min($totalPages, $maxResults / $resultsPerPage));
+    $: if (!$scrollId) {
+        goTo(1);
+    };
 
     const computePages = (index,total) => {
         if (total === 0) {return}
