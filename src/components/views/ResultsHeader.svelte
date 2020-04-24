@@ -1,7 +1,7 @@
 {#if $wasSearched}
     <div class="has-background-white">
         <div class="columns is-vcentered is-mobile ">
-            <div class="column is-4 is-mobile-6 is-size-7">
+            <div class={`column ${blockInteractive ? "is-9" : "is-4"} is-mobile-6 is-size-7`}>
                 <span>Résultats <strong>{from}</strong> à <strong>{to}</strong> parmi <strong>{$totalResults}</strong></span>
                 <span>pour: <i>{query}</i></span>
             </div>
@@ -53,7 +53,7 @@
                     </span>
                 </div>
             {:else}
-                <div class="column is-4 is-mobile-6 is-size-7 has-text-right">
+                <div class="column is-3 is-mobile-6 is-size-7 has-text-right">
                     <slot></slot>
                 </div>
             {/if}
