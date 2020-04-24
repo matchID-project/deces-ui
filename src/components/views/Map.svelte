@@ -306,7 +306,7 @@
 
   .wait {
     width: 100%;
-    height: 600px;
+    height: 100vh;
     z-index: 1150;
     position: absolute;
     background: rgba(255, 255, 255, 0.5);
