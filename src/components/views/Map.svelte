@@ -89,35 +89,38 @@
     resultsPerPage
   } from "../tools/stores.js";
 
-  $: updateDisplay(displayLayers);
-  $: updateDisplay(layerParams);
   $: scale = leafletMap &&  (leafletMap.getZoom() ** 1.5) * 0.05 * (2 - Math.log(Math.max(1, $searchResults.length))/Math.log(maxBase)) ** 3;
   $: layerParams = {
       birth: {
           color:'#00d1b2',
           opacity: 0.8,
           radius: 1.5 * scale,
-          weight: scale
+          weight: scale,
+          pane: 'birth'
       },
       death: {
           color: '#ff3860',
           opacity: 0.8,
           radius: 2 * scale,
-          weight: scale
+          weight: scale,
+          pane: 'death'
       },
       life: {
           color: '#209cee',
           opacity: 0.3,
-          weight: scale
+          weight: scale,
+          pane: 'overlayPane'
       }
   }
+  $: drawLayers(layerParams);
+
 
   onMount(() => {
     getDataGouvCatalog();
     $resultsPerPage = $maxResultsPerPage;
     leafletMap = L.map(mapContainer, {
       svgSprite: false,
-      preferCanvas: true,
+      preferCanvas: false,
       zoomControl: false,
       center: center,
       zoom: zoom
@@ -129,6 +132,11 @@
     leafletMap.on('zoomend', e => {
         scale = leafletMap &&  (leafletMap.getZoom() ** 1.5) * 0.05 * (2 - Math.log(Math.max(1, $searchResults.length))/Math.log(maxBase)) ** 3;
     });
+    leafletMap.getPane('overlayPane').style.zIndex = 650;
+    leafletMap.createPane('birth');
+    leafletMap.getPane('birth').style.zIndex = 700;
+    leafletMap.createPane('death');
+    leafletMap.getPane('death').style.zIndex = 750;
     resize();
   });
 
@@ -165,7 +173,6 @@
   };
 
   const toggleLayer = (layer) => {
-      console.log('ici',layer);
       displayLayers=Object.keys(possibleLayers).map((l)  => {
           if (l === layer) {
             if (!displayLayers.includes(possibleLayers[layer])) {
@@ -181,129 +188,113 @@
               }
           }
       }).filter(x => x);
+      if (displayLayers.length === 2) {
+          leafletMap.getPane('overlayPane').style.display='block';
+      } else {
+          leafletMap.getPane('overlayPane').style.display='none';
+      }
+      Object.keys(possibleLayers).map(layer => {
+        if (displayLayers.includes(possibleLayers[layer])) {
+          leafletMap.getPane(`${layer}`).style.display='block';
+        } else {
+          leafletMap.getPane(`${layer}`).style.display='none';
+        }
+      });
   }
 
   $: if ($searchResults) {
     showResult = undefined;
   }
 
-  const updateDisplay = (arg) => {
+  const drawLayers = (arg) => {
     if (!leafletMap) {
       return;
     }
-    if (displayLayers.includes(possibleLayers.birth) && displayLayers.includes(possibleLayers.death)) {
-        if ((arg !== displayLayers) || !lifeLayer) { // do not compute if already exists
-            lifeLayer = L.layerGroup(
-                $searchResults
-                .filter(
-                result =>
-                    result.birth &&
-                    result.birth.location &&
-                    result.birth.location.latitude &&
-                    result.birth.location.longitude &&
-                    result.death &&
-                    result.death.location &&
-                    result.death.location.latitude &&
-                    result.death.location.longitude
-                )
-                .map(result => {
-                return L.polyline(
-                    [
-                    [result.birth.location.latitude, result.birth.location.longitude],
-                    [result.death.location.latitude, result.death.location.longitude]
-                    ],
-                    layerParams.life
-                )
-                    .on("mouseover", e => {
-                    forceExpand = false;
-                    showResult = result;
-                    })
-                    .on("click", e => {
-                    forceExpand = true;
-                    showResult = result;
-                    });
-                })
-            );
-        }
-    } else {
-        if (arg !== displayLayers) { // purge cache if update due to searchUpdate
-            lifeLayer = undefined;
-        }
-    }
-    if (displayLayers.includes(possibleLayers.birth)) {
-        if ((arg !== displayLayers) || !birthLayer) { // do not compute if already exists
-            birthLayer = L.layerGroup(
-                $searchResults
-                .filter(
-                result =>
-                    result.birth &&
-                    result.birth.location &&
-                    result.birth.location.latitude &&
-                    result.birth.location.longitude
-                )
-                .map(result => {
-                return L.circleMarker(
-                    [result.birth.location.latitude, result.birth.location.longitude],
-                    layerParams.birth
-                )
-                    .on("mouseover", e => {
-                    forceExpand = false;
-                    showResult = result;
-                    })
-                    .on("click", e => {
-                    forceExpand = true;
-                    showResult = result;
-                    });
-                })
-            );
-        }
-    } else {
-        if (arg !== displayLayers) { // purge cache if update due to searchUpdate
-            birthLayer = undefined;
-        }
-    }
-    if (displayLayers.includes(possibleLayers.death)) {
-        if ((arg !== displayLayers) || !birthLayer) { // do not compute if already exists
-            deathLayer = L.layerGroup(
-                $searchResults
-                .filter(
-                result =>
-                    result.death &&
-                    result.death.location &&
-                    result.death.location.latitude &&
-                    result.death.location.longitude
-                )
-                .map(result => {
-                return L.circleMarker(
-                    [result.death.location.latitude, result.death.location.longitude],
-                    layerParams.death,
-                )
-                    .on("mouseover", e => {
-                    forceExpand = false;
-                    showResult = result;
-                    })
-                    .on("click", e => {
-                    forceExpand = true;
-                    showResult = result;
-                    });
-                })
-            );
-        }
-    } else {
-        if (arg !== displayLayers) { // purge cache if update due to searchUpdate
-            deathLayer = undefined;
-        }
-    }
-    currentLayer && currentLayer.remove();
-    if (displayLayers.length == 2) {
-        currentLayer = L.layerGroup([lifeLayer, birthLayer, deathLayer]).addTo(leafletMap);
-    } else if (displayLayers.includes(possibleLayers.birth)) {
-        currentLayer = birthLayer.addTo(leafletMap);
-    } else {
-        currentLayer = deathLayer.addTo(leafletMap);
-    }
+    let oldLayers= [lifeLayer, birthLayer, deathLayer];
+    lifeLayer = L.layerGroup(
+      $searchResults
+        .filter(
+        result =>
+            result.birth &&
+            result.birth.location &&
+            result.birth.location.latitude &&
+            result.birth.location.longitude &&
+            result.death &&
+            result.death.location &&
+            result.death.location.latitude &&
+            result.death.location.longitude
+        )
+        .map(result => {
+        return L.polyline(
+            [
+            [result.birth.location.latitude, result.birth.location.longitude],
+            [result.death.location.latitude, result.death.location.longitude]
+            ],
+            layerParams.life
+        )
+            .on("mouseover", e => {
+            forceExpand = false;
+            showResult = result;
+            })
+            .on("click", e => {
+            forceExpand = true;
+            showResult = result;
+            });
+        })
+    );
+    birthLayer = L.layerGroup(
+      $searchResults
+        .filter(
+        result =>
+            result.birth &&
+            result.birth.location &&
+            result.birth.location.latitude &&
+            result.birth.location.longitude
+        )
+        .map(result => {
+        return L.circleMarker(
+            [result.birth.location.latitude, result.birth.location.longitude],
+            layerParams.birth
+        )
+            .on("mouseover", e => {
+            forceExpand = false;
+            showResult = result;
+            })
+            .on("click", e => {
+            forceExpand = true;
+            showResult = result;
+            });
+        })
+    );
+    deathLayer = L.layerGroup(
+        $searchResults
+        .filter(
+        result =>
+            result.death &&
+            result.death.location &&
+            result.death.location.latitude &&
+            result.death.location.longitude
+        )
+        .map(result => {
+        return L.circleMarker(
+            [result.death.location.latitude, result.death.location.longitude],
+            layerParams.death,
+        )
+            .on("mouseover", e => {
+            forceExpand = false;
+            showResult = result;
+            })
+            .on("click", e => {
+            forceExpand = true;
+            showResult = result;
+            });
+        })
+    );
+    oldLayers.map(l => l && l.remove());
+    lifeLayer.addTo(leafletMap);
+    birthLayer.addTo(leafletMap);
+    deathLayer.addTo(leafletMap);
   };
-
 
 </script>
 
