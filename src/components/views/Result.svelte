@@ -100,6 +100,12 @@
                                             </td>
                                         </tr>
                                         <tr>
+                                            <td>Sexe</td>
+                                            <td>
+                                                { result.sex === 'M' ? 'masculin' : 'féminin' }
+                                            </td>
+                                        </tr>
+                                        <tr>
                                             <td>Date</td>
                                             <td>{dateFormat(result.birth.date)}</td>
                                         </tr>
