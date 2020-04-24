@@ -17,7 +17,8 @@ import {
     wasSearched,
     waitSearch,
     fuzzySearch,
-    apiVersion
+    apiVersion,
+    scrollId
 } from './stores.js'
 
 import buildRequest from "./buildRequest.js";
@@ -88,6 +89,12 @@ export const search = async (searchInput, newCurrent) => {
         state = buildResults(json, myResultsPerPage, myCurrent);
     } else {
         state = json;
+        if (state.response && state.response.scrollId) {
+            scrollId.update(v => state.response.scrollId);
+            setTimeout(() => {
+                scrollId.update(v => undefined)
+            }, 59000);
+        }
     }
     return state && state.response;
 };

@@ -4,6 +4,7 @@ import {
   filters,
   resultsPerPage,
   sortInput,
+  scrollId,
   advancedSearch,
   fuzzySearch,
   apiVersion
@@ -16,6 +17,7 @@ let myFilters;
 let myResultsPerPage;
 let mySortInput;
 let myApiVersion;
+let myScrollId;
 
 const a = advancedSearch.subscribe((value) => { myAdvancedSearch=value })
 const f = fuzzySearch.subscribe((value) => { myFuzzySearch=value })
@@ -24,6 +26,7 @@ const cf = filters.subscribe((value) => { myFilters=value })
 const cr = resultsPerPage.subscribe((value) => { myResultsPerPage=value })
 const ci = sortInput.subscribe((value) => { mySortInput=value })
 const v = apiVersion.subscribe((value) => { myApiVersion=value })
+const s = scrollId.subscribe((value) => { myScrollId=value })
 
 import buildRequestFilter from "./buildRequestFilter";
 
@@ -314,7 +317,9 @@ export default function buildRequest(searchInput) {
       fuzzy: `${myFuzzySearch}`,
       sort: buildSort(mySortInput, searchInput),
       page: myCurrent,
-      size: myResultsPerPage
+      size: myResultsPerPage,
+      scroll: ((myCurrent === 1) || myScrollId ) ? '1m' : undefined,
+      scrollId: myScrollId
     };
     Object.keys(searchInput).map(key => {
       if (searchInput[key].value !== "") {
