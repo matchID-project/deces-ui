@@ -1,4 +1,6 @@
 
+import sum from 'hash-sum';
+
 import {
   current,
   filters,
@@ -310,16 +312,30 @@ function buildSimpleMatch(searchInput) {
   We then do similar things for searchTerm, filters, sort, etc.
 */
 
+export const validScrollId = (scrollId, searchInput, forget) => {
+  if (scrollId) {
+    if ((Date.now() - scrollId.date) > 5000) {
+      return undefined;
+    }
+    if (sum(JSON.stringify(searchInput)) !== scrollId.context) {
+      return undefined;
+    }
+    return scrollId.id;
+  }
+  return undefined;
+}
+
 export default function buildRequest(searchInput) {
   let body;
   if (myApiVersion === 'backend') {
+    let scrollIdLocal = validScrollId(myScrollId, searchInput);
     body = {
       fuzzy: `${myFuzzySearch}`,
       sort: buildSort(mySortInput, searchInput),
       page: myCurrent,
       size: myResultsPerPage,
-      scroll: ((myCurrent === 1) || myScrollId ) ? '1m' : undefined,
-      scrollId: myScrollId
+      scroll: ((myCurrent === 1) || scrollIdLocal ) ? '1m' : undefined,
+      scrollId: scrollIdLocal
     };
     Object.keys(searchInput).map(key => {
       if (searchInput[key].value !== "") {
