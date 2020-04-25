@@ -314,7 +314,7 @@ function buildSimpleMatch(searchInput) {
 
 export const validScrollId = (scrollId, searchInput, forget) => {
   if (scrollId) {
-    if ((Date.now() - scrollId.date) > 5000) {
+    if ((Date.now() - scrollId.date) > 59000) {
       return undefined;
     }
     if (sum(JSON.stringify(searchInput)) !== scrollId.context) {
