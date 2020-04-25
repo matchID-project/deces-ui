@@ -43,6 +43,7 @@
 <script>
     import { current, totalResults, totalPages, resultsPerPage, maxResults, searchInput, wasSearched, scrollId } from '../tools/stores.js'
     import { searchString, searchSubmit, searchURLUpdate } from '../tools/search.js'
+    import { validScrollId } from '../tools/buildRequest.js';
 
     let from, to, query, pages;
 
@@ -78,10 +79,13 @@
         return `${location.pathname}?${params}`;
     }
 
-    const goTo = (page) => {
+    const goTo = async (page) => {
         if ((page>0) && (page <= $totalPages)) {
-            searchSubmit(page);
-            searchURLUpdate();
+            if (!validScrollId($scrollId,$searchInput) && (page !==1)) {
+                await searchSubmit(1);
+            }
+            await searchSubmit(page);
+            await searchURLUpdate();
         }
     }
 

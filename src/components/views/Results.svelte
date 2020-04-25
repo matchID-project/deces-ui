@@ -2,7 +2,7 @@
   <div class="results-body">
     <div class="container">
       <div class="margin">
-        <ResultsHeader/>
+        <ResultsHeader blockInteractive={false}/>
         <div class="columns is-vcentered is-multiline is-mobile">
           {#each $searchResults as result, index}
             {#if (index === 1) && adsbygoogle }
@@ -15,7 +15,7 @@
                 data-full-width-responsive="true">
               </ins>
             {/if}
-            <Result result={result}/>
+            <Result result={result} forceExpand={false}/>
           {/each}
         </div>
         <Pagination/>
