@@ -1,3 +1,5 @@
+import sum from 'hash-sum';
+
 import {
     searchInput,
     searchCanvas,
@@ -89,27 +91,27 @@ export const search = async (searchInput, newCurrent) => {
         state = buildResults(json, myResultsPerPage, myCurrent);
     } else {
         state = json;
-        if (state.response && state.response.scrollId) {
-            scrollId.update(v => state.response.scrollId);
-            setTimeout(() => {
-                scrollId.update(v => undefined)
-            }, 59000);
-        }
     }
     return state && state.response;
 };
 
 export const searchSubmit = async (newCurrent) => {
     if (searchTrigger(mySearchInput) && (!myWaitSearch)) {
-        waitSearch.update( v => true);
+        await waitSearch.update( v => true);
         const state = await search(mySearchInput, newCurrent);
-        searchResults.update( v => state.persons );
-        totalResults.update(v => state.total);
-        totalPages.update(v => computeTotalPages(state.size, state.total));
-        // facets.update(v => state.facets);
-        autocompleteDisplay.update(v => false);
-        wasSearched.update(v => searchString(mySearchInput));
-        waitSearch.update( v => false);
+        await searchResults.update( v => state.persons );
+        await totalResults.update(v => state.total);
+        await totalPages.update(v => computeTotalPages(state.size, state.total));
+        if (state.scrollId) {
+            await scrollId.update(v => { return {
+                context: sum(JSON.stringify(mySearchInput)),
+                id: state.scrollId,
+                date: Date.now()
+            }});
+        }
+        await autocompleteDisplay.update(v => false);
+        await wasSearched.update(v => searchString(mySearchInput));
+        await waitSearch.update( v => false);
     }
 };
 
