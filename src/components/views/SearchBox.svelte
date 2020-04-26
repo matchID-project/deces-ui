@@ -368,44 +368,56 @@
       font-size: 1.15rem!important;
     }
 
-    .column.is-1 {
+    .column.is-1,
+    .column.is-1-3,
+    .column.is-1-4 {
       flex: none;
-      width: 8%;
+      width: 8.33%;
     }
 
-    .column.is-1-5 {
+    .column.is-1l,
+    .column.is-1l-4 {
       flex: none;
       width: 12.5%;
     }
 
-    .column.is-2 {
-      flex: none;
-      width: 17%;
-    }
-
+    .column.is-2,
+    .column.is-2-4,
+    .column.is-2-8,
     .column.is-2-12 {
       flex: none;
-      width: 17%;
+      width: 16.66%;
     }
 
-    .column.is-3 {
+    .column.is-3,
+    .column.is-3-4 {
       flex: none;
       width: 25%;
     }
 
-    .column.is-3-5 {
+    .column.is-3l {
       flex: none;
-      width: 28.5%;
+      width: 29.16%;
     }
 
     .column.is-4 {
       flex: none;
-      width: 33%;
+      width: 33.33%;
+    }
+
+    .column.is-4-4 {
+      flex: none;
+      width: 33.33%;
     }
 
     .column.is-5 {
       flex: none;
-      width: 42%;
+      width: 41.66%;
+    }
+
+    .column.is-5-5 {
+      flex: none;
+      width: 41.66%;
     }
 
     .column.is-6 {
@@ -415,12 +427,12 @@
 
     .column.is-7 {
       flex: none;
-      width: 58%;
+      width: 58.33%;
     }
 
     .column.is-8 {
       flex: none;
-      width: 67%;
+      width: 66.66%;
     }
 
     .column.is-9 {
@@ -430,7 +442,7 @@
 
     .column.is-11 {
       flex: none;
-      width: 92%;
+      width: 91.66%;
     }
 
     .column.is-12,
@@ -508,11 +520,35 @@
       display: none;
     }
 
+    .columns.is-mobile>.column.is-1-3 {
+      flex: none;
+      width: 25%;
+    }
+
+    .columns.is-mobile>.column.is-1-4,
+    .columns.is-mobile>.column.is-1l-4,
+    .columns.is-mobile>.column.is-2-4,
+    .columns.is-mobile>.column.is-3-4,
+    .columns.is-mobile>.column.is-4-4 {
+      flex: none;
+      width: 33.33%;
+    }
+
+    .columns.is-mobile>.column.is-5-5 {
+      flex: none;
+      width: 41.66%;
+    }
+
+    .columns.is-mobile>.column.is-2-8 {
+      flex: none;
+      width: 66.66%;
+    }
+
   .columns.is-mobile>.column.is-1,
-  .columns.is-mobile>.column.is-1-5,
+  .columns.is-mobile>.column.is-1l,
   .columns.is-mobile>.column.is-2,
   .columns.is-mobile>.column.is-3,
-  .columns.is-mobile>.column.is-3-5,
+  .columns.is-mobile>.column.is-3l,
   .columns.is-mobile>.column.is-4,
   .columns.is-mobile>.column.is-5,
   .columns.is-mobile>.column.is-6,
