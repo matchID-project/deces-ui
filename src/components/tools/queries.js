@@ -108,3 +108,50 @@ export const dateRangeStringQuery = (field, value, fuzzy) => {
         return fuzzyTermQuery(field, value, fuzzy)
     }
 };
+
+export const ageRangeStringQuery = (field, value, fuzzy) => {
+    if (Array.isArray(value) && (value.length === 2)) {
+        const min = (value[0] <= value[1]) ? value[0] : value[1];
+        const max = (value[0] <= value[1]) ? value[1] : value[0];
+        return {
+            range: {
+                [field]: {
+                    gte: min,
+                    lte: max
+                }
+            }
+        };
+    } else {
+        return matchQuery(field, value, fuzzy)
+    }
+};
+
+export const geoPointQuery = (field, value, fuzzy) =>  {
+    if (value.latitude && value.longitude) {
+        let distance;
+        if (value.distance && value.distance.match(/[1-9]\d*\s*(mi|miles|yd|yards|ft|feet|in|inch|km|kilometers|m|meters|cm|centimeters|mm|millimeters|NM|nminauticalmiles)$/)) {
+            distance = value.distance;
+        } else {
+            distance = '1km';
+        }
+        return {
+            bool: {
+                must: {
+                    match_all: {}
+                },
+                filter : {
+                    geo_distance: {
+                        distance,
+                        [field] : {
+                            lat: value.latitude,
+                            lon: value.longitude
+                        }
+                    }
+                }
+            }
+        }
+    } else {
+        return undefined
+    }
+};
+
