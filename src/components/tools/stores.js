@@ -41,7 +41,7 @@ export const searchInput = writable({
         fuzzy: "auto",
         placeholder: "Pompidou",
         title: "saisissez le nom",
-        size: 5,
+        size: "5-5",
         active: true,
     },
     firstName: {
@@ -54,7 +54,7 @@ export const searchInput = writable({
         fuzzy: "auto",
         placeholder: "Georges",
         title: "saisissez le prénom",
-        size: 4,
+        size: "4-4",
         active: true,
     },
     sex: {
@@ -71,7 +71,7 @@ export const searchInput = writable({
             validation: sexValidationMask,
             transform: sexTransformMask
         },
-        size: 1,
+        size: "1-3",
         active: true,
     },
     birthDate: {
@@ -105,7 +105,7 @@ export const searchInput = writable({
         fuzzy: "auto",
         placeholder: "commune: Montboudif",
         title:"saisissez la commune de naissance",
-        size: "3-5",
+        size: "3l",
         active: true,
     },
     birthDepartment: {
@@ -119,7 +119,7 @@ export const searchInput = writable({
         fuzzy: false,
         placeholder: "dépt: 15",
         title:"saisissez le département de naissance",
-        size: "1-5",
+        size: "1l",
         active: true,
     },
     birthCountry: {
@@ -154,7 +154,7 @@ export const searchInput = writable({
             validation: dateRangeValidationMask,
             transform: dateRangeTransformMask
         },
-        size: 2,
+        size: "2-8",
         active: true,
     },
     deathAge: {
@@ -173,7 +173,7 @@ export const searchInput = writable({
             validation: ageRangeValidationMask,
             transform: ageRangeTransformMask
         },
-        size: "1-5",
+        size: "1l-4",
         active: true
     },
     deathCity: {
@@ -187,7 +187,7 @@ export const searchInput = writable({
         fuzzy: "auto",
         title:"saisissez la commune de décès",
         placeholder: "commune: Paris",
-        size: 3,
+        size: "3-4",
         active: true,
     },
     deathDepartment: {
@@ -201,7 +201,7 @@ export const searchInput = writable({
         fuzzy: false,
         placeholder: "dépt: 75",
         title:"saisissez le département de décès",
-        size: "1-5",
+        size: "1l-4",
         active: true,
     },
     deathCountry: {
@@ -215,7 +215,7 @@ export const searchInput = writable({
         fuzzy: "auto",
         placeholder: "pays: France",
         title:"saisissez le pays de décès",
-        size: 2,
+        size: "2-4",
         active: true,
     }
 });
