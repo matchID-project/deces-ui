@@ -2,10 +2,15 @@ import { writable } from 'svelte/store';
 import {
     dateRangeTypingMask,
     dateRangeValidationMask,
-    dateRangeTransformMask
+    dateRangeTransformMask,
+    sexTypingMask,
+    sexValidationMask,
+    sexTransformMask,
+    ageRangeTypingMask,
+    ageRangeValidationMask
 } from './masks.js';
 import {
-    prefixQuery,
+    ageRangeStringQuery,
     dateRangeStringQuery,
     firstNameQuery,
     fuzzyTermQuery,
@@ -134,6 +139,24 @@ export const searchInput = writable({
         size: 2,
         active: true,
     },
+    deathAge: {
+        path: "death.location",
+        url: "dage",
+        value: "",
+        field: "AGE_DECES",
+        sortField: "AGE_DECES",
+        query: ageRangeStringQuery,
+        fuzzy: false,
+        title: "saisissez l'âge au décès, ou une plage d'âge : 75-80",
+        placeholder: "âge: 78",
+        multiQuery: "range",
+        mask: {
+            typing: ageRangeTypingMask,
+            validation: ageRangeValidationMask,
+        },
+        size: "1-5",
+        active: true
+    },
     deathCity: {
         path: "death.location",
         url: "dc",
@@ -145,7 +168,7 @@ export const searchInput = writable({
         fuzzy: "auto",
         title:"saisissez la commune de décès",
         placeholder: "commune: Paris",
-        size: "3-5",
+        size: 3,
         active: true,
     },
     deathDepartment: {
@@ -173,7 +196,7 @@ export const searchInput = writable({
         fuzzy: "auto",
         placeholder: "pays: France",
         title:"saisissez le pays de décès",
-        size: 3,
+        size: 2,
         active: true,
     }
 });
