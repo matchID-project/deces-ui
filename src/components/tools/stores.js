@@ -7,7 +7,8 @@ import {
     sexValidationMask,
     sexTransformMask,
     ageRangeTypingMask,
-    ageRangeValidationMask
+    ageRangeValidationMask,
+    ageRangeTransformMask
 } from './masks.js';
 import {
     ageRangeStringQuery,
@@ -40,7 +41,7 @@ export const searchInput = writable({
         fuzzy: "auto",
         placeholder: "Pompidou",
         title: "saisissez le nom",
-        size: 6,
+        size: 5,
         active: true,
     },
     firstName: {
@@ -54,6 +55,23 @@ export const searchInput = writable({
         placeholder: "Georges",
         title: "saisissez le prénom",
         size: 4,
+        active: true,
+    },
+    sex: {
+        path: "birth.location",
+        url: "sex",
+        value: "",
+        field: "SEXE",
+        query: matchQuery,
+        fuzzy: false,
+        placeholder: "F/M",
+        title:"saisissez le sexe",
+        mask: {
+            typing: sexTypingMask,
+            validation: sexValidationMask,
+            transform: sexTransformMask
+        },
+        size: 1,
         active: true,
     },
     birthDate: {
@@ -153,6 +171,7 @@ export const searchInput = writable({
         mask: {
             typing: ageRangeTypingMask,
             validation: ageRangeValidationMask,
+            transform: ageRangeTransformMask
         },
         size: "1-5",
         active: true

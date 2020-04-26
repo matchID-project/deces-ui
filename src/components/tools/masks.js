@@ -25,6 +25,14 @@ export const ageRangeValidationMask = (ageRangeString) => {
     }
 }
 
+export const ageRangeTransformMask = (ageRangeString) => {
+    if ((typeof(ageRangeString) === 'string') && (ageRangeString.match(/[0-9\/]+\-[0-9\/]+/))) {
+        return ageRangeString.split('-').map(d => d);
+    } else {
+        return ageRangeString;
+    }
+}
+
 export const dateTypingMask = (dateString) => {
     return dateString.match(/^(|0{0,4}?|1([8-9]\d{1,2}?)?|2(0\d{1,2})?|[0-3](\d(\/([0-1](\d(\/(1([8-9]\d{0,2})?|2(0\d{0,2})?)?)?)?)?)?)?)$/);
 }
@@ -65,13 +73,13 @@ export const dateRangeTransformMask = (dateRangeString) => {
 }
 
 export const sexTypingMask = (sex) => {
-    return sex.match(/^(F|H)?$/);
+    return sex.match(/^(F|M)?$/);
 }
 
 export const sexValidationMask = (sex) => {
-    return sex.match(/^(F|H)?$/);
+    return sex.match(/^(F|M)?$/);
 }
 
 export const sexTransformMask = (sex) => {
-    return sex.replace(/^(F|H).*$/,'$1');
+    return sex.replace(/^(F|M).*$/,'$1');
 }

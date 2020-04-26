@@ -111,8 +111,8 @@ export const dateRangeStringQuery = (field, value, fuzzy) => {
 
 export const ageRangeStringQuery = (field, value, fuzzy) => {
     if (Array.isArray(value) && (value.length === 2)) {
-        const min = (value[0] <= value[1]) ? value[0] : value[1];
-        const max = (value[0] <= value[1]) ? value[1] : value[0];
+        const min = (parseInt(value[0]) <= parseInt(value[1])) ? parseInt(value[0]) : parseInt(value[1]);
+        const max = (parseInt(value[0]) <= parseInt(value[1])) ? parseInt(value[1]) : parseInt(value[0]);
         return {
             range: {
                 [field]: {
