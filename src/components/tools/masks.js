@@ -1,3 +1,30 @@
+export const ageTypingMask = (ageString) => {
+    return ageString.match(/^(|0|([1-9]([0-9]|[0-3][0-9]?)?))$/);
+}
+
+export const ageRangeTypingMask = (ageRangeString) => {
+    if (ageRangeString.match(/^[0-9\/]+\-[0-9\/]*$/)) {
+        const ages = ageRangeString.split('-');
+        return ageValidationMask(ages[0]) && ageTypingMask(ages[1]);
+    } else {
+        return ageTypingMask(ageRangeString);
+    }
+}
+
+export const ageValidationMask = (ageString) => {
+    return ageString.match(/^(|[0-9]|[1-9]([0-9]|[0-3][0-9]))$/);
+}
+
+
+export const ageRangeValidationMask = (ageRangeString) => {
+    if (ageRangeString.match(/[0-9\/]+\-[0-9\/]+/)) {
+        const ages = ageRangeString.split('-');
+        return ages.every(d => ageValidationMask(d)) && (parseInt(ages[0])<parseInt(ages[1]));
+    } else {
+        return ageValidationMask(ageRangeString);
+    }
+}
+
 export const dateTypingMask = (dateString) => {
     return dateString.match(/^(|0{0,4}?|1([8-9]\d{1,2}?)?|2(0\d{1,2})?|[0-3](\d(\/([0-1](\d(\/(1([8-9]\d{0,2})?|2(0\d{0,2})?)?)?)?)?)?)?)$/);
 }
