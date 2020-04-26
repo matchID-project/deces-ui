@@ -18,7 +18,8 @@ export const dateRangeTypingMask = (dateRangeString) => {
 
 export const dateRangeValidationMask = (dateRangeString) => {
     if (dateRangeString.match(/[0-9\/]+\-[0-9\/]+/)) {
-        return dateRangeString.split('-').every(d => dateValidationMask(d))
+        const dates = dateRangeString.split('-');
+        return dates.every(d => dateValidationMask(d)) && (parseInt(dateTransformMask(dates[0]))<parseInt(dateTransformMask(dates[1])));
     } else {
         return dateValidationMask(dateRangeString);
     }
