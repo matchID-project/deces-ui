@@ -30,6 +30,59 @@ html.has-navbar-fixed-top {
   padding-top: 3.25rem;
 }
 
+.columns.is-vcentered {
+	align-items: center;
+}
+
+  .content:not(:last-child),.subtitle:not(:last-child),.title:not(:last-child) {
+	  margin-bottom: 1.5rem;
+  }
+
+  .content table:not(:last-child) {
+	  margin-bottom: 1em;
+  }
+
+  .content table {
+	  width: 100%;
+  }
+
+  .content table td,.table td {
+	  border: solid #dbdbdb;
+	  border-width: 0 0 1px;
+	  padding: .5em .75em;
+	  vertical-align: top;
+  }
+
+  .content table tbody tr:last-child td,.content table tbody tr:last-child th,.table tbody tr:last-child td,.table tbody tr:last-child th {
+	  border-bottom-width: 0;
+  }
+
+  .table:not(:last-child) {
+	  margin-bottom: 1.5rem;
+  }
+
+  .table {
+	  background-color: #fff;
+	  color: #363636;
+  }
+
+  .table tbody {
+	  background-color: transparent;
+  }
+
+  .table.is-fullwidth {
+	  width: 100%;
+  }
+
+  .table.is-narrow td {
+	  padding: .25em .5em;
+	  text-align: left;
+  }
+
+  .table.is-striped tbody tr:not(.is-selected):nth-child(2n) {
+	  background-color: #fafafa;
+  }
+
 
 /* required styles */
 

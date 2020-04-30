@@ -303,8 +303,6 @@ export const cachedResponses = writable({});
 
 export const waitSearch = writable(false);
 
-export const accordeonMode = writable(true);
-
 export const autocompleteBypass = writable(true);
 
 export const autocompleteResults = writable([]);
@@ -349,6 +347,8 @@ export const updateURL = writable(false);
 
 export const autocompleteDisplay = writable(false);
 
+export const displayMode = writable('card');
+
 export const searchTyping = writable(0);
 
 export const socialIcons = false;
@@ -367,6 +367,10 @@ export const sortInput = writable([
     {
         label: "prénom",
         input: "firstName",
+    },
+    {
+        label: "sexe",
+        input: "sex"
     },
     {
         label: "naissance: date",

@@ -109,7 +109,7 @@
                                             <td>Date</td>
                                             <td>{dateFormat(result.birth.date)}</td>
                                         </tr>
-                                        <Place
+                                        <PlaceInCard
                                             city={result.birth.location.city}
                                             cityCode={result.birth.location.cityCode}
                                             department={result.birth.location.departmentCode}
@@ -129,13 +129,13 @@
                                                 {dateFormat(result.death.date)}
                                             </td>
                                         </tr>
-                                        {#if age>1}
+                                        {#if result.death.age && result.death.age>1}
                                             <tr>
                                                 <td>Age</td>
-                                                <td>{age} ans</td>
+                                                <td>{result.death.age} ans</td>
                                             </tr>
                                         {/if}
-                                        <Place
+                                        <PlaceInCard
                                             city={result.death.location.city}
                                             cityCode={result.death.location.cityCode}
                                             department={result.death.location.departmentCode}
@@ -155,7 +155,7 @@
                                         <tr>
                                             <td>Source INSEE</td>
                                             <td>
-                                                {#if result.source}
+                                                {#if (result.source && $dataGouvCatalog)}
                                                     <a href={$dataGouvCatalog[result.source]} target="_blank">
                                                         fichier {result.source}
                                                     </a>
@@ -177,8 +177,8 @@
 
 
 <script>
-    import { accordeonMode, dataGouvCatalog } from '../tools/stores.js';
-    import Place from './Place.svelte';
+    import { dataGouvCatalog, displayMode } from '../tools/stores.js';
+    import PlaceInCard from './PlaceInCard.svelte';
     import FontAwesomeIcon from './FontAwesomeIcon.svelte';
 
     import {
@@ -190,9 +190,9 @@
     export let result;
     export let forceExpand;
 
-    let expand = forceExpand || !$accordeonMode;
+    let expand = forceExpand || ($displayMode === 'card-expand');
 
-    $: expand = forceExpand || !$accordeonMode;
+    $: expand = forceExpand || ($displayMode === 'card-expand');
 
     const dateFormat = (dateString) => {
         return dateString.replace(/(\d{4})(\d{2})(\d{2})/,"$3/$2/$1");
@@ -205,12 +205,6 @@
             dateString.substring(6,8)
         );
     };
-
-    let age;
-
-    $: age = result.error ? undefined : Math.abs(
-            new Date(toDate(result.death.date) - toDate(result.birth.date)).getUTCFullYear()
-            - 1970);
 
     const cityString = (city) => {
         return city
@@ -294,28 +288,6 @@
         font-weight: 400;
     }
 
-    .content:not(:last-child),.subtitle:not(:last-child),.title:not(:last-child) {
-        margin-bottom: 1.5rem;
-    }
-
-    .content table:not(:last-child) {
-        margin-bottom: 1em;
-    }
-
-    .content table {
-        width: 100%;
-    }
-
-    :global(.content table td,.table td) {
-        border: solid #dbdbdb;
-        border-width: 0 0 1px;
-        padding: .5em .75em;
-        vertical-align: top;
-    }
-
-    :global(.content table tbody tr:last-child td,.content table tbody tr:last-child th,.table tbody tr:last-child td,.table tbody tr:last-child th) {
-        border-bottom-width: 0;
-    }
 
     .subtitle,.title {
         word-break: break-word;
@@ -357,32 +329,6 @@
 
     .is-size-7 {
         font-size: 0.75rem;
-    }
-
-    .table:not(:last-child) {
-        margin-bottom: 1.5rem;
-    }
-
-    .table {
-        background-color: #fff;
-        color: #363636;
-    }
-
-    .table tbody {
-        background-color: transparent;
-    }
-
-    .table.is-fullwidth {
-        width: 100%;
-    }
-
-    :global(.table.is-narrow td) {
-        padding: .25em .5em;
-        text-align: left;
-    }
-
-    :global(.table.is-striped tbody tr:not(.is-selected):nth-child(2n)) {
-        background-color: #fafafa;
     }
 
     .card {
