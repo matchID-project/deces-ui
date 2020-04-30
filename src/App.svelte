@@ -12,7 +12,8 @@
 	import MatchIDHeader from './components/views/MatchIDHeader.svelte';
 	import Search from './components/views/Search.svelte';
 	import Geo from './components/views/Geo.svelte';
-	import { searchInput, searchCanvas, current, resultsPerPage, updateURL, advancedSearch, apiVersion, fuzzySearch } from './components/tools/stores.js';
+	import { searchInput, searchCanvas, current, resultsPerPage,
+		updateURL, advancedSearch, apiVersion, fuzzySearch, displayMode } from './components/tools/stores.js';
 
 	let routes = {
 		'/': { component: Search },
@@ -38,6 +39,7 @@
 
 	const URLSearchSubmit = (urlParams) => {
 		if (!$updateURL) {
+			$displayMode = urlParams.get('view') ? urlParams.get('view') : 'card';
 			const myCurrent = urlParams.get('current') ? parseInt(urlParams.get('current').replace(/n_(.*)_n/,"$1")) : undefined;
 			const myResultsPerPage = urlParams.get('size') ? parseInt(urlParams.get('size').replace(/n_(.*)_n/,"$1")) : undefined;
 			const myQuery = Object.keys($searchInput).map(key => {

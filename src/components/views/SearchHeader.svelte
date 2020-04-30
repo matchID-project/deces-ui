@@ -1,4 +1,4 @@
-<Hero height={$advancedSearch ? "19rem" : "16rem" }>
+<Hero height={$advancedSearch ? "19rem" : "17rem" }>
     <span slot="title">
       fichier des décès
     </span>

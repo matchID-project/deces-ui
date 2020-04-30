@@ -26,7 +26,7 @@
     class="results-header leaflet-top-of bottom"
     on:click|preventDefault={toggleFullScreen}
   >
-        <ResultsHeader blockInteractive={true}>
+        <ResultsHeader>
             {#if isFull}
                 Cliquez ici pour sortir du plein écran
             {:else}
@@ -42,7 +42,7 @@
       on:click|preventDefault={e => {
         forceExpand = !forceExpand;
       }}>
-      <Result result={showResult} {forceExpand} />
+      <ResultCard result={showResult} {forceExpand} />
     </div>
   {/if}
 </div>
@@ -52,9 +52,9 @@
 
   import { onMount, getContext } from "svelte";
   import { fade } from 'svelte/transition';
-  import { searchTyping, waitSearch, maxResultsPerPage } from "../tools/stores.js";
+  import { searchTyping, waitSearch, maxResultsPerPage, displayMode } from "../tools/stores.js";
   import getDataGouvCatalog from "../tools/getDataGouvCatalog.js";
-  import Result from "./Result.svelte";
+  import ResultCard from "./ResultCard.svelte";
   import ResultsHeader from './ResultsHeader.svelte';
   import SearchBox from "./SearchBox.svelte";
   import FontAwesomeIcon from "./FontAwesomeIcon.svelte";
@@ -117,6 +117,7 @@
 
   onMount(() => {
     getDataGouvCatalog();
+    if ($displayMode) {$displayMode = 'geo'};
     $resultsPerPage = $maxResultsPerPage;
     leafletMap = L.map(mapContainer, {
       svgSprite: false,
@@ -176,14 +177,12 @@
       displayLayers=Object.keys(possibleLayers).map((l)  => {
           if (l === layer) {
             if (!displayLayers.includes(possibleLayers[layer])) {
-                console.log('la',l,layer);
                 return possibleLayers[l];
             }
           } else {
               if (displayLayers.includes(possibleLayers[l])
                     || ((displayLayers.includes(possibleLayers[layer])
                         && (displayLayers.length === 1)))) {
-                    console.log('hop',l,layer);
                     return possibleLayers[l];
               }
           }
