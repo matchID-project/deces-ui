@@ -20,7 +20,8 @@ import {
     waitSearch,
     fuzzySearch,
     apiVersion,
-    scrollId
+    scrollId,
+    displayMode
 } from './stores.js'
 
 import buildRequest from "./buildRequest.js";
@@ -39,6 +40,7 @@ let mySearchMinLength;
 let myWaitSearch;
 let myFuzzySearch;
 let myApiVersion;
+let myDisplayMode;
 
 const s = searchInput.subscribe((value) => { mySearchInput=value });
 const sc = searchCanvas.subscribe((value) => { mySearchCanvas=value });
@@ -51,6 +53,7 @@ const b = autocompleteBypass.subscribe((value) => { myAutocompleteBypass=value }
 const w = waitSearch.subscribe((value) => { myWaitSearch=value });
 const f = fuzzySearch.subscribe((value) => {myFuzzySearch = value});
 const p = apiVersion.subscribe((value) => {myApiVersion = value});
+const d = displayMode.subscribe((value) => {myDisplayMode = value});
 
 const computeTotalPages = (resultsPerPage, totalResults) => {
     if (!resultsPerPage) return 0;
@@ -120,12 +123,17 @@ export const buildURLParams = () => {
     if (myAdvancedSearch) {
         params.set('advanced',true)
     } else {
-        params.delete('advanced')
+        params.delete('advanced');
     }
     if (!myFuzzySearch) {
         params.set('fuzzy',false)
     } else {
-        params.delete('fuzzy')
+        params.delete('fuzzy');
+    }
+    if (['table','card-expand'].includes(myDisplayMode)) {
+        params.set('view', myDisplayMode);
+    } else {
+        params.delete('view');
     }
     Object.keys(mySearchInput).map(key => {
         if (mySearchInput[key].value !== "") {

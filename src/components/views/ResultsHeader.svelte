@@ -1,11 +1,11 @@
 {#if $wasSearched}
     <div class="has-background-white">
         <div class="columns is-vcentered is-mobile ">
-            <div class={`column ${blockInteractive ? "is-9" : "is-4"} is-mobile-6 is-size-7`}>
+            <div class={`column ${$displayMode === 'geo' ? "is-9" : "is-4"} is-mobile-6 is-size-7`}>
                 <span>Résultats <strong>{from}</strong> à <strong>{to}</strong> parmi <strong>{$totalResults}</strong></span>
                 <span>pour: <i>{query}</i></span>
             </div>
-            {#if !blockInteractive}
+            {#if (!($displayMode === 'geo'))}
                 <div
                     class="column is-4 is-mobile-3 is-size-7 has-text-centered"
                 >
@@ -44,13 +44,6 @@
                             {/each}
                         </select>
                     </span>
-                    <span
-                        class="has-text-primary expand-icon"
-                        title={$accordeonMode ? "déplier tous les résultats" : "replier tous les résultats"}
-                        on:click={() => {$accordeonMode=!$accordeonMode}}
-                    >
-                        <FontAwesomeIcon icon={$accordeonMode ? faPlus : faMinus} class="is-lower"/>
-                    </span>
                 </div>
             {:else}
                 <div class="column is-3 is-mobile-6 is-size-7 has-text-right">
@@ -58,7 +51,7 @@
                 </div>
             {/if}
         </div>
-        {#if !blockInteractive}
+        {#if (!($displayMode === 'geo'))}
             <div class="columns">
                 <div class="column is-1"></div>
                 <div class="column is-10 is-vcentered has-text-centered"><SortInput/></div>
@@ -71,13 +64,12 @@
 <script>
     import { faSortUp, faSortDown, faPlus, faMinus } from '@fortawesome/free-solid-svg-icons';
     import FontAwesomeIcon from './FontAwesomeIcon.svelte'
-    import { accordeonMode, current, sortInput, sortInputDisplay, updateURL, totalResults, totalPages, resultsPerPage, searchInput, wasSearched } from '../tools/stores.js'
+    import { current, sortInput, sortInputDisplay, updateURL, totalResults, totalPages,
+        resultsPerPage, searchInput, wasSearched, displayMode } from '../tools/stores.js'
     import { searchSubmit, searchURLUpdate } from '../tools/search.js'
     import SortInput from './SortInput.svelte';
 
     let from, to, query;
-
-    export let blockInteractive;
 
     let resultsPerPageList;
 

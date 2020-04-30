@@ -78,19 +78,40 @@
           </button>
         </div>
       {/if}
+        <div class="column is-2 is-hidden-mobile" style="margin-bottom:-1rem!important;"></div>
       {#if $advancedSearch}
-        <div class="column is-12 is-size-5">
+        <div class={`column is-${$displayMode === 'geo' ? "12" : "5" } is-size-5`}>
           <div
             class="field small-margin-mobile"
-            style="margin-bottom:-1rem!important;"
+            style="margin-top:-0.25rem;margin-bottom:-1rem!important;"
             on:click|preventDefault={ toggleFuzzySearch }
           >
-            <label for="switchRoundedInfo">recherche floue &nbsp;</label>
-            <input id="switchRoundedInfo" type="checkbox" name="switchRoundedInfo" class="switch is-rounded is-info is-unchecked-danger" bind:checked={$fuzzySearch}>
-            <label for="switchRoundedInfo"></label>
+            <input id="switchRoundedInfo" type="checkbox" name="switchRoundedInfo" class="switch is-rounded is-info is-unchecked-grey" bind:checked={$fuzzySearch}>
+            <label for="switchRoundedInfo">
+              {#if $fuzzySearch} recherche floue
+              {:else} <strike> recherche floue</strike>{/if}
+              </label>
           </div>
         </div>
       {/if}
+      {#if ($displayMode !== 'geo')}
+        <div class="is-hidden-mobile column is-${$advancedSearch ? "3" : "12" } is-size-5">
+          <div
+            class="field small-margin-mobile"
+            style="margin-top:0.5rem;margin-bottom:-1rem!important;"
+          >
+
+            {#each displayChoices as choice}
+              <span style="margin: 0.25rem;"
+                title={`${choice.mode === $displayMode ? "mode d'affichage actuel:" : "basculez au mode d'affichage:"} ${choice.label}`}
+                on:click={() => enableDisplayMode(choice.mode)}>
+                <FontAwesomeIcon icon={choice.icon} class={`is-36 is-higher ${choice.mode === $displayMode ? "is-info" : ""}`}/>
+              </span>
+            {/each}
+          </div>
+        </div>
+      {/if}
+        <div class="column is-2 is-hidden-mobile" style="margin-bottom:-1rem!important;"></div>
     </form>
 </div>
 {#if infoDisplay}
@@ -112,20 +133,32 @@
 <script>
   import FontAwesomeIcon from './FontAwesomeIcon.svelte'
 
-  import { advancedSearch, searchInput, searchCanvas, autocompleteBypass, infoDisplayOption, sortInput, resultsPerPage, autocompleteResults, autocompleteDisplay, searchInputFocus, searchTyping, fuzzySearch } from '../tools/stores.js';
+  import { advancedSearch, searchInput, searchCanvas, autocompleteBypass, infoDisplayOption,
+    sortInput, resultsPerPage, autocompleteResults, autocompleteDisplay, searchInputFocus,
+    searchTyping, fuzzySearch, displayMode } from '../tools/stores.js';
   import { search, searchString, searchAutocompleteTrigger, searchSubmit, searchURLUpdate, toggleAdvancedSearch, toggleFuzzySearch } from '../tools/search.js';
   import Autocomplete from './Autocomplete.svelte';
   import GoogleAnalytics from './GoogleAnalytics.svelte';
 
   import {
+      faAddressCard,
+      faGlobeEurope,
+      faGripLines,
       faMinus,
       faPlus,
-      faQuestionCircle
+      faQuestionCircle,
+      faTable
   } from '@fortawesome/free-solid-svg-icons';
 
   let lastInput = {}
 
   let tag={};
+
+  let displayChoices = [
+    {mode: 'card', icon: faGripLines, label: "fiche compacte"},
+    {mode: 'card-expand', icon: faAddressCard, label: "fiche complète"},
+    {mode: 'table', icon: faTable, label: "tableur"},
+  ];
 
   let inputsKeys;
 
@@ -217,6 +250,13 @@
           console.log("key input limiter")
         } }, 355)
     }
+  }
+
+  const enableDisplayMode = async (mode) => {
+    if ($displayMode) {
+      $displayMode = mode;
+    }
+    searchURLUpdate();
   }
 
   const autocomplete = async () => {
@@ -504,7 +544,7 @@
   }
 
     .small-margin-mobile {
-      margin-top: 0.75rem!important;
+      margin-top: 1rem!important;
       margin-bottom:-1rem!important;
     }
 
@@ -573,6 +613,7 @@
   }
 
   @media print,screen and (min-width:769px) {
+
     .info-footer {
       display: none;
     }
@@ -601,6 +642,7 @@
     display:inline-block;
     position:absolute;
     opacity:0;
+    width: auto;
   }
   .switch[type="checkbox"]:focus+label::before,
   .switch[type="checkbox"]:focus+label:before,
@@ -682,23 +724,18 @@
   background:#209cee
   }
 
-  .switch[type="checkbox"].is-unchecked-warning+label::before,
-  .switch[type="checkbox"].is-unchecked-warning+label:before {
-  background:#ffdd57
+  .switch[type="checkbox"].is-unchecked-grey+label::before,
+  .switch[type="checkbox"].is-unchecked-grey+label:before {
+  background:#777777
   }
-
-  .switch[type="checkbox"].is-unchecked-danger+label::before,
-  .switch[type="checkbox"].is-unchecked-danger+label:before {
-  background:#ff3860
-  }
-  .switch[type="checkbox"].is-unchecked-danger.is-outlined+label::before,
-  .switch[type="checkbox"].is-unchecked-danger.is-outlined+label:before {
+  .switch[type="checkbox"].is-unchecked-grey.is-outlined+label::before,
+  .switch[type="checkbox"].is-unchecked-grey.is-outlined+label:before {
   background-color:transparent;
-  border-color:#ff3860 !important
+  border-color:#777777 !important
   }
-  .switch[type="checkbox"].is-unchecked-danger.is-outlined+label::after,
-  .switch[type="checkbox"].is-unchecked-danger.is-outlined+label:after {
-  background:#ff3860
+  .switch[type="checkbox"].is-unchecked-grey.is-outlined+label::after,
+  .switch[type="checkbox"].is-unchecked-grey.is-outlined+label:after {
+  background:#777777
   }
 
   [placeholder]{

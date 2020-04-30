@@ -32,8 +32,16 @@
       margin-bottom: -0.25rem;
   }
 
+  .is-high {
+      margin-top: -0.25rem;
+  }
+
   .is-lower {
       margin-bottom: -0.35rem;
+  }
+
+  .is-higher {
+      margin-top: -0.35rem;
   }
 
   .is-48 {
@@ -43,9 +51,12 @@
   }
 
   .is-36 {
-      margin-top: 4px!important;
       width: 36px;
       height: 36px;
+  }
+
+  .is-36.margin {
+    margin: 0.35rem
   }
 
   .is-24 {
