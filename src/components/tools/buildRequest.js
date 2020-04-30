@@ -312,12 +312,12 @@ function buildSimpleMatch(searchInput) {
   We then do similar things for searchTerm, filters, sort, etc.
 */
 
-export const validScrollId = (scrollId, searchInput, forget) => {
+export const validScrollId = (scrollId, searchInput, sortInput) => {
   if (scrollId) {
     if ((Date.now() - scrollId.date) > 59000) {
       return undefined;
     }
-    if (sum(JSON.stringify(searchInput)) !== scrollId.context) {
+    if (sum(JSON.stringify(searchInput)+JSON.stringify(sortInput)) !== scrollId.context) {
       return undefined;
     }
     return scrollId.id;
@@ -328,7 +328,7 @@ export const validScrollId = (scrollId, searchInput, forget) => {
 export default function buildRequest(searchInput) {
   let body;
   if (myApiVersion === 'backend') {
-    let scrollIdLocal = validScrollId(myScrollId, searchInput);
+    let scrollIdLocal = validScrollId(myScrollId, searchInput, mySortInput);
     body = {
       fuzzy: `${myFuzzySearch}`,
       sort: buildSort(mySortInput, searchInput),

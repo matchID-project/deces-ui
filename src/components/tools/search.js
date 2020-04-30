@@ -5,6 +5,7 @@ import {
     searchCanvas,
     searchResults,
     searchMinLength,
+    sortInput,
     totalResults,
     totalPages,
     facets,
@@ -30,6 +31,7 @@ import buildResults from "./buildResults.js";
 import buildState from "./buildState.js";
 
 let mySearchInput;
+let mySortInput;
 let mySearchCanvas;
 let myCurrent;
 let myResultsPerPage;
@@ -43,6 +45,7 @@ let myApiVersion;
 let myDisplayMode;
 
 const s = searchInput.subscribe((value) => { mySearchInput=value });
+const so = sortInput.subscribe((value) => { mySortInput=value });
 const sc = searchCanvas.subscribe((value) => { mySearchCanvas=value });
 const sm = searchMinLength.subscribe((value) => { mySearchMinLength=value });
 const c = current.subscribe((value) => { myCurrent=value });
@@ -107,7 +110,7 @@ export const searchSubmit = async (newCurrent) => {
         await totalPages.update(v => computeTotalPages(state.size, state.total));
         if (state.scrollId) {
             await scrollId.update(v => { return {
-                context: sum(JSON.stringify(mySearchInput)),
+                context: sum(JSON.stringify(mySearchInput)+JSON.stringify(mySortInput)),
                 id: state.scrollId,
                 date: Date.now()
             }});
