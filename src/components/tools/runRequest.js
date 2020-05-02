@@ -1,5 +1,5 @@
 import sum from 'hash-sum';
-import { cachedResponses, apiVersion } from './stores.js';
+import { cachedResponses, apiVersion, scrollIdTimeout } from './stores.js';
 
 let myCachedResponses;
 let myApiVersion;
@@ -15,7 +15,9 @@ export default async function runRequest(body) {
   console.log(`AB_THRESHOLD=__AB_THRESHOLD__ runRequest to ${myApiVersion} ${JSON.stringify(body)}`);
   let hash = sum(body);
   if (myCachedResponses[hash]) {
-    return myCachedResponses[hash];
+    if ((Date.now() - myCachedResponses[hash].date) < scrollIdTimeout) {
+      return myCachedResponses[hash];
+    }
   }
   const response = await fetch(apiPath(), {
       method: "POST",
@@ -44,7 +46,7 @@ export default async function runRequest(body) {
     };
   } else {
     let json = await response.json();
-    cachedResponses.update(v => { v[hash]=json; return v } );
+    cachedResponses.update(v => { v[hash]={date: Date.now(), response: json}; return v } );
     return json;
   }
 };

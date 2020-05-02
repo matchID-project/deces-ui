@@ -9,7 +9,8 @@ import {
   scrollId,
   advancedSearch,
   fuzzySearch,
-  apiVersion
+  apiVersion,
+  scrollIdTimeout
 } from './stores.js';
 
 let myAdvancedSearch;
@@ -314,7 +315,7 @@ function buildSimpleMatch(searchInput) {
 
 export const validScrollId = (scrollId, searchInput, sortInput) => {
   if (scrollId) {
-    if ((Date.now() - scrollId.date) > 59000) {
+    if ((Date.now() - scrollId.date) > scrollIdTimeout) {
       return undefined;
     }
     if (sum(JSON.stringify(searchInput)+JSON.stringify(sortInput)) !== scrollId.context) {
@@ -325,15 +326,15 @@ export const validScrollId = (scrollId, searchInput, sortInput) => {
   return undefined;
 }
 
-export default function buildRequest(searchInput) {
+export default function buildRequest(searchInput, options) {
   let body;
   if (myApiVersion === 'backend') {
-    let scrollIdLocal = validScrollId(myScrollId, searchInput, mySortInput);
+    let scrollIdLocal = validScrollId((options && options.scrollId) || myScrollId, searchInput, mySortInput);
     body = {
       fuzzy: `${myFuzzySearch}`,
       sort: buildSort(mySortInput, searchInput),
-      page: myCurrent,
-      size: myResultsPerPage,
+      page: (options && options.page) || myCurrent,
+      size: (options && options.size) || myResultsPerPage,
       scroll: ((myCurrent === 1) || scrollIdLocal ) ? '1m' : undefined,
       scrollId: scrollIdLocal
     };

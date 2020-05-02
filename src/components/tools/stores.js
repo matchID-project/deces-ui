@@ -343,6 +343,8 @@ export const current = writable(1);
 
 export const scrollId = writable(null);
 
+export const scrollIdTimeout = 59000;
+
 export const updateURL = writable(false);
 
 export const autocompleteDisplay = writable(false);
