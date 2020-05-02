@@ -41,7 +41,8 @@
 {/if}
 
 <script>
-    import { current, totalResults, totalPages, resultsPerPage, maxResults, searchInput, wasSearched, scrollId } from '../tools/stores.js'
+    import { current, totalResults, totalPages, resultsPerPage, maxResults,
+    searchInput, sortInput, wasSearched, scrollId } from '../tools/stores.js'
     import { searchString, searchSubmit, searchURLUpdate } from '../tools/search.js'
     import { validScrollId } from '../tools/buildRequest.js';
 
@@ -81,7 +82,7 @@
 
     const goTo = async (page) => {
         if ((page>0) && (page <= $totalPages)) {
-            if (!validScrollId($scrollId,$searchInput) && (page !==1)) {
+            if (!validScrollId($scrollId,$searchInput,$sortInput) && (page !==1)) {
                 await searchSubmit(1);
             }
             await searchSubmit(page);
