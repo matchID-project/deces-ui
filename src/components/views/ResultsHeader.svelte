@@ -36,6 +36,10 @@
                     </div>
                 </div>
                 <div class="column is-4 is-mobile-3 has-text-right is-size-7 is-vcentered">
+                    <span class="is-hidden-mobile" style="margin-right:10px;">
+                        <Download/>
+                    </span>
+
                     <span class="is-hidden-mobile">résultats </span>par page
                     <span class="select is-size-7">
                         <select bind:value={$resultsPerPage}>
@@ -63,11 +67,12 @@
 
 <script>
     import { faSortUp, faSortDown, faPlus, faMinus } from '@fortawesome/free-solid-svg-icons';
-    import FontAwesomeIcon from './FontAwesomeIcon.svelte'
+    import FontAwesomeIcon from './FontAwesomeIcon.svelte';
     import { current, sortInput, sortInputDisplay, updateURL, totalResults, totalPages,
         resultsPerPage, searchInput, wasSearched, displayMode } from '../tools/stores.js'
     import { searchSubmit, searchURLUpdate } from '../tools/search.js'
     import SortInput from './SortInput.svelte';
+    import Download from './Download.svelte';
 
     let from, to, query;
 

@@ -329,7 +329,7 @@ export const validScrollId = (scrollId, searchInput, sortInput) => {
 export default function buildRequest(searchInput, options) {
   let body;
   if (myApiVersion === 'backend') {
-    let scrollIdLocal = validScrollId((options && options.scrollId) || myScrollId, searchInput, mySortInput);
+    let scrollIdLocal = options ? options.scrollId : validScrollId(myScrollId, searchInput, mySortInput);
     body = {
       fuzzy: `${myFuzzySearch}`,
       sort: buildSort(mySortInput, searchInput),
