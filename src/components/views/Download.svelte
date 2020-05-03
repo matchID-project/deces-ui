@@ -41,10 +41,12 @@
 	});
     let max = 0;
 
-    streamSaver.ReadableStream = ReadableStream;
-    streamSaver.WritableStream = WritableStream;
-    streamSaver.TransformStream = TransformStream;
-    streamSaver.mitm = 'https://matchid.io/mitm/mitm.html';
+    onMount(() => {
+        streamSaver.ReadableStream = ReadableStream;
+        streamSaver.WritableStream = WritableStream;
+        streamSaver.TransformStream = TransformStream;
+        streamSaver.mitm = 'https://matchid.io/mitm/mitm.html';
+    })
 
     $: if ($searchInput) {status = undefined};
 
