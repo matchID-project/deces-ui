@@ -11,7 +11,7 @@
           </div>
         {:else }
           <div class="content">
-            <table class="table is-narrow is-striped is-size-7">
+            <table class="table is-narrow is-striped is-size-7" style="margin-top:24px!important;">
               {#each columns as column}
                 <col style={column.width ? `width: ${column.width};`: ""}/>
               {/each}
