@@ -395,6 +395,10 @@ export const sortInput = writable([
         input: "deathDate"
     },
     {
+        label: "décès: âge",
+        input: "deathAge"
+    },
+    {
         label: "décès: commune",
         input: "deathCity",
     },

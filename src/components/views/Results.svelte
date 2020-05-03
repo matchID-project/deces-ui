@@ -11,7 +11,7 @@
           </div>
         {:else }
           <div class="content">
-            <table class="table is-narrow is-striped is-size-7">
+            <table class="table is-narrow is-striped is-size-7" style="margin-top:24px!important;">
               {#each columns as column}
                 <col style={column.width ? `width: ${column.width};`: ""}/>
               {/each}
@@ -22,7 +22,10 @@
               </tr>
               <tr class="is-grey" >
                 {#each columns as column, index}
-                  <th class="th-label" scope="col" on:click={e => toggleSort(column.field)}>
+                  <th class={`th-label ${column.field ? "th-sortable" : ""}`} scope="col"
+                    on:click={e => toggleSort(column.field)}
+                    title={column.field ? "cliquez pour activer/désactiver le tri" : undefined}
+                  >
                     {column.label}
                     {#if column.order}
                       <FontAwesomeIcon icon={column.order === "desc" ? faSortDown : faSortUp } class="is-small is-low"/>
@@ -59,23 +62,24 @@
 
   let columns = [
     { label: "nom", field: "lastName", width: "100px"},
-    { label: "prénom(s)", field: "firstName", width: "100px"},
+    { label: "prénom(s)", field: "firstName", width: "160px"},
     { label: "sexe", field: "sex",  width: "30px"},
     { label: "date", field: "birthDate",  width: "80px"},
     { label: "commune", field: "birthCity", width: "120px"},
-    { label: "code INSEE", field: "birthCityCode", width: "50px"},
+    { label: "code INSEE", width: "50px"},
     { label: "dép", field: "birthDepartment", width: "30px"},
     { label: "pays", field: "birthCountry", width: "70px"},
     { label: "date", field: "deathDate", width: "80px"},
     { label: "âge", field: "deathAge", width: "35px"},
     { label: "commune", field: "deathCity", width: "120px"},
-    { label: "code INSEE", field: "deathCityCode", width: "50px"},
+    { label: "code INSEE", width: "50px"},
     { label: "dep", field: "deathDepartment", width: "30px"},
     { label: "pays", field: "deathCountry", width: "70px"},
     { label: "n° acte", field: "deathCertificateId", width: "50px"},
     { label: "source", field: "source", width: "70px"},
   ]
   const toggleSort= (field) => {
+    if (!field) {return}
     sortInput.update(v =>
       v.filter(k => k.input === field).map(item => { return {
         label: item.label,
@@ -106,6 +110,12 @@
   .th-label {
     height: 2.5rem;
   }
+
+  .th-sortable:hover {
+        color: #209cee;
+        cursor: pointer;
+    }
+
     .is-size-7 {
         font-size: .75rem !important;
     }

@@ -1,30 +1,60 @@
-<span
-    on:click={download}
->
-    télécharger les résulats
-     <FontAwesomeIcon icon={faFileDownload} class="is-lower"/>
-</span>
+{#if status === 'downloading'}
+    <span
+        title={`téléchargement en cours ${Math.round($progress/max*100)}%`}
+    >
+        <progress class="progress is-info is-small download-bar" value={$progress} max={max}/>
+    </span>
+{:else if (status === undefined)}
+    <span
+        on:click={download}
+        class="download"
+        title="téléchargez l'ensemble des résultats en tableur CSV"
+    >
+        téléchargement des résultats
+        <FontAwesomeIcon icon={faFileDownload} class="is-lower"/>
+    </span>
+{:else if (status === 'success')}
+    <span class="is-primary">
+        téléchargement terminé
+        <FontAwesomeIcon icon={faCheck} class="is-small"/>
+    </span>
+{/if}
+
 <script>
-    import { onMount } from 'svelte';
-    import { faFileDownload } from '@fortawesome/free-solid-svg-icons';
+    import { onMount, onDestroy } from 'svelte';
+    import { tweened } from 'svelte/motion';
+	import { sineInOut } from 'svelte/easing';
+    import { faFileDownload, faCheck } from '@fortawesome/free-solid-svg-icons';
     import FontAwesomeIcon from './FontAwesomeIcon.svelte';
     import { ReadableStream, WritableStream, TransformStream } from 'web-streams-polyfill/ponyfill';
     import streamSaver from 'streamsaver';
     import { searchInput, searchResults, maxResultsPerPage } from '../tools/stores.js';
+    import { searchString } from '../tools/search.js'
     import buildRequest from '../tools/buildRequest.js';
     import runRequest from '../tools/runRequest.js';
 
-    streamSaver.ReadableStream = ReadableStream;
-    streamSaver.WritableStream = WritableStream;
-    streamSaver.TransformStream = TransformStream;
-    streamSaver.mitm = 'https://matchid.io/mitm/mitm.html';
+    let status = undefined;
+    let writer = undefined;
+    const progress = tweened(0, {
+		duration: 500,
+		easing: sineInOut
+	});
+    let max = 0;
+
+    onMount(() => {
+        streamSaver.ReadableStream = ReadableStream;
+        streamSaver.WritableStream = WritableStream;
+        streamSaver.TransformStream = TransformStream;
+        streamSaver.mitm = 'https://matchid.io/mitm/mitm.html';
+    })
+
+    $: if ($searchInput) {status = undefined};
 
     const fileName = () => {
         return `deces-${Object.keys($searchInput).map(k => {
-            return ($searchInput[k].value && $searchInput[k].value.replace(/\s+/,"_")) || undefined;
+            return ($searchInput[k].value && $searchInput[k].value.replace(/\s+/,"_").toUpperCase()) || undefined;
         }).filter(x => x).join('-')}.csv`;
     };
-
 
     const cityString = (city) => {
         return city
@@ -57,11 +87,10 @@
         'date_décès;age_décès;commune_décès;code_INSEE_décès;département_décès;pays_décès;pays_ISO_décès;num_décès;source_INSEE\n';
 
     const searchNext = async (state) => {
-        console.log(state);
         const page = state.page;
         const size = state.size;
         let request = buildRequest($searchInput, {page: page, size: size, scrollId: state.scrollId});
-        state = await runRequest(request);
+        state = await runRequest(request, false);
         return {
             total: state.response.total,
             searchResults: state.response.persons,
@@ -72,8 +101,10 @@
     }
 
     const download = async () => {
+        max = 0;
+        progress.set(0);
         const fileStream=streamSaver.createWriteStream(fileName());
-        const writer = fileStream.getWriter();
+        writer = fileStream.getWriter();
         const encoder = new TextEncoder();
         await writer.write(encoder.encode(csvHeader));
         let state ={
@@ -82,10 +113,64 @@
             size: $maxResultsPerPage
         };
         while ((state.page - 1) * $maxResultsPerPage < state.total) {
+            if (state.page > 1) { status = 'downloading' };
             state = await searchNext(state);
+            max = state.total;
+            progress.set($progress + state.searchResults.length);
             await writer.write(encoder.encode(toCsv(state.searchResults)));
         }
         writer.close();
+        status = 'success';
     };
 
+    onDestroy(() => {
+        if (writer) {
+            writer.abort();
+        }
+        status = undefined;
+    });
+
 </script>
+
+<style>
+    .is-primary {
+        color: #00d1b2;
+    }
+
+    .download:hover {
+        color: #209cee;
+        cursor: pointer;
+    }
+
+    .download-bar {
+        width: 50%!important;
+        display: inline!important;
+    }
+
+    .progress.is-info::-moz-progress-bar {
+        background-color: #3298dc;
+    }
+    .progress::-moz-progress-bar {
+        background-color: #4a4a4a;
+    }
+
+    .progress {
+        -moz-appearance: none;
+        -webkit-appearance: none;
+        border: none;
+        border-radius: 290486px;
+        display: block;
+        height: 1rem;
+        overflow: hidden;
+        padding: 0;
+        width: 100%;
+    }
+
+    .progress.is-small {
+        height: .75rem;
+    }
+
+    *, ::after, ::before {
+        box-sizing: inherit;
+    }
+</style>
