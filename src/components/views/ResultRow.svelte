@@ -31,7 +31,7 @@
 {:else if (result)}
     <tr class={`is-size-7 ${(index%2) ? "is-striped" : "bof"}`} >
         <td><div class="expand-on-hover">{result.name && result.name.last || ''} </div></td>
-        <td><div class="expand-on-hover">{result.name && result.name.first.join(' ') || ''} </div></td>
+        <td><div class="expand-on-hover">{(result.name && result.name.first && result.name.first.join(' ')) || '(aucun)'} </div></td>
         <td><div class="expand-on-hover">{result.sex || ''}</div></td>
         <td><div class="expand-on-hover">{result.birth && result.birth.date && dateFormat(result.birth.date) || ''}</div></td>
         <td><div class="expand-on-hover">{result.birth && result.birth.location && result.birth.location.city && cityString(result.birth.location.city) || ''}</div></td>
