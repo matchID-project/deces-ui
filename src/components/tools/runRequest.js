@@ -11,12 +11,12 @@ const apiPath = () => {
   return myApiVersion === 'backend' ? '__BACKEND_PROXY_PATH__/search' : '__ES_PROXY_PATH__';
 }
 
-export default async function runRequest(body) {
+export default async function runRequest(body, cache=true) {
   console.log(`AB_THRESHOLD=__AB_THRESHOLD__ runRequest to ${myApiVersion} ${JSON.stringify(body)}`);
   let hash = sum(body);
-  if (myCachedResponses[hash]) {
+  if (cache && myCachedResponses[hash]) {
     if ((Date.now() - myCachedResponses[hash].date) < scrollIdTimeout) {
-      return myCachedResponses[hash];
+      return myCachedResponses[hash].response;
     }
   }
   const response = await fetch(apiPath(), {
