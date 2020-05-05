@@ -16,9 +16,15 @@
     <p>
         Nous avons mis récemment à jour l'application pour favoriser les recherches approfondies:
         <br/>
-        - une recherche avancée (bouton '+') par année, lieu de naissance
+        - l'ajout des fichiers source INSEE et du champ âge et code commune INSEE
         <br/>
-        - une configuration du tri des résultats
+        - la recherche par plage de dates, par sexe et âge au décès, et la désactivation de la recherche floue
+        <br/>
+        - une vue géographique (pour visualiser les origines patronymiques)
+        <br/>
+        - une vue tableur comme vue complémentaire d'exploration des recherches
+        <br/>
+        - un téléchargement des résultats en tableur CSV
     </p>
 <p><strong>Evolutions futures</strong></p>
     <p>
@@ -26,14 +32,10 @@
     </p>
     <ul>
         <li>
-            la possibilité de désactiver de la recherche floue
+            identifier les personnes décédées dans une liste de type tableur
         </li>
         <li>
-            dans la recherche avancée la recherche par plage de date
-        </li>
-        <li>
-            la possibilité de télécharger les fichiers source restreints aux années et départements
-    pour favoriser les recherches approfondies.
+            une configuration avancée pour les requêtes floues (regex, phonétique, fuzzy : par champ) 
         </li>
     </ul>
 
