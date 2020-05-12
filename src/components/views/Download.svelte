@@ -91,8 +91,8 @@
 
     const csvRow = (row) => {
         return `${row.name.last || ''};${(row.name.first && row.name.first.join(' ')) || ''};${row.sex};`+
-            `${dateFormat(row.birth.date)};${cityString(row.birth.location.city || '')};${row.birth.location.cityCode || ''};${row.birth.location.departmentCode || ''};${row.birth.location.country || ''};${row.birth.location.countryCode || ''};`+
-            `${dateFormat(row.death.date)};${row.death.age};${cityString(row.death.location.city || '')};${row.death.location.cityCode || ''};${row.death.location.departmentCode || ''};${row.death.location.country || ''};${row.death.location.countryCode || ''};${row.death.certificateId || ''};${row.source};`;
+            `${dateFormat(row.birth.date)};${cityString(row.birth.location.city || '')};"${row.birth.location.cityCode || ''}";"${row.birth.location.departmentCode || ''}";${row.birth.location.country || ''};${row.birth.location.countryCode || ''};`+
+            `${dateFormat(row.death.date)};${row.death.age};${cityString(row.death.location.city || '')};"${row.death.location.cityCode || ''}";"${row.death.location.departmentCode || ''}";${row.death.location.country || ''};${row.death.location.countryCode || ''};${row.death.certificateId || ''};${row.source};`;
      }
 
     const toCsv = (searchResults) => {
