@@ -13,7 +13,6 @@ const map = new Map()
 // This should be called once per download
 // Each event has a dataChannel that the data will be piped through
 self.onmessage = async (event) => {
-  console.log('sw',event);
   // We send a heartbeat every x secound to keep the
   // service worker alive if a transferable stream is not sent
   if (event.data === 'ping') {
@@ -53,10 +52,12 @@ function createStream (port) {
       // When we receive data on the messageChannel, we write
       port.onmessage = ({ data }) => {
         if (data === 'end') {
+          port.postMessage({ end: 'success' })
           return controller.close()
         }
 
         if (data === 'abort') {
+          port.postMessage({ end: 'aborted' })
           controller.error('Aborted the download')
           return
         }
@@ -65,7 +66,7 @@ function createStream (port) {
       }
     },
     cancel () {
-      console.log('user aborted')
+      port.postMessage({ end: 'cancel' })
     }
   })
 }
@@ -125,5 +126,5 @@ self.onfetch = event => {
 
   event.respondWith(new Response(stream, { headers: responseHeaders }))
 
-  port.postMessage({ debug: 'Download started' })
+  port.postMessage({ start: 'Download started' })
 }
