@@ -78,6 +78,7 @@ services:
       DATAGOUV_PROXY_PATH: ${DATAGOUV_PROXY_PATH}
       DATAGOUV_CATALOG_URL: ${DATAGOUV_CATALOG_URL}
       DATAGOUV_RESOURCES_URL: ${DATAGOUV_RESOURCES_URL}
+      MITM_URL: ${MITM_URL}
     volumes:
       - ${FRONTEND}/public:/${APP}/public
       - ${FRONTEND}/.eslintrc.js:/${APP}/.eslintrc.js

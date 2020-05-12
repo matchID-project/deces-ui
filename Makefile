@@ -47,6 +47,7 @@ export API_USER_SCOPE=http_x_forwarded_for
 export API_GLOBAL_LIMIT_RATE=20r/s
 export API_GLOBAL_BURST=200 nodelay
 export API_TEST_JSON_PATH=hits
+export MITM_URL=/mitm/mitm.html
 export API_TEST_REQUEST={"query":{"match_all":{}}}
 
 export DC_DIR=${APP_PATH}
