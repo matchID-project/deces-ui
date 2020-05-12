@@ -15,7 +15,7 @@
 {#if country}
     <tr>
         <td>Pays</td>
-        <td>{country}</td>
+        <td>{country} {countryCode ? `(${countryCode})` : ''}</td>
     </tr>
 {/if}
 
