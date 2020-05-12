@@ -32,6 +32,7 @@ services:
       - API_USER_SCOPE
       - API_GLOBAL_LIMIT_RATE
       - API_GLOBAL_BURST
+      - MITM_URL
       - GOOGLE_ANALYTICS_ID
     ports:
       - ${PORT}:80
