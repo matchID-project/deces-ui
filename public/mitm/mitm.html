@@ -140,7 +140,6 @@ function onMessage (event) {
   if (!(data.readableStream || data.transferringReadable)) {
     keepAlive()
   }
-  console.log('mitm', data, transferable)
   return sw.postMessage(data, transferable)
 }
 

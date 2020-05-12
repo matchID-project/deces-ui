@@ -10,7 +10,10 @@
   'use strict'
 
   let mitmTransporter = null
+  let downloader = null
   let supportsTransferable = false
+  let onmessage = (data) => console.log('StreamSaver message',data);
+  let channel = null
   const test = fn => { try { fn() } catch (e) {} }
   const ponyfill = window.WebStreamsPolyfill || {}
   const isSecureContext = window.isSecureContext
@@ -22,6 +25,8 @@
 
   const streamSaver = {
     createWriteStream,
+    onmessage,
+    useBlobFallback,
     WritableStream: window.WritableStream || ponyfill.WritableStream,
     supported: true,
     version: { full: '2.0.0', major: 2, minor: 0, dot: 0 },
@@ -89,10 +94,10 @@
     // We can't look for service worker since it may still work on http
     new Response(new ReadableStream())
     if (isSecureContext && !('serviceWorker' in navigator)) {
-      useBlobFallback = true
+      streamSaver.useBlobFallback = true
     }
   } catch (err) {
-    useBlobFallback = true
+    streamSaver.useBlobFallback = true
   }
 
   test(() => {
@@ -135,7 +140,7 @@
 
     let bytesWritten = 0 // by StreamSaver.js (not the service worker)
     let downloadUrl = null
-    let channel = null
+    channel = null
     let ts = null
 
     // normalize arguments
@@ -151,7 +156,7 @@
     } else {
       opts = options || {}
     }
-    if (!useBlobFallback) {
+    if (!streamSaver.useBlobFallback) {
       loadTransporter()
 
       channel = new MessageChannel()
@@ -221,14 +226,15 @@
               mitmTransporter.remove()
               // Special case for firefox, they can keep sw alive with fetch
               if (downloadStrategy === 'iframe') {
-                makeIframe(streamSaver.mitm)
+                mitmTransporter = makeIframe(streamSaver.mitm)
               }
             }
 
             // We never remove this iframes b/c it can interrupt saving
-            makeIframe(evt.data.download)
+            downloader = makeIframe(evt.data.download)
           }
         }
+        evt.data && streamSaver.onmessage(evt.data)
       }
 
       if (mitmTransporter.loaded) {
@@ -242,9 +248,9 @@
 
     let chunks = []
 
-    return (!useBlobFallback && ts && ts.writable) || new streamSaver.WritableStream({
+    return (!streamSaver.useBlobFallback && ts && ts.writable) || new streamSaver.WritableStream({
       write (chunk) {
-        if (useBlobFallback) {
+        if (streamSaver.useBlobFallback) {
           // Safari... The new IE6
           // https://github.com/jimmywarting/StreamSaver.js/issues/69
           //
@@ -273,12 +279,13 @@
         }
       },
       close () {
-        if (useBlobFallback) {
+        if (streamSaver.useBlobFallback) {
           const blob = new Blob(chunks, { type: 'application/octet-stream; charset=utf-8' })
           const link = document.createElement('a')
           link.href = URL.createObjectURL(blob)
           link.download = filename
           link.click()
+          channel.port1.postMessage('end')
         } else {
           channel.port1.postMessage('end')
         }
@@ -286,10 +293,12 @@
       abort () {
         chunks = []
         channel.port1.postMessage('abort')
-        channel.port1.onmessage = null
-        channel.port1.close()
-        channel.port2.close()
-        channel = null
+        setTimeout(() => {
+            channel.port1.onmessage = null
+            channel.port1.close()
+            channel.port2.close()
+            channel = null
+        }, 500)
       }
     }, opts.writableStrategy)
   }
