@@ -1,0 +1,93 @@
+name: build and deploy
+
+on: push
+
+jobs:
+  build:
+    name: build and deploy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Extract branch name
+        shell: bash
+        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+        id: extract_branch
+      - name: config
+        run: make config
+        env:
+          GIT_BRANCH: ${{ steps.extract_branch.outputs.branch }}
+      - name: build
+        if: success()
+        run: make docker-check || make build
+        env:
+          GIT_BRANCH: ${{ steps.extract_branch.outputs.branch }}
+      - name: test
+        if: success()
+        run: make deploy-local FILES_TO_PROCESS=deces-2020-m01.txt.gz
+        env:
+          GIT_BRANCH: ${{ steps.extract_branch.outputs.branch }}
+          GOOGLE_ANALYTICS_ID: ${{ secrets.GOOGLE_ANALYTICS_ID }}
+          STORAGE_ACCESS_KEY: ${{ secrets.STORAGE_ACCESS_KEY }}
+          STORAGE_SECRET_KEY: ${{ secrets.STORAGE_SECRET_KEY }}
+      - name: publish (if dev or master)
+        if: success()
+        run: |
+          if [[ ( "$GIT_BRANCH" == "dev" ) || ( "$GIT_BRANCH" == "master" ) ]]; then
+            make docker-push GIT_BRANCH=$GIT_BRANCH;
+          fi
+        env:
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+          GIT_BRANCH: ${{ steps.extract_branch.outputs.branch }}
+      - name: deploy-key (if dev or master)
+        if: success()
+        run: |
+          if [[ ( "$GIT_BRANCH" == "dev" ) || ( "$GIT_BRANCH" == "master" ) ]]; then
+            mkdir -p ~/.ssh/;
+            ssh-agent -a $SSH_AUTH_SOCK > /dev/null;
+            echo "$SSHENC" | base64 -d | gpg -d --passphrase $SSHPWD --batch > /tmp/id_rsa_matchID;
+            chmod 600 /tmp/id_rsa_matchID;
+            ssh-add /tmp/id_rsa_matchID;
+            echo "$SSHPUB" > ~/.ssh/id_rsa_matchID.pub;
+            echo "Host * !""$BASTION_HOST" > ~/.ssh/config;
+            echo "   ProxyCommand ssh -o StrictHostKeyChecking=no $BASTION_USER@$BASTION_HOST nc %h %p" >> ~/.ssh/config;
+            cat ~/.ssh/config;
+          fi
+        env:
+          GIT_BRANCH: ${{ steps.extract_branch.outputs.branch }}
+          BASTION_HOST: ${{ secrets.BASTION_HOST }}
+          BASTION_USER: ${{ secrets.BASTION_USER }}
+          SSHENC: ${{ secrets.SSHENC }}
+          SSHPWD: ${{ secrets.SSHPWD }}
+          SSHPUB: ${{ secrets.SSHPUB }}
+          SSH_AUTH_SOCK: /tmp/ssh_agent.sock
+      - name: deploy
+        if: success()
+        run: |
+          if [[ ( "$GIT_BRANCH" == "dev" ) ]]; then
+            make deploy-remote FILES_TO_PROCESS=$FILES_TO_PROCESS_DEV GIT_BRANCH=$GIT_BRANCH NGINX_USER=$NGINX_USER NGINX_HOST=$NGINX_HOST remote_http_proxy=$remote_http_proxy remote_https_proxy=$remote_https_proxy remote_no_proxy=$remote_no_proxy NQ_TOKEN=$NQ_TOKEN_DEV GOOGLE_ANALYTICS_ID=$GOOGLE_ANALYTICS_ID;
+          fi;
+          if [[ ( "$GIT_BRANCH" == "master" ) ]]; then
+            make deploy-remote ES_MEM_MASTER=$ES_MEM SCW_FLAVOR=$SCW_FLAVOR_MASTER GIT_BACKEND_BRANCH=master GIT_BRANCH=$GIT_BRANCH NGINX_USER=$NGINX_USER NGINX_HOST=$NGINX_HOST remote_http_proxy=$remote_http_proxy remote_https_proxy=$remote_https_proxy remote_no_proxy=$remote_no_proxy NQ_TOKEN=$NQ_TOKEN_MASTER GOOGLE_ANALYTICS_ID=$GOOGLE_ANALYTICS_ID;
+          fi;
+        env:
+          FILES_TO_PROCESS_DEV: deces-2020-m[0-1][0-9].txt.gz
+          ES_MEM_MASTER: ${{ secrets.ES_MEM_MASTER }}
+          SCW_FLAVOR_MASTER: ${{ secrets.SCW_FLAVER_MASTER }}
+          GOOGLE_ANALYTICS_ID: ${{ secrets.GOOGLE_ANALYTICS_ID }}
+          NGINX_USER: ${{ secrets.NGINX_USER }}
+          NGINX_HOST: ${{ secrets.NGINX_HOST }}
+          NQ_TOKEN_DEV: ${{ secrets.NQ_TOKEN_DEV }}
+          NQ_TOKEN_MASTER: ${{ secrets.NQ_TOKEN_DEV }}
+          GIT_BRANCH: ${{ steps.extract_branch.outputs.branch }}
+          remote_http_proxy: ${{ secrets.remote_http_proxy }}
+          remote_https_proxy: ${{ secrets.remote_https_proxy }}
+          remote_no_proxy: localhost
+          SCW_ORGANIZATION_ID: ${{ secrets.SCW_ORGANIZATION_ID }}
+          SCW_SECRET_TOKEN: ${{ secrets.SCW_SECRET_TOKEN }}
+          SCW_SERVER_OPTS: ${{ secrets.SCW_SERVER_OPTS }}
+          STORAGE_ACCESS_KEY: ${{ secrets.STORAGE_ACCESS_KEY }}
+          STORAGE_SECRET_KEY: ${{ secrets.STORAGE_SECRET_KEY }}
+          BLOCK_DEPLOY: ${{ secrets.BLOCK_DEPLOY }}
+          SSH_AUTH_SOCK: /tmp/ssh_agent.sock
+
+
