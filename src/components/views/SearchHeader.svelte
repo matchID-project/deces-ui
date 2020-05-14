@@ -30,7 +30,7 @@
 <style>
 
   a {
-      color: #3273dc;
+      color: #ff7a8a;
       cursor: pointer;
       text-decoration: none;
   }

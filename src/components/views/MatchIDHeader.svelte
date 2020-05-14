@@ -2,11 +2,13 @@
     <div class="container">
         <div class="navbar-brand">
             <a class="logo" href="/search">
-              {#if themeDnum}
-                <img src={"/dnum-logo.svg"} alt="DNUM Logo" width="50" height="50" />
-              {/if}
-                <img src={"/matchID-logo.svg"} alt="matchID Logo" />
+                <img src={"/favicon.svg"} alt="matchID Logo" width="50" height="50" />
             </a>
+            {#if themeDnum}
+            <a class="logo" href="/search">
+                <img src={"/dnum-logo.svg"} alt="DNUM Logo" width="50" height="50" />
+            </a>
+            {/if}
             <div
                 class="navbar-burger"
                 class:is-active={burgerState}

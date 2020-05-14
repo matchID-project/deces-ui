@@ -238,7 +238,7 @@
     }
 
     .has-text-primary {
-        color: #00d1b2!important;
+        color: #003189!important;
     }
 
     .has-background-white {
@@ -246,7 +246,7 @@
     }
 
     .has-background-primary {
-        background-color: #00d1b2!important;
+        background-color: #e2011c!important;
     }
 
     .has-background-danger {

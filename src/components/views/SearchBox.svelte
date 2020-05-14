@@ -374,13 +374,13 @@
   }
 
   .button.is-info,.button.is-info:hover {
-    background-color: #209cee;
+    background-color: #e2011c;
     border-color: transparent;
     color: #fff;
   }
 
   .button.is-info:hover {
-    background-color: #1496ed;
+    background-color: #e2011c;
   }
 
   .button.is-info:focus {
@@ -389,11 +389,11 @@
   }
 
   .button.is-info:focus:not(:active) {
-    box-shadow: 0 0 0 .125em rgba(32,156,238,.25);
+    box-shadow: 0 0 0 .125em rgba(250,1,28,.25);
   }
 
   .button.is-info:active {
-    background-color: #118fe4;
+    background-color: #e2011c;
     border-color: transparent;
     color: #fff;
   }
@@ -528,7 +528,7 @@
   }
 
   .info-footer {
-    color: #209cee;
+    color: #e2011c;
     z-index: 40;
     width: 100%;
     position: fixed;
@@ -537,7 +537,7 @@
     right: 0;
     padding: 5px;
     background: rgba(255, 255, 255, 0.8);
-    border-top: solid 1px #209cee;
+    border-top: solid 1px #e2011c;
     vertical-align: center;
     justify-content: center;
     display: inline-block;
@@ -721,7 +721,7 @@
 
   .switch[type="checkbox"].is-info:checked+label::before,
   .switch[type="checkbox"].is-info:checked+label:before {
-  background:#209cee
+  background:#e2011c
   }
 
   .switch[type="checkbox"].is-unchecked-grey+label::before,

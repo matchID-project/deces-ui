@@ -182,10 +182,10 @@
 
     a {
          text-decoration: none;
-         color: #00d1b2;
+         color: #e2011c;
     }
     .is-primary {
-        color: #00d1b2;
+        color: #e2011c;
     }
     .is-danger {
         color:  hsl(348, 100%, 61%);
