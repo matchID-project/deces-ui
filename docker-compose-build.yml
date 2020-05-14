@@ -28,6 +28,7 @@ services:
         DATAGOUV_CATALOG_URL: ${DATAGOUV_CATALOG_URL}
         DATAGOUV_RESOURCES_URL: ${DATAGOUV_RESOURCES_URL}
         MITM_URL: ${MITM_URL}
+        THEME_DNUM: ${THEME_DNUM}
     image: ${DOCKER_USERNAME}/${DC_PREFIX}-frontend-build:${APP_VERSION}
     container_name: ${DC_PREFIX}-frontend-build
 
