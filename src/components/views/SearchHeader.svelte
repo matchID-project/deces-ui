@@ -5,7 +5,7 @@
     <div slot="subtitle">
       {#if !$advancedSearch}
         <span class="is-hidden-mobile">
-          recherche gratuite parmi
+          recherche {#if !themeDnum}gratuite{/if} parmi
         </span>
         <span> <b>25 millions</b> de décès depuis 1970
           <br/>
@@ -24,6 +24,7 @@
   import { advancedSearch } from '../tools/stores.js';
   import Hero from './Hero.svelte';
   import SearchBox from "./SearchBox.svelte";
+  const themeDnum = parseInt('__THEME_DNUM__')
 </script>
 
 <style>

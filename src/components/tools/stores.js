@@ -25,7 +25,7 @@ export const searchInput = writable({
         backendQuery: "q",
         value: "",
         field: "fullText",
-        placeholder: "nom, prénom, date de naissance ou de décès, ... e.g. Pompidou Georges",
+        placeholder: "nom, prénom, date de naissance ou de décès (JJ/MM/AAAA), ... e.g. Pompidou Georges",
         title: "saisissez en recherche libre nom, prénom, date de naissance ou de décès",
         size: 12,
         active: true,

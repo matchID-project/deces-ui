@@ -2,6 +2,9 @@
     <div class="container">
         <div class="navbar-brand">
             <a class="logo" href="/search">
+              {#if themeDnum}
+                <img src={"/dnum-logo.svg"} alt="DNUM Logo" width="50" height="50" />
+              {/if}
                 <img src={"/matchID-logo.svg"} alt="matchID Logo" />
             </a>
             <div
@@ -68,12 +71,12 @@
                         </span>
                     </div>
                     <div class="navbar-dropdown">
-                        {#each Object.keys(aboutMenu) as about}
-                            <a class="navbar-item" href={`/about/${about}`}>
+                        {#each aboutMenu as about}
+                            <a class="navbar-item" href={`${about.url}`}>
                                 <span class="icon">
-                                    <FontAwesomeIcon icon={aboutMenu[about].icon} class="icon"/>
+                                    <FontAwesomeIcon icon={about.icon} class="icon"/>
                                 </span>
-                                <span> {aboutMenu[about].title} </span>
+                                <span> {about.title} </span>
                             </a>
                         {/each}
                     </div>
@@ -161,6 +164,7 @@
 
     import {
         faFacebook,
+        faServicestack,
         faTwitter
     } from '@fortawesome/free-brands-svg-icons';
 
@@ -176,19 +180,27 @@
 
     // const dispatch = createEventDispatcher();
 
+    const themeDnum = parseInt('__THEME_DNUM__')
     let burgerState = false;
     let modalState = false;
     let modalContent = 'service';
-    let aboutMenu = {
-        service: {
-            icon: faSearch,
-            title:'le service'
-        },
-        data: {
-            icon: faDatabase,
-            title: 'les données INSEE'
-        }
-    }
+    let aboutMenu = [
+      {
+        url: '/about/service',
+        icon: faSearch,
+        title:'le service'
+      },
+      {
+        url: '/about/data',
+        icon: faDatabase,
+        title: 'les données INSEE'
+      },
+      {
+        url: '/deces/api/v1/docs',
+        icon: faServicestack,
+        title:'documentation API'
+      }
+    ]
 
     function toggleBurger() {
         burgerState = !burgerState
@@ -222,7 +234,7 @@
 
     .logo {
         margin-bottom: -5px;
-        margin-left: -12px;
+        margin-left: 2px;
     }
 
     img {

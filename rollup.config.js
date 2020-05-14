@@ -37,8 +37,8 @@ export default {
 			__DATAGOUV_RESOURCES_URL__: process.env.DATAGOUV_RESOURCES_URL,
 			__MITM_URL__: process.env.MITM_URL,
 			__APP__: process.env.APP,
-			__THEME_DNUM__: process.env.THEME_DNUM,
-			__APP_VERSION__: process.env.APP_VERSION
+			__APP_VERSION__: process.env.APP_VERSION,
+			__THEME_DNUM__: process.env.THEME_DNUM
 		  }),
 		// If you have external dependencies installed from
 		// npm, you'll most likely need these plugins. In
