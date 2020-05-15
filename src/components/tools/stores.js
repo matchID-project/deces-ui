@@ -423,3 +423,5 @@ export const apiVersion = writable(
 );
 
 export const liveConfig = writable(null);
+
+export const mitmUrl = writable('__MITM_URL__');

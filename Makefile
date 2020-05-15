@@ -47,6 +47,7 @@ export API_USER_SCOPE=http_x_forwarded_for
 export API_GLOBAL_LIMIT_RATE=20r/s
 export API_GLOBAL_BURST=200 nodelay
 export API_TEST_JSON_PATH=hits
+export MITM_URL=/mitm/mitm.html
 export API_TEST_REQUEST={"query":{"match_all":{}}}
 
 export DC_DIR=${APP_PATH}
@@ -109,7 +110,6 @@ commit              := $(shell git describe --tags || cat VERSION )
 tag                 := $(shell git describe --tags | sed 's/-.*//')
 lastcommit          := $(shell touch .lastcommit && cat .lastcommit)
 date                := $(shell date -I)
-id                  := $(shell cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 8 | head -n 1)
 
 export APP_VERSION :=  ${tag}-${VERSION}
 
@@ -126,8 +126,8 @@ include /etc/os-release
 
 config:
 	# this proc relies on matchid/tools and works both local and remote
-	@which make || sudo apt-get install make
-	@if [ -z "${TOOLS_PATH}" ];then\
+	which make || sudo apt-get install make
+	if [ -z "${TOOLS_PATH}" ];then\
 		git clone ${GIT_ROOT}/${GIT_TOOLS};\
 		${MAKE} -C ${APP_PATH}/${GIT_TOOLS} config ${MAKEOVERRIDES};\
 	else\

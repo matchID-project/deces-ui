@@ -35,6 +35,7 @@ export default {
 			__DATAGOUV_PROXY_PATH__ : process.env.DATAGOUV_PROXY_PATH,
 			__DATAGOUV_CATALOG_URL__: process.env.DATAGOUV_CATALOG_URL,
 			__DATAGOUV_RESOURCES_URL__: process.env.DATAGOUV_RESOURCES_URL,
+			__MITM_URL__: process.env.MITM_URL,
 			__APP__: process.env.APP,
 			__APP_VERSION__: process.env.APP_VERSION
 		  }),

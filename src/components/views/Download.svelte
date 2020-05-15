@@ -1,22 +1,28 @@
 {#if status === 'downloading'}
     <span
-        title={`téléchargement en cours ${Math.round($progress/max*100)}%`}
+        title={`${fallback ? 'préparation du téléchargement' : 'téléchargement en cours'} ${Math.round($progress/max*100)}%`}
     >
         <progress class="progress is-info is-small download-bar" value={$progress} max={max}/>
     </span>
 {:else if (status === undefined)}
-    <span
-        on:click={download}
+    <a
         class="download"
+        href={src || '/'}
+        on:click|preventDefault={download}
         title="téléchargez l'ensemble des résultats en tableur CSV"
     >
         téléchargement des résultats
         <FontAwesomeIcon icon={faFileDownload} class="is-lower"/>
-    </span>
+    </a>
 {:else if (status === 'success')}
     <span class="is-primary">
         téléchargement terminé
         <FontAwesomeIcon icon={faCheck} class="is-small"/>
+    </span>
+{:else if (status === 'fail')}
+    <span class="is-danger">
+        le téléchargement a échoué
+        <FontAwesomeIcon icon={faExclamationTriangle} class="is-small"/>
     </span>
 {/if}
 
@@ -24,31 +30,44 @@
     import { onMount, onDestroy } from 'svelte';
     import { tweened } from 'svelte/motion';
 	import { sineInOut } from 'svelte/easing';
-    import { faFileDownload, faCheck } from '@fortawesome/free-solid-svg-icons';
+    import { faFileDownload, faCheck, faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
     import FontAwesomeIcon from './FontAwesomeIcon.svelte';
-    import { ReadableStream, WritableStream, TransformStream } from 'web-streams-polyfill/ponyfill';
-    import streamSaver from 'streamsaver';
-    import { searchInput, searchResults, maxResultsPerPage } from '../tools/stores.js';
+    import { searchInput, searchResults, maxResultsPerPage, mitmUrl } from '../tools/stores.js';
     import { searchString } from '../tools/search.js'
     import buildRequest from '../tools/buildRequest.js';
     import runRequest from '../tools/runRequest.js';
+    import { ReadableStream, WritableStream, TransformStream } from 'web-streams-polyfill/ponyfill';
+    import streamSaver from '../tools/streamSaver.js';
 
     let status = undefined;
     let writer = undefined;
+    let src=undefined;
+    let fallback=false;
     const progress = tweened(0, {
 		duration: 500,
 		easing: sineInOut
 	});
     let max = 0;
 
-    onMount(() => {
-        streamSaver.ReadableStream = ReadableStream;
-        streamSaver.WritableStream = WritableStream;
-        streamSaver.TransformStream = TransformStream;
-        streamSaver.mitm = 'https://matchid.io/mitm/mitm.html';
-    })
-
     $: if ($searchInput) {status = undefined};
+
+    const handleStreamSaverMessage = (data) => {
+        if (data.download) {
+            src = data.download;
+        }
+        if (data.start) {
+            status = 'downloading';
+        }
+        if (data.end) {
+            status = data.end === 'success' ? data.end : 'fail';
+        }
+    }
+
+    onMount(() => {
+        streamSaver.mitm = $mitmUrl;
+        streamSaver.WritableStream = WritableStream;
+        streamSaver.onmessage = handleStreamSaverMessage;
+    });
 
     const fileName = () => {
         return `deces-${Object.keys($searchInput).map(k => {
@@ -72,8 +91,8 @@
 
     const csvRow = (row) => {
         return `${row.name.last || ''};${(row.name.first && row.name.first.join(' ')) || ''};${row.sex};`+
-            `${dateFormat(row.birth.date)};${cityString(row.birth.location.city || '')};${row.birth.location.cityCode || ''};${row.birth.location.departmentCode || ''};${row.birth.location.country || ''};${row.birth.location.countryCode || ''};`+
-            `${dateFormat(row.death.date)};${row.death.age};${cityString(row.death.location.city || '')};${row.death.location.cityCode || ''};${row.death.location.departmentCode || ''};${row.death.location.country || ''};${row.death.location.countryCode || ''};${row.death.certificateId || ''};${row.source};`;
+            `${dateFormat(row.birth.date)};${cityString(row.birth.location.city || '')};"${row.birth.location.cityCode || ''}";"${row.birth.location.departmentCode || ''}";${row.birth.location.country || ''};${row.birth.location.countryCode || ''};`+
+            `${dateFormat(row.death.date)};${row.death.age};${cityString(row.death.location.city || '')};"${row.death.location.cityCode || ''}";"${row.death.location.departmentCode || ''}";${row.death.location.country || ''};${row.death.location.countryCode || ''};${row.death.certificateId || ''};${row.source};`;
      }
 
     const toCsv = (searchResults) => {
@@ -100,27 +119,54 @@
         };
     }
 
-    const download = async () => {
+    function sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    const download = async (e) => {
         max = 0;
-        progress.set(0);
-        const fileStream=streamSaver.createWriteStream(fileName());
-        writer = fileStream.getWriter();
+        await progress.set(0);
+        let fileStream;
         const encoder = new TextEncoder();
-        await writer.write(encoder.encode(csvHeader));
+        while (status !== 'downloading') {
+            fileStream = await streamSaver.createWriteStream(fileName());
+            writer = await fileStream.getWriter();
+            writer.write(encoder.encode(csvHeader));
+            await sleep(200);
+            if (status !== 'downloading') {
+                streamSaver.useBlobFallback = true;
+                fallback = true;
+                console.warn('download using blob fallback');
+                status = 'downloading';
+            }
+        }
         let state ={
             total: $maxResultsPerPage + 1,
             page: 1,
             size: $maxResultsPerPage
         };
         while ((state.page - 1) * $maxResultsPerPage < state.total) {
-            if (state.page > 1) { status = 'downloading' };
-            state = await searchNext(state);
+            try {
+                state = await searchNext(state);
+            } catch(err) {
+                throw(err);
+            }
             max = state.total;
             progress.set($progress + state.searchResults.length);
-            await writer.write(encoder.encode(toCsv(state.searchResults)));
+            try {
+                await writer.write(encoder.encode(toCsv(state.searchResults)));
+            } catch(err) {
+                throw(err);
+            }
         }
-        writer.close();
-        status = 'success';
+        if (status !== 'downloading') {
+            writer.abort();
+            console.warn('could not download');
+        } else {
+            writer.close();
+        }
+        fallback = false;
+        max = 0;
     };
 
     onDestroy(() => {
@@ -133,8 +179,16 @@
 </script>
 
 <style>
+
+    a {
+         text-decoration: none;
+         color: #00d1b2;
+    }
     .is-primary {
         color: #00d1b2;
+    }
+    .is-danger {
+        color:  hsl(348, 100%, 61%);
     }
 
     .download:hover {
