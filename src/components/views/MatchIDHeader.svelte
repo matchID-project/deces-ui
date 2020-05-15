@@ -1,13 +1,18 @@
 <nav class="ztop navbar is-fixed-top is-white" role="navigation" aria-label="main navigation">
     <div class="container">
         <div class="navbar-brand">
-            <a class="logo" href="/search">
-                <img src={"/favicon.svg"} alt="matchID Logo" width="50" height="50" />
-            </a>
-            {#if themeDnum}
-            <a class="logo" href="/search">
-                <img src={"/dnum-logo.svg"} alt="DNUM Logo" width="50" height="50" />
-            </a>
+
+            {#if !$themeDnum}
+                <a class="logo" href="/search">
+                    <img src={"/matchID-logo.svg"} alt="matchid Logo"/>
+                </a>
+            {:else}
+                <a class="logo is-hidden-mobile" href="/search">
+                    <img src={"/matchID-logo.svg"} alt="matchid Logo"/>
+                </a>
+                <a class="logo is-hidden-desktop" style="z-index:1200;position:absolute;margin-top:-10px;margin-left:-10px;" href="/search">
+                    <img src={"/dnum-logo-round.svg"} alt="dnum Logo"/>
+                </a>
             {/if}
             <div
                 class="navbar-burger"
@@ -120,32 +125,39 @@
                     </div>
                 </div>
             </div>
-            {#if socialIcons}
+            {#if $themeDnum}
                 <div class="navbar-end is-hidden-mobile">
-                    <div class="navbar-item">
-                        <a
-                            class="button is-info"
-                            href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURI(window.location)}`}
-                            on:click|preventDefault={shareOn.bind(this,'facebook')}
-                            target="_blank"
-                            title="Partager sur Facebook"
-                        >
-                            <span class="icon"><FontAwesomeIcon class="is-24" icon={faFacebook}/></span>
-                            <span>Facebook</span>
+                    {#if $socialIcons}
+                        <div class="navbar-item">
+                            <a
+                                class="button is-info"
+                                href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURI(window.location)}`}
+                                on:click|preventDefault={shareOn.bind(this,'facebook')}
+                                target="_blank"
+                                title="Partager sur Facebook"
+                            >
+                                <span class="icon"><FontAwesomeIcon class="is-24" icon={faFacebook}/></span>
+                                <span>Facebook</span>
+                            </a>
+                        </div>
+                        <div class="navbar-item">
+                            <a
+                                class="button is-info"
+                                href={`https://twitter.com/share?url=${encodeURI(window.location)}&via=fabien_antoine&text=${"#genealogistes, utilisez le moteur de recherche #matchID, basé sur le fichier des décès INSEE"}`}
+                                on:click|preventDefault={shareOn.bind(this,'twitter')}
+                                target="_blank"
+                                title="Partager sur Twitter"
+                            >
+                                <span class="icon"><FontAwesomeIcon class="is-24" icon={faTwitter}/></span>
+                                <span>Twitter</span>
+                            </a>
+                        </div>
+                    {/if}
+                    {#if $themeDnum}
+                        <a class="logo" href="/search">
+                            <img src={"/dnum-logo-round.svg"} style="position:absolute;z-index:1200;right:50px;" alt="DNUM Logo" height="110px" width="110px"  />
                         </a>
-                    </div>
-                    <div class="navbar-item">
-                        <a
-                            class="button is-info"
-                            href={`https://twitter.com/share?url=${encodeURI(window.location)}&via=fabien_antoine&text=${"#genealogistes, utilisez le moteur de recherche #matchID, basé sur le fichier des décès INSEE"}`}
-                            on:click|preventDefault={shareOn.bind(this,'twitter')}
-                            target="_blank"
-                            title="Partager sur Twitter"
-                        >
-                            <span class="icon"><FontAwesomeIcon class="is-24" icon={faTwitter}/></span>
-                            <span>Twitter</span>
-                        </a>
-                    </div>
+                    {/if}
                 </div>
             {/if}
         </div>
@@ -614,6 +626,11 @@
     width: auto;
     }
 
+    @media screen and (min-width:769px) {
+        .is-hidden-desktop {
+            display: none;
+        }
+    }
 
     @media screen and (min-width:1024px) {
     .container {
