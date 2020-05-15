@@ -24,6 +24,10 @@
     <p>
         __APP__ version __APP_VERSION__-api/v{$apiVersion === 'backend' ? 1 : 0}
     </p>
+<p><strong>Date de mise à jour des données</strong></p>
+  <p> 
+    Les données de décès d'avril 2020 ont été publiées par l'INSEE et intégrées au service le 15 mai 2020.
+  </p>
 <p><strong>Evolutions récentes</strong></p>
     <p>
         Nous avons mis récemment à jour l'application pour favoriser les recherches approfondies:
