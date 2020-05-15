@@ -246,7 +246,7 @@
     }
 
     .has-background-primary {
-        background-color: #e2011c!important;
+        background-color: #003189!important;
     }
 
     .has-background-danger {
