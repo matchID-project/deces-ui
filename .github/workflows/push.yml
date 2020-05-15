@@ -72,7 +72,7 @@ jobs:
         env:
           FILES_TO_PROCESS_DEV: deces-2020-m[0-1][0-9].txt.gz
           ES_MEM_MASTER: ${{ secrets.ES_MEM_MASTER }}
-          SCW_FLAVOR_MASTER: ${{ secrets.SCW_FLAVER_MASTER }}
+          SCW_FLAVOR_MASTER: ${{ secrets.SCW_FLAVOR_MASTER }}
           GOOGLE_ANALYTICS_ID: ${{ secrets.GOOGLE_ANALYTICS_ID }}
           NGINX_USER: ${{ secrets.NGINX_USER }}
           NGINX_HOST: ${{ secrets.NGINX_HOST }}
