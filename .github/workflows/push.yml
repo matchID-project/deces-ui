@@ -77,7 +77,7 @@ jobs:
           NGINX_USER: ${{ secrets.NGINX_USER }}
           NGINX_HOST: ${{ secrets.NGINX_HOST }}
           NQ_TOKEN_DEV: ${{ secrets.NQ_TOKEN_DEV }}
-          NQ_TOKEN_MASTER: ${{ secrets.NQ_TOKEN_DEV }}
+          NQ_TOKEN_MASTER: ${{ secrets.NQ_TOKEN_MASTER }}
           GIT_BRANCH: ${{ steps.extract_branch.outputs.branch }}
           remote_http_proxy: ${{ secrets.remote_http_proxy }}
           remote_https_proxy: ${{ secrets.remote_https_proxy }}

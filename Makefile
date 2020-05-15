@@ -47,6 +47,9 @@ export API_USER_SCOPE=http_x_forwarded_for
 export API_GLOBAL_LIMIT_RATE=20r/s
 export API_GLOBAL_BURST=200 nodelay
 export API_TEST_JSON_PATH=hits
+export API_READ_TIMEOUT=3600
+export API_SEND_TIMEOUT=1200
+export API_MAX_BODY=0
 export MITM_URL=/mitm/mitm.html
 export API_TEST_REQUEST={"query":{"match_all":{}}}
 
