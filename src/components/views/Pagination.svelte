@@ -204,7 +204,7 @@
     .pagination-link:focus,
     .pagination-next:focus,
     .pagination-previous:focus {
-    border-color:#3273dc
+    border-color:#003189
     }
     .pagination-link:active,
     .pagination-next:active,
@@ -227,8 +227,8 @@
     white-space:nowrap
     }
     .pagination-link.is-current {
-    background-color:#3273dc;
-    border-color:#3273dc;
+    background-color:#003189;
+    border-color:#003189;
     color:#fff
     }
     .pagination-ellipsis {

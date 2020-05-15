@@ -5,7 +5,7 @@
     <div slot="subtitle">
       {#if !$advancedSearch}
         <span class="is-hidden-mobile">
-          recherche gratuite parmi
+          recherche {#if !$themeDnum}gratuite{/if} parmi
         </span>
         <span> <b>25 millions</b> de décès depuis 1970
           <br/>
@@ -21,7 +21,7 @@
 </Hero>
 
 <script>
-  import { advancedSearch } from '../tools/stores.js';
+  import { advancedSearch, themeDnum } from '../tools/stores.js';
   import Hero from './Hero.svelte';
   import SearchBox from "./SearchBox.svelte";
 </script>
@@ -29,7 +29,7 @@
 <style>
 
   a {
-      color: #3273dc;
+      color: #ff7a8a;
       cursor: pointer;
       text-decoration: none;
   }

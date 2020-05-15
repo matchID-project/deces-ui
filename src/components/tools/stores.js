@@ -25,7 +25,7 @@ export const searchInput = writable({
         backendQuery: "q",
         value: "",
         field: "fullText",
-        placeholder: "nom, prénom, date de naissance ou de décès, ... e.g. Pompidou Georges",
+        placeholder: "nom, prénom, date de naissance ou de décès (JJ/MM/AAAA), ... e.g. Pompidou Georges",
         title: "saisissez en recherche libre nom, prénom, date de naissance ou de décès",
         size: 12,
         active: true,
@@ -353,7 +353,7 @@ export const displayMode = writable('card');
 
 export const searchTyping = writable(0);
 
-export const socialIcons = false;
+export const socialIcons = writable(false);
 
 export const sortInput = writable([
     {
@@ -425,3 +425,5 @@ export const apiVersion = writable(
 export const liveConfig = writable(null);
 
 export const mitmUrl = writable('__MITM_URL__');
+
+export const themeDnum = writable(parseInt('__THEME_DNUM__'))

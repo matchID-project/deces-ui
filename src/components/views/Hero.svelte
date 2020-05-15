@@ -72,12 +72,12 @@
   }
 
   .hero.is-primary {
-    background-color: #00d1b2;
+    background-color: #003189;
     color: #fff;
   }
 
   .hero.is-primary.is-bold {
-      background-image: linear-gradient(141deg, #009e6c 0%, #00d1b2 71%, #00e7eb 100%);
+    background-image: linear-gradient(45deg, #003189, #0052cc)
   }
 
   .has-text-centered {

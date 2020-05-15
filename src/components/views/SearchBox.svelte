@@ -374,28 +374,32 @@
   }
 
   .button.is-info,.button.is-info:hover {
-    background-color: #209cee;
+    background-color: #fff;
     border-color: transparent;
-    color: #fff;
+    color: #003189;
   }
 
   .button.is-info:hover {
-    background-color: #1496ed;
+    background-color: #003189;
+    color: #fff;
   }
 
   .button.is-info:focus {
+    background-color: #003189;
     border-color: transparent;
     color: #fff;
   }
 
   .button.is-info:focus:not(:active) {
-    box-shadow: 0 0 0 .125em rgba(32,156,238,.25);
+    background-color: #003189;
+    border-color: transparent;
+    color: #fff;
   }
 
   .button.is-info:active {
-    background-color: #118fe4;
+    background-color: #fff;
     border-color: transparent;
-    color: #fff;
+    color: #003189;
   }
 
   .button.is-fullwidth {
@@ -528,7 +532,7 @@
   }
 
   .info-footer {
-    color: #209cee;
+    color: #e2011c;
     z-index: 40;
     width: 100%;
     position: fixed;
@@ -537,7 +541,7 @@
     right: 0;
     padding: 5px;
     background: rgba(255, 255, 255, 0.8);
-    border-top: solid 1px #209cee;
+    border-top: solid 1px #e2011c;
     vertical-align: center;
     justify-content: center;
     display: inline-block;
@@ -684,7 +688,7 @@
   left:0;
   width:3rem;
   height:1.5rem;
-  border:0.1rem solid transparent;
+  border:0.1rem solid #003189;
   border-radius:4px;
   background:#b5b5b5;
   content:''
@@ -699,7 +703,7 @@
   height:1rem;
   transform:translate3d(0, 0, 0);
   border-radius:4px;
-  background:#fff;
+  background:#003189;
   transition:all 0.25s ease-out;
   content:''
   }
@@ -721,7 +725,8 @@
 
   .switch[type="checkbox"].is-info:checked+label::before,
   .switch[type="checkbox"].is-info:checked+label:before {
-  background:#209cee
+    background:#ffffff;
+    color: #003189!important;
   }
 
   .switch[type="checkbox"].is-unchecked-grey+label::before,

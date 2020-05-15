@@ -182,10 +182,10 @@
 
     a {
          text-decoration: none;
-         color: #00d1b2;
+         color: #003189;
     }
     .is-primary {
-        color: #00d1b2;
+        color: #003189;
     }
     .is-danger {
         color:  hsl(348, 100%, 61%);
@@ -202,7 +202,7 @@
     }
 
     .progress.is-info::-moz-progress-bar {
-        background-color: #3298dc;
+        background-color: #003189;
     }
     .progress::-moz-progress-bar {
         background-color: #4a4a4a;
