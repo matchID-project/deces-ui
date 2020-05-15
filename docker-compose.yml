@@ -32,6 +32,9 @@ services:
       - API_USER_SCOPE
       - API_GLOBAL_LIMIT_RATE
       - API_GLOBAL_BURST
+      - API_SEND_TIMEOUT
+      - API_READ_TIMEOUT
+      - API_MAX_BODY
       - MITM_URL
       - GOOGLE_ANALYTICS_ID
     ports:
