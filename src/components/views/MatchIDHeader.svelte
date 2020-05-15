@@ -172,13 +172,13 @@
         faGlobeEurope,
         faLink,
         faMagic,
+        faPlug,
         faQuestion,
         faThList
     } from '@fortawesome/free-solid-svg-icons';
 
     import {
         faFacebook,
-        faServicestack,
         faTwitter
     } from '@fortawesome/free-brands-svg-icons';
 
@@ -201,16 +201,16 @@
       {
         url: '/about/service',
         icon: faSearch,
-        title:'le service'
+        title:'ce service'
       },
       {
         url: '/about/data',
         icon: faDatabase,
-        title: 'les données INSEE'
+        title: 'données INSEE'
       },
       {
         url: '/deces/api/v1/docs',
-        icon: faServicestack,
+        icon: faPlug,
         title:'documentation API'
       }
     ]
