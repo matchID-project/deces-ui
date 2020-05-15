@@ -153,7 +153,7 @@
 </nav>
 
 <script>
-    import { socialIcons } from '../tools/stores.js'
+    import { socialIcons, themeDnum } from '../tools/stores.js'
     import FontAwesomeIcon from './FontAwesomeIcon.svelte'
 
     import {
@@ -182,7 +182,6 @@
 
     // const dispatch = createEventDispatcher();
 
-    const themeDnum = parseInt('__THEME_DNUM__')
     let burgerState = false;
     let modalState = false;
     let modalContent = 'service';

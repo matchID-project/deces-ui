@@ -353,7 +353,7 @@ export const displayMode = writable('card');
 
 export const searchTyping = writable(0);
 
-export const socialIcons = false;
+export const socialIcons = writable(false);
 
 export const sortInput = writable([
     {
@@ -425,3 +425,5 @@ export const apiVersion = writable(
 export const liveConfig = writable(null);
 
 export const mitmUrl = writable('__MITM_URL__');
+
+export const themeDnum = writable(parseInt('__THEME_DNUM__'))

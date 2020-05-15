@@ -1,7 +1,7 @@
 <footer class="footer">
   <div class="content has-text-centered">
     <a class="logo is-hidden-mobile" href="/search">
-      {#if themeDnum}
+      {#if $themeDnum}
         <img src={"/dnum-logo.svg"} alt="DNUM Logo" width="50" height="50" />
       {:else}
         <img src={"/favicon.svg"} alt="matchID Logo" width="50" height="50"  />
@@ -14,7 +14,7 @@
 </footer>
 
 <script>
-  const themeDnum = parseInt('__THEME_DNUM__')
+  import { themeDnum } from '../tools/stores.js'
 </script>
 
 <style>
