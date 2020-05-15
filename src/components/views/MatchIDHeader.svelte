@@ -307,11 +307,11 @@
 
     .navbar.is-white {
     background-color: #fff;
-    color: #0a0a0a;
+    color: #003189;
     }
 
     .navbar.is-white .navbar-burger {
-    color: #0a0a0a;
+    color: #003189;
     }
 
     @media screen and (max-width:1023px) {
@@ -339,16 +339,16 @@
 
     @media screen and (min-width:1024px) {
     .navbar.is-white .navbar-start .navbar-link,.navbar.is-white .navbar-start>.navbar-item {
-        color: #0a0a0a;
+        color: #003189;
     }
 
     .navbar.is-white .navbar-item.has-dropdown:focus .navbar-link,.navbar.is-white .navbar-item.has-dropdown:hover .navbar-link,.navbar.is-white .navbar-start .navbar-link:focus,.navbar.is-white .navbar-start .navbar-link:hover,.navbar.is-white .navbar-start>a.navbar-item:focus,.navbar.is-white .navbar-start>a.navbar-item:hover {
         background-color: #f2f2f2;
-        color: #0a0a0a;
+        color: #003189;
     }
 
     .navbar.is-white .navbar-start .navbar-link:after {
-        border-color: #0a0a0a;
+        border-color: #003189;
     }
     }
 
@@ -534,7 +534,7 @@
 
     .navbar-dropdown a.navbar-item:focus,.navbar-dropdown a.navbar-item:hover,.navbar.is-transparent .navbar-dropdown a.navbar-item:focus,.navbar.is-transparent .navbar-dropdown a.navbar-item:hover {
         background-color: #f5f5f5;
-        color: #0a0a0a;
+        color: #003189;
     }
 
     .navbar-burger {
@@ -652,7 +652,7 @@
 
     .navbar.is-white .navbar-start .navbar-link::after {
         border-color:
-        #0a0a0a;
+        #003189;
     }
 
 
