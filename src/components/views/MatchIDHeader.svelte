@@ -1,9 +1,19 @@
 <nav class="ztop navbar is-fixed-top is-white" role="navigation" aria-label="main navigation">
     <div class="container">
         <div class="navbar-brand">
-            <a class="logo" href="/search">
-                <img src={"/matchID-logo.svg"} alt="matchID Logo" />
-            </a>
+
+            {#if !$themeDnum}
+                <a class="logo" href="/search">
+                    <img src={"/matchID-logo.svg"} alt="matchid Logo"/>
+                </a>
+            {:else}
+                <a class="logo is-hidden-mobile" href="/search">
+                    <img src={"/matchID-logo.svg"} alt="matchid Logo"/>
+                </a>
+                <a class="logo is-hidden-desktop" style="z-index:1200;position:absolute;margin-top:-10px;margin-left:-10px;" href="/search">
+                    <img src={"/dnum-logo-round.svg"} alt="dnum Logo"/>
+                </a>
+            {/if}
             <div
                 class="navbar-burger"
                 class:is-active={burgerState}
@@ -68,12 +78,12 @@
                         </span>
                     </div>
                     <div class="navbar-dropdown">
-                        {#each Object.keys(aboutMenu) as about}
-                            <a class="navbar-item" href={`/about/${about}`}>
+                        {#each aboutMenu as about}
+                            <a class="navbar-item" href={`${about.url}`}>
                                 <span class="icon">
-                                    <FontAwesomeIcon icon={aboutMenu[about].icon} class="icon"/>
+                                    <FontAwesomeIcon icon={about.icon} class="icon"/>
                                 </span>
-                                <span> {aboutMenu[about].title} </span>
+                                <span> {about.title} </span>
                             </a>
                         {/each}
                     </div>
@@ -115,32 +125,39 @@
                     </div>
                 </div>
             </div>
-            {#if socialIcons}
+            {#if $themeDnum}
                 <div class="navbar-end is-hidden-mobile">
-                    <div class="navbar-item">
-                        <a
-                            class="button is-info"
-                            href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURI(window.location)}`}
-                            on:click|preventDefault={shareOn.bind(this,'facebook')}
-                            target="_blank"
-                            title="Partager sur Facebook"
-                        >
-                            <span class="icon"><FontAwesomeIcon class="is-24" icon={faFacebook}/></span>
-                            <span>Facebook</span>
+                    {#if $socialIcons}
+                        <div class="navbar-item">
+                            <a
+                                class="button is-info"
+                                href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURI(window.location)}`}
+                                on:click|preventDefault={shareOn.bind(this,'facebook')}
+                                target="_blank"
+                                title="Partager sur Facebook"
+                            >
+                                <span class="icon"><FontAwesomeIcon class="is-24" icon={faFacebook}/></span>
+                                <span>Facebook</span>
+                            </a>
+                        </div>
+                        <div class="navbar-item">
+                            <a
+                                class="button is-info"
+                                href={`https://twitter.com/share?url=${encodeURI(window.location)}&via=fabien_antoine&text=${"#genealogistes, utilisez le moteur de recherche #matchID, basé sur le fichier des décès INSEE"}`}
+                                on:click|preventDefault={shareOn.bind(this,'twitter')}
+                                target="_blank"
+                                title="Partager sur Twitter"
+                            >
+                                <span class="icon"><FontAwesomeIcon class="is-24" icon={faTwitter}/></span>
+                                <span>Twitter</span>
+                            </a>
+                        </div>
+                    {/if}
+                    {#if $themeDnum}
+                        <a class="logo" href="/search">
+                            <img src={"/dnum-logo-round.svg"} style="position:absolute;z-index:1200;right:50px;" alt="DNUM Logo" height="110px" width="110px"  />
                         </a>
-                    </div>
-                    <div class="navbar-item">
-                        <a
-                            class="button is-info"
-                            href={`https://twitter.com/share?url=${encodeURI(window.location)}&via=fabien_antoine&text=${"#genealogistes, utilisez le moteur de recherche #matchID, basé sur le fichier des décès INSEE"}`}
-                            on:click|preventDefault={shareOn.bind(this,'twitter')}
-                            target="_blank"
-                            title="Partager sur Twitter"
-                        >
-                            <span class="icon"><FontAwesomeIcon class="is-24" icon={faTwitter}/></span>
-                            <span>Twitter</span>
-                        </a>
-                    </div>
+                    {/if}
                 </div>
             {/if}
         </div>
@@ -148,13 +165,14 @@
 </nav>
 
 <script>
-    import { socialIcons } from '../tools/stores.js'
+    import { socialIcons, themeDnum } from '../tools/stores.js'
     import FontAwesomeIcon from './FontAwesomeIcon.svelte'
 
     import {
         faGlobeEurope,
         faLink,
         faMagic,
+        faPlug,
         faQuestion,
         faThList
     } from '@fortawesome/free-solid-svg-icons';
@@ -179,16 +197,23 @@
     let burgerState = false;
     let modalState = false;
     let modalContent = 'service';
-    let aboutMenu = {
-        service: {
-            icon: faSearch,
-            title:'le service'
-        },
-        data: {
-            icon: faDatabase,
-            title: 'les données INSEE'
-        }
-    }
+    let aboutMenu = [
+      {
+        url: '/about/service',
+        icon: faSearch,
+        title:'ce service'
+      },
+      {
+        url: '/about/data',
+        icon: faDatabase,
+        title: 'données INSEE'
+      },
+      {
+        url: '/deces/api/v1/docs',
+        icon: faPlug,
+        title:'documentation API'
+      }
+    ]
 
     function toggleBurger() {
         burgerState = !burgerState
@@ -222,7 +247,7 @@
 
     .logo {
         margin-bottom: -5px;
-        margin-left: -12px;
+        margin-left: 2px;
     }
 
     img {
@@ -282,11 +307,11 @@
 
     .navbar.is-white {
     background-color: #fff;
-    color: #0a0a0a;
+    color: #003189;
     }
 
     .navbar.is-white .navbar-burger {
-    color: #0a0a0a;
+    color: #003189;
     }
 
     @media screen and (max-width:1023px) {
@@ -314,16 +339,16 @@
 
     @media screen and (min-width:1024px) {
     .navbar.is-white .navbar-start .navbar-link,.navbar.is-white .navbar-start>.navbar-item {
-        color: #0a0a0a;
+        color: #003189;
     }
 
     .navbar.is-white .navbar-item.has-dropdown:focus .navbar-link,.navbar.is-white .navbar-item.has-dropdown:hover .navbar-link,.navbar.is-white .navbar-start .navbar-link:focus,.navbar.is-white .navbar-start .navbar-link:hover,.navbar.is-white .navbar-start>a.navbar-item:focus,.navbar.is-white .navbar-start>a.navbar-item:hover {
         background-color: #f2f2f2;
-        color: #0a0a0a;
+        color: #003189;
     }
 
     .navbar.is-white .navbar-start .navbar-link:after {
-        border-color: #0a0a0a;
+        border-color: #003189;
     }
     }
 
@@ -509,7 +534,7 @@
 
     .navbar-dropdown a.navbar-item:focus,.navbar-dropdown a.navbar-item:hover,.navbar.is-transparent .navbar-dropdown a.navbar-item:focus,.navbar.is-transparent .navbar-dropdown a.navbar-item:hover {
         background-color: #f5f5f5;
-        color: #0a0a0a;
+        color: #003189;
     }
 
     .navbar-burger {
@@ -601,6 +626,11 @@
     width: auto;
     }
 
+    @media screen and (min-width:769px) {
+        .is-hidden-desktop {
+            display: none;
+        }
+    }
 
     @media screen and (min-width:1024px) {
     .container {
@@ -622,7 +652,7 @@
 
     .navbar.is-white .navbar-start .navbar-link::after {
         border-color:
-        #0a0a0a;
+        #003189;
     }
 
 

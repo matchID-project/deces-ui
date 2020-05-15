@@ -13,7 +13,7 @@
 	import Search from './components/views/Search.svelte';
 	import Geo from './components/views/Geo.svelte';
 	import { searchInput, searchCanvas, current, resultsPerPage,
-		updateURL, advancedSearch, apiVersion, fuzzySearch, displayMode } from './components/tools/stores.js';
+		updateURL, advancedSearch, apiVersion, fuzzySearch, displayMode, themeDnum } from './components/tools/stores.js';
 
 	let routes = {
 		'/': { component: Search },
@@ -79,6 +79,10 @@
 		if (event.ctrlKey && event.altKey && event.key === 'b') {
 			await apiVersion.update(v => v === 'elasticsearch' ? 'backend' : 'elasticsearch');
 			console.log(`switch Api to ${$apiVersion}`);
+		}
+		if (event.ctrlKey && event.altKey && event.key === 'd') {
+			await themeDnum.update(v => v === 0 ? 1 : 0);
+			console.log(`switch theme to ${$themeDnum ? 'DNUM' : 'public site'}`);
 		}
 	}
 

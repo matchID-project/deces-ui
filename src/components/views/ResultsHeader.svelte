@@ -216,7 +216,7 @@
     }
 
     .has-text-primary {
-        color: #00d1b2!important;
+        color: #003189!important;
     }
 
     .has-text-right {

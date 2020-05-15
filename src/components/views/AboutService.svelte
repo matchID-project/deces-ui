@@ -1,13 +1,25 @@
 <p><strong>A qui s'adresse ce service</strong></p>
-    <p>
-        Généalogistes, professionnels ou particuliers, services publics de lutte contre la fraude.
-    </p>
+{#if $themeDnum}
+  <p>
+    Professionnels du service public.
+  </p>
+{:else}
+  <p>
+    Généalogistes, professionnels ou particuliers, services publics de lutte contre la fraude.
+  </p>
+{/if}
 <p><strong>Un bug, une question ?</strong></p>
     <p>
         Le service est encore en version bêta (cf conditions d'utilisation).
         Des bugs peuvent subsister. En cas de doute commencez par actualiser l'application (touche Ctrl + F5),
         certaines mises à jours du service nécessitent un rechargement.
-        En cas de doute sollicitez nous à <a href="mailto:matchid.project@gmail.com">matchid.project@gmail.com</a>, en mentionnant la référence de version ci-dessous:
+        En cas de doute sollicitez nous à
+        {#if $themeDnum}
+          <a href="mailto:datalab@interieur.gouv.fr">datalab@interieur.gouv.fr</a>
+        {:else}
+          <a href="mailto:matchid.project@gmail.com">matchid.project@gmail.com</a>
+        {/if}
+        , en mentionnant la référence de version ci-dessous:
     </p>
     <p>
         __APP__ version __APP_VERSION__-api/v{$apiVersion === 'backend' ? 1 : 0}
@@ -35,15 +47,17 @@
             identifier les personnes décédées dans une liste de type tableur
         </li>
         <li>
-            une configuration avancée pour les requêtes floues (regex, phonétique, fuzzy : par champ) 
+            une configuration avancée pour les requêtes floues (regex, phonétique, fuzzy : par champ)
         </li>
     </ul>
 
 <p><strong>Conditions d'usage et garanties (version bêta)</strong></p>
     <p>
         Ce service vise à faciliter l'accès à l'exploration des données INSEE (cf. menu idoine).
+        {#if !$themeDnum}
         Il est gratuit, et financé sur fonds personnels. Il est offert sans garantie
         particulière. Etant donné l'affluence, nous avons choisi de consolider et maintenir ce service.
+        {/if}
         Les retours sont les bienvenus, nous vous répondrons sur <a href="mailto:matchid.project@gmail.com">matchid.project@gmail.com</a> pour
         toute question, signalement ou tout avis sur le service.
     </p>
@@ -73,8 +87,7 @@
 </p>
 <p><strong>Qui sommes nous ?</strong></p>
 <p>
-    Le projet matchID a été initié au ministère de l'Intérieur dans le contexte des
-    challenges d'<a href="https://entrepreneur-interet-general.etalab.gouv.fr/defis/2017/mi-matchid.html" target="_blank">Entrepreneur d'intérêt général</a>.
+  Le projet matchID a été initié par le Ministère de l'Intérieur {#if $themeDnum} (administrateur ministériel des données) {/if} dans le contexte des challenges d'<a href="https://entrepreneur-interet-general.etalab.gouv.fr/defis/2017/mi-matchid.html" target="_blank">Entrepreneur d'intérêt général</a>.
     La réconciliation des personnes décédées avec le permis de conduire a été le premier cas d'usage réalisé avec
     matchID. Le projet a été libéré et mis en opensource. Nous avons créé de service
     en complément qui semblait d'utilité notamment pour la lutte contre la fraude.
@@ -82,5 +95,5 @@
 </p>
 
 <script>
-    import { apiVersion } from '../tools/stores.js';
+    import { apiVersion, themeDnum } from '../tools/stores.js';
 </script>

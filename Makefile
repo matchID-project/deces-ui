@@ -51,6 +51,7 @@ export API_READ_TIMEOUT=3600
 export API_SEND_TIMEOUT=1200
 export API_MAX_BODY=0
 export MITM_URL=/mitm/mitm.html
+export THEME_DNUM=0
 export API_TEST_REQUEST={"query":{"match_all":{}}}
 
 export DC_DIR=${APP_PATH}

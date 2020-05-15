@@ -92,14 +92,14 @@
   $: scale = leafletMap &&  (leafletMap.getZoom() ** 1.5) * 0.05 * (2 - Math.log(Math.max(1, $searchResults.length))/Math.log(maxBase)) ** 3;
   $: layerParams = {
       birth: {
-          color:'#00d1b2',
+          color:'#003189',
           opacity: 0.8,
           radius: 1.5 * scale,
           weight: scale,
           pane: 'birth'
       },
       death: {
-          color: '#ff3860',
+          color: '#e2011c',
           opacity: 0.8,
           radius: 2 * scale,
           weight: scale,
