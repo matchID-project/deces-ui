@@ -2,6 +2,7 @@ name: PR build and test
 
 on: pull_request
 
+jobs:
   build:
     name: PR build and test
     runs-on: ubuntu-latest
