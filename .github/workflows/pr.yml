@@ -4,7 +4,7 @@ on: pull_request
 
 jobs:
   build:
-    name: build test and publish docker image
+    name: PR build and test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
@@ -17,15 +17,15 @@ jobs:
         env:
           GIT_BRANCH: ${{ steps.extract_branch.outputs.branch }}
       - name: build
+        if: success()
         run: make docker-check || make build
         env:
           GIT_BRANCH: ${{ steps.extract_branch.outputs.branch }}
-      - name: local test
-        if: ${{ success() }}
-        run: deploy-local
+      - name: test
+        if: success()
+        run: make deploy-local FILES_TO_PROCESS=deces-2020-m01.txt.gz
         env:
           GIT_BRANCH: ${{ steps.extract_branch.outputs.branch }}
-          FILES_TO_PROCESS: deces-2020-m01.txt.gz
           GOOGLE_ANALYTICS_ID: ${{ secrets.GOOGLE_ANALYTICS_ID }}
           STORAGE_ACCESS_KEY: ${{ secrets.STORAGE_ACCESS_KEY }}
           STORAGE_SECRET_KEY: ${{ secrets.STORAGE_SECRET_KEY }}
