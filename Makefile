@@ -71,7 +71,7 @@ export GIT_BACKEND = deces-backend
 export GIT_BACKEND_BRANCH = dev
 export GIT_ROOT = https://github.com/matchid-project
 export GIT_TOOLS = tools
-export API_URL?=localhost:8080
+export API_URL?=${APP_DNS}
 export API_EMAIL?=matchid-project@gmail.com
 export API_SSL?=1
 
