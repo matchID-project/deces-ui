@@ -26,7 +26,8 @@
     </p>
 <p><strong>Date de mise à jour des données</strong></p>
   <p> 
-    Les données de décès d'avril 2020 ont été publiées par l'INSEE et intégrées au service le 15 mai 2020.
+    Les données de décès d'avril 2020 ont été publiées par l'INSEE le 15 mai 2020, puis corrigées le 16 mai suite à un problème d'exhaustivité.
+    Le service intègre bien ces nouvelles données actualisées.
   </p>
 <p><strong>Evolutions récentes</strong></p>
     <p>
