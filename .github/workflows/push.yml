@@ -64,10 +64,10 @@ jobs:
         if: success()
         run: |
           if [[ ( "$GIT_BRANCH" == "dev" ) ]]; then
-            make deploy-remote FILES_TO_PROCESS=$FILES_TO_PROCESS_DEV GIT_BRANCH=$GIT_BRANCH NGINX_USER=$NGINX_USER NGINX_HOST=$NGINX_HOST remote_http_proxy=$remote_http_proxy remote_https_proxy=$remote_https_proxy remote_no_proxy=$remote_no_proxy NQ_TOKEN=$NQ_TOKEN_DEV GOOGLE_ANALYTICS_ID=$GOOGLE_ANALYTICS_ID;
+            make deploy-remote FILES_TO_PROCESS=$FILES_TO_PROCESS_DEV GIT_BRANCH=$GIT_BRANCH NGINX_USER=$NGINX_USER NGINX_HOST=$NGINX_HOST API_URL=$API_URL API_EMAIL=$API_EMAIL API_SSL=$API_SSL remote_http_proxy=$remote_http_proxy remote_https_proxy=$remote_https_proxy remote_no_proxy=$remote_no_proxy NQ_TOKEN=$NQ_TOKEN_DEV GOOGLE_ANALYTICS_ID=$GOOGLE_ANALYTICS_ID;
           fi;
           if [[ ( "$GIT_BRANCH" == "master" ) ]]; then
-            make deploy-remote ES_MEM_MASTER=$ES_MEM SCW_FLAVOR=$SCW_FLAVOR_MASTER GIT_BACKEND_BRANCH=master GIT_BRANCH=$GIT_BRANCH NGINX_USER=$NGINX_USER NGINX_HOST=$NGINX_HOST remote_http_proxy=$remote_http_proxy remote_https_proxy=$remote_https_proxy remote_no_proxy=$remote_no_proxy NQ_TOKEN=$NQ_TOKEN_MASTER GOOGLE_ANALYTICS_ID=$GOOGLE_ANALYTICS_ID;
+            make deploy-remote ES_MEM_MASTER=$ES_MEM SCW_FLAVOR=$SCW_FLAVOR_MASTER GIT_BACKEND_BRANCH=master GIT_BRANCH=$GIT_BRANCH NGINX_USER=$NGINX_USER NGINX_HOST=$NGINX_HOST API_URL=$API_URL API_EMAIL=$API_EMAIL API_SSL=$API_SSL remote_http_proxy=$remote_http_proxy remote_https_proxy=$remote_https_proxy remote_no_proxy=$remote_no_proxy NQ_TOKEN=$NQ_TOKEN_MASTER GOOGLE_ANALYTICS_ID=$GOOGLE_ANALYTICS_ID;
           fi;
         env:
           FILES_TO_PROCESS_DEV: deces-2020-m[0-1][0-9].txt.gz
@@ -76,6 +76,9 @@ jobs:
           GOOGLE_ANALYTICS_ID: ${{ secrets.GOOGLE_ANALYTICS_ID }}
           NGINX_USER: ${{ secrets.NGINX_USER }}
           NGINX_HOST: ${{ secrets.NGINX_HOST }}
+          API_URL: deces.matchid.io
+          API_SSL: 1
+          API_EMAIL: matchid-project@gmail.com
           NQ_TOKEN_DEV: ${{ secrets.NQ_TOKEN_DEV }}
           NQ_TOKEN_MASTER: ${{ secrets.NQ_TOKEN_MASTER }}
           GIT_BRANCH: ${{ steps.extract_branch.outputs.branch }}
