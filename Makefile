@@ -71,6 +71,9 @@ export GIT_BACKEND = deces-backend
 export GIT_BACKEND_BRANCH = dev
 export GIT_ROOT = https://github.com/matchid-project
 export GIT_TOOLS = tools
+export API_URL?=${APP_DNS}
+export API_EMAIL?=matchid-project@gmail.com
+export API_SSL?=1
 
 # backup dir
 export BACKUP_DIR = ${APP_PATH}/backup
@@ -198,7 +201,7 @@ backend-dev: backend-config
 	@${MAKE} -C ${APP_PATH}/${GIT_BACKEND} backend-dev DC_NETWORK=${DC_NETWORK} GIT_BRANCH=${GIT_BACKEND_BRANCH}
 
 backend-dev-stop:
-	@${MAKE} -C ${APP_PATH}/${GIT_BACKEND} backend-dev-stop DC_NETWORK=${DC_NETWORK} GIT_BRANCH=${GIT_BACKEND_BRANCH}
+	@${MAKE} -C ${APP_PATH}/${GIT_BACKEND} backend-dev-stop DC_NETWORK=${DC_NETWORK} GIT_BRANCH=${GIT_BACKEND_BRANCH} API_URL=${API_URL} API_EMAIL=${API_EMAIL} API_SSL=${API_SSL}
 
 backend-clean-version:
 	rm backend-version
@@ -209,7 +212,7 @@ backend-docker-check: backend-config
 
 backend: backend-config backend-docker-check
 	@BACKEND_APP_VERSION=$(shell cd ${APP_PATH}/${GIT_BACKEND} && git describe --tags);\
-	${MAKE} -C ${APP_PATH}/${GIT_BACKEND} backend-start DC_NETWORK=${DC_NETWORK} APP_VERSION=$$BACKEND_APP_VERSION GIT_BRANCH=${GIT_BACKEND_BRANCH}
+	${MAKE} -C ${APP_PATH}/${GIT_BACKEND} backend-start DC_NETWORK=${DC_NETWORK} APP_VERSION=$$BACKEND_APP_VERSION GIT_BRANCH=${GIT_BACKEND_BRANCH} API_URL=${API_URL} API_EMAIL=${API_EMAIL} API_SSL=${API_SSL}
 
 backend-stop:
 	@BACKEND_APP_VERSION=$(shell cd ${APP_PATH}/${GIT_BACKEND} && git describe --tags);\
