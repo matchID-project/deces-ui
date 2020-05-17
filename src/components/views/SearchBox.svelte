@@ -1,7 +1,6 @@
 <GoogleAnalytics {...tag}/>
 <div
-  class={`container autocomplete column ${($advancedSearch && !$autocompleteBypass) ? "is-10" : "is-8"}`}
-  style="margin-top: -15px;"
+  class={`container margin column ${($advancedSearch && !$autocompleteBypass) ? "is-10" : "is-8"}`}
 >
     <form
        class="columns is-vcentered is-multiline"
@@ -25,19 +24,23 @@
             {#each inputsKeys as key}
               {#if isActive[key]}
                 {#if $searchInput[key].section}
-                  <span class="column is-size-5 is-2 is-mobile-fullwidth is-mobile-centered is-left">{$searchInput[key].section}</span>
+                  <span class="column is-higher is-right-desktop is-2 is-mobile-fullwidth is-mobile-centered">{$searchInput[key].section}</span>
                 {/if}
-                <input
-                  autoComplete="off"
-                  placeholder={$searchInput[key].placeholder}
-                  class={`is-size-5 column is-${$searchInput[key].size} ${isValid(key) ? "" : "is-danger"}`}
-                  bind:value={$searchInput[key].value}
-                  title={$searchInput[key].title}
-                  on:input={() => handleInput(key)}
-                  on:blur={focusInput(key,false)}
-                  on:focus={focusInput(key,true)}
-                  disabled={$searchInput[key].disabled}
-                />
+                <div class={`column low-padding is-${$searchInput[key].size}`}>
+                  <div class="field padding" style="flex-direction:column;text-align:left!important;">
+                    <input
+                      autoComplete="off"
+                      placeholder={$searchInput[key].placeholder}
+                      class={`padding is-size-5 ${isValid(key) ? "" : "is-danger"}`}
+                      bind:value={$searchInput[key].value}
+                      title={$searchInput[key].title}
+                      on:input={() => handleInput(key)}
+                      on:blur={focusInput(key,false)}
+                      on:focus={focusInput(key,true)}
+                      disabled={$searchInput[key].disabled}
+                    />
+                  </div>
+                </div>
               {/if}
             {/each}
           </div>
@@ -82,7 +85,7 @@
       {#if $advancedSearch}
         <div class={`column is-${$displayMode === 'geo' ? "12" : "5" } is-size-5`}>
           <div
-            class="field small-margin-mobile"
+            class="field is-centered small-margin-mobile"
             style="margin-top:-0.25rem;margin-bottom:-1rem!important;"
             on:click|preventDefault={ toggleFuzzySearch }
           >
@@ -273,6 +276,197 @@
 </script>
 
 <style>
+.label {
+ color:#363636;
+ display:block;
+ font-size:1rem;
+ font-weight:700
+}
+.label:not(:last-child) {
+ margin-bottom:.5em
+}
+.label.is-small {
+ font-size:.75rem
+}
+.label.is-medium {
+ font-size:1.25rem
+}
+.label.is-large {
+ font-size:1.5rem
+}
+.help {
+ display:block;
+ font-size:.75rem;
+ margin-top:.25rem
+}
+.help.is-white {
+ color:#fff
+}
+.help.is-black {
+ color:#0a0a0a
+}
+.help.is-light {
+ color:#f5f5f5
+}
+.help.is-dark {
+ color:#363636
+}
+.help.is-primary {
+ color:#00d1b2
+}
+.help.is-link {
+ color:#3273dc
+}
+.help.is-info {
+ color:#3298dc
+}
+.help.is-success {
+ color:#48c774
+}
+.help.is-warning {
+ color:#ffdd57
+}
+.help.is-danger {
+ color:#f14668
+}
+.field:not(:last-child) {
+ margin-bottom:.75rem
+}
+.field.has-addons {
+ display:flex;
+ justify-content:flex-start
+}
+.field.has-addons .control:not(:last-child) {
+ margin-right:-1px
+}
+.field.has-addons .control:not(:first-child):not(:last-child) .button,
+.field.has-addons .control:not(:first-child):not(:last-child) .input,
+.field.has-addons .control:not(:first-child):not(:last-child) .select select {
+ border-radius:0
+}
+.field.has-addons .control:first-child:not(:only-child) .button,
+.field.has-addons .control:first-child:not(:only-child) .input,
+.field.has-addons .control:first-child:not(:only-child) .select select {
+ border-bottom-right-radius:0;
+ border-top-right-radius:0
+}
+.field.has-addons .control:last-child:not(:only-child) .button,
+.field.has-addons .control:last-child:not(:only-child) .input,
+.field.has-addons .control:last-child:not(:only-child) .select select {
+ border-bottom-left-radius:0;
+ border-top-left-radius:0
+}
+.field.has-addons .control .button:not([disabled]).is-hovered,
+.field.has-addons .control .button:not([disabled]):hover,
+.field.has-addons .control .input:not([disabled]).is-hovered,
+.field.has-addons .control .input:not([disabled]):hover,
+.field.has-addons .control .select select:not([disabled]).is-hovered,
+.field.has-addons .control .select select:not([disabled]):hover {
+ z-index:2
+}
+.field.has-addons .control .button:not([disabled]).is-active,
+.field.has-addons .control .button:not([disabled]).is-focused,
+.field.has-addons .control .button:not([disabled]):active,
+.field.has-addons .control .button:not([disabled]):focus,
+.field.has-addons .control .input:not([disabled]).is-active,
+.field.has-addons .control .input:not([disabled]).is-focused,
+.field.has-addons .control .input:not([disabled]):active,
+.field.has-addons .control .input:not([disabled]):focus,
+.field.has-addons .control .select select:not([disabled]).is-active,
+.field.has-addons .control .select select:not([disabled]).is-focused,
+.field.has-addons .control .select select:not([disabled]):active,
+.field.has-addons .control .select select:not([disabled]):focus {
+ z-index:3
+}
+.field.has-addons .control .button:not([disabled]).is-active:hover,
+.field.has-addons .control .button:not([disabled]).is-focused:hover,
+.field.has-addons .control .button:not([disabled]):active:hover,
+.field.has-addons .control .button:not([disabled]):focus:hover,
+.field.has-addons .control .input:not([disabled]).is-active:hover,
+.field.has-addons .control .input:not([disabled]).is-focused:hover,
+.field.has-addons .control .input:not([disabled]):active:hover,
+.field.has-addons .control .input:not([disabled]):focus:hover,
+.field.has-addons .control .select select:not([disabled]).is-active:hover,
+.field.has-addons .control .select select:not([disabled]).is-focused:hover,
+.field.has-addons .control .select select:not([disabled]):active:hover,
+.field.has-addons .control .select select:not([disabled]):focus:hover {
+ z-index:4
+}
+.field.has-addons .control.is-expanded {
+ flex-grow:1;
+ flex-shrink:1
+}
+.field.has-addons.has-addons-centered {
+ justify-content:center
+}
+.field.has-addons.has-addons-right {
+ justify-content:flex-end
+}
+.field.has-addons.has-addons-fullwidth .control {
+ flex-grow:1;
+ flex-shrink:0
+}
+.field.is-grouped {
+ display:flex;
+ justify-content:flex-start
+}
+.field.is-grouped>.control {
+ flex-shrink:0
+}
+.field.is-grouped>.control:not(:last-child) {
+ margin-bottom:0;
+ margin-right:.75rem
+}
+.field.is-grouped>.control.is-expanded {
+ flex-grow:1;
+ flex-shrink:1
+}
+.field.is-grouped.is-grouped-centered {
+ justify-content:center
+}
+.field.is-grouped.is-grouped-right {
+ justify-content:flex-end
+}
+.field.is-grouped.is-grouped-multiline {
+ flex-wrap:wrap
+}
+.field.is-grouped.is-grouped-multiline>.control:last-child,
+.field.is-grouped.is-grouped-multiline>.control:not(:last-child) {
+ margin-bottom:.75rem
+}
+.field.is-grouped.is-grouped-multiline:last-child {
+ margin-bottom:-.75rem
+}
+.field.is-grouped.is-grouped-multiline:not(:last-child) {
+ margin-bottom:0
+}
+@media screen and (min-width:769px),print {
+ .field.is-horizontal {
+  display:flex
+ }
+}
+.field-label .label {
+ font-size:inherit
+}
+@media screen and (max-width:768px) {
+ .field-label {
+  margin-bottom:.5rem
+ }
+}
+@media screen and (min-width:769px),print {
+ .field-label {
+  flex-basis:0;
+  flex-grow:1;
+  flex-shrink:0;
+  margin-right:1.5rem;
+  text-align:right
+ }
+ .field-label.is-small {
+  font-size:.75rem;
+  padding-top:.375em
+ }
+}
+
 
   input {
     height: 2.35em;
@@ -293,6 +487,20 @@
     position: relative;
     width: auto;
   }
+
+
+  @media screen and (min-width:769px) {
+    .container.margin {
+      margin-top: 2rem!important;
+    }
+  }
+
+  @media screen and (max-width:768px) {
+    .container.margin {
+      margin-top: -1.75rem!important;
+    }
+  }
+
 
   @media screen and (min-width:1024px) {
     .container {
@@ -410,6 +618,10 @@
   @media print,screen and (min-width:769px) {
     .is-size-5 {
       font-size: 1.15rem!important;
+    }
+
+    .is-right-desktop {
+     text-align:right!important;
     }
 
     .column.is-1,
@@ -747,8 +959,31 @@
       text-overflow:ellipsis;
   }
 
+  @media screen and (max-width:768px) {
+    .low-padding {
+      padding:0!important;
+    }
+  }
+  @media screen and (min-width:769px) {
+    .low-padding {
+      padding:0 .15rem!important;
+    }
+  }
+
+  .help.low-margin {
+    margin:.15rem!important;
+  }
+
+  .is-higher {
+  }
+
   *, ::after, ::before {
     box-sizing: inherit;
+  }
+
+  input.padding {
+    padding-left: .35rem;
+    padding-right: .35rem;
   }
 
 </style>
