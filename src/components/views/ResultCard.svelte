@@ -22,7 +22,7 @@
                 <div class="content">
                     {result.status === 429
                         ? "Le service est momentanément saturé, veuillez réessayer."
-                        : "Erreur de service. Le service est en version alpha, à ce stade tous les cas d'erreur ne sont pas gérés. Si l'erreur perdure, veuillez nous contacter matchid.result@gmail.com"
+                        : "Erreur de service. Le service est en version alpha, à ce stade tous les cas d'erreur ne sont pas gérés. Si l'erreur perdure, veuillez nous contacter matchid-project@gmail.com"
                     }
                 </div>
             </div>
