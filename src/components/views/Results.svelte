@@ -150,31 +150,6 @@
     }
   }
 
-  .container {
-    flex-grow: 1;
-    margin: 0 auto;
-    position: relative;
-    width: auto;
-  }
-
-  @media screen and (min-width:1024px) {
-    .container {
-      max-width: 960px;
-    }
-  }
-
-  @media screen and (min-width:1216px) {
-    .container {
-      max-width: 1152px;
-    }
-  }
-
-  @media screen and (min-width:1408px) {
-    .container {
-      max-width: 1344px;
-    }
-  }
-
   .columns {
     margin-left: -.75rem;
     margin-right: -.75rem;
