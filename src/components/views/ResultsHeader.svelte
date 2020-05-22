@@ -1,13 +1,13 @@
 {#if $wasSearched}
     <div class="has-background-white">
         <div class="columns is-vcentered is-mobile ">
-            <div class={`column ${$displayMode === 'geo' ? "is-9" : "is-4"} is-mobile-6 is-size-7`}>
+            <div class={`column padding ${$displayMode === 'geo' ? "is-9" : "is-4"} is-mobile-6 is-size-7`}>
                 <span>Résultats <strong>{from}</strong> à <strong>{to}</strong> parmi <strong>{$totalResults}</strong></span>
                 <span>pour: <i>{query}</i></span>
             </div>
             {#if (!($displayMode === 'geo'))}
                 <div
-                    class="column is-4 is-mobile-3 is-size-7 has-text-centered"
+                    class="column padding is-4 is-mobile-3 is-size-7 has-text-centered"
                 >
                     <div
                         on:click={() => {$sortInputDisplay=!$sortInputDisplay}}
@@ -35,7 +35,7 @@
                         </span>
                     </div>
                 </div>
-                <div class="column is-4 is-mobile-3 has-text-right is-size-7 is-vcentered">
+                <div class="column padding is-4 is-mobile-3 has-text-right is-size-7 is-vcentered">
                     <span class="is-hidden-mobile" style="margin-right:10px;">
                         <Download/>
                     </span>
@@ -50,16 +50,16 @@
                     </span>
                 </div>
             {:else}
-                <div class="column is-3 is-mobile-6 is-size-7 has-text-right">
+                <div class="column padding is-3 is-mobile-6 is-size-7 has-text-right">
                     <slot></slot>
                 </div>
             {/if}
         </div>
         {#if (!($displayMode === 'geo'))}
             <div class="columns">
-                <div class="column is-1"></div>
-                <div class="column is-10 is-vcentered has-text-centered"><SortInput/></div>
-                <div class="column is-1"></div>
+                <div class="column padding is-1"></div>
+                <div class="column padding is-10 is-vcentered has-text-centered"><SortInput/></div>
+                <div class="column padding is-1"></div>
             </div>
         {/if}
     </div>
@@ -91,81 +91,9 @@
         background: rgba(255, 255, 255, 0.5);
         margin-bottom: 12px;
     }
-    .column {
-        display: block;
-        flex-basis: 0;
-        flex-grow: 1;
-        flex-shrink: 1;
-        padding: 0rem 1rem 0rem 0.75rem;
-    }
 
-
-    .columns.is-mobile>.column.is-9 {
-        flex: none;
-        width: 75%;
-    }
-
-
-
-
-    @media print,screen and (max-width:768px) {
-        .columns>.column.is-mobile-3 {
-            flex: none;
-            width: 26%;
-        }
-
-        .columns>.column.is-mobile-6 {
-            flex: none;
-            width: 48%;
-        }
-
-        .columns.is-mobile>.column.is-3 {
-            flex: none;
-            width: 25%;
-        }
-    }
-
-    @media print,screen and (min-width:769px) {
-        .column.is-1 {
-            flex: none;
-            width: 8%;
-        }
-        .column.is-2 {
-            flex: none;
-            width: 17%;
-        }
-
-        .column.is-3 {
-            flex: none;
-            width: 25%;
-        }
-
-        .column.is-4 {
-            flex: none;
-            width: 33.3%;
-        }
-
-        .column.is-6 {
-            flex: none;
-            width: 50%;
-        }
-
-        .column.is-9 {
-            flex: none;
-            width: 75%;
-        }
-        .column.is-8 {
-            flex: none;
-            width: 66%;
-        }
-        .column.is-10 {
-            flex: none;
-            width: 83%;
-        }
-        .column.is-12 {
-                flex: none;
-                width: 100%;
-        }
+    .column.padding {
+        padding: 0rem 1rem 0rem 0.75rem!important;
     }
 
     .expand-icon {

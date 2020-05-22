@@ -29,7 +29,7 @@
         </div>
     </div>
 {:else if (result)}
-    <div class={`column block-flex ${expand ? "is-12" : "is-6"}`}>
+    <div class={`column ${expand ? "is-12" : "is-6-12"}`}>
         <div class="card has-text-centered">
             <div
                 class={`card-header has-background-${expand ? "primary" : "white"}`}
@@ -220,11 +220,6 @@
 
 <style>
 
-    .block-flex {
-        flex: none!important;
-        width: 100%;
-    }
-
     .has-text-centered {
         text-align: center!important;
     }
@@ -351,66 +346,6 @@
 
     .card-content {
         padding: 1.5rem;
-    }
-
-    .column {
-        display: block;
-        flex-basis: 0;
-        flex-grow: 1;
-        flex-shrink: 1;
-        padding: .75rem;
-    }
-
-    .columns.is-mobile>.column.is-1 {
-        flex: none;
-        width: 8%;
-    }
-
-    .columns.is-mobile>.column.is-3 {
-        flex: none;
-        width: 25%;
-    }
-
-    .columns.is-mobile>.column.is-9 {
-        flex: none;
-        width: 75%;
-    }
-
-    .columns.is-mobile>.column.is-11 {
-        flex: none;
-        width: 83%;
-    }
-
-    @media print,screen and (min-width:769px) {
-        .column.is-1 {
-            flex: none;
-            width: 8%;
-        }
-
-        .column.is-3 {
-            flex: none;
-            width: 25%;
-        }
-
-        .column.is-6 {
-            flex: none;
-            width: 50%;
-        }
-
-        .column.is-9 {
-            flex: none;
-            width: 75%;
-        }
-
-        .column.is-11 {
-            flex: none;
-            width: 83%;
-        }
-
-        .column.is-12 {
-                flex: none;
-                width: 100%;
-        }
     }
 
     .level {
