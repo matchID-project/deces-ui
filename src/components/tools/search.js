@@ -13,9 +13,6 @@ import {
     updateURL,
     resultsPerPage,
     resultsPerPageDefault,
-    autocompleteBypass,
-    autocompleteDisplay,
-    autocompleteMinLength,
     advancedSearch,
     wasSearched,
     waitSearch,
@@ -35,8 +32,6 @@ let mySortInput;
 let mySearchCanvas;
 let myCurrent;
 let myResultsPerPage;
-let myAutocompleteBypass;
-let myAutocompleteMinLength;
 let myAdvancedSearch;
 let mySearchMinLength;
 let myWaitSearch;
@@ -50,9 +45,7 @@ const sc = searchCanvas.subscribe((value) => { mySearchCanvas=value });
 const sm = searchMinLength.subscribe((value) => { mySearchMinLength=value });
 const c = current.subscribe((value) => { myCurrent=value });
 const r = resultsPerPage.subscribe((value) => { myResultsPerPage=value });
-const a = autocompleteMinLength.subscribe((value) => { myAutocompleteMinLength=value });
 const av = advancedSearch.subscribe((value) => { myAdvancedSearch=value });
-const b = autocompleteBypass.subscribe((value) => { myAutocompleteBypass=value });
 const w = waitSearch.subscribe((value) => { myWaitSearch=value });
 const f = fuzzySearch.subscribe((value) => {myFuzzySearch = value});
 const p = apiVersion.subscribe((value) => {myApiVersion = value});
@@ -63,10 +56,6 @@ const computeTotalPages = (resultsPerPage, totalResults) => {
     if (totalResults === 0) return 1;
     return Math.ceil(totalResults / resultsPerPage);
   }
-
-export const searchAutocompleteTrigger = (searchInput) => {
-    return Object.keys(searchInput).some(key => searchInput[key].value.length >= myAutocompleteMinLength);
-};
 
 export const searchTrigger = (searchInput) => {
     return Object.keys(searchInput).some(key => searchInput[key].value.length >= mySearchMinLength) &&
@@ -115,7 +104,6 @@ export const searchSubmit = async (newCurrent) => {
                 date: Date.now()
             }});
         }
-        await autocompleteDisplay.update(v => false);
         await wasSearched.update(v => searchString(mySearchInput));
         await waitSearch.update( v => false);
     }

@@ -303,12 +303,6 @@ export const cachedResponses = writable({});
 
 export const waitSearch = writable(false);
 
-export const autocompleteBypass = writable(true);
-
-export const autocompleteResults = writable([]);
-
-export const autocompleteMinLength = writable(2);
-
 export const fuzzySearch = writable(true);
 
 export const searchMinLength = writable(1);
@@ -346,8 +340,6 @@ export const scrollId = writable(null);
 export const scrollIdTimeout = 59000;
 
 export const updateURL = writable(false);
-
-export const autocompleteDisplay = writable(false);
 
 export const displayMode = writable('card');
 

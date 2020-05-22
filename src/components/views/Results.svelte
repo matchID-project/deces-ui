@@ -1,4 +1,4 @@
-{#if searchTrigger($searchInput) || !$autocompleteBypass }
+{#if searchTrigger($searchInput) }
   <div class="results-body">
     <div class="container">
       <div class="margin">
@@ -49,7 +49,7 @@
   import { onMount } from 'svelte';
   import getDataGouvCatalog from '../tools/getDataGouvCatalog.js';
   import { searchResults, searchInput,
-    autocompleteBypass, sortInput, displayMode } from '../tools/stores.js';
+    sortInput, displayMode } from '../tools/stores.js';
   import { searchTrigger } from '../tools/search.js';
   import ResultsHeader from './ResultsHeader.svelte';
   import ResultCard from "./ResultCard.svelte";
