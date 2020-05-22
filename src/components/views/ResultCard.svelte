@@ -413,38 +413,6 @@
         }
     }
 
-    .columns {
-        margin-left: -.75rem;
-        margin-right: -.75rem;
-        margin-top: -.75rem;
-    }
-
-    .columns:last-child {
-        margin-bottom: -.75rem;
-    }
-
-    .columns:not(:last-child) {
-        margin-bottom: .75rem;
-    }
-
-    .columns.is-mobile {
-        display: flex;
-    }
-
-    .columns.is-multiline {
-        flex-wrap: wrap;
-    }
-
-    .columns.is-vcentered {
-        align-items: center;
-    }
-
-    @media print,screen and (min-width:769px) {
-        .columns:not(.is-desktop) {
-            display: flex;
-        }
-    }
-
     .level {
     align-items: center;
     justify-content: space-between;

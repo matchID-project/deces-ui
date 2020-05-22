@@ -629,32 +629,6 @@
     text-align: left!important;
   }
 
-  .columns {
-    margin-left: -.75rem;
-    margin-right: -.75rem;
-    margin-top: -.75rem;
-  }
-
-  .columns:last-child {
-    margin-bottom: -.75rem;
-  }
-
-  .columns:not(:last-child) {
-    margin-bottom: .75rem;
-  }
-
-  .columns.is-mobile {
-    display: flex;
-  }
-
-  .columns.is-multiline {
-    flex-wrap: wrap;
-  }
-
-  .columns.is-vcentered {
-    align-items: center;
-  }
-
   @media print,screen and (max-width:768px) {
   .is-size-5 {
     font-size: 1rem!important;
@@ -753,9 +727,6 @@
 
     .is-hidden-desktop {
       display: none;
-    }
-    .columns:not(.is-desktop) {
-      display: flex;
     }
   }
 

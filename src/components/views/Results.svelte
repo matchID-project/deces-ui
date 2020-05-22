@@ -150,28 +150,6 @@
     }
   }
 
-  .columns {
-    margin-left: -.75rem;
-    margin-right: -.75rem;
-    margin-top: -.75rem;
-  }
-
-  .columns.is-mobile {
-    display: flex;
-  }
-
-  .columns:last-child {
-      margin-bottom: -.75rem;
-  }
-
-  .columns:not(:last-child) {
-      margin-bottom: .75rem;
-  }
-
-  .columns.is-multiline {
-      flex-wrap: wrap;
-  }
-
   *, ::after, ::before {
     box-sizing: inherit;
   }
