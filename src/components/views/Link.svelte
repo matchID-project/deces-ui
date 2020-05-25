@@ -1,3 +1,8 @@
+<div class="image">
+    <div class="badge">
+        beta
+    </div>
+</div>
 <Hero height={"14rem"}>
     <span slot="title">
       fichier des décès
@@ -178,4 +183,40 @@
     .delete.is-danger {
         background-color: #e2011c;
     }
+
+.badge {
+  position: absolute;
+  left: -7px;
+  top: 4.80rem;
+  z-index: 900;
+  background-color: #e2011c;
+  -webkit-transform: rotate(-45deg) scale(1) skew(0deg) translate(10px);
+  -moz-transform: rotate(-45deg) scale(1) skew(0deg) translate(10px);
+  -o-transform: rotate(-45deg) scale(1) skew(0deg) translate(10px);
+  -ms-transform: rotate(-45deg) scale(1) skew(0deg) translate(10px);
+  transform: rotate(-45deg) scale(1) skew(0deg) translate(10px);
+  text-align: center;
+  color: white;
+  padding: 0 .5em;
+  border-top: 0px;
+  line-height: 20px;
+  margin: 0;
+}
+.badge:after {
+    content: ' ';
+    position: absolute;
+    right: -1.23rem;
+    top: 0px;
+    border-right: 20px solid transparent;
+    border-bottom: 20px solid #e2011c;
+}
+.badge:before {
+    content: ' ';
+    position: absolute;
+    left: -1.23rem;
+    top: 0px;
+    border-left: 20px solid transparent;
+    border-bottom: 20px solid #e2011c;
+}
+
 </style>
