@@ -66,6 +66,14 @@
                                 géographique
                             </span>
                         </a>
+                            <a class="navbar-item" href="/link">
+                            <span class="icon">
+                                <FontAwesomeIcon icon={faCoins} className="icon is-small"/>
+                            </span>
+                            <span>
+                                appariement
+                            </span>
+                        </a>
                     </div>
                 </div>
                 <div class="navbar-item has-dropdown is-hoverable">
@@ -169,6 +177,7 @@
     import FontAwesomeIcon from './FontAwesomeIcon.svelte'
 
     import {
+        faCoins,
         faGlobeEurope,
         faLink,
         faMagic,
