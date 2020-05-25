@@ -1,0 +1,56 @@
+<div class="content">
+
+    <div class="wrap">
+        <p>
+            <strong>Choisissez les champs à apparier:</strong><br/>
+            <span class="is-size-7">(choisissez au minimum {$linkMinFields} champs à apparier)</span>
+
+        </p>
+        <LinkFields bind:mapping={mapping}/>
+        <button
+            type="button"
+            class="button is-info"
+            disabled={Object.keys(mapping).length < $linkMinFields}
+            on:click|preventDefault={validate}
+        >
+            valider
+        </button>
+        <p>
+            <strong>Depuis les colonnes ci-dessous:</strong><br/>
+            <span class="is-size-7">(glissez-collez une colonne du bas sur un champ au-dessus)</span>
+        </p>
+        <div class="wrap-table">
+            <LinkSampleTable/>
+        </div>
+    </div>
+</div>
+<script>
+    import { linkStep, linkMapping, linkMinFields } from '../tools/stores.js';
+    import LinkFields from './LinkFields.svelte';
+    import LinkSampleTable from './LinkSampleTable.svelte';
+    let mapping = {};
+    let done = false;
+
+    $: if (done) {$linkStep = 3};
+
+    const validate = (ev) => {
+        $linkMapping = mapping;
+        done = true;
+    }
+
+</script>
+
+<style>
+    .wrap {
+        max-width: 1024px;
+        margin-left: auto;
+        margin-right: auto;
+        padding: 8px;
+        text-align: center;
+    }
+    .wrap-table {
+        border: 1px solid;
+        overflow-x: hidden;
+        overflow-y: hidden;
+    }
+</style>
