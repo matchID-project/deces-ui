@@ -12,15 +12,18 @@
 	import MatchIDHeader from './components/views/MatchIDHeader.svelte';
 	import Search from './components/views/Search.svelte';
 	import Geo from './components/views/Geo.svelte';
+	import Link from './components/views/Link.svelte';
 	import { searchInput, searchCanvas, current, resultsPerPage,
-		updateURL, advancedSearch, apiVersion, fuzzySearch, displayMode, themeDnum } from './components/tools/stores.js';
+		updateURL, advancedSearch, apiVersion, fuzzySearch, displayMode, themeDnum
+	} from './components/tools/stores.js';
 
 	let routes = {
 		'/': { component: Search },
 		'/search': { component: Search },
 		'/about/service': { component: About, props: { page: 'service'} },
 		'/about/data': { component: About, props: { page: 'data'} },
-		'/geo': { component: Geo }
+		'/geo': { component: Geo },
+		'/link': { component: Link }
 	}
 
 	onMount(async () => {

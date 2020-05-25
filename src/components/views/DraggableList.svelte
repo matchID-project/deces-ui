@@ -1,5 +1,5 @@
 <div class="columns">
-	<div class="column is-6">
+	<div class="column padding is-6">
 		<i>actives</i>
 		<ul
 			on:drop|preventDefault={event => dropTop(event, status[0], undefined, -1)}
@@ -36,7 +36,7 @@
 			{/each}
 		</ul>
 	</div>
-	<div class="column is-6">
+	<div class="column padding is-6">
 		<i>inactives</i>
 		<ul
 			on:drop|preventDefault={event => dropTop(event, undefined, undefined, -1)}
@@ -153,81 +153,10 @@
 	}
     .has-text-left {
         text-align: left!important;
-    }
-    .column {
-        display: block;
-        flex-basis: 0;
-        flex-grow: 1;
-        flex-shrink: 1;
+	}
+
+	.column.padding {
         padding: 0rem 1rem 0rem 0.75rem;
     }
 
-    .columns.is-mobile>.column.is-3 {
-        flex: none;
-        width: 25%;
-    }
-
-    .columns.is-mobile>.column.is-9 {
-        flex: none;
-        width: 75%;
-    }
-
-    @media print,screen and (min-width:769px) {
-        .column.is-3 {
-            flex: none;
-            width: 25%;
-        }
-
-        .column.is-4 {
-            flex: none;
-            width: 33.3%;
-        }
-
-        .column.is-6 {
-            flex: none;
-            width: 50%;
-        }
-
-        .column.is-9 {
-            flex: none;
-            width: 75%;
-        }
-
-        .column.is-12 {
-                flex: none;
-                width: 100%;
-        }
-    }
-
-    .columns {
-        margin-left: -.75rem;
-        margin-right: -.75rem;
-        margin-top: -.75rem;
-    }
-
-    .columns:last-child {
-        margin-bottom: -.75rem;
-    }
-
-    .columns:not(:last-child) {
-        margin-bottom: .75rem;
-    }
-
-    .columns.is-mobile {
-        display: flex;
-    }
-
-    .columns.is-multiline {
-        flex-wrap: wrap;
-    }
-
-    .is-vcentered {
-        align-items: center;
-    }
-
-    @media print,screen and (min-width:769px) {
-        .columns:not(.is-desktop) {
-            display: flex;
-        }
-    }
 </style>

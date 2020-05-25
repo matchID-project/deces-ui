@@ -66,30 +66,6 @@
       transform: translate(-20%, 0%);
     }
   }
-  @media screen and (min-width:1024px) {
-    .container {
-      max-width: 960px;
-    }
-  }
-
-  @media screen and (min-width:1216px) {
-    .container {
-      max-width: 1152px;
-    }
-  }
-  @media screen and (min-width:1408px) {
-    .container {
-      max-width: 1344px;
-    }
-  }
-
-  .container {
-    flex-grow: 1;
-    margin: 0 auto;
-    position: relative;
-    width: auto;
-  }
-
 
   ul {
     margin: 0!important;
@@ -99,10 +75,6 @@
   li {
     margin: 0!important;
     padding: 0!important;
-  }
-
-  .is-size-6 {
-      font-size: 1rem!important;
   }
 
 </style>

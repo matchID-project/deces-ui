@@ -1,4 +1,4 @@
-{#if searchTrigger($searchInput) || !$autocompleteBypass }
+{#if searchTrigger($searchInput) }
   <div class="results-body">
     <div class="container">
       <div class="margin">
@@ -49,7 +49,7 @@
   import { onMount } from 'svelte';
   import getDataGouvCatalog from '../tools/getDataGouvCatalog.js';
   import { searchResults, searchInput,
-    autocompleteBypass, sortInput, displayMode } from '../tools/stores.js';
+    sortInput, displayMode } from '../tools/stores.js';
   import { searchTrigger } from '../tools/search.js';
   import ResultsHeader from './ResultsHeader.svelte';
   import ResultCard from "./ResultCard.svelte";
@@ -116,10 +116,6 @@
         cursor: pointer;
     }
 
-    .is-size-7 {
-        font-size: .75rem !important;
-    }
-
   .is-grey {
     background-color: #fafafa;
   }
@@ -148,53 +144,6 @@
         width: 100%;
         padding-left: 0;
     }
-  }
-
-  .container {
-    flex-grow: 1;
-    margin: 0 auto;
-    position: relative;
-    width: auto;
-  }
-
-  @media screen and (min-width:1024px) {
-    .container {
-      max-width: 960px;
-    }
-  }
-
-  @media screen and (min-width:1216px) {
-    .container {
-      max-width: 1152px;
-    }
-  }
-
-  @media screen and (min-width:1408px) {
-    .container {
-      max-width: 1344px;
-    }
-  }
-
-  .columns {
-    margin-left: -.75rem;
-    margin-right: -.75rem;
-    margin-top: -.75rem;
-  }
-
-  .columns.is-mobile {
-    display: flex;
-  }
-
-  .columns:last-child {
-      margin-bottom: -.75rem;
-  }
-
-  .columns:not(:last-child) {
-      margin-bottom: .75rem;
-  }
-
-  .columns.is-multiline {
-      flex-wrap: wrap;
   }
 
   *, ::after, ::before {
