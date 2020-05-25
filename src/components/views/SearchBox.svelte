@@ -35,7 +35,7 @@
       <div class="column is-1">
         <button
           type="reset"
-          class="button is-fullwidth is-size-5 is-info small-margin-mobile"
+          class="button is-fullwidth is-size-5 is-white small-margin-mobile"
           on:click|preventDefault={ toggleAdvancedSearch }
           title={ $advancedSearch ? "retour à la recherche simple" : "activer la recherche avancée" }
         >
@@ -50,7 +50,7 @@
             style="margin-top:-0.25rem;margin-bottom:-1rem!important;"
             on:click|preventDefault={ toggleFuzzySearch }
           >
-            <input id="switchRoundedInfo" type="checkbox" name="switchRoundedInfo" class="switch is-rounded is-info is-unchecked-grey" bind:checked={$fuzzySearch}>
+            <input id="switchRoundedInfo" type="checkbox" name="switchRoundedInfo" class="switch is-rounded is-white is-unchecked-grey" bind:checked={$fuzzySearch}>
             <label for="switchRoundedInfo">
               {#if $fuzzySearch} recherche floue
               {:else} <strike> recherche floue</strike>{/if}
@@ -421,10 +421,6 @@
       vertical-align: baseline;
   }
 
-  button, input, select, textarea {
-      margin: 0;
-  }
-
   @media screen and (min-width:769px) {
     .container.margin {
       margin-top: 2rem!important;
@@ -437,98 +433,7 @@
     }
   }
 
-  .button {
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-    -moz-appearance: none;
-    -webkit-appearance: none;
-    align-items: center;
-    border: 1px solid transparent;
-    border-radius: 4px;
-    box-shadow: none;
-    display: inline-flex;
-    font-size: 1rem;
-    height: 2.25em;
-    line-height: 1.5;
-    position: relative;
-    vertical-align: top;
-    background-color: #fff;
-    border-color: #dbdbdb;
-    border-width: 1px;
-    color: #363636;
-    cursor: pointer;
-    justify-content: center;
-    padding: calc(.375em - 1px) .75em;
-    text-align: center;
-    white-space: nowrap;
-    box-sizing: border-box;
-  }
-
-  .button:active,.button:focus {
-    outline: 0;
-  }
-
-  .button:hover {
-    border-color: #b5b5b5;
-    color: #363636;
-  }
-
-  .button:focus {
-    border-color: #3273dc;
-    color: #363636;
-  }
-
-  .button:focus:not(:active) {
-    box-shadow: 0 0 0 .125em rgba(50,115,220,.25);
-  }
-
-  .button:active {
-    border-color: #4a4a4a;
-    color: #363636;
-  }
-
-  .button.is-info,.button.is-info:hover {
-    background-color: #fff;
-    border-color: transparent;
-    color: #003189;
-  }
-
-  .button.is-info:hover {
-    background-color: #003189;
-    color: #fff;
-  }
-
-  .button.is-info:focus {
-    background-color: #003189;
-    border-color: transparent;
-    color: #fff;
-  }
-
-  .button.is-info:focus:not(:active) {
-    background-color: #003189;
-    border-color: transparent;
-    color: #fff;
-  }
-
-  .button.is-info:active {
-    background-color: #fff;
-    border-color: transparent;
-    color: #003189;
-  }
-
-  .button.is-fullwidth {
-    display: flex;
-    width: 100%;
-  }
-
   @media print,screen and (min-width:769px) {
-    .is-size-5 {
-      font-size: 1.15rem!important;
-    }
-
     .is-right-desktop {
      text-align:right!important;
     }
@@ -539,10 +444,6 @@
   }
 
   @media print,screen and (max-width:768px) {
-    .is-size-5 {
-      font-size: 1rem!important;
-    }
-
     .info-footer {
       color: #e2011c;
       z-index: 40;
@@ -596,109 +497,6 @@
   .field {
     display: flex;
     justify-content: center;
-  }
-
-  .switch[type="checkbox"] {
-    outline:0;
-    user-select:none;
-    display:inline-block;
-    position:absolute;
-    opacity:0;
-    width: auto;
-  }
-  .switch[type="checkbox"]:focus+label::before,
-  .switch[type="checkbox"]:focus+label:before,
-  .switch[type="checkbox"]:focus+label::after,
-  .switch[type="checkbox"]:focus+label:after {
-  outline:1px dotted #b5b5b5
-  }
-  .switch[type="checkbox"][disabled] {
-  cursor:not-allowed
-  }
-  .switch[type="checkbox"][disabled]+label {
-  opacity:0.5
-  }
-  .switch[type="checkbox"][disabled]+label::before,
-  .switch[type="checkbox"][disabled]+label:before {
-  opacity:0.5
-  }
-  .switch[type="checkbox"][disabled]+label::after,
-  .switch[type="checkbox"][disabled]+label:after {
-  opacity:0.5
-  }
-  .switch[type="checkbox"][disabled]+label:hover {
-  cursor:not-allowed
-  }
-  .switch[type="checkbox"]+label {
-  position:relative;
-  display:initial;
-  font-size:1rem;
-  line-height:initial;
-  padding-left:3.5rem;
-  padding-top:.2rem;
-  cursor:pointer
-  }
-  .switch[type="checkbox"]+label::before,
-  .switch[type="checkbox"]+label:before {
-  position:absolute;
-  display:block;
-  top:0;
-  left:0;
-  width:3rem;
-  height:1.5rem;
-  border:0.1rem solid #003189;
-  border-radius:4px;
-  background:#b5b5b5;
-  content:''
-  }
-  .switch[type="checkbox"]+label::after,
-  .switch[type="checkbox"]+label:after {
-  display:block;
-  position:absolute;
-  top:.25rem;
-  left:.25rem;
-  width:1rem;
-  height:1rem;
-  transform:translate3d(0, 0, 0);
-  border-radius:4px;
-  background:#003189;
-  transition:all 0.25s ease-out;
-  content:''
-  }
-  .switch[type="checkbox"]:checked+label::before,
-  .switch[type="checkbox"]:checked+label:before {
-  background:#00d1b2
-  }
-  .switch[type="checkbox"]:checked+label::after {
-  left:1.625rem
-  }
-  .switch[type="checkbox"].is-rounded+label::before,
-  .switch[type="checkbox"].is-rounded+label:before {
-  border-radius:24px
-  }
-  .switch[type="checkbox"].is-rounded+label::after,
-  .switch[type="checkbox"].is-rounded+label:after {
-  border-radius:50%
-  }
-
-  .switch[type="checkbox"].is-info:checked+label::before,
-  .switch[type="checkbox"].is-info:checked+label:before {
-    background:#ffffff;
-    color: #003189!important;
-  }
-
-  .switch[type="checkbox"].is-unchecked-grey+label::before,
-  .switch[type="checkbox"].is-unchecked-grey+label:before {
-  background:#777777
-  }
-  .switch[type="checkbox"].is-unchecked-grey.is-outlined+label::before,
-  .switch[type="checkbox"].is-unchecked-grey.is-outlined+label:before {
-  background-color:transparent;
-  border-color:#777777 !important
-  }
-  .switch[type="checkbox"].is-unchecked-grey.is-outlined+label::after,
-  .switch[type="checkbox"].is-unchecked-grey.is-outlined+label:after {
-  background:#777777
   }
 
   [placeholder]{

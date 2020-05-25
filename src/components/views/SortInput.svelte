@@ -77,8 +77,4 @@
     padding: 0!important;
   }
 
-  .is-size-6 {
-      font-size: 1rem!important;
-  }
-
 </style>

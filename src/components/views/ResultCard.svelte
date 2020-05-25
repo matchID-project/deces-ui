@@ -314,18 +314,6 @@
         line-height: 1.25;
     }
 
-    .is-size-6 {
-        font-size: 1rem;
-    }
-
-    .is-size-6-7 {
-        font-size: 0.875rem;
-    }
-
-    .is-size-7 {
-        font-size: 0.75rem;
-    }
-
     .card {
         background-color: #fff;
         box-shadow: 0 2px 3px rgba(10,10,10,.1),0 0 0 1px rgba(10,10,10,.1);

@@ -303,9 +303,6 @@
     .has-text-right {
         text-align: right!important;
     }
-    .is-size-7 {
-        font-size: .75rem !important;
-    }
 
     ul {
         margin:0;

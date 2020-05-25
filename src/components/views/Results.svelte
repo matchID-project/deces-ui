@@ -116,10 +116,6 @@
         cursor: pointer;
     }
 
-    .is-size-7 {
-        font-size: .75rem !important;
-    }
-
   .is-grey {
     background-color: #fafafa;
   }

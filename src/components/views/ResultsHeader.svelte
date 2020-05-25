@@ -120,9 +120,6 @@
     .has-text-centered {
         text-align: center!important;
     }
-    .is-size-7 {
-        font-size: .75rem !important;
-    }
 
     .select select.is-hovered, .select select:hover {
          border-color: #b5b5b5;
