@@ -419,3 +419,21 @@ export const liveConfig = writable(null);
 export const mitmUrl = writable('__MITM_URL__');
 
 export const themeDnum = writable(parseInt('__THEME_DNUM__'))
+
+export const linkFile = writable(null);
+
+export const linkFileName = writable(null);
+
+export const linkStep = writable(1);
+
+export const linkSourceHeader = writable(null);
+
+export const linkMapping = writable({});
+
+export const linkMinFields = writable(2);
+
+export const linkJob = writable(null);
+
+export const linkResults = writable(null);
+
+export const linkCompleted = writable(false);
