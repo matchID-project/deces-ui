@@ -211,23 +211,10 @@
         line-height: 1.25;
     }
 
-    .is-size-6 {
-        font-size: 1rem;
-    }
-
-    .is-size-6-7 {
-        font-size: 0.875rem;
-    }
-
-    .is-size-7 {
-        font-size: 0.75rem;
-    }
-
     @media screen and (max-width: 768px) {
         .is-hidden-mobile {
             display: none!important;
         }
     }
-
 
 </style>
