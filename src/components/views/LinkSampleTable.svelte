@@ -39,8 +39,17 @@
     $: $linkFile && read($linkFile);
     $: if ($linkSourceHeader) { displayRows = rows.slice((page-1)*page,page*pageSize); }
 
+    const guessSeparator = (csv) => {
+        let max = 0;
+        [';',',','|','\t'].map(c => {
+            const n = csv.split(/\s*\r?\n\s*/).map(r => r.split(c).length).reduce((a,b) => Math.min(a,b))
+            if (n > max) { max = n; sep = c}
+        });
+    };
+
     const parseCsv = (ev) => {
         var contents = ev.target.result;
+        guessSeparator(contents);
         rows = contents.split(/\s*\r?\n\s*/).map(r => r.split(sep));
         $linkSourceHeader = rows.shift();
     };
