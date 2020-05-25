@@ -50,7 +50,7 @@
     const parseCsv = (ev) => {
         var contents = ev.target.result;
         guessSeparator(contents);
-        rows = contents.split(/\s*\r?\n\s*/).map(r => r.split(sep));
+        rows = contents.split(/\s*\r?\n\s*/).map(r => r.split(sep).map(col => col || '<vide>'));
         $linkSourceHeader = rows.shift();
     };
 
