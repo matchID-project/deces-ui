@@ -80,17 +80,19 @@
     }
 
     const watchJob = async () =>  {
-        const res = await axios.get(`__BACKEND_PROXY_PATH__/search/csv/${$linkJob}`);
-        if(res.status == 200){
-            if (typeof(res.data) !== 'string') {
-                if (res.data.progress && res.data.progress.percentage) {
-                    progressJob = res.data.progress.percentage;
+        if ($linkJob) {
+            const res = await axios.get(`__BACKEND_PROXY_PATH__/search/csv/${$linkJob}`);
+            if(res.status == 200){
+                if (typeof(res.data) !== 'string') {
+                    if (res.data.progress && res.data.progress.percentage) {
+                        progressJob = res.data.progress.percentage;
+                    } else {
+                        progressJob = 0;
+                    }
                 } else {
-                    progressJob = 0;
+                    progressJob = 100;
+                    parseLinkResults(res.data);
                 }
-            } else {
-                progressJob = 100;
-                parseLinkResults(res.data);
             }
         }
     }
