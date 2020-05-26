@@ -27,9 +27,9 @@
 </div>
 
 <script>
-    import { linkFile, resultsPerPage, linkStep, linkSourceHeader } from '../tools/stores.js';
+    import { linkFile, resultsPerPage, linkStep, linkSourceHeader, linkCsvType } from '../tools/stores.js';
 
-    export let sep = /;/;
+    export let sep = ';';
     export let page = 1;
     export let pageSize=5;
     let rows;
@@ -47,10 +47,32 @@
         });
     };
 
+    const protect = (sep) => {
+        return sep === '|' ? '\|' : sep;
+    }
+
     const parseCsv = (ev) => {
-        var contents = ev.target.result;
+        const contents = ev.target.result;
         guessSeparator(contents);
-        rows = contents.split(/\s*\r?\n\s*/).map(r => r.split(sep).map(col => col || '<vide>'));
+        const re = new RegExp(`^("([^"]*?)"|([^${protect(sep)}]*))(\\${protect(sep)}(.*))?$`);
+        const quotingGuess = [0, 0]
+        rows = contents.split(/\s*\r?\n\s*/).map(r => {
+            const row = [];
+            let i = 0;
+            while(r && r.length) {
+                i += 1;
+                const m = r.match(re);
+                row.push(m[2] ? m[2] : m[3]);
+                if (m[2]) { quotingGuess[0] += 1}
+                if (m[3]) { quotingGuess[1] += 1}
+                r = m[5];
+            };
+            return row.map(col => col || '<vide>');
+            });
+        $linkCsvType = {
+            sep: sep,
+            quoting: quotingGuess[1] ? (quotingGuess[0] ? 'minimal' : false ) : true
+        };
         $linkSourceHeader = rows.shift();
     };
 

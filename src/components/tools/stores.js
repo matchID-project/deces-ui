@@ -428,6 +428,8 @@ export const linkStep = writable(1);
 
 export const linkSourceHeader = writable(null);
 
+export const linkCsvType = writable(null);
+
 export const linkMapping = writable({});
 
 export const linkMinFields = writable(2);

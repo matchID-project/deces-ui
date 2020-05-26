@@ -49,7 +49,7 @@
     import { onMount } from 'svelte';
     import { linkStep, linkFile, linkFileName, linkMapping,
         linkSourceHeader, linkMinFields, linkJob,
-        linkResults
+        linkResults, linkCsvType
     } from '../tools/stores.js';
     import FontAwesomeIcon from './FontAwesomeIcon.svelte';
    import {
@@ -113,10 +113,11 @@
     onMount(() => {
         useLocalStorage(linkFileName, 'linkFileName');
         useLocalStorage(linkSourceHeader, 'linkSourceHeader');
+        useLocalStorage(linkCsvType, 'linkCsvType');
         useLocalStorage(linkMapping, 'linkMapping');
         useLocalStorage(linkJob, 'linkJob');
         useLocalStorage(linkResults, 'linkResults');
-        if (!$linkMapping || !$linkFileName || !$linkSourceHeader || !$linkJob) {
+        if (!$linkMapping || !$linkFileName || !$linkCsvType || !$linkSourceHeader || !$linkJob) {
             reset();
         }
     })

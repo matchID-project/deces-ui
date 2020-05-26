@@ -21,10 +21,9 @@
     import { tweened } from 'svelte/motion';
 	import { sineInOut } from 'svelte/easing';
     import axios from 'axios';
-    let sep = /;/;
     let estimator;
 
-    import { linkMapping, linkFile, linkJob, linkStep, linkResults, updateURL } from '../tools/stores.js';
+    import { linkMapping, linkFile, linkJob, linkStep, linkResults, updateURL, linkCsvType } from '../tools/stores.js';
     let progressUpload = 0;
     let progressJob = 0;
     let jobPredictor = null;
@@ -65,7 +64,7 @@
     const upload = async () =>  {
         progressUpload = 0;
         let formData = new FormData();
-        formData.append('sep', ';');
+        formData.append('sep', $linkCsvType.sep);
         Object.keys($linkMapping).map(k => formData.append($linkMapping[k], k));
         formData.append('csv', $linkFile);
         const res = await axios.post('__BACKEND_PROXY_PATH__/search/csv', formData, axiosUploadConfig);
@@ -98,7 +97,7 @@
 
     const parseLinkResults = (data) => {
         const rows = data.split(/\s*\r?\n\s*/).map(r => {
-            const row = r.split(sep);
+            const row = r.split($linkCsvType.sep);
             row.push('check');
             return row
         });
