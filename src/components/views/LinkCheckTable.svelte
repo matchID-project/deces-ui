@@ -1,3 +1,4 @@
+<span class="is-size-6-7"><strong>filtre:</strong> <input bind:value={subFilter}/></span>
 {#if $linkResults && $linkSourceHeader && displayRows.length}
     <table class="table is-narrow is-size-6-7">
         <tr>
@@ -110,13 +111,15 @@
         birthCountry: 'birth country'
     };
 
-    $: if ($linkResults) {
+    $: if ($linkResults || subFilter) {
         displayRows = $linkResults.rows.map((r, index) => {
                 const row = r.slice(0);
                 row.push(index);
                 return row;
             })
             .filter(row => applyFilter(row, filter))
+            .filter(row => (new RegExp(subFilter,'i')).test(JSON.stringify(row)))
+            .sort(sorts[sort]);
     }
 
     const get = (row, col) => {
