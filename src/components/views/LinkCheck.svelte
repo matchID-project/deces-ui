@@ -23,7 +23,7 @@
 
         {#if (scoredLinks !== checkedLinks)}
             <p> {scoredLinks - checkedLinks} identité(s) à valider :</p>
-            <LinkCheckTable filter={filterUnchecked} bind:rowSelect={rowSelect}/>
+            <LinkCheckTable filter={filterUnchecked} bind:rowSelect={rowSelect} sort={'scoreDesc'}/>
         {/if}
 
         {#if checkedLinks}
@@ -36,7 +36,7 @@
             {:else}
                 <p> {checkedLinks} identités validées :</p>
             {/if}
-            <LinkCheckTable filter={ filterChecked } bind:rowSelect={rowSelect}/>
+            <LinkCheckTable filter={ filterChecked } bind:rowSelect={rowSelect} sort={'scoreAsc'}/>
         {/if}
 
     </div>
@@ -53,11 +53,11 @@
 
     let rowSelect;
     const filterUnchecked = {
-        check: (v) => {return (v === 'check')},
+        check: (v) => {return (v.checked === false)},
         score: (v) => {return v}
     };
     const filterChecked = {
-        check: (v) => {return (v !== 'check')},
+        check: (v) => {return (v.checked)},
         score: (v) => {return v}
     };
     let scoredLinks;
@@ -74,7 +74,7 @@
         const c = $linkResults.header.indexOf('check');
         checkedLinks = $linkResults.rows
             .filter(r => r[s])
-            .filter(r => r[c] !== 'check').length;
+            .filter(r => r[c].checked).length;
         if (rowSelect === undefined) {
             // rowSelect is first unchecked and scored row
             $linkResults.rows
