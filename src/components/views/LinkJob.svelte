@@ -23,7 +23,8 @@
     import axios from 'axios';
     let estimator;
 
-    import { linkMapping, linkFile, linkJob, linkStep, linkResults, updateURL, linkCsvType } from '../tools/stores.js';
+    import { linkMapping, linkFile, linkJob, linkStep,
+    linkResults, linkCsvType, linkAutoCheckThreshold } from '../tools/stores.js';
     let progressUpload = 0;
     let progressJob = 0;
     let jobPredictor = null;
@@ -104,10 +105,19 @@
             return row
         });
         const header = rows.shift();
+        const headerMapping = {};
+        header.map((h,i) => headerMapping[h] = i);
         linkResults.update(v => {
             return {
                 header: header,
-                rows: rows
+                rows: rows.map(r => {
+                    if (r[headerMapping['score']] >= $linkAutoCheckThreshold) {
+                        r[headerMapping['check']] =  { valid: true, checked: "auto" };
+                    } else {
+                        r[headerMapping['check']] = { checked: false }
+                    }
+                    return r;
+                })
             };
         });
         $linkStep = 4;

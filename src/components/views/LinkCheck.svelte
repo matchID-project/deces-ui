@@ -28,7 +28,11 @@
 
         {#if checkedLinks}
             {#if (scoredLinks === checkedLinks)}
-                <p> toutes les identé(s) ({checkedLinks}) ont été validées !</p>
+                <p>
+                    toutes les identé(s) ({checkedLinks}) ont été validées* !
+                    <br/>
+                    <span class="is-size-7">* validation automatique pour les scores > {Math.round($linkAutoCheckThreshold*100)}</span>
+                </p>
             {:else}
                 <p> {checkedLinks} identités validées :</p>
             {/if}
@@ -39,7 +43,7 @@
 {/if}
 
 <script>
-    import { linkResults, linkFileName, linkCompleted } from '../tools/stores.js';
+    import { linkResults, linkFileName, linkCompleted, linkAutoCheckThreshold} from '../tools/stores.js';
     import LinkCheckTable from './LinkCheckTable.svelte';
     import FontAwesomeIcon from './FontAwesomeIcon.svelte';
     import {
