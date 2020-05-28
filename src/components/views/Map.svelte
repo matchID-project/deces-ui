@@ -85,7 +85,6 @@
   import {
     searchResults,
     searchInput,
-    autocompleteBypass,
     resultsPerPage
   } from "../tools/stores.js";
 

@@ -66,7 +66,7 @@
   }
 
   .is-info {
-    color:#e2011c;
+    color:#209cee;
   }
 
   .is-small {

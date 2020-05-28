@@ -22,14 +22,14 @@
                 <div class="content">
                     {result.status === 429
                         ? "Le service est momentanément saturé, veuillez réessayer."
-                        : "Erreur de service. Le service est en version alpha, à ce stade tous les cas d'erreur ne sont pas gérés. Si l'erreur perdure, veuillez nous contacter matchid.result@gmail.com"
+                        : "Erreur de service. Le service est en version alpha, à ce stade tous les cas d'erreur ne sont pas gérés. Si l'erreur perdure, veuillez nous contacter matchid-project@gmail.com"
                     }
                 </div>
             </div>
         </div>
     </div>
 {:else if (result)}
-    <div class={`column block-flex ${expand ? "is-12" : "is-6"}`}>
+    <div class={`column ${expand ? "is-12" : "is-6-12"}`}>
         <div class="card has-text-centered">
             <div
                 class={`card-header has-background-${expand ? "primary" : "white"}`}
@@ -220,11 +220,6 @@
 
 <style>
 
-    .block-flex {
-        flex: none!important;
-        width: 100%;
-    }
-
     .has-text-centered {
         text-align: center!important;
     }
@@ -319,18 +314,6 @@
         line-height: 1.25;
     }
 
-    .is-size-6 {
-        font-size: 1rem;
-    }
-
-    .is-size-6-7 {
-        font-size: 0.875rem;
-    }
-
-    .is-size-7 {
-        font-size: 0.75rem;
-    }
-
     .card {
         background-color: #fff;
         box-shadow: 0 2px 3px rgba(10,10,10,.1),0 0 0 1px rgba(10,10,10,.1);
@@ -351,98 +334,6 @@
 
     .card-content {
         padding: 1.5rem;
-    }
-
-    .column {
-        display: block;
-        flex-basis: 0;
-        flex-grow: 1;
-        flex-shrink: 1;
-        padding: .75rem;
-    }
-
-    .columns.is-mobile>.column.is-1 {
-        flex: none;
-        width: 8%;
-    }
-
-    .columns.is-mobile>.column.is-3 {
-        flex: none;
-        width: 25%;
-    }
-
-    .columns.is-mobile>.column.is-9 {
-        flex: none;
-        width: 75%;
-    }
-
-    .columns.is-mobile>.column.is-11 {
-        flex: none;
-        width: 83%;
-    }
-
-    @media print,screen and (min-width:769px) {
-        .column.is-1 {
-            flex: none;
-            width: 8%;
-        }
-
-        .column.is-3 {
-            flex: none;
-            width: 25%;
-        }
-
-        .column.is-6 {
-            flex: none;
-            width: 50%;
-        }
-
-        .column.is-9 {
-            flex: none;
-            width: 75%;
-        }
-
-        .column.is-11 {
-            flex: none;
-            width: 83%;
-        }
-
-        .column.is-12 {
-                flex: none;
-                width: 100%;
-        }
-    }
-
-    .columns {
-        margin-left: -.75rem;
-        margin-right: -.75rem;
-        margin-top: -.75rem;
-    }
-
-    .columns:last-child {
-        margin-bottom: -.75rem;
-    }
-
-    .columns:not(:last-child) {
-        margin-bottom: .75rem;
-    }
-
-    .columns.is-mobile {
-        display: flex;
-    }
-
-    .columns.is-multiline {
-        flex-wrap: wrap;
-    }
-
-    .columns.is-vcentered {
-        align-items: center;
-    }
-
-    @media print,screen and (min-width:769px) {
-        .columns:not(.is-desktop) {
-            display: flex;
-        }
     }
 
     .level {
