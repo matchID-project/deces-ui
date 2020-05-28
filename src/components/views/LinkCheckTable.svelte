@@ -96,6 +96,7 @@
     export let filter;
     export let subFilter='';
     export let sort = 'scoreDesc';
+    export let master;
     const sorts = {
         scoreDesc: (a, b) => get(a,'score') > get(b,'score') ? -1 : ( get(a,'score') < get(b,'score') ? 1 : 0 ),
         scoreAsc: (a, b) => get(a,'score') > get(b,'score') ? 1 : ( get(a,'score') < get(b,'score') ? -1 : 0 )
@@ -111,7 +112,7 @@
         birthCountry: 'birth country'
     };
 
-    $: if ($linkResults || subFilter) {
+    $: if ($linkResults || ($linkResults && subFilter)) {
         displayRows = $linkResults.rows.map((r, index) => {
                 const row = r.slice(0);
                 row.push(index);
@@ -120,6 +121,9 @@
             .filter(row => applyFilter(row, filter))
             .filter(row => (new RegExp(subFilter,'i')).test(JSON.stringify(row)))
             .sort(sorts[sort]);
+        if (master && !rowSelect) {
+            rowSelect = displayRows[0].slice(-1)[0];
+        }
     }
 
     const get = (row, col) => {

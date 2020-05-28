@@ -23,7 +23,7 @@
 
         {#if (scoredLinks !== checkedLinks)}
             <p> {scoredLinks - checkedLinks} identité(s) à valider :</p>
-            <LinkCheckTable filter={filterUnchecked} bind:rowSelect={rowSelect} sort={'scoreDesc'}/>
+            <LinkCheckTable filter={filterUnchecked} bind:rowSelect={rowSelect} sort={'scoreDesc'} master=true/>
         {/if}
 
         {#if checkedLinks}
@@ -75,32 +75,6 @@
         checkedLinks = $linkResults.rows
             .filter(r => r[s])
             .filter(r => r[c].checked).length;
-        if (rowSelect === undefined) {
-            // rowSelect is first unchecked and scored row
-            $linkResults.rows
-                .filter((r, index) => {
-                    if (rowSelect) { return false };
-                    if (r[s] && r[c] !== 'check') {
-                        rowSelect = index;
-                        return false;
-                    } else {
-                        return false;
-                    }
-                });
-            if (rowSelect === undefined) {
-                // rowSelect is first scored row if all are checked
-                $linkResults.rows
-                    .filter((r, index) => {
-                        if (rowSelect) { return false };
-                        if (r[s]) {
-                            rowSelect = index;
-                            return false;
-                        } else {
-                            return false;
-                        }
-                    });
-                }
-        }
     }
 
     const download = () => {
