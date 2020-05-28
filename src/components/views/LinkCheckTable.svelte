@@ -1,3 +1,4 @@
+<span class="is-size-6-7"><strong>filtre:</strong> <input bind:value={subFilter}/></span>
 {#if $linkResults && $linkSourceHeader && displayRows.length}
     <table class="table is-narrow is-size-6-7">
         <tr>
@@ -42,15 +43,15 @@
                     {/if}
                 {/each}
                 <td class="hcenter">
-                    {Math.round(row[$linkResults.header.indexOf('score')]*100)}%
+                    {Math.round(get(row,'score')*100)}%
                 </td>
                 <td
                     class="hcenter has-text-grey-light"
                 >
                     <span
-                        class:has-text-danger={row[$linkResults.header.indexOf('check')] === false}
-                        class:is-hidden={(row.slice(-1)[0] !== rowSelect) && (row[$linkResults.header.indexOf('check')] !== false)}
-                        on:click={() => {row[$linkResults.header.indexOf('check')] = check(row, false);}}
+                        class:has-text-danger={row[$linkResults.header.indexOf('check')].valid === false}
+                        class:is-hidden={(row.slice(-1)[0] !== rowSelect) && (row[$linkResults.header.indexOf('check')].valid !== false)}
+                        on:click={() => {row[$linkResults.header.indexOf('check')].valid = check(row, false);}}
                     >
                         <FontAwesomeIcon icon={faWindowClose} class="is-lower"/>
                     </span>
@@ -58,9 +59,9 @@
                         &nbsp;
                     {/if}
                     <span
-                        class:has-text-info={row[$linkResults.header.indexOf('check')] === true}
-                        class:is-hidden={(row.slice(-1)[0] !== rowSelect) && (row[$linkResults.header.indexOf('check')] !== true)}
-                        on:click={() => {row[$linkResults.header.indexOf('check')] = check(row, true);}}
+                        class:has-text-info={row[$linkResults.header.indexOf('check')].valid === true}
+                        class:is-hidden={(row.slice(-1)[0] !== rowSelect) && (row[$linkResults.header.indexOf('check')].valid !== true)}
+                        on:click={() => {row[$linkResults.header.indexOf('check')].valid = check(row, true);}}
                     >
                             <FontAwesomeIcon icon={faCheck} class="is-lower"/>
                     </span>
@@ -76,21 +77,29 @@
             </tr>
         {/if}
     </table>
+{:else if subFilter}
+    <p>attention, le filtre <strong>{subFilter}</strong> est trop restrictif </p>
 {/if}
 
 <script>
     import { linkResults, resultsPerPage, linkStep, linkSourceHeader, linkMapping } from '../tools/stores.js';
     import FontAwesomeIcon from './FontAwesomeIcon.svelte';
-    import jsdiff from 'diff';
     import {
       faCheck,
       faWindowClose
     } from '@fortawesome/free-solid-svg-icons';
+    import jsdiff from 'diff';
 
 
     export let page = 1;
     export let pageSize=5;
     export let filter;
+    export let subFilter='';
+    export let sort = 'scoreDesc';
+    const sorts = {
+        scoreDesc: (a, b) => get(a,'score') > get(b,'score') ? -1 : ( get(a,'score') < get(b,'score') ? 1 : 0 ),
+        scoreAsc: (a, b) => get(a,'score') > get(b,'score') ? 1 : ( get(a,'score') < get(b,'score') ? -1 : 0 )
+    }
     let displayRows;
     export let rowSelect;
     const headerMapping = {
@@ -102,14 +111,20 @@
         birthCountry: 'birth country'
     };
 
-    $: if ($linkResults) {
+    $: if ($linkResults || subFilter) {
         displayRows = $linkResults.rows.map((r, index) => {
                 const row = r.slice(0);
                 row.push(index);
                 return row;
             })
             .filter(row => applyFilter(row, filter))
+            .filter(row => (new RegExp(subFilter,'i')).test(JSON.stringify(row)))
+            .sort(sorts[sort]);
     }
+
+    const get = (row, col) => {
+        return row[$linkResults.header.indexOf(col)];
+    };
 
     const applyFilter = (row, filter) => {
         if (!filter) { return true }
@@ -119,16 +134,18 @@
     }
 
     const check = (row, status) => {
-        if (row[$linkResults.header.indexOf('check')] === status) {
-            row[$linkResults.header.indexOf('check')] = 'check'
+        if (row[$linkResults.header.indexOf('check')].valid === status) {
+            row[$linkResults.header.indexOf('check')].valid = undefined
+            row[$linkResults.header.indexOf('check')].checked = false
         } else {
-            row[$linkResults.header.indexOf('check')] = status
+            row[$linkResults.header.indexOf('check')].valid = status
+            row[$linkResults.header.indexOf('check')].checked = Date.now()
         }
         linkResults.update(v => {
             v.rows[row.slice(-1)[0]][$linkResults.header.indexOf('check')] = row[$linkResults.header.indexOf('check')];
             return v;
         })
-        return row[$linkResults.header.indexOf('check')];
+        return row[$linkResults.header.indexOf('check')].valid;
     }
 
     const coloredDiff = (doubleArray) => {

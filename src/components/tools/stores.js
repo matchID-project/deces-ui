@@ -438,4 +438,6 @@ export const linkJob = writable(null);
 
 export const linkResults = writable(null);
 
+export const linkAutoCheckThreshold = writable(0.9);
+
 export const linkCompleted = writable(false);

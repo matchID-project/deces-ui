@@ -73,7 +73,7 @@
 
     $: if ($linkJob) {
         $linkStep = 3;
-        steps[2].label = `job: ${$linkJob} en cours`
+        steps[2].label = `job: ${$linkJob.substring(0,8)}... en cours`
     };
 
     $: if ($linkResults) {
@@ -83,7 +83,7 @@
         const c = $linkResults.header.indexOf('check');
         const cLinks = $linkResults.rows
             .filter(r => r[s])
-            .filter(r => r[c] !== 'check').length;
+            .filter(r => r[c].checked).length;
         steps[3].label = `${cLinks}/${sLinks} identifications validées`;
     }
 

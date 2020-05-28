@@ -23,23 +23,27 @@
 
         {#if (scoredLinks !== checkedLinks)}
             <p> {scoredLinks - checkedLinks} identité(s) à valider :</p>
-            <LinkCheckTable filter={filterUnchecked} bind:rowSelect={rowSelect}/>
+            <LinkCheckTable filter={filterUnchecked} bind:rowSelect={rowSelect} sort={'scoreDesc'}/>
         {/if}
 
         {#if checkedLinks}
             {#if (scoredLinks === checkedLinks)}
-                <p> toutes les identé(s) ({checkedLinks}) ont été validées !</p>
+                <p>
+                    toutes les identé(s) ({checkedLinks}) ont été validées* !
+                    <br/>
+                    <span class="is-size-7">* validation automatique pour les scores > {Math.round($linkAutoCheckThreshold*100)}</span>
+                </p>
             {:else}
                 <p> {checkedLinks} identités validées :</p>
             {/if}
-            <LinkCheckTable filter={ filterChecked } bind:rowSelect={rowSelect}/>
+            <LinkCheckTable filter={ filterChecked } bind:rowSelect={rowSelect} sort={'scoreAsc'}/>
         {/if}
 
     </div>
 {/if}
 
 <script>
-    import { linkResults, linkFileName, linkCompleted } from '../tools/stores.js';
+    import { linkResults, linkFileName, linkCompleted, linkAutoCheckThreshold} from '../tools/stores.js';
     import LinkCheckTable from './LinkCheckTable.svelte';
     import FontAwesomeIcon from './FontAwesomeIcon.svelte';
     import {
@@ -49,11 +53,11 @@
 
     let rowSelect;
     const filterUnchecked = {
-        check: (v) => {return (v === 'check')},
+        check: (v) => {return (v.checked === false)},
         score: (v) => {return v}
     };
     const filterChecked = {
-        check: (v) => {return (v !== 'check')},
+        check: (v) => {return (v.checked)},
         score: (v) => {return v}
     };
     let scoredLinks;
@@ -70,7 +74,7 @@
         const c = $linkResults.header.indexOf('check');
         checkedLinks = $linkResults.rows
             .filter(r => r[s])
-            .filter(r => r[c] !== 'check').length;
+            .filter(r => r[c].checked).length;
         if (rowSelect === undefined) {
             // rowSelect is first unchecked and scored row
             $linkResults.rows
