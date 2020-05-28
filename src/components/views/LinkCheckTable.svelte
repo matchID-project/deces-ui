@@ -153,8 +153,10 @@
     }
 
     const coloredDiff = (doubleArray) => {
-        if (doubleArray.length !== 2) return 'Error => array\'s length must be 2'
-
+        doubleArray = doubleArray.filter(x => x);
+        if (doubleArray.length !== 2) {
+            return `<strong style="color: #e2011c;">${doubleArray.join(' ') || '<vide>'}</strong>`
+        }
         if (doubleArray[0] === doubleArray[1]) return doubleArray[0]
 
         let diff = jsdiff.diffChars(doubleArray[0], doubleArray[1], {'ignoreCase': true})
