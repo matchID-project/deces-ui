@@ -1,33 +1,13 @@
 {#if $linkResults}
     <div class="check-body content">
-        <p>
-            {#if (scoredLinks && (scoredLinks === checkedLinks))}
-                <span class="has-text-danger">
-                    <FontAwesomeIcon icon={faArrowAltCircleRight} class="is-24 is-low"/>
-                    &nbsp;
-                </span>
-            {/if}
-            <button
-                class="button is-info"
-                on:click={download}
-            >
-                téléchargez le résultat
-            </button>
-            {#if (scoredLinks && (scoredLinks === checkedLinks))}
-                <span class="has-text-danger">
-                    &nbsp;
-                    <FontAwesomeIcon icon={faArrowAltCircleLeft} class="is-24 is-low"/>
-                </span>
-            {/if}
-        </p>
-
-        {#if (scoredLinks !== checkedLinks)}
-            <p> {scoredLinks - checkedLinks} identité(s) à valider :</p>
-            <LinkCheckTable filter={filterUnchecked} bind:rowSelect={rowSelect} sort={'scoreDesc'} master=true/>
-        {/if}
-
-        {#if checkedLinks}
-            {#if (scoredLinks === checkedLinks)}
+        {#if (unCheckedLinks === 0) && (checkedLinks === 0)}
+            <p>
+                <strong>
+                    Aucune correspondance de personne décédée n'a été trouvée dans votre fichier
+                </strong>
+            </p>
+        {:else}
+            {#if checkedLinks && (unCheckedLinks === 0)}
                 <p>
                     toutes les identé(s) ({checkedLinks}) ont été validées* !
                     <br/>
