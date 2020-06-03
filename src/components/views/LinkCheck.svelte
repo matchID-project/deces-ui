@@ -1,49 +1,58 @@
 {#if $linkResults}
     <div class="check-body content">
-        <p>
-            {#if (scoredLinks && (scoredLinks === checkedLinks))}
-                <span class="has-text-danger">
-                    <FontAwesomeIcon icon={faArrowAltCircleRight} class="is-24 is-low"/>
-                    &nbsp;
-                </span>
-            {/if}
-            <button
-                class="button is-info"
-                on:click={download}
-            >
-                téléchargez le résultat
-            </button>
-            {#if (scoredLinks && (scoredLinks === checkedLinks))}
-                <span class="has-text-danger">
-                    &nbsp;
-                    <FontAwesomeIcon icon={faArrowAltCircleLeft} class="is-24 is-low"/>
-                </span>
-            {/if}
-        </p>
-
-        {#if (scoredLinks !== checkedLinks)}
-            <p> {scoredLinks - checkedLinks} identité(s) à valider :</p>
-            <LinkCheckTable filter={filterUnchecked} bind:rowSelect={rowSelect} sort={'scoreDesc'} master=true/>
-        {/if}
-
-        {#if checkedLinks}
-            {#if (scoredLinks === checkedLinks)}
+        {#if (unCheckedLinks === 0) && (checkedLinks === 0)}
+            <p>
+                <strong>
+                    Aucune correspondance de personne décédée n'a été trouvée dans votre fichier
+                </strong>
+            </p>
+        {:else}
+            {#if checkedLinks && (unCheckedLinks === 0)}
                 <p>
                     toutes les identé(s) ({checkedLinks}) ont été validées* !
                     <br/>
                     <span class="is-size-7">* validation automatique pour les scores > {Math.round($linkAutoCheckThreshold*100)}</span>
                 </p>
-            {:else}
-                <p> {checkedLinks} identités validées :</p>
             {/if}
-            <LinkCheckTable filter={ filterChecked } bind:rowSelect={rowSelect} sort={'scoreAsc'}/>
-        {/if}
+            <p>
+                <span>
+                    téléchargez:<br/>
+                    {#if (unCheckedLinks === 0)}
+                        <span class="has-text-danger">
+                            <FontAwesomeIcon icon={faArrowAltCircleRight} class="is-24 is-low"/>
+                            &nbsp;
+                        </span>
+                    {/if}
+                    <button
+                        class="button is-info"
+                        on:click={e => download(false)}
+                    >
+                        le fichier complet
+                    </button>
+                    <button
+                        class="button is-danger"
+                        on:click={e => download(true)}
+                    >
+                        les décès identifiés
+                    </button>
+                    {#if (unCheckedLinks === 0)}
+                        <span class="has-text-danger">
+                            &nbsp;
+                            <FontAwesomeIcon icon={faArrowAltCircleLeft} class="is-24 is-low"/>
+                        </span>
+                    {/if}
+                </span>
+            </p>
 
+            <LinkCheckTable filter={filterUnchecked} bind:rowSelect={rowSelect} sort={'scoreDesc'} master=true actionTitle={"à valider"} bind:size={unCheckedLinks}/>
+            <LinkCheckTable filter={ filterChecked } bind:rowSelect={rowSelect} sort={'scoreAsc'} actionTitle={"validées"} bind:size={checkedLinks}/>
+
+        {/if}
     </div>
 {/if}
 
 <script>
-    import { linkResults, linkFileName, linkCompleted, linkAutoCheckThreshold} from '../tools/stores.js';
+    import { linkResults, linkFileName, linkCsvType, linkCompleted, linkAutoCheckThreshold} from '../tools/stores.js';
     import LinkCheckTable from './LinkCheckTable.svelte';
     import FontAwesomeIcon from './FontAwesomeIcon.svelte';
     import {
@@ -53,32 +62,42 @@
 
     let rowSelect;
     const filterUnchecked = {
-        check: (v) => {return (v.checked === false)},
-        score: (v) => {return v}
+        check: (v) => {return v.checked === false},
+        score: (v) => {return v && parseFloat(v)}
     };
     const filterChecked = {
-        check: (v) => {return (v.checked)},
-        score: (v) => {return v}
+        check: (v) => {return v.checked},
+        score: (v) => {return v && parseFloat(v)}
     };
-    let scoredLinks;
+    let unCheckedLinks;
     let checkedLinks;
-    let sep = ';';
 
-    $: if (scoredLinks && (scoredLinks === checkedLinks)) {
+    $: if (checkedLinks && (unCheckedLinks === 0)) {
         $linkCompleted = true;
+    } else {
+        $linkCompleted = false;
     }
 
-    $: if ($linkResults) {
-        const s = $linkResults.header.indexOf('score');
-        scoredLinks = $linkResults.rows.filter(r => r[s]).length;
-        const c = $linkResults.header.indexOf('check');
-        checkedLinks = $linkResults.rows
-            .filter(r => r[s])
-            .filter(r => r[c].checked).length;
+    const protect = (sep) => {
+        return sep === '|' ? '\|' : sep;
     }
 
-    const download = () => {
-        const blob = new Blob(toCsv(), { type: 'text/csv; charset=utf-8;' });
+    const protectField = (field) => {
+        if (typeof(field) === 'string') {
+            if (/^0\d+$/.test(field) || field.includes($linkCsvType.sep)) {
+                const q = $linkCsvType.quote || '"'
+                const re = new RegExp(`${q}`,'g');
+                return `${q}${field.replace(re, `${q}${q}`)}${q}`
+            } else {
+                return field
+            }
+        } else {
+            return protectField(JSON.stringify(field));
+        }
+    }
+
+    const download = (filter) => {
+        const blob = new Blob(toCsv(filter), { type: 'text/csv; charset=utf-8;' });
         const link = document.createElement('a');
         link.href = URL.createObjectURL(blob);
         link.download = $linkFileName.replace(/\.(.*?)$/,'_deces_INSEE.$1');
@@ -86,14 +105,11 @@
         $linkCompleted = true;
     }
 
-    const toCsv = () => {
-        return [$linkResults.header.join(sep) + '\r\n',
-            ...$linkResults.rows.map(row => $linkResults.header.map((col, i) => {
-                if (col === 'check') {
-                    if (row[i] === 'check') {return '';}
-                }
-                return row[i];
-            }).join(sep) + '\r\n')];
+    const toCsv = (filter) => {
+        return [
+            $linkResults.header.map(h => protectField(h)).join($linkCsvType.sep) + '\r\n',
+            ...$linkResults.rows.filter(row => !filter || row[$linkResults.header.indexOf('score')])
+                .map(row => $linkResults.header.map((col, i) => protectField(row[i])).join($linkCsvType.sep) + '\r\n')];
     }
 
 </script>

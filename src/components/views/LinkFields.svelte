@@ -6,21 +6,18 @@
 
 <script>
     import LinkField from './LinkField.svelte';
-    export let mapping = {}
-
-    let fields = [
-        { label: "nom", field: "lastName", mapTo: null},
-        { label: "prénom(s)", field: "firstName", mapTo: null},
-        { label: "sexe", field: "sex", mapTo: null},
-        { label: "date de naissance", field: "birthDate", mapTo: null},
-        { label: "commune de naissance", field: "birthCity", mapTo: null},
-        { label: "département de naissance", field: "birthDepartment", mapTo: null},
-        { label: "pays de naissance", field: "birthCountry", mapTo: null}
-    ]
+    export let mapping = {};
+    export let fields;
 
     $: if (fields) {
-        mapping={};
-        fields.filter(f => f.mapTo).map(f => mapping[f.mapTo]=f.field);
+        mapping={
+            direct: {},
+            reverse: {}
+        };
+        fields.filter(f => f.mapTo).map(f => {
+            mapping.direct[f.mapTo]=f.field;
+            mapping.reverse[f.field]=f.mapTo;
+        });
     };
 
 </script>

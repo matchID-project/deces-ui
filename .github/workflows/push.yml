@@ -32,7 +32,7 @@ jobs:
       - name: publish (if dev or master)
         if: success()
         run: |
-          if [[ ( "$GIT_BRANCH" == "dev" ) || ( "$GIT_BRANCH" == "master" ) ]]; then
+          if [[ ( "$GIT_BRANCH" == "dev" ) || ( "$GIT_BRANCH" == "master" ) || ( "$GIT_BRANCH" == "bulk" ) ]]; then
             make docker-push GIT_BRANCH=$GIT_BRANCH;
           fi
         env:
@@ -41,7 +41,7 @@ jobs:
       - name: deploy-key (if dev or master)
         if: success()
         run: |
-          if [[ ( "$GIT_BRANCH" == "dev" ) || ( "$GIT_BRANCH" == "master" ) ]]; then
+          if [[ ( "$GIT_BRANCH" == "dev" ) || ( "$GIT_BRANCH" == "master" ) || ( "$GIT_BRANCH" == "bulk" ) ]]; then
             mkdir -p ~/.ssh/;
             ssh-agent -a $SSH_AUTH_SOCK > /dev/null;
             echo "$SSHENC" | base64 -d | gpg -d --passphrase $SSHPWD --batch > /tmp/id_rsa_matchID;
@@ -69,15 +69,22 @@ jobs:
           if [[ ( "$GIT_BRANCH" == "master" ) ]]; then
             make deploy-remote ES_MEM=$ES_MEM_MASTER SCW_FLAVOR=$SCW_FLAVOR_MASTER GIT_BACKEND_BRANCH=master GIT_BRANCH=$GIT_BRANCH NGINX_USER=$NGINX_USER NGINX_HOST=$NGINX_HOST remote_http_proxy=$remote_http_proxy remote_https_proxy=$remote_https_proxy remote_no_proxy=$remote_no_proxy NQ_TOKEN=$NQ_TOKEN_MASTER GOOGLE_ANALYTICS_ID=$GOOGLE_ANALYTICS_ID;
           fi;
+          if [[ ( "$GIT_BRANCH" == "bulk" ) ]]; then
+            make deploy-remote ES_MEM=$ES_MEM_BULK SCW_FLAVOR=$SCW_FLAVOR_BULK GIT_BACKEND_BRANCH=master GIT_BRANCH=$GIT_BRANCH NGINX_USER=$NGINX_USER NGINX_HOST=$NGINX_HOST remote_http_proxy=$remote_http_proxy remote_https_proxy=$remote_https_proxy remote_no_proxy=$remote_no_proxy NQ_TOKEN=$NQ_TOKEN_BULK GOOGLE_ANALYTICS_ID=$GOOGLE_ANALYTICS_ID;
+          fi;
+
         env:
           FILES_TO_PROCESS_DEV: deces-2020-m[0-1][0-9].txt.gz
           ES_MEM_MASTER: ${{ secrets.ES_MEM_MASTER }}
+          ES_MEM_BULK: ${{ secrets.ES_MEM_BULK }}
           SCW_FLAVOR_MASTER: ${{ secrets.SCW_FLAVOR_MASTER }}
+          SCW_FLAVOR_BULK: ${{ secrets.SCW_FLAVOR_BULK }}
           GOOGLE_ANALYTICS_ID: ${{ secrets.GOOGLE_ANALYTICS_ID }}
           NGINX_USER: ${{ secrets.NGINX_USER }}
           NGINX_HOST: ${{ secrets.NGINX_HOST }}
           NQ_TOKEN_DEV: ${{ secrets.NQ_TOKEN_DEV }}
           NQ_TOKEN_MASTER: ${{ secrets.NQ_TOKEN_MASTER }}
+          NQ_TOKEN_BULK: ${{ secrets.NQ_TOKEN_BULK }}
           GIT_BRANCH: ${{ steps.extract_branch.outputs.branch }}
           remote_http_proxy: ${{ secrets.remote_http_proxy }}
           remote_https_proxy: ${{ secrets.remote_https_proxy }}

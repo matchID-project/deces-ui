@@ -29,6 +29,7 @@ export default {
 			// you're right, you shouldn't be injecting this
 			// into a client script :)
 			__AB_THRESHOLD__: process.env.AB_THRESHOLD,
+			__API_MAX_BODY__: process.env.API_MAX_BODY,
 			__ES_PROXY_PATH__: process.env.ES_PROXY_PATH,
 			__ES_MAX_RESULTS__: process.env.ES_MAX_RESULTS,
 			__BACKEND_PROXY_PATH__: process.env.BACKEND_PROXY_PATH,

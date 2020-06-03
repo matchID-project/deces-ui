@@ -1,86 +1,96 @@
-<span class="is-size-6-7"><strong>filtre:</strong> <input bind:value={subFilter}/></span>
-{#if $linkResults && $linkSourceHeader && displayRows.length}
-    <table class="table is-narrow is-size-6-7">
-        <tr>
-            {#each $linkSourceHeader as col}
-                <th>
-                    {col}
-                    {#if $linkMapping[col]}
-                    *
-                    {/if}
-                </th>
-            {/each}
-            <th>
-            confiance
-            </th>
-            <th>
-            validation
-            </th>
-        </tr>
-        {#each displayRows.slice((page-1)*page,page*pageSize) as row, rowNumber}
-            <tr
-                on:click={() => {rowSelect = row.slice(-1)[0]}}
-                class:is-striped={rowNumber%2}
-                class:has-text-grey-light={rowSelect !== row.slice(-1)[0]}
-            >
-                {#each row as col, index}
-                    {#if (index < $linkSourceHeader.length)}
-                        <td
-                            title={col}
-                        >
-                            {#if ($linkMapping[$linkSourceHeader[index]])}
+{#if (header && filteredRows && size)}
+    <div style="width: 100%">
+        <p>
+        <strong>{filteredRows.length} identités {actionTitle || ''} :</strong>
+        </p>
+        <div class="columns header-margin">
+            <div class="column is-4"></div>
+            <div class="column is-4">
+                <span class="is-size-6-7">
+                    <strong>filtre:</strong>
+                    <input bind:value={subFilter}/>
+                </span>
+            </div>
+            <div class="column is-4 has-text-right">
+                afficher les colonnes non appariées
+                <input type="checkbox" bind:checked={displayUnmappedColumns}/>
+            </div>
+        </div>
+        {#if subFilteredRows.length}
+            <table class="table is-narrow is-size-6-7">
+                <tr>
+                    {#each header as col, index}
+                        {#if displayUnmappedColumns || (index < mappedColumns+2)}
+                            <th class:is-active={($linkMapping.direct[col] || ['score', 'check'].includes(col))}>
+                                {col}
+                            </th>
+                        {/if}
+                    {/each}
+                </tr>
+                {#each filteredRows.slice((page-1)*page,page*pageSize) as row, rowNumber}
+                    <tr
+                        on:click={() => {rowSelect = row.slice(-1)[0]}}
+                        class:is-striped={rowNumber%2}
+                        class:has-text-grey-light={rowSelect !== row.slice(-1)[0]}
+                    >
+                        {#each header.filter((h,index) => index < mappedColumns).map(h => row[$linkResults.header.indexOf(h)]) as col, index}
+                            <td title={col}>
                                 {@html coloredDiff([
                                     col,
-                                    $linkMapping[$linkSourceHeader[index]] === 'birthDate'
-                                        ? dateFormat( row[$linkResults.header.indexOf(headerMapping[$linkMapping[$linkSourceHeader[index]]])])
-                                        : row[$linkResults.header.indexOf(headerMapping[$linkMapping[$linkSourceHeader[index]]])]
+                                    $linkMapping.direct[header[index]] === 'birthDate'
+                                        ? dateFormat( row[$linkResults.header.indexOf(headerMapping[$linkMapping.direct[header[index]]])])
+                                        : row[$linkResults.header.indexOf(headerMapping[$linkMapping.direct[header[index]]])]
                                 ])}
-                            {:else}
-                                {col}
-                            {/if}
-
+                            </td>
+                        {/each}
+                        <td class="hcenter">
+                            {Math.round(get(row,'score')*100)}%
                         </td>
-                    {/if}
+                        <td class="hcenter has-text-grey-light">
+                            <span
+                                class:has-text-danger={row[$linkResults.header.indexOf('check')].valid === false}
+                                class:is-hidden={(row.slice(-1)[0] !== rowSelect) && (row[$linkResults.header.indexOf('check')].valid !== false)}
+                                on:click={() => {row[$linkResults.header.indexOf('check')].valid = check(row, false);}}
+                            >
+                                <FontAwesomeIcon icon={faWindowClose} class="is-lower"/>
+                            </span>
+                            {#if row.slice(-1)[0] === rowSelect}
+                                &nbsp;
+                            {/if}
+                            <span
+                                class:has-text-info={row[$linkResults.header.indexOf('check')].valid === true}
+                                class:is-hidden={(row.slice(-1)[0] !== rowSelect) && (row[$linkResults.header.indexOf('check')].valid !== true)}
+                                on:click={() => {row[$linkResults.header.indexOf('check')].valid = check(row, true);}}
+                            >
+                                    <FontAwesomeIcon icon={faCheck} class="is-lower"/>
+                            </span>
+                        </td>
+                        {#if displayUnmappedColumns}
+                            {#each header.filter((h,index) => index >= (mappedColumns+2)).map(h => row[$linkResults.header.indexOf(h)]) as col, index}
+                                <td title={col}>
+                                    {col}
+                                </td>
+                            {/each}
+                        {/if}
+                    </tr>
                 {/each}
-                <td class="hcenter">
-                    {Math.round(get(row,'score')*100)}%
-                </td>
-                <td
-                    class="hcenter has-text-grey-light"
-                >
-                    <span
-                        class:has-text-danger={row[$linkResults.header.indexOf('check')].valid === false}
-                        class:is-hidden={(row.slice(-1)[0] !== rowSelect) && (row[$linkResults.header.indexOf('check')].valid !== false)}
-                        on:click={() => {row[$linkResults.header.indexOf('check')].valid = check(row, false);}}
-                    >
-                        <FontAwesomeIcon icon={faWindowClose} class="is-lower"/>
-                    </span>
-                    {#if row.slice(-1)[0] === rowSelect}
-                        &nbsp;
-                    {/if}
-                    <span
-                        class:has-text-info={row[$linkResults.header.indexOf('check')].valid === true}
-                        class:is-hidden={(row.slice(-1)[0] !== rowSelect) && (row[$linkResults.header.indexOf('check')].valid !== true)}
-                        on:click={() => {row[$linkResults.header.indexOf('check')].valid = check(row, true);}}
-                    >
-                            <FontAwesomeIcon icon={faCheck} class="is-lower"/>
-                    </span>
-                </td>
-            </tr>
-        {/each}
-        {#if displayRows.length > pageSize}
-            <tr>
-            {#each $linkSourceHeader as col}
-                <td>...</td>
-            {/each}
-                <td>...</td><td>...</td>
-            </tr>
+                {#if filteredRows.length > pageSize}
+                    <tr>
+                        {#each header as col, index}
+                            {#if displayUnmappedColumns || (index < mappedColumns+2)}
+                                <td>
+                                    ...
+                                </td>
+                            {/if}
+                        {/each}
+                    </tr>
+                {/if}
+            </table>
+        {:else if subFilter}
+            <p>attention, le filtre <strong>{subFilter}</strong> est trop restrictif </p>
         {/if}
-    </table>
-{:else if subFilter}
-    <p>attention, le filtre <strong>{subFilter}</strong> est trop restrictif </p>
+    </div>
 {/if}
-
 <script>
     import { linkResults, resultsPerPage, linkStep, linkSourceHeader, linkMapping } from '../tools/stores.js';
     import FontAwesomeIcon from './FontAwesomeIcon.svelte';
@@ -90,41 +100,69 @@
     } from '@fortawesome/free-solid-svg-icons';
     import jsdiff from 'diff';
 
-
+    export let actionTitle;
     export let page = 1;
     export let pageSize=5;
     export let filter;
     export let subFilter='';
     export let sort = 'scoreDesc';
     export let master;
+    export let size;
+    let header;
+    let mappedColumns;
+    let displayUnmappedColumns = false;
+
     const sorts = {
         scoreDesc: (a, b) => get(a,'score') > get(b,'score') ? -1 : ( get(a,'score') < get(b,'score') ? 1 : 0 ),
         scoreAsc: (a, b) => get(a,'score') > get(b,'score') ? 1 : ( get(a,'score') < get(b,'score') ? -1 : 0 )
     }
-    let displayRows;
+    let filteredRows;
+    let subFilteredRows;
     export let rowSelect;
     const headerMapping = {
-        firstName: 'name first',
-        lastName: 'name last',
-        birthDate: 'birth date',
-        birthCity: 'birth city',
-        birthDepartment: 'birth departmentCode',
-        birthCountry: 'birth country'
+        firstName: 'name.first',
+        lastName: 'name.last',
+        birthDate: 'birth.date',
+        birthCity: 'birth.city',
+        birthDepartment: 'birth.departmentCode',
+        birthCountry: 'birth.country'
     };
 
     $: if ($linkResults || ($linkResults && subFilter)) {
-        displayRows = $linkResults.rows.map((r, index) => {
+        header = [
+            ...$linkSourceHeader.map(h => ($linkMapping.direct && $linkMapping.direct[h]) && h)
+                .filter(x => x),
+            'score',
+            'check',
+            ...$linkSourceHeader.map(h => !($linkMapping.direct && $linkMapping.direct[h]) && h)
+                .filter(x => x)
+        ];
+        mappedColumns = $linkSourceHeader.filter(h => ($linkMapping.direct && $linkMapping.direct[h])).length;
+        filteredRows = $linkResults.rows.map((r, index) => {
                 const row = r.slice(0);
                 row.push(index);
                 return row;
             })
             .filter(row => applyFilter(row, filter))
-            .filter(row => (new RegExp(subFilter,'i')).test(JSON.stringify(row)))
-            .sort(sorts[sort]);
-        if (master && !rowSelect) {
-            rowSelect = displayRows[0].slice(-1)[0];
+            .sort(sorts[sort])
+        if (master) {
+            if (!rowSelect) {
+                if (filteredRows && filteredRows.length) {
+                    rowSelect = filteredRows[0].slice(-1)[0];
+                } else {
+                    rowSelect = -1;
+                }
+            }
+        } else {
+            if (filteredRows && filteredRows.length && (rowSelect === -1)) {
+                rowSelect = filteredRows[0].slice(-1)[0];
+            }
         }
     }
+
+    $: subFilteredRows = filteredRows.filter(row => (new RegExp(subFilter,'i')).test(JSON.stringify(row)));
+
+    $: size = filteredRows && filteredRows.length || 0;
 
     const get = (row, col) => {
         return row[$linkResults.header.indexOf(col)];
@@ -211,6 +249,10 @@
 
   .is-striped {
     background-color: #fafafa;
+  }
+
+  .has-text-right {
+      text-align: right!important;
   }
 
 </style>
