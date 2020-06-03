@@ -14,7 +14,6 @@
             <progress class="progress is-info" value={$progressBarJob}/>
         {/if}
     </div>
-
 </div>
 <script>
     import { onMount } from 'svelte';
@@ -66,7 +65,7 @@
         progressUpload = 0;
         let formData = new FormData();
         formData.append('sep', $linkCsvType.sep);
-        Object.keys($linkMapping).map(k => formData.append($linkMapping[k], k));
+        Object.keys($linkMapping && $linkMapping.reverse).map(k => formData.append(k,$linkMapping.reverse[k]));
         formData.append('csv', $linkFile);
         const res = await axios.post('__BACKEND_PROXY_PATH__/search/csv', formData, axiosUploadConfig);
         if(res.status == 200){

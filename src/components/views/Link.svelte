@@ -76,8 +76,8 @@
 
     $: if ($linkFileName) { steps[0].label = $linkFileName };
 
-    $: if (Object.keys($linkMapping).length >= $linkMinFields) {
-        steps[1].label = `colonnes: ${Object.keys($linkMapping).map(k => $linkMapping[k]).join(', ')}`;
+    $: if (Object.keys(($linkMapping && $linkMapping.direct) ? $linkMapping.direct : {}).length >= $linkMinFields) {
+        steps[1].label = `colonnes: ${Object.keys($linkMapping.direct).join(', ')}`;
     }
 
     $: if ($linkJob) {
