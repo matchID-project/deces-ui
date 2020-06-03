@@ -97,12 +97,33 @@
         }
     }
 
+    const protect = (sep) => {
+        return sep === '|' ? '\|' : sep;
+    }
+
     const parseLinkResults = (data) => {
+        const q = $linkCsvType.quote || '"';
+        const sep = $linkCsvType.sep;
+        const re = new RegExp(`^(${q}([^${q}]*?)${q}|([^${protect(sep)}]*))(\\${protect(sep)}(.*))?$`);
+
         const rows = data.split(/\s*\r?\n\s*/).map(r => {
-            const row = r.split($linkCsvType.sep);
+            const row = [];
+            let i = 0;
+            while(r && r.length) {
+                i += 1;
+                const m = r.match(re);
+                if (m) {
+                    row.push(m[2] ? m[2] : m[3]);
+                    r = m[5];
+                } else {
+                    r = '';
+                }
+            }
             row.push('check');
+            console.log(row);
             return row
         });
+
         const header = rows.shift();
         const headerMapping = {};
         header.map((h,i) => headerMapping[h] = i);
