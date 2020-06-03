@@ -78,6 +78,24 @@
         $linkCompleted = false;
     }
 
+    const protect = (sep) => {
+        return sep === '|' ? '\|' : sep;
+    }
+
+    const protectField = (field) => {
+        if (typeof(field) === 'string') {
+            if (/^0\d+$/.test(field) || field.includes($linkCsvType.sep)) {
+                const q = $linkCsvType.quote || '"'
+                const re = new RegExp(`${q}`,'g');
+                return `${q}${field.replace(re, `${q}${q}`)}${q}`
+            } else {
+                return field
+            }
+        } else {
+            return protectField(JSON.stringify(field));
+        }
+    }
+
     const download = (filter) => {
         const blob = new Blob(toCsv(filter), { type: 'text/csv; charset=utf-8;' });
         const link = document.createElement('a');
@@ -89,9 +107,9 @@
 
     const toCsv = (filter) => {
         return [
-            $linkResults.header.map(h => JSON.stringify(h)).join($linkCsvType.sep) + '\r\n',
+            $linkResults.header.map(h => protectField(h)).join($linkCsvType.sep) + '\r\n',
             ...$linkResults.rows.filter(row => !filter || row[$linkResults.header.indexOf('score')])
-                .map(row => $linkResults.header.map((col, i) => JSON.stringify(row[i])).join($linkCsvType.sep) + '\r\n')];
+                .map(row => $linkResults.header.map((col, i) => protectField(row[i])).join($linkCsvType.sep) + '\r\n')];
     }
 
 </script>

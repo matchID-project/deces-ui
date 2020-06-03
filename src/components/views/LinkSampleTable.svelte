@@ -66,21 +66,26 @@
     const guessQuote = (csv, sep) => {
         let rows
         potentialQuotes.map(q => {
-            const re = new RegExp(`^(${q}([^${q}]*?)${q}|([^${protect(sep)}]*))(\\${protect(sep)}(.*))?$`);
+            const re = new RegExp(`^(${q}(([^${q}]|${q}${q})*?)${q}|([^${protect(sep)}]*))(\\${protect(sep)}(.*))?$`);
+            const re2 = new RegExp(`${q}${q}`,'g');
             const quoteCounts = [0, 0];
             rows = csv.split(/\s*\r?\n\s*/).map(r => {
                 const row = [];
                 let i = 0;
-                while(r && r.length) {
+                while(r !== undefined) {
                     i += 1;
                     const m = r.match(re);
                     if (m) {
-                        row.push(m[2] ? m[2] : m[3]);
+                        row.push(m[2] ? m[2].replace(re2, `${q}`) : m[4]);
                         if (m[2]) { quoteCounts[0] += 1}
-                        if (m[3]) { quoteCounts[1] += 1}
-                        r = m[5];
+                        if (m[4]) { quoteCounts[1] += 1}
+                        r = m[6];
                     } else {
-                        r = '';
+                        if (r === '') {
+                            row.push('');
+                        } else {
+                            r = undefined;
+                        }
                     }
                 };
                 return row.map(col => col || '<vide>');

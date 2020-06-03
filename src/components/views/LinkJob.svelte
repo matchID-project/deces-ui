@@ -104,23 +104,25 @@
     const parseLinkResults = (data) => {
         const q = $linkCsvType.quote || '"';
         const sep = $linkCsvType.sep;
-        const re = new RegExp(`^(${q}([^${q}]*?)${q}|([^${protect(sep)}]*))(\\${protect(sep)}(.*))?$`);
-
+        const re = new RegExp(`^(${q}(([^${q}]|${q}${q})*?)${q}|([^${protect(sep)}]*))(\\${protect(sep)}(.*))?$`);
+        const re2 = new RegExp(`${q}${q}`,'g');
         const rows = data.split(/\s*\r?\n\s*/).map(r => {
             const row = [];
             let i = 0;
-            while(r && r.length) {
+            while(r !== undefined) {
                 i += 1;
                 const m = r.match(re);
                 if (m) {
-                    row.push(m[2] ? m[2] : m[3]);
-                    r = m[5];
+                    row.push(m[2] ? m[2].replace(re2, `${q}`) : m[4]);
+                    r = m[6];
                 } else {
-                    r = '';
+                    if (r === '') {
+                        row.push('');
+                    }
+                    r = undefined;
                 }
             }
             row.push('check');
-            console.log(row);
             return row
         });
 
