@@ -6,18 +6,22 @@
         on:dragleave={() => hovering = false}
         class:hovering={(hovering === true) || $linkFile}
         class="dropzone"
+        class:error={error}
     >
         <div class="vcenter">
             {#if $linkFile}
                 <span>étape {step}</span> &nbsp;
                 <span>
-                    <FontAwesomeIcon icon={faCheck} class="is-low"/>
+                    <FontAwesomeIcon
+                        icon={error ? faExclamationTriangle : faCheck}
+                        class="is-low"
+                    />
                 </span>
                 <br/>
-                {$linkFile.name}
+                {label}
             {:else}
                 <span>étape {step}</span><br/>
-                <span>{label}</span>
+                <span>{@html label}</span>
             {/if}
         </div>
     </div>
@@ -25,11 +29,10 @@
 <script>
     import { linkFile, linkStep } from '../tools/stores.js';
     import FontAwesomeIcon from './FontAwesomeIcon.svelte';
-    import { faCheck } from '@fortawesome/free-solid-svg-icons';
+    import { faCheck, faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
     export let label;
     export let step;
-
-    $: if ($linkFile) { $linkStep+=1; };
+    export let error;
 
     let hovering = false;
 	export function dropTop (events) {
@@ -85,6 +88,10 @@
 
     .has-text-left {
         text-align: left!important;
+    }
+
+    .error {
+        background-color:#e2011c;
     }
 
 </style>

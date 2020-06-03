@@ -29,9 +29,9 @@
             {#each steps as step, i}
                 <div class="column is-3">
                     {#if ((i+1) === $linkStep) && step.hero}
-                        <svelte:component this={step.hero} step={i+1} label={step.label}/>
+                        <svelte:component this={step.hero} step={i+1} label={step.label} error={step.error}/>
                     {:else}
-                        <LinkStep step={i+1} label={step.label}/>
+                        <LinkStep step={i+1} label={step.label} error={step.error}/>
                     {/if}
                 </div>
             {/each}
@@ -47,7 +47,7 @@
 
 <script>
     import { onMount } from 'svelte';
-    import { linkStep, linkFile, linkFileName, linkMapping,
+    import { linkStep, linkFile, linkFileName, linkFileSizeLimit, linkMapping,
         linkSourceHeader, linkMinFields, linkJob,
         linkResults, linkCsvType
     } from '../tools/stores.js';
@@ -63,7 +63,16 @@
     import LinkCheck from './LinkCheck.svelte';
     import { useLocalStorage } from '../tools/useLocalStorage.js';
 
-    $: if ($linkFile) { $linkFileName = $linkFile.name ; };
+    $: if ($linkFile) {
+        if ($linkFile.size <= $linkFileSizeLimit ) {
+            $linkFileName = $linkFile.name ;
+            steps[0].error = false;
+            $linkStep+=1;
+        } else {
+            steps[0].label = `${$linkFile.name }: volume > ${Math.round($linkFileSizeLimit / 1000**2)}Mo`
+            steps[0].error = true
+        }
+    };
 
     $: if ($linkFileName) { steps[0].label = $linkFileName };
 
@@ -87,11 +96,16 @@
         steps[3].label = `${cLinks}/${sLinks} identifications validées`;
     }
 
+    const step0Label = `glissez un fichier ici <br/> (${Math.round($linkFileSizeLimit / 1000**2)}Mo maximum)`;
+    const step1Label = "choisissez les colonnes à apparier";
+    const step2Label="lancez le traitement";
+    const step3Label="vérifiez les identifications";
+
     const steps = [
-        { label: "glissez un fichier ici", hero: LinkFile},
-        { label: "choisissez les colonnes à apparier", body: LinkConfigure},
-        { label: "lancez le traitement", body: LinkJob },
-        { label: "vérifiez les identifications", body: LinkCheck }
+        { label: step0Label, hero: LinkFile},
+        { label: step1Label, body: LinkConfigure},
+        { label: step2Label, body: LinkJob },
+        { label: step3Label, body: LinkCheck }
     ];
 
     const reset = () => {
@@ -104,10 +118,10 @@
         $linkSourceHeader = null;
         $linkFileName = null;
         $linkMapping = {};
-        steps[0].label="glissez un fichier ici";
-        steps[1].label="choisissez les colonnes à apparier";
-        steps[2].label="lancez le traitement";
-        steps[3].label="vérifiez les identifications";
+        steps[0].label = step0Label;
+        steps[1].label = step1Label;
+        steps[2].label = step2Label;
+        steps[3].label = step3Label;
     }
 
     onMount(() => {
