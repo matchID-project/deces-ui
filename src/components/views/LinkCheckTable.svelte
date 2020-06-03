@@ -3,15 +3,25 @@
         <p>
         <strong>{filteredRows.length} identités {actionTitle || ''} :</strong>
         </p>
-        <p>
-            <span class="is-size-6-7"><strong>filtre:</strong> <input bind:value={subFilter}/></span>
-        </p>
+        <div class="columns header-margin">
+            <div class="column is-4"></div>
+            <div class="column is-4">
+                <span class="is-size-6-7">
+                    <strong>filtre:</strong>
+                    <input bind:value={subFilter}/>
+                </span>
+            </div>
+            <div class="column is-4 has-text-right">
+                afficher les colonnes non appariées
+                <input type="checkbox" bind:checked={displayUnmappedColumns}/>
+            </div>
+        </div>
         {#if subFilteredRows.length}
             <table class="table is-narrow is-size-6-7">
                 <tr>
                     {#each header as col, index}
                         {#if displayUnmappedColumns || (index < mappedColumns+2)}
-                            <th class:is-active={displayUnmappedColumns && ($linkMapping.direct[col] || ['score', 'check'].includes(col))}>
+                            <th class:is-active={($linkMapping.direct[col] || ['score', 'check'].includes(col))}>
                                 {col}
                             </th>
                         {/if}
@@ -110,12 +120,12 @@
     let subFilteredRows;
     export let rowSelect;
     const headerMapping = {
-        firstName: 'name first',
-        lastName: 'name last',
-        birthDate: 'birth date',
-        birthCity: 'birth city',
-        birthDepartment: 'birth departmentCode',
-        birthCountry: 'birth country'
+        firstName: 'name.first',
+        lastName: 'name.last',
+        birthDate: 'birth.date',
+        birthCity: 'birth.city',
+        birthDepartment: 'birth.departmentCode',
+        birthCountry: 'birth.country'
     };
 
     $: if ($linkResults || ($linkResults && subFilter)) {
@@ -239,6 +249,10 @@
 
   .is-striped {
     background-color: #fafafa;
+  }
+
+  .has-text-right {
+      text-align: right!important;
   }
 
 </style>
