@@ -6,7 +6,7 @@
             <span class="is-size-7">(choisissez au minimum {$linkMinFields} champs à apparier)</span>
 
         </p>
-        <LinkFields bind:mapping={mapping}/>
+        <LinkFields bind:mapping={mapping} bind:fields={fields}/>
         <button
             type="button"
             class="button is-info"
@@ -20,7 +20,7 @@
             <span class="is-size-7">(glissez-collez une colonne du bas sur un champ au-dessus)</span>
         </p>
         <div class="wrap-table">
-            <LinkSampleTable/>
+            <LinkSampleTable bind:mapping={mapping} bind:fields={fields}/>
         </div>
     </div>
 </div>
@@ -29,6 +29,15 @@
     import LinkFields from './LinkFields.svelte';
     import LinkSampleTable from './LinkSampleTable.svelte';
     let mapping = {};
+    let fields = [
+        { label: "nom", field: "lastName", mapTo: null},
+        { label: "prénom(s)", field: "firstName", mapTo: null},
+        { label: "sexe", field: "sex", mapTo: null},
+        { label: "date de naissance", field: "birthDate", mapTo: null},
+        { label: "commune de naissance", field: "birthCity", mapTo: null},
+        { label: "département de naissance", field: "birthDepartment", mapTo: null},
+        { label: "pays de naissance", field: "birthCountry", mapTo: null}
+    ];
     let done = false;
 
     $: if (done) {$linkStep = 3};
