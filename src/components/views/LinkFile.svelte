@@ -7,6 +7,7 @@
         class:hovering={(hovering === true) || $linkFile}
         class="dropzone"
         class:error={error}
+        on:click|preventDefault={chooseFile}
     >
         <div class="vcenter">
             {#if $linkFile}
@@ -57,7 +58,17 @@
             }
         }
 		hovering = null;
-	};
+    };
+
+    const chooseFile = () => {
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.onchange = ev => {
+            $linkFile = ev.target.files[0];
+        }
+        input.click();
+    }
+
 </script>
 
 <style>
