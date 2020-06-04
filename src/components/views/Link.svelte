@@ -49,7 +49,7 @@
     import { onMount } from 'svelte';
     import { linkStep, linkFile, linkFileName, linkFileSizeLimit, linkMapping,
         linkSourceHeader, linkMinFields, linkJob,
-        linkResults, linkCsvType
+        linkResults, linkCsvType, linkCompleted
     } from '../tools/stores.js';
     import FontAwesomeIcon from './FontAwesomeIcon.svelte';
    import {
@@ -67,7 +67,7 @@
         if ($linkFile.size <= $linkFileSizeLimit ) {
             $linkFileName = $linkFile.name ;
             steps[0].error = false;
-            $linkStep+=1;
+            $linkStep=2;
         } else {
             steps[0].label = `${$linkFile.name }: volume > ${Math.round($linkFileSizeLimit / 1000**2)}Mo`
             steps[0].error = true
@@ -82,7 +82,7 @@
 
     $: if ($linkJob) {
         $linkStep = 3;
-        steps[2].label = `job: ${$linkJob.substring(0,8)}... en cours`
+        steps[2].label = `traitement en cours <br/> ${$linkJob.substring(0,32)}...`
     };
 
     $: if ($linkResults) {
@@ -117,6 +117,7 @@
         $linkJob = null;
         $linkSourceHeader = null;
         $linkFileName = null;
+        $linkCompleted = false;
         $linkMapping = {};
         steps[0].label = step0Label;
         steps[1].label = step1Label;
