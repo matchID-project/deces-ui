@@ -18,10 +18,10 @@
                     />
                 </span>
                 <br/>
-                {label}
+                <span class="is-size-6-7">{@html label}</span>
             {:else}
                 <span>étape {step}</span><br/>
-                <span>{@html label}</span>
+                <span class="is-size-6-7">{@html label}</span>
             {/if}
         </div>
     </div>

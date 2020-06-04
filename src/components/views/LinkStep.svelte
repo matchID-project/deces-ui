@@ -17,7 +17,7 @@
                 </span>
             {/if}
             <br/>
-            <span>{@html label}</span>
+            <span class="is-size-6-7">{@html label}</span>
 
         </div>
     </div>
