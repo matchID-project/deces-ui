@@ -62,7 +62,7 @@ export API_PATH = deces
 export DC_NETWORK := $(shell echo ${APP} | tr '[:upper:]' '[:lower:]')
 export DC_BUILD_ARGS = --pull --no-cache
 
-export DC := /usr/local/bin/docker-compose
+export DC := docker-compose
 export GIT_ORIGIN=origin
 export GIT_BRANCH := $(shell git branch | grep '*' | awk '{print $$2}')
 export GIT_BRANCH_MASTER=master
