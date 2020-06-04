@@ -67,7 +67,7 @@
         if ($linkFile.size <= $linkFileSizeLimit ) {
             $linkFileName = $linkFile.name ;
             steps[0].error = false;
-            $linkStep+=1;
+            $linkStep=2;
         } else {
             steps[0].label = `${$linkFile.name }: volume > ${Math.round($linkFileSizeLimit / 1000**2)}Mo`
             steps[0].error = true
