@@ -3,17 +3,21 @@
         class="step"
         class:inactive={step > $linkStep}
         class:done={ (step < $linkStep) || $linkCompleted }
+        class:error={error}
     >
         <div class="vcenter">
             <span>étape {step}</span>
             {#if ($linkStep > step) || ($linkCompleted)}
                 &nbsp;
                 <span>
-                    <FontAwesomeIcon icon={faCheck}/>
+                    <FontAwesomeIcon
+                        icon={error ? faExclamationTriangle : faCheck}
+                        class="is-low"
+                    />
                 </span>
             {/if}
             <br/>
-            <span>{label}</span>
+            <span class="is-size-6-7">{@html label}</span>
 
         </div>
     </div>
@@ -21,10 +25,11 @@
 <script>
     import { linkStep, linkCompleted } from '../tools/stores.js';
     import FontAwesomeIcon from './FontAwesomeIcon.svelte';
-    import { faCheck } from '@fortawesome/free-solid-svg-icons';
+    import { faCheck, faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
 
     export let step;
     export let label;
+    export let error;
 </script>
 
 <style>
@@ -42,6 +47,10 @@
 
     .done {
         background-color:#209cee;
+    }
+
+    .error {
+        background-color:#e2011c;
     }
 
     .vcenter {

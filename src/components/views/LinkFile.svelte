@@ -6,18 +6,23 @@
         on:dragleave={() => hovering = false}
         class:hovering={(hovering === true) || $linkFile}
         class="dropzone"
+        class:error={error}
+        on:click|preventDefault={chooseFile}
     >
         <div class="vcenter">
             {#if $linkFile}
                 <span>étape {step}</span> &nbsp;
                 <span>
-                    <FontAwesomeIcon icon={faCheck} class="is-low"/>
+                    <FontAwesomeIcon
+                        icon={error ? faExclamationTriangle : faCheck}
+                        class="is-low"
+                    />
                 </span>
                 <br/>
-                {$linkFile.name}
+                <span class="is-size-6-7">{@html label}</span>
             {:else}
                 <span>étape {step}</span><br/>
-                <span>{label}</span>
+                <span class="is-size-6-7">{@html label}</span>
             {/if}
         </div>
     </div>
@@ -25,11 +30,10 @@
 <script>
     import { linkFile, linkStep } from '../tools/stores.js';
     import FontAwesomeIcon from './FontAwesomeIcon.svelte';
-    import { faCheck } from '@fortawesome/free-solid-svg-icons';
+    import { faCheck, faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
     export let label;
     export let step;
-
-    $: if ($linkFile) { $linkStep+=1; };
+    export let error;
 
     let hovering = false;
 	export function dropTop (events) {
@@ -54,7 +58,17 @@
             }
         }
 		hovering = null;
-	};
+    };
+
+    const chooseFile = () => {
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.onchange = ev => {
+            $linkFile = ev.target.files[0];
+        }
+        input.click();
+    }
+
 </script>
 
 <style>
@@ -85,6 +99,10 @@
 
     .has-text-left {
         text-align: left!important;
+    }
+
+    .error {
+        background-color:#e2011c;
     }
 
 </style>

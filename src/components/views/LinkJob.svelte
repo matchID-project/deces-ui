@@ -14,7 +14,6 @@
             <progress class="progress is-info" value={$progressBarJob}/>
         {/if}
     </div>
-
 </div>
 <script>
     import { onMount } from 'svelte';
@@ -66,7 +65,7 @@
         progressUpload = 0;
         let formData = new FormData();
         formData.append('sep', $linkCsvType.sep);
-        Object.keys($linkMapping).map(k => formData.append($linkMapping[k], k));
+        Object.keys($linkMapping && $linkMapping.reverse).map(k => formData.append(k,$linkMapping.reverse[k]));
         formData.append('csv', $linkFile);
         const res = await axios.post('__BACKEND_PROXY_PATH__/search/csv', formData, axiosUploadConfig);
         if(res.status == 200){
@@ -98,12 +97,35 @@
         }
     }
 
+    const protect = (sep) => {
+        return sep === '|' ? '\|' : sep;
+    }
+
     const parseLinkResults = (data) => {
+        const q = $linkCsvType.quote || '"';
+        const sep = $linkCsvType.sep;
+        const re = new RegExp(`^(${q}(([^${q}]|${q}${q})*?)${q}|([^${protect(sep)}]*))(\\${protect(sep)}(.*))?$`);
+        const re2 = new RegExp(`${q}${q}`,'g');
         const rows = data.split(/\s*\r?\n\s*/).map(r => {
-            const row = r.split($linkCsvType.sep);
+            const row = [];
+            let i = 0;
+            while(r !== undefined) {
+                i += 1;
+                const m = r.match(re);
+                if (m) {
+                    row.push(m[2] ? m[2].replace(re2, `${q}`) : m[4]);
+                    r = m[6];
+                } else {
+                    if (r === '') {
+                        row.push('');
+                    }
+                    r = undefined;
+                }
+            }
             row.push('check');
             return row
         });
+
         const header = rows.shift();
         const headerMapping = {};
         header.map((h,i) => headerMapping[h] = i);

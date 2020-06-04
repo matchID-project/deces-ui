@@ -79,6 +79,10 @@ html.has-navbar-fixed-top {
 	background-color: #fafafa;
 }
 
+th.is-active {
+  background-color: #003189;
+  color: #fff;
+}
 
 /* required styles */
 
