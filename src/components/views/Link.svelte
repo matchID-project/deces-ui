@@ -82,7 +82,7 @@
 
     $: if ($linkJob) {
         $linkStep = 3;
-        steps[2].label = `job: ${$linkJob.substring(0,8)}... en cours`
+        steps[2].label = `traitement en cours <br/> ${$linkJob.substring(0,32)}...`
     };
 
     $: if ($linkResults) {
