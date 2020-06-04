@@ -49,7 +49,7 @@
     import { onMount } from 'svelte';
     import { linkStep, linkFile, linkFileName, linkFileSizeLimit, linkMapping,
         linkSourceHeader, linkMinFields, linkJob,
-        linkResults, linkCsvType
+        linkResults, linkCsvType, linkCompleted
     } from '../tools/stores.js';
     import FontAwesomeIcon from './FontAwesomeIcon.svelte';
    import {
@@ -117,6 +117,7 @@
         $linkJob = null;
         $linkSourceHeader = null;
         $linkFileName = null;
+        $linkCompleted = false;
         $linkMapping = {};
         steps[0].label = step0Label;
         steps[1].label = step1Label;
