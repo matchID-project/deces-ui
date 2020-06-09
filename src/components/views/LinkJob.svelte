@@ -23,7 +23,9 @@
     let estimator;
 
     import { linkMapping, linkFile, linkJob, linkStep,
-    linkResults, linkCsvType, linkAutoCheckThreshold } from '../tools/stores.js';
+        linkResults, linkCsvType, linkAutoCheckThreshold,
+        linkValidations
+    } from '../tools/stores.js';
     let progressUpload = 0;
     let progressJob = 0;
     let jobPredictor = null;
@@ -122,24 +124,20 @@
                     r = undefined;
                 }
             }
-            row.push('check');
             return row
         });
 
         const header = rows.shift();
         const headerMapping = {};
         header.map((h,i) => headerMapping[h] = i);
+        linkValidations.update(v => {
+            return rows.map(r => (r[headerMapping['score']] >= $linkAutoCheckThreshold) ?
+                        { valid: true, checked: "auto" } : { checked: false })
+        });
         linkResults.update(v => {
             return {
                 header: header,
-                rows: rows.map(r => {
-                    if (r[headerMapping['score']] >= $linkAutoCheckThreshold) {
-                        r[headerMapping['check']] =  { valid: true, checked: "auto" };
-                    } else {
-                        r[headerMapping['check']] = { checked: false }
-                    }
-                    return r;
-                })
+                rows: rows
             };
         });
         $linkStep = 4;

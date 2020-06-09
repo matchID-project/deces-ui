@@ -9,7 +9,7 @@
         class:error={error}
         on:click|preventDefault={chooseFile}
     >
-        <div class="vcenter">
+        <div class="vcenter overflow-hidden">
             {#if $linkFile}
                 <span>étape {step}</span> &nbsp;
                 <span>
@@ -89,12 +89,18 @@
 
     .vcenter {
         margin: 0;
+        padding: 10px;
         position: absolute;
         top: 50%;
         left: 50%;
         -ms-transform: translate(-50%,-50%);
         transform: translate(-50%, -50%);
         width: 100%;
+    }
+
+    .overflow-hidden {
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     .has-text-left {

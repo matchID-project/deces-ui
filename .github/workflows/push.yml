@@ -70,7 +70,7 @@ jobs:
             make deploy-remote ES_MEM=$ES_MEM_MASTER SCW_FLAVOR=$SCW_FLAVOR_MASTER GIT_BACKEND_BRANCH=master GIT_BRANCH=$GIT_BRANCH NGINX_USER=$NGINX_USER NGINX_HOST=$NGINX_HOST remote_http_proxy=$remote_http_proxy remote_https_proxy=$remote_https_proxy remote_no_proxy=$remote_no_proxy NQ_TOKEN=$NQ_TOKEN_MASTER GOOGLE_ANALYTICS_ID=$GOOGLE_ANALYTICS_ID;
           fi;
           if [[ ( "$GIT_BRANCH" == "bulk" ) ]]; then
-            make deploy-remote ES_MEM=$ES_MEM_BULK SCW_FLAVOR=$SCW_FLAVOR_BULK GIT_BACKEND_BRANCH=master GIT_BRANCH=$GIT_BRANCH NGINX_USER=$NGINX_USER NGINX_HOST=$NGINX_HOST remote_http_proxy=$remote_http_proxy remote_https_proxy=$remote_https_proxy remote_no_proxy=$remote_no_proxy NQ_TOKEN=$NQ_TOKEN_BULK GOOGLE_ANALYTICS_ID=$GOOGLE_ANALYTICS_ID;
+            make deploy-remote API_MAX_BODY=100m ES_MEM=$ES_MEM_BULK SCW_FLAVOR=$SCW_FLAVOR_BULK GIT_BACKEND_BRANCH=master GIT_BRANCH=$GIT_BRANCH NGINX_USER=$NGINX_USER NGINX_HOST=$NGINX_HOST remote_http_proxy=$remote_http_proxy remote_https_proxy=$remote_https_proxy remote_no_proxy=$remote_no_proxy NQ_TOKEN=$NQ_TOKEN_BULK GOOGLE_ANALYTICS_ID=$GOOGLE_ANALYTICS_ID;
           fi;
 
         env:
