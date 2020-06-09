@@ -40,7 +40,7 @@ export const useLocalSync = async (store, key) => {
             } catch(err) {}
         } else {
             const stringValue = JSON.stringify(value);
-            if (stringValue.length < 100000) {
+            if (stringValue.length < 1000000) {
                 localStorage.setItem(key, stringValue);
             } else {
                 try {
