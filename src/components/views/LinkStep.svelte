@@ -5,7 +5,7 @@
         class:done={ (step < $linkStep) || $linkCompleted }
         class:error={error}
     >
-        <div class="vcenter">
+        <div class="vcenter overflow-hidden">
             <span>étape {step}</span>
             {#if ($linkStep > step) || ($linkCompleted)}
                 &nbsp;
@@ -55,12 +55,18 @@
 
     .vcenter {
         margin: 0;
+        padding: 10px;
         position: absolute;
         top: 50%;
         left: 50%;
         -ms-transform: translate(-50%,-50%);
         transform: translate(-50%, -50%);
         width: 100%;
+    }
+
+    .overflow-hidden {
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     *, ::after, ::before {
