@@ -48,9 +48,9 @@
                         </td>
                         <td class="hcenter has-text-grey-light">
                             <span
-                                class:has-text-danger={row[$linkResults.header.indexOf('check')].valid === false}
-                                class:is-hidden={(row.slice(-1)[0] !== rowSelect) && (row[$linkResults.header.indexOf('check')].valid !== false)}
-                                on:click={() => {row[$linkResults.header.indexOf('check')].valid = check(row, false);}}
+                                class:has-text-danger={row[row.length - 2].valid === false}
+                                class:is-hidden={(row.slice(-1)[0] !== rowSelect) && (row[row.length - 2].valid !== false)}
+                                on:click={() => {row[row.length - 2].valid = check(row, false);}}
                             >
                                 <FontAwesomeIcon icon={faWindowClose} class="is-lower"/>
                             </span>
@@ -58,9 +58,9 @@
                                 &nbsp;
                             {/if}
                             <span
-                                class:has-text-info={row[$linkResults.header.indexOf('check')].valid === true}
-                                class:is-hidden={(row.slice(-1)[0] !== rowSelect) && (row[$linkResults.header.indexOf('check')].valid !== true)}
-                                on:click={() => {row[$linkResults.header.indexOf('check')].valid = check(row, true);}}
+                                class:has-text-info={row[row.length - 2].valid === true}
+                                class:is-hidden={(row.slice(-1)[0] !== rowSelect) && (row[row.length - 2].valid !== true)}
+                                on:click={() => {row[row.length - 2].valid = check(row, true);}}
                             >
                                     <FontAwesomeIcon icon={faCheck} class="is-lower"/>
                             </span>
@@ -92,7 +92,9 @@
     </div>
 {/if}
 <script>
-    import { linkResults, resultsPerPage, linkStep, linkSourceHeader, linkMapping } from '../tools/stores.js';
+    import { linkResults, resultsPerPage, linkStep,
+        linkSourceHeader, linkMapping, linkValidations
+    } from '../tools/stores.js';
     import FontAwesomeIcon from './FontAwesomeIcon.svelte';
     import {
       faCheck,
@@ -140,6 +142,7 @@
         mappedColumns = $linkSourceHeader.filter(h => ($linkMapping.direct && $linkMapping.direct[h])).length;
         filteredRows = $linkResults.rows.map((r, index) => {
                 const row = r.slice(0);
+                row.push($linkValidations[index]);
                 row.push(index);
                 return row;
             })
@@ -165,29 +168,37 @@
     $: size = filteredRows && filteredRows.length || 0;
 
     const get = (row, col) => {
-        return row[$linkResults.header.indexOf(col)];
+        if (col === 'check') {
+            return row[row.length - 2]
+        } else {
+            return row[$linkResults.header.indexOf(col)];
+        }
     };
 
     const applyFilter = (row, filter) => {
         if (!filter) { return true }
         return Object.keys(filter).every(k => {
-            return filter[k](row[$linkResults.header.indexOf(k)]);
+            if (k === 'check') {
+                return filter[k](row[row.length - 2]);
+            } else {
+                return filter[k](row[$linkResults.header.indexOf(k)]);
+            }
         });
     }
 
     const check = (row, status) => {
-        if (row[$linkResults.header.indexOf('check')].valid === status) {
-            row[$linkResults.header.indexOf('check')].valid = undefined
-            row[$linkResults.header.indexOf('check')].checked = false
+        if (row[row.length - 2].valid === status) {
+            row[row.length - 2].valid = undefined
+            row[row.length - 2].checked = false
         } else {
-            row[$linkResults.header.indexOf('check')].valid = status
-            row[$linkResults.header.indexOf('check')].checked = Date.now()
+            row[row.length - 2].valid = status
+            row[row.length - 2].checked = Date.now()
         }
-        linkResults.update(v => {
-            v.rows[row.slice(-1)[0]][$linkResults.header.indexOf('check')] = row[$linkResults.header.indexOf('check')];
+        linkValidations.update(v => {
+            v[row.slice(-1)[0]] = row[row.length - 2];
             return v;
         })
-        return row[$linkResults.header.indexOf('check')].valid;
+        return row[row.length - 2].valid;
     }
 
     const coloredDiff = (doubleArray) => {

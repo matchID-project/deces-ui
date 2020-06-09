@@ -109,7 +109,6 @@
             sep: sep,
             quote: quote
         };
-        console.log($linkCsvType);
         $linkSourceHeader = rows.shift();
     };
 
