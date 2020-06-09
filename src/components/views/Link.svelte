@@ -49,7 +49,7 @@
     import { onMount } from 'svelte';
     import { linkStep, linkFile, linkFileName, linkFileSizeLimit, linkMapping,
         linkSourceHeader, linkMinFields, linkJob,
-        linkResults, linkCsvType, linkCompleted
+        linkResults, linkCsvType, linkCompleted, linkValidations
     } from '../tools/stores.js';
     import { clear } from 'idb-keyval'
     import FontAwesomeIcon from './FontAwesomeIcon.svelte';
@@ -93,8 +93,7 @@
         steps[2].label = `${sLinks} identifications potentielles`;
         const c = $linkResults.header.indexOf('check');
         const cLinks = $linkResults.rows
-            .filter(r => r[s])
-            .filter(r => r[c].checked).length;
+            .filter((r, i) => r[s] && $linkValidations[i].checked).length;
         steps[3].label = `${cLinks}/${sLinks} identifications validées`;
     }
 
@@ -118,6 +117,7 @@
         $linkSourceHeader = undefined;
         $linkJob = undefined;
         $linkResults = undefined;
+        $linkValidations = undefined;
         $linkCompleted = false;
         $linkMapping = {};
         steps[0].label = step0Label;
@@ -126,14 +126,16 @@
         steps[3].label = step3Label;
     }
 
-    onMount(() => {
-        useLocalSync(linkFileName, 'linkFileName');
-        useLocalSync(linkSourceHeader, 'linkSourceHeader');
-        useLocalSync(linkCsvType, 'linkCsvType');
-        useLocalSync(linkMapping, 'linkMapping');
-        useLocalSync(linkResults, 'linkResults');
-        useLocalSync(linkJob, 'linkJob');
+    onMount(async () => {
+        await useLocalSync(linkFileName, 'linkFileName');
+        await useLocalSync(linkSourceHeader, 'linkSourceHeader');
+        await useLocalSync(linkCsvType, 'linkCsvType');
+        await useLocalSync(linkMapping, 'linkMapping');
+        await useLocalSync(linkValidations, 'linkValidations');
+        await useLocalSync(linkResults, 'linkResults');
+        await useLocalSync(linkJob, 'linkJob');
         if (!$linkMapping || !$linkFileName || !$linkCsvType || !$linkSourceHeader || !$linkJob) {
+            console.log('reset');
             reset();
         }
     })
