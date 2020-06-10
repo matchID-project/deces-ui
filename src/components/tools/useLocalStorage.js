@@ -44,8 +44,8 @@ export const useLocalSync = async (store, key) => {
                 localStorage.setItem(key, stringValue);
             } else {
                 try {
-                    set(key, JSON.stringify(value))
-                } catch {
+                    set(key, JSON.stringify(value));
+                } catch(err) {
                     console.log(`error while storing ${key} into IndexedDB:`, err);
                 }
             }
