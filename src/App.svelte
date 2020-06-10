@@ -40,7 +40,7 @@
 	$: element = document.getElementById('infoNotWorking');
 	$: element.parentNode  && element.parentNode.removeChild(element);
 
-	const URLSearchSubmit = (urlParams) => {
+	const URLSearchSubmit = async (urlParams) => {
 		if (!$updateURL) {
 			$displayMode = urlParams.get('view') ? urlParams.get('view') : 'card';
 			const myCurrent = urlParams.get('current') ? parseInt(urlParams.get('current').replace(/n_(.*)_n/,"$1")) : undefined;
@@ -63,8 +63,8 @@
 			};
 
 			if (myQuery) {
+				if (myCurrent) { current.update(v => 1) }
 				if (myResultsPerPage) { resultsPerPage.update(v => myResultsPerPage) }
-				if (myCurrent) { current.update(v => myCurrent) }
 				searchInput.update( v => {
 					myQuery.map(q => {
 						v[q[0]].value = q[1]

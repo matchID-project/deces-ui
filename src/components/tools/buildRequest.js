@@ -329,14 +329,19 @@ export const validScrollId = (scrollId, searchInput, sortInput) => {
 export default function buildRequest(searchInput, options) {
   let body;
   if (myApiVersion === 'backend') {
-    let scrollIdLocal = options ? options.scrollId : validScrollId(myScrollId, searchInput, mySortInput);
+    const page = (options && options.page) || myCurrent;
+    const size = (options && options.size) || myResultsPerPage;
+    const scrollId = (page === 1) ? undefined
+      : (options ? options.scrollId : validScrollId(myScrollId, searchInput, mySortInput));
+    const sort = buildSort(mySortInput, searchInput);
+    const scroll = ((page === 1) || scrollId ) ? '1m' : undefined;
     body = {
       fuzzy: `${myFuzzySearch}`,
-      sort: buildSort(mySortInput, searchInput),
-      page: (options && options.page) || myCurrent,
-      size: (options && options.size) || myResultsPerPage,
-      scroll: ((myCurrent === 1) || scrollIdLocal ) ? '1m' : undefined,
-      scrollId: scrollIdLocal
+      sort: sort,
+      page: page,
+      size: size,
+      scroll: scroll,
+      scrollId: scrollId
     };
     Object.keys(searchInput).map(key => {
       if (searchInput[key].value !== "") {
