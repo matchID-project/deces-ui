@@ -50,7 +50,7 @@
             style="margin-top:-0.25rem;margin-bottom:-1rem!important;"
             on:click|preventDefault={ toggleFuzzySearch }
           >
-            <input id="switchRoundedInfo" type="checkbox" name="switchRoundedInfo" class="switch is-rounded is-white is-unchecked-grey" bind:checked={$fuzzySearch}>
+            <input style="width:0px" id="switchRoundedInfo" type="checkbox" name="switchRoundedInfo" class="switch is-rounded is-white is-unchecked-grey" bind:checked={$fuzzySearch}>
             <label for="switchRoundedInfo">
               {#if $fuzzySearch} recherche floue
               {:else} <strike> recherche floue</strike>{/if}
@@ -68,7 +68,7 @@
             {#each displayChoices as choice}
               <span style="margin: 0.25rem;"
                 title={`${choice.mode === $displayMode ? "mode d'affichage actuel:" : "basculez au mode d'affichage:"} ${choice.label}`}
-                on:click={() => enableDisplayMode(choice.mode)}>
+                on:click|preventDefault={() => enableDisplayMode(choice.mode)}>
                 <FontAwesomeIcon icon={choice.icon} class={`is-36 is-higher ${choice.mode === $displayMode ? "is-info" : ""}`}/>
               </span>
             {/each}
