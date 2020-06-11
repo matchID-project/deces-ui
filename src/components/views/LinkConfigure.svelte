@@ -10,7 +10,7 @@
         <button
             type="button"
             class="button is-info"
-            disabled={Object.keys(mapping).length < $linkMinFields}
+            disabled={(mapping.direct && (Object.keys(mapping.direct).length < $linkMinFields))}
             on:click|preventDefault={validate}
         >
             valider
