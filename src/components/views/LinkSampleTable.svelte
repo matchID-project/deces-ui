@@ -168,8 +168,8 @@
         const type = guessFieldType(rows.map(row => row[$linkSourceHeader.indexOf(col)]));
         ev.dataTransfer.setData('text/plain', JSON.stringify({
                 col: col,
-                type: type.replace(/:.*/,''),
-                format: /:/.test(type) ? type.replace(/.*:/, '') : undefined
+                type: type && type.replace(/:.*/,''),
+                format: type && /:/.test(type) && type.replace(/.*:/, '')
         }));
 	};
 
