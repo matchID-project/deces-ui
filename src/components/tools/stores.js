@@ -434,7 +434,7 @@ export const linkCsvType = writable(null);
 
 export const linkMapping = writable({});
 
-export const linkMinFields = writable(2);
+export const linkMinFields = writable(3);
 
 export const linkJob = writable(null);
 
