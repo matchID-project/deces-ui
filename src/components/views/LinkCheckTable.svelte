@@ -93,7 +93,8 @@
 {/if}
 <script>
     import { linkResults, resultsPerPage, linkStep,
-        linkSourceHeader, linkMapping, linkValidations
+        linkSourceHeader, linkMapping, linkValidations,
+        linkCsvType
     } from '../tools/stores.js';
     import FontAwesomeIcon from './FontAwesomeIcon.svelte';
     import {
@@ -236,7 +237,11 @@
     };
 
     const dateFormat = (dateString) => {
-        return dateString.replace(/(\d{4})(\d{2})(\d{2})/,"$3/$2/$1");
+        const format = ($linkCsvType.dateFormat || 'DD/MM/YYYY')
+            .replace('DD','$3')
+            .replace('MM','$2')
+            .replace('YYYY','$1');
+        return dateString.replace(/(\d{4})(\d{2})(\d{2})/, format);
     };
 
 </script>

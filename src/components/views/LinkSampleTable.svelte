@@ -42,6 +42,23 @@
     let header;
     let displayRows;
 
+    const guessTypeRegexp = [
+        [/^[1-2]\d{3}\/[0-1]\d\/[0-3]\d$/, 'guess:date:YYYY/MM/DD'],
+        [/^[1-2]\d{3}-[0-1]\d-[0-3]\d$/, 'guess:date:YYYY-MM-DD'],
+        [/^[0-3]\d-[0-1]\d-[1-2]\d{3}$/, 'guess:date:DD-MM-YYYY'],
+        [/^[0-3]\d\/[0-1]\d\/[1-2]\d{3}$/, 'guess:date:DD/MM/YYYY'],
+        [/^\d[0-9a-b]\d{3}/, 'guess:cityCode'],
+        [/^[1-2]$/, 'guess:sex:12'],
+        [/^(f|m)$/, 'guess:sex:fm'],
+        [/^(\d[0-9a-b]|97[1-5])$/, 'guess:depCode'],
+        [/^(petit|du(rand|bois|pon[dt]|val|mont|four)|mor(e(au|l)|in)|le(feb?vre|roy|grand|maire)|roux|fournier|girard|bonnet|lambert|fontaine|rousseau|muller|faure|mercier|blanc|guerin|boyer|garnier|chevalier|perrin|garcia|gauthier|robin|roussel|masson|meunier|meyer|giraud|blanchard|joly|martinez|brunet|barbier|payet|diallo|lacroix|vidal|schmi(dt|tt)|fabre|roche|renard|colin|caron|aubert)$/, 'guess:lastName'],
+        [/^(marie|jean{2}e|francoise|monique|catherine|nathalie|isabel{2}e|jacqueline|sylvie|an{2}e|jean|pier{2}e|michel|andre|philip{2}e|louis|rene|alain|jacques)((\s*\w+)+)?$/, 'guess:firstName'],
+        [/^\s*(((saint|st)(-|\s)\w+.*)|((paris|marseille|lyon)(\s.*?))|toulouse|nice|nantes|montpellier|strasbourg)\s*$/, 'guess:city'],
+        [/^\s*(france|algerie)\s*$/, 'guess:country'],
+        [/^(?!guess:).*/, ''],
+        [/^guess:/, '']
+    ];
+
     $: $linkFile && read($linkFile);
 
     $: if ($linkSourceHeader && mapping) {
@@ -53,6 +70,32 @@
 
         displayRows = rows.slice((page-1)*page,page*pageSize)
             .map(row => header.map(h => row[$linkSourceHeader.indexOf(h)]))
+    }
+
+    const norm = (s) => {
+        return s ? s.normalize('NFKD').replace(/[\u0300-\u036f]/g, "").toLocaleLowerCase() : '';
+    }
+
+    const guessFieldType = (column) => {
+        return maxFreqTerm(column.map(f => {
+            let g = norm(f);
+            guessTypeRegexp.map(r => g = g.replace(r[0],r[1]));
+            return g;
+        }).filter(x => x));
+    };
+
+    const maxFreqTerm = (a) => {
+        let maxCount = 0;
+        let maxTerm = undefined;
+        let dic = {};
+        a.map(v => {
+            dic[v] = dic[v] ? dic[v] + 1 : 1;
+            if (dic[v] > maxCount) {
+                maxTerm = v;
+                maxCount = dic[v]
+            }
+        });
+        return maxTerm;
     }
 
     const guessSeparator = (csv) => {
@@ -114,15 +157,20 @@
 
     const read = (ev) => {
         const reader = new FileReader();
-        const blob = $linkFile.slice(0, 1024);
+        const blob = $linkFile.slice(0, 32768);
         reader.onload = parseCsv;
         reader.readAsText(blob);
     }
 
 	export function dragstart (ev, col) {
 		ev.dataTransfer.effectAllowed = 'move';
-		ev.dataTransfer.dropEffect = 'move';
-   	    ev.dataTransfer.setData('text/plain', col);
+        ev.dataTransfer.dropEffect = 'move';
+        const type = guessFieldType(rows.map(row => row[$linkSourceHeader.indexOf(col)]));
+        ev.dataTransfer.setData('text/plain', JSON.stringify({
+                col: col,
+                type: type.replace(/:.*/,''),
+                format: /:/.test(type) ? type.replace(/.*:/, '') : undefined
+        }));
 	};
 
 </script>

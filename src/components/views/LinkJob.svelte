@@ -77,6 +77,7 @@
         progressUpload = 0;
         let formData = new FormData();
         formData.append('sep', $linkCsvType.sep);
+        formData.append('dateFormat', $linkCsvType.dateFormat || 'DD/MM/YYYY');
         Object.keys($linkMapping && $linkMapping.reverse).map(k => formData.append(k,$linkMapping.reverse[k]));
         formData.append('csv', $linkFile);
         const res = await axios.post('__BACKEND_PROXY_PATH__/search/csv', formData, axiosUploadConfig);
@@ -93,8 +94,8 @@
 
     const watchJob = async () =>  {
         if ($linkJob && !error) {
-            const res = await axios.get(`__BACKEND_PROXY_PATH__/search/csv/${$linkJob}`);
-            if(res.status == 200){
+            try {
+                const res = await axios.get(`__BACKEND_PROXY_PATH__/search/csv/${$linkJob}`);
                 if (typeof(res.data) !== 'string') {
                     if ((res.data.status === 'failed') || (res.data.msg === "job doesn't exists")) {
                         error = `${res.data && res.data.msg || 'erreur inconnue'}`;
@@ -109,8 +110,8 @@
                     progressJob = 100;
                     parseLinkResults(res.data);
                 }
-            } else {
-                error = `Erreur ${res.status}: ${res.data && res.data.msg || 'erreur inconnue'}`;
+            } catch(err) {
+                error = `Erreur ${err}`;
             }
         }
     }
