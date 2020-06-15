@@ -6,12 +6,21 @@
         {:else}
             <p> téléchargement terminé </p>
             <progress class="progress is-info" value={100}/>
-            <p><strong> traitement en cours {Math.round(progressJob)}%
-                {#if (jobPredictor && jobPredictor.end)}
-                    (fin dans environ {Math.round(jobPredictor.end/1000)} secondes)
-                {/if}
-            </strong></p>
-            <progress class="progress is-info" value={$progressBarJob}/>
+            {#if !error}
+                <p><strong> traitement en cours {Math.round(progressJob)}%
+                    {#if (jobPredictor && jobPredictor.end)}
+                        (fin dans environ {Math.round(jobPredictor.end/1000)} secondes)
+                    {/if}
+                </strong></p>
+                <progress class="progress is-info" value={$progressBarJob}/>
+            {:else}
+                <p>
+                    <strong>Le traitement a échoué</strong>
+                </p>
+                <p>
+                    {error}
+                </p>
+            {/if}
         {/if}
     </div>
 </div>
@@ -21,6 +30,7 @@
 	import { sineInOut } from 'svelte/easing';
     import axios from 'axios';
     let estimator;
+    export let error=false;
 
     import { linkMapping, linkFile, linkJob, linkStep,
         linkResults, linkCsvType, linkAutoCheckThreshold,
@@ -67,6 +77,7 @@
         progressUpload = 0;
         let formData = new FormData();
         formData.append('sep', $linkCsvType.sep);
+        formData.append('dateFormat', $linkCsvType.dateFormat || 'DD/MM/YYYY');
         Object.keys($linkMapping && $linkMapping.reverse).map(k => formData.append(k,$linkMapping.reverse[k]));
         formData.append('csv', $linkFile);
         const res = await axios.post('__BACKEND_PROXY_PATH__/search/csv', formData, axiosUploadConfig);
@@ -82,22 +93,30 @@
     }
 
     const watchJob = async () =>  {
-        if ($linkJob) {
-            const res = await axios.get(`__BACKEND_PROXY_PATH__/search/csv/${$linkJob}`);
-            if(res.status == 200){
+        if ($linkJob && !error) {
+            try {
+                const res = await axios.get(`__BACKEND_PROXY_PATH__/search/csv/${$linkJob}`);
                 if (typeof(res.data) !== 'string') {
-                    if (res.data.progress && res.data.progress.percentage) {
-                        progressJob = res.data.progress.percentage;
+                    if ((res.data.status === 'failed') || (res.data.msg === "job doesn't exists")) {
+                        error = `${res.data && res.data.msg || 'erreur inconnue'}`;
                     } else {
-                        progressJob = 0;
+                        if (res.data.progress && res.data.progress.percentage) {
+                            progressJob = res.data.progress.percentage;
+                        } else {
+                            progressJob = 0;
+                        }
                     }
                 } else {
                     progressJob = 100;
                     parseLinkResults(res.data);
                 }
+            } catch(err) {
+                error = `Erreur ${err}`;
             }
         }
     }
+
+    $: if (error) {$linkJob = 'failed'}
 
     const protect = (sep) => {
         return sep === '|' ? '\|' : sep;

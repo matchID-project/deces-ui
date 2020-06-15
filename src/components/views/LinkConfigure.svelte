@@ -3,14 +3,45 @@
     <div class="wrap">
         <p>
             <strong>Choisissez les champs à apparier:</strong><br/>
-            <span class="is-size-7">(choisissez au minimum {$linkMinFields} champs à apparier)</span>
-
         </p>
         <LinkFields bind:mapping={mapping} bind:fields={fields}/>
+        {#if warning}
+            <p class="is-size-6-7">
+                Le contenu des colonnes suivantes n'est pas reconnu :
+                {#each fields.filter(f => (f.warning && !f.blockOnWarning)) as field}
+                    <strong>{field.label} ({field.mapTo})</strong>,
+                {/each}
+                <br/>
+                ceci n'est pas bloquant pour le traitement mais pourrait conduire à une absence de résultats.
+            </p>
+        {/if}
+        {#if disabled}
+            <p>
+            {#if notEnoughFields}
+                <span class="is-size-6-7 has-text-danger">
+                    vous devez choisir au minimum {$linkMinFields} champs à apparier
+                    {#if selectedFieldsNumber}
+                        ({selectedFieldsNumber} champ(s) sélectionné(s))
+                    {:else}
+                        (aucun champ sélectionné)
+                    {/if}
+                </span>
+                <br/>
+            {/if}
+            {#if blockOnWarning}
+                {#each fields.filter(f => (f.warning && f.blockOnWarning)) as field}
+                    <span class="is-size-6-7 has-text-danger">
+                        {field.errorMessage}
+                    </span>
+                    <br/>
+                {/each}
+            {/if}
+            </p>
+        {/if}
         <button
             type="button"
             class="button is-info"
-            disabled={Object.keys(mapping).length < $linkMinFields}
+            disabled={disabled}
             on:click|preventDefault={validate}
         >
             valider
@@ -25,20 +56,39 @@
     </div>
 </div>
 <script>
-    import { linkStep, linkMapping, linkMinFields } from '../tools/stores.js';
+    import { linkStep, linkMapping, linkMinFields, linkCsvType } from '../tools/stores.js';
     import LinkFields from './LinkFields.svelte';
     import LinkSampleTable from './LinkSampleTable.svelte';
     let mapping = {};
     let fields = [
-        { label: "nom", field: "lastName", mapTo: null},
-        { label: "prénom(s)", field: "firstName", mapTo: null},
-        { label: "sexe", field: "sex", mapTo: null},
-        { label: "date de naissance", field: "birthDate", mapTo: null},
-        { label: "commune de naissance", field: "birthCity", mapTo: null},
-        { label: "département de naissance", field: "birthDepartment", mapTo: null},
-        { label: "pays de naissance", field: "birthCountry", mapTo: null}
+        { label: "nom", field: "lastName", mapTo: null, type: "lastName"},
+        { label: "prénom(s)", field: "firstName", mapTo: null, type: "firstName"},
+        { label: "sexe", field: "sex", mapTo: null, type: "sex"},
+        { label: "date de naissance", field: "birthDate", mapTo: null, type: "date", blockOnWarning: true,
+            errorMessage: "le champ date ne supporte que les format JJ/MM/AAAA, JJ-MM-AAAA, AAAA/MM/JJ et AAAA-MM-JJ"},
+        { label: "commune de naissance", field: "birthCity", mapTo: null, type: "city"},
+        { label: "département de naissance", field: "birthDepartment", mapTo: null, type: "depCode"},
+        { label: "pays de naissance", field: "birthCountry", mapTo: null, type: "country"}
     ];
     let done = false;
+    let disabled = true;
+    let notEnoughFields = true;
+    let blockOnWarning = false;
+    let warning = false;
+    let selectedFieldsNumber = 0;
+
+    $: selectedFieldsNumber = mapping.direct ? Object.keys(mapping.direct).length : 0;
+    $: warning = fields.some(f => (f.warning && !f.blockOnWarning));
+    $: blockOnWarning = fields.some(f => (f.warning && f.blockOnWarning));
+    $: notEnoughFields = (selectedFieldsNumber < $linkMinFields);
+    $: disabled =  notEnoughFields || blockOnWarning ;
+
+    $: if ($linkCsvType && fields.filter(f => f.field === "birthDate")[0].guessedFormat) {
+        linkCsvType.update(v => {
+            v.dateFormat = fields.filter(f => f.field === "birthDate")[0].guessedFormat
+            return v;
+        });
+    }
 
     $: if (done) {$linkStep = 3};
 

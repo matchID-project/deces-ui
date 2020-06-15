@@ -6,7 +6,8 @@
         on:dragleave={() => hovering = false}
         class:hovering={(hovering === true) || (field && field.mapTo)}
         class="dropzone"
-        on:click|preventDefault={() => field.mapTo = null }
+        class:warning={field && field.warning}
+        on:click|preventDefault={reset}
     >
         <div class="vcenter is-size-6-7">
             {field.label}: <strong>{field.mapTo || 'aucun'}</strong>
@@ -19,9 +20,24 @@
 
     let hovering = false;
 
+    const reset = () => {
+        field.mapTo = null;
+        field.guessedType = undefined;
+        field.guessedFormat = undefined;
+        field.warning = undefined;
+    }
+
     const drop = (ev) => {
         ev.dataTransfer.dropEffect = 'move';
-		field.mapTo = ev.dataTransfer.getData("text/plain");
+        const data = JSON.parse(ev.dataTransfer.getData("text/plain"));
+        field.mapTo = data.col;
+        field.guessedType = data.type;
+        field.guessedFormat = data.format;
+        if (field.guessedType !== field.type) {
+            field.warning = true;
+        } else {
+            field.warning = undefined;
+        }
 		hovering = null;
     };
 </script>
@@ -55,5 +71,7 @@
 	.hovering * {
 		pointer-events: none; /* so that a child hover child is not a "dragleave" event */
 	}
-
+    .warning {
+        background-color:#e2011c;
+    }
 </style>

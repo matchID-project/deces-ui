@@ -86,6 +86,11 @@
         steps[2].label = `traitement en cours <br/> ${$linkJob}`
     };
 
+    $: if ($linkJob === 'failed') {
+        steps[2].error = true;
+        steps[2].label = 'le traitement a échoué';
+    }
+
     $: if ($linkResults) {
         $linkStep = 4;
         const s = $linkResults.header.indexOf('score');
@@ -121,9 +126,13 @@
         $linkCompleted = false;
         $linkMapping = {};
         steps[0].label = step0Label;
+        steps[0].error = false;
         steps[1].label = step1Label;
+        steps[1].error = false;
         steps[2].label = step2Label;
+        steps[2].error = false;
         steps[3].label = step3Label;
+        steps[3].error = false;
     }
 
     onMount(async () => {
