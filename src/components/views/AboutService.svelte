@@ -22,12 +22,11 @@
         , en mentionnant la référence de version ci-dessous:
     </p>
     <p>
-        __APP__ version __APP_VERSION__-api/v{$apiVersion === 'backend' ? 1 : 0}
+        __APP__ version __APP_VERSION__-api/{$apiVersion === 'backend' ? backendVersion : 'v0'}
     </p>
 <p><strong>Date de mise à jour des données</strong></p>
-  <p> 
-    Les données de décès d'avril 2020 ont été publiées par l'INSEE le 15 mai 2020, puis corrigées le 16 mai suite à un problème d'exhaustivité.
-    Le service intègre bien ces nouvelles données actualisées.
+  <p>
+    16 juin 2020 (date de publication data.gouv.fr du fichier deces-2020-m05.txt)
   </p>
 <p><strong>Evolutions récentes</strong></p>
     <p>
@@ -114,5 +113,13 @@
 </p>
 
 <script>
+    import { onMount } from 'svelte';
     import { apiVersion, themeDnum } from '../tools/stores.js';
+    let backendVersion;
+
+    onMount(async () => {
+        const r = await fetch('__BACKEND_PROXY_PATH__/version');
+        backendVersion = await r.json();
+    })
+
 </script>
