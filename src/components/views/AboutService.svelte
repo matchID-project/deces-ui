@@ -26,7 +26,7 @@
     </p>
 <p><strong>Date de mise à jour des données</strong></p>
   <p>
-    16 juin 2020 (date de publication data.gouv.fr du fichier deces-2020-m05.txt)
+    8 juillet 2020 (date de publication data.gouv.fr du fichier deces-2020-m06.txt)
   </p>
 <p><strong>Evolutions récentes</strong></p>
     <p>
@@ -53,7 +53,7 @@
     </p>
 <p><strong>Evolutions futures</strong></p>
     <p>
-        Nous prévoyons prochainement :
+        Nous prévoyons prochainement (été 2020):
     </p>
     <ul>
         {#if !$themeDnum}
@@ -62,7 +62,7 @@
         </li>
         {/if}
         <li>
-            le support du formulaire Service public pour la demande d'acte de décès
+            le support du formulaire Service public pour la demande d'acte de décès (6000 communes)
         </li>
         <li>
             une configuration avancée pour les requêtes floues (regex, phonétique, fuzzy : par champ)
