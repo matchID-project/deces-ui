@@ -38,3 +38,4 @@ La réconciliation des personnes décédées avec le permis de conduire a été 
 matchID. Le projet a été libéré et mis en opensource. Nous avons créé de service
 en complément qui semblait d'utilité notamment pour la lutte contre la fraude.
 Pour en savoir plus sur le projet matchID, suivez ce <a href="https://matchid.io">lien</a>.
+Aujourd'hui le projet est composé de personnes travaillant dans l'administration (ministere de l'intérieur, ministère de la justice)
