@@ -132,7 +132,7 @@
                         }
                     }
                 };
-                return row.map(col => col || '<vide>');
+                return row.map(col => col.replace(/^\s*/,'') || '<vide>');
             });
             if (quoteCounts[0] > quoteCounts[1]) {
                 quote = q;
