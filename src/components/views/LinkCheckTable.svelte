@@ -4,16 +4,19 @@
         <strong>{filteredRows.length} identités {actionTitle || ''} :</strong>
         </p>
         <div class="columns header-margin">
-            <div class="column is-4"></div>
+            <div class="column is-4 has-text-right">
+                afficher les colonnes non appariées
+                <input type="checkbox" bind:checked={displayUnmappedColumns}/>
+            </div>
             <div class="column is-4">
                 <span class="is-size-6-7">
                     <strong>filtre:</strong>
                     <input bind:value={subFilter}/>
                 </span>
             </div>
-            <div class="column is-4 has-text-right">
-                afficher les colonnes non appariées
-                <input type="checkbox" bind:checked={displayUnmappedColumns}/>
+            <div class="column is-4">
+                valider automatiquement les paires similaires
+                <input type="checkbox" bind:checked={autoCheckSimilar}/>
             </div>
         </div>
         {#if subFilteredRows.length}
@@ -43,14 +46,18 @@
                                 ])}
                             </td>
                         {/each}
-                        <td class="hcenter">
+                        <td
+                            class="hcenter"
+                            title={get(row,'scores')}
+                        >
                             {Math.round(get(row,'score')*100)}%
                         </td>
                         <td class="hcenter has-text-grey-light">
                             <span
                                 class:has-text-danger={row[row.length - 2].valid === false}
                                 class:is-hidden={(row.slice(-1)[0] !== rowSelect) && (row[row.length - 2].valid !== false)}
-                                on:click={() => {row[row.length - 2].valid = check(row, false);}}
+                                on:click={() => {row[row.length -2].valid = autoCheckSimlarRows(row, false);}}
+                                title="invalider l'appariement"
                             >
                                 <FontAwesomeIcon icon={faWindowClose} class="is-lower"/>
                             </span>
@@ -60,7 +67,8 @@
                             <span
                                 class:has-text-info={row[row.length - 2].valid === true}
                                 class:is-hidden={(row.slice(-1)[0] !== rowSelect) && (row[row.length - 2].valid !== true)}
-                                on:click={() => {row[row.length - 2].valid = check(row, true);}}
+                                on:click={() => {row[row.length -2].valid = autoCheckSimlarRows(row, true);}}
+                                title="valider l'appariement"
                             >
                                     <FontAwesomeIcon icon={faCheck} class="is-lower"/>
                             </span>
@@ -114,6 +122,7 @@
     let header;
     let mappedColumns;
     let displayUnmappedColumns = false;
+    let autoCheckSimilar = false;
 
     const sorts = {
         scoreDesc: (a, b) => get(a,'score') > get(b,'score') ? -1 : ( get(a,'score') < get(b,'score') ? 1 : 0 ),
@@ -187,13 +196,13 @@
         });
     }
 
-    const check = (row, status) => {
+    const check = (row, status, checkType = 'manual') => {
         if (row[row.length - 2].valid === status) {
             row[row.length - 2].valid = undefined
             row[row.length - 2].checked = false
         } else {
             row[row.length - 2].valid = status
-            row[row.length - 2].checked = Date.now()
+            row[row.length - 2].checked = `${Date.now()} - ${checkType}`
         }
         linkValidations.update(v => {
             v[row.slice(-1)[0]] = row[row.length - 2];
@@ -243,6 +252,29 @@
             .replace('YYYY','$1');
         return dateString.replace(/(\d{4})(\d{2})(\d{2})/, format);
     };
+
+    const autoCheckSimlarRows = (row, status) => {
+        if (autoCheckSimilar) {
+            const scores = JSON.parse(get(row,'scores'));
+            check(row, status, 'manual');
+            filteredRows.map(r => {
+                if (r !== row) {
+                    const s = JSON.parse(get(r, 'scores'));
+                    if (similarScores(scores, s)) {
+                        check(r, status, 'similar group');
+                    }
+                }
+            });
+        } else {
+            return check(row, status, 'manual');
+        }
+    }
+
+    const similarScores = (s1, s2) => {
+        const dist = Math.max((s1.score - s2.score) ** 2, (s1.date - s2.date) ** 2, ((s1.location ? s1.location.score : 0) - (s2.location ? s2.location.score : 0)) ** 2, (s1.name - s2.name) ** 2);
+        return dist < 0.001;
+    }
+
 
 </script>
 
