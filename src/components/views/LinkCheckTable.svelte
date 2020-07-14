@@ -27,7 +27,7 @@
                         {/if}
                     {/each}
                 </tr>
-                {#each filteredRows.slice((page-1)*page,page*pageSize) as row, rowNumber}
+                {#each subFilteredRows.slice((page-1)*page,page*pageSize) as row, rowNumber}
                     <tr
                         on:click={() => {rowSelect = row.slice(-1)[0]}}
                         class:is-striped={rowNumber%2}
