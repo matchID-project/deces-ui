@@ -234,8 +234,13 @@
     .progress.is-info::-moz-progress-bar {
         background-color: #003189;
     }
+
     .progress::-moz-progress-bar {
         background-color: #4a4a4a;
+    }
+
+    .progress.is-info::-webkit-progress-value {
+        background-color: #003189;
     }
 
     .progress {
