@@ -7,12 +7,21 @@
             <p> téléchargement terminé </p>
             <progress class="progress is-info" value={100}/>
             {#if !error}
-                <p><strong> traitement en cours {Math.round(progressJob)}%
-                    {#if (jobPredictor && jobPredictor.end)}
-                        (fin dans environ {Math.round(jobPredictor.end/1000)} secondes)
-                    {/if}
-                </strong></p>
-                <progress class="progress is-info" value={$progressBarJob}/>
+                {#if !waiting}
+                    <p><strong> traitement en cours {Math.round(progressJob)}%
+                        {#if (jobPredictor && jobPredictor.end)}
+                            (fin dans environ {Math.round(jobPredictor.end/1000)} secondes)
+                        {/if}
+                    </strong></p>
+                    <progress class="progress is-info" value={$progressBarJob}/>
+                {:else}
+                    <p><strong> traitement en attente
+                        {#if (queuePredictor && queuePredictor.end)}
+                            (lancement dans environ {Math.round(queuePredictor.end/1000)} secondes)
+                        {/if}
+                    </strong></p>
+                    <progress class="progress is-info" value={$progressBarQueue}/>
+                {/if}
             {:else}
                 <p>
                     <strong>Le traitement a échoué</strong>
@@ -38,7 +47,11 @@
     } from '../tools/stores.js';
     let progressUpload = 0;
     let progressJob = 0;
+    let progressQueue = 0;
+    let queueSize = 0;
     let jobPredictor = null;
+    let queuePredictor = null;
+    let waiting = null;
 
     const progressBarUpload = tweened(0, {
 		duration: 500,
@@ -48,9 +61,16 @@
 		duration: 500,
 		easing: sineInOut
     });
+    const progressBarQueue = tweened(0, {
+		duration: 500,
+		easing: sineInOut
+    });
 
     $: progressBarUpload.set(progressUpload/100);
     $: progressBarJob.set(progressJob/100);
+    $: progressQueue = queuePredictor ? Math.round(100*(queuePredictor.initialSize - queuePredictor.size)/queuePredictor.initialSize) : 0;
+    $: progressBarQueue.set(progressQueue/100);
+
     $: if (progressJob) {
         let d = Date.now();
         if (jobPredictor) {
@@ -61,6 +81,22 @@
         } else {
             jobPredictor = {
                 progress: progressJob,
+                date: d,
+                speed: []
+            }
+        }
+    }
+    $: if (queueSize) {
+        let d = Date.now();
+        if (queuePredictor) {
+            queuePredictor.speed.push(( queuePredictor.size - queueSize) / (d - queuePredictor.date));
+            queuePredictor.size = queueSize;
+            queuePredictor.date = d;
+            queuePredictor.end = queueSize / (queuePredictor.speed.reduce((a,b) => a+b)/queuePredictor.speed.length);
+        } else {
+            queuePredictor = {
+                size: queueSize,
+                initialSize: queueSize,
                 date: d,
                 speed: []
             }
@@ -100,10 +136,16 @@
                     if ((res.data.status === 'failed') || (res.data.msg === "job doesn't exists")) {
                         error = `${res.data && res.data.msg || 'erreur inconnue'}`;
                     } else {
-                        if (res.data.progress && res.data.progress.percentage) {
-                            progressJob = res.data.progress.percentage;
+                        if (res.data.status === 'active') {
+                            waiting = null;
+                            if (res.data.progress && res.data.progress.percentage) {
+                                progressJob = res.data.progress.percentage;
+                            } else {
+                                progressJob = 0;
+                            }
                         } else {
-                            progressJob = 0;
+                            waiting = true;
+                            queueSize = res.data.remainingRowsWaiting + res.data.remainingRowsActive;
                         }
                     }
                 } else {
