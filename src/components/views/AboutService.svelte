@@ -51,6 +51,12 @@
         cherchons un panel d'utilisateurs pour nous faire un retour sur
         la pertinence de cette fonction pour le grand public.
     </p>
+<p><strong>Résolutions de bugs</strong></p>
+    <ul>
+      <li>
+        août 2020: normalisation des accents dans la recherche avancée "stricte" (nom, villes, etc.)
+      </li>
+    </ul>
 <p><strong>Evolutions futures</strong></p>
     <p>
         Nous prévoyons prochainement (été 2020):
