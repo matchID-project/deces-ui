@@ -14,7 +14,7 @@
 	import Geo from './components/views/Geo.svelte';
 	import Link from './components/views/Link.svelte';
 	import { searchInput, searchCanvas, current, resultsPerPage,
-		updateURL, advancedSearch, apiVersion, fuzzySearch, displayMode, themeDnum
+		updateURL, advancedSearch, fuzzySearch, displayMode, themeDnum
 	} from './components/tools/stores.js';
 
 	let routes = {
@@ -79,10 +79,6 @@
 	}
 
 	const handleKeydown = async (event) => {
-		if (event.ctrlKey && event.altKey && event.key === 'b') {
-			await apiVersion.update(v => v === 'elasticsearch' ? 'backend' : 'elasticsearch');
-			console.log(`switch Api to ${$apiVersion}`);
-		}
 		if (event.ctrlKey && event.altKey && event.key === 'd') {
 			await themeDnum.update(v => v === 0 ? 1 : 0);
 			console.log(`switch theme to ${$themeDnum ? 'DNUM' : 'public site'}`);
