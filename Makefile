@@ -36,7 +36,8 @@ export FRONTEND_DEV_HOST = frontend-development
 export FRONTEND_DEV_PORT = ${PORT}
 export BACKEND_PORT=8080
 export BACKEND_HOST=backend
-export BACKEND_PROXY_PATH=/deces/api/v1
+export API_PATH = deces
+export BACKEND_PROXY_PATH=/${API_PATH}/api/v1
 export NGINX = ${APP_PATH}/nginx
 export NGINX_TIMEOUT = 30
 export NGINX_CSP=default-src https: 'self' 'unsafe-inline' 'unsafe-eval';img-src 'self' https://*.cartocdn.com https://www.google-analytics.com https://www.googletagmanager.com https://*.doubleclick.net;
@@ -51,8 +52,7 @@ export API_SEND_TIMEOUT=1200
 export API_MAX_BODY=20m
 export MITM_URL=/mitm/mitm.html
 export THEME_DNUM=0
-export API_PATH = deces
-export API_TEST_PATH = ${BACKEND_PROXY_PATH}/search
+export API_TEST_PATH = ${API_PATH}/api/v1/search
 export API_TEST_JSON_PATH=response
 export API_TEST_REQUEST={"fuzzy":"false","sort":[{"score":"desc"}],"page":1,"size":20,"scroll":"1m","firstName":"jean"}
 
@@ -388,6 +388,9 @@ ${DATA_VERSION_FILE}:
 		FILES_PATTERN='${FILES_TO_PROCESS}'
 
 deploy-local: config elasticsearch-storage-pull elasticsearch-restore elasticsearch docker-check up backup-dir-clean local-test-api
+
+backend-test:
+	@${MAKE} -C ${APP_PATH}/${GIT_BACKEND} backend-test
 
 local-test-api:
 	@${MAKE} -C ${APP_PATH}/${GIT_TOOLS} local-test-api \
