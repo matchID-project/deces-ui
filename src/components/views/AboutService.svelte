@@ -22,7 +22,7 @@
         , en mentionnant la référence de version ci-dessous:
     </p>
     <p>
-        __APP__ version __APP_VERSION__-api/{$apiVersion === 'backend' ? backendVersion : 'v0'}
+        __APP__ version __APP_VERSION__-api/{backendVersion}
     </p>
 <p><strong>Date de mise à jour des données</strong></p>
   <p>
@@ -120,7 +120,7 @@
 
 <script>
     import { onMount } from 'svelte';
-    import { apiVersion, themeDnum } from '../tools/stores.js';
+    import { themeDnum } from '../tools/stores.js';
     let backendVersion;
 
     onMount(async () => {
