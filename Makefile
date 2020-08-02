@@ -36,7 +36,8 @@ export FRONTEND_DEV_HOST = frontend-development
 export FRONTEND_DEV_PORT = ${PORT}
 export BACKEND_PORT=8080
 export BACKEND_HOST=backend
-export BACKEND_PROXY_PATH=/deces/api/v1
+export API_PATH = deces
+export BACKEND_PROXY_PATH=/${API_PATH}/api/v1
 export NGINX = ${APP_PATH}/nginx
 export NGINX_TIMEOUT = 30
 export NGINX_CSP=default-src https: 'self' 'unsafe-inline' 'unsafe-eval';img-src 'self' https://*.cartocdn.com https://www.google-analytics.com https://www.googletagmanager.com https://*.doubleclick.net;
@@ -46,19 +47,19 @@ export API_USER_BURST=20 nodelay
 export API_USER_SCOPE=http_x_forwarded_for
 export API_GLOBAL_LIMIT_RATE=20r/s
 export API_GLOBAL_BURST=200 nodelay
-export API_TEST_JSON_PATH=hits
 export API_READ_TIMEOUT=3600
 export API_SEND_TIMEOUT=1200
 export API_MAX_BODY=20m
 export MITM_URL=/mitm/mitm.html
 export THEME_DNUM=0
-export API_TEST_REQUEST={"query":{"match_all":{}}}
+export API_TEST_PATH = ${API_PATH}/api/v1/search
+export API_TEST_JSON_PATH=response
+export API_TEST_REQUEST={"fuzzy":"false","sort":[{"score":"desc"}],"page":1,"size":20,"scroll":"1m","firstName":"jean"}
 
 export DC_DIR=${APP_PATH}
 export DC_FILE=${DC_DIR}/docker-compose
 export DC_PREFIX := $(shell echo ${APP} | tr '[:upper:]' '[:lower:]' | tr '_' '-')
 export DC_IMAGE_NAME = ${DC_PREFIX}
-export API_PATH = deces
 export DC_NETWORK := $(shell echo ${APP} | tr '[:upper:]' '[:lower:]')
 export DC_BUILD_ARGS = --pull --no-cache
 
@@ -91,7 +92,6 @@ export DATAGOUV_RESOURCES_REWRITE_PATH := $(shell echo ${DATAGOUV_RESOURCES_HOST
 export ES_HOST = elasticsearch
 export ES_PORT = 9200
 export ES_TIMEOUT = 60
-export ES_PROXY_PATH = /${API_PATH}/api/v0/search
 export ES_INDEX = deces
 export ES_MAX_RESULTS = 10000
 export ES_DATA = ${APP_PATH}/esdata
@@ -389,10 +389,13 @@ ${DATA_VERSION_FILE}:
 
 deploy-local: config elasticsearch-storage-pull elasticsearch-restore elasticsearch docker-check up backup-dir-clean local-test-api
 
+backend-test:
+	@${MAKE} -C ${APP_PATH}/${GIT_BACKEND} backend-test
+
 local-test-api:
 	@${MAKE} -C ${APP_PATH}/${GIT_TOOLS} local-test-api \
 		PORT=${PORT} \
-		API_TEST_PATH=${ES_PROXY_PATH} API_TEST_JSON_PATH=${API_TEST_JSON_PATH} API_TEST_DATA='${API_TEST_REQUEST}'\
+		API_TEST_PATH=${API_TEST_PATH} API_TEST_JSON_PATH=${API_TEST_JSON_PATH} API_TEST_DATA='${API_TEST_REQUEST}'\
 		${MAKEOVERRIDES}
 
 deploy-remote-instance: config backend-config
@@ -417,7 +420,7 @@ deploy-remote-publish:
 	fi;\
 	${MAKE} -C ${APP_PATH}/${GIT_TOOLS} remote-test-api-in-vpc nginx-conf-apply remote-test-api\
 		APP=${APP} APP_VERSION=${APP_VERSION} GIT_BRANCH=${GIT_BRANCH} PORT=${PORT}\
-		APP_DNS=$$APP_DNS API_TEST_PATH=${ES_PROXY_PATH} API_TEST_JSON_PATH=${API_TEST_JSON_PATH} API_TEST_DATA='${API_TEST_REQUEST}'\
+		APP_DNS=$$APP_DNS API_TEST_PATH=${API_TEST_PATH} API_TEST_JSON_PATH=${API_TEST_JSON_PATH} API_TEST_DATA='${API_TEST_REQUEST}'\
 		${MAKEOVERRIDES}
 
 deploy-delete-old:

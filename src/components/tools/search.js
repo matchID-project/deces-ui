@@ -17,7 +17,6 @@ import {
     wasSearched,
     waitSearch,
     fuzzySearch,
-    apiVersion,
     scrollId,
     displayMode
 } from './stores.js'
@@ -36,7 +35,6 @@ let myAdvancedSearch;
 let mySearchMinLength;
 let myWaitSearch;
 let myFuzzySearch;
-let myApiVersion;
 let myDisplayMode;
 
 const s = searchInput.subscribe((value) => { mySearchInput=value });
@@ -48,7 +46,6 @@ const r = resultsPerPage.subscribe((value) => { myResultsPerPage=value });
 const av = advancedSearch.subscribe((value) => { myAdvancedSearch=value });
 const w = waitSearch.subscribe((value) => { myWaitSearch=value });
 const f = fuzzySearch.subscribe((value) => {myFuzzySearch = value});
-const p = apiVersion.subscribe((value) => {myApiVersion = value});
 const d = displayMode.subscribe((value) => {myDisplayMode = value});
 
 const computeTotalPages = (resultsPerPage, totalResults) => {
@@ -81,13 +78,7 @@ export const search = async (searchInput, newCurrent) => {
     else { current.update(v => 1) }
     const request = buildRequest(searchInput);
     const json = await runRequest(request);
-    let state;
-    if (myApiVersion === 'elasticsearch') {
-        state = buildResults(json, myResultsPerPage, myCurrent);
-    } else {
-        state = json;
-    }
-    return state && state.response;
+    return json && json.response;
 };
 
 export const searchSubmit = async (newCurrent) => {
