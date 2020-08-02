@@ -380,6 +380,7 @@ ${DATAPREP_VERSION_FILE}: ${GIT_DATAPREP}
 		${GIT_DATAPREP}/projects/deces-dataprep/recipes/deces_dataprep.yml\
 		${GIT_DATAPREP}/projects/deces-dataprep/datasets/deces_index.yml\
 	| sha1sum | awk '{print $1}' | cut -c-8 > ${DATAPREP_VERSION_FILE}
+	@echo b1ab5b93 > ${DATAPREP_VERSION_FILE}
 
 ${DATA_VERSION_FILE}:
 	@${MAKE} -C ${APP_PATH}/${GIT_TOOLS} catalog-tag CATALOG_TAG=${DATA_VERSION_FILE}\
