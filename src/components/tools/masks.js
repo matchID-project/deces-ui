@@ -73,13 +73,13 @@ export const dateRangeTransformMask = (dateRangeString) => {
 }
 
 export const sexTypingMask = (sex) => {
-    return sex.match(/^(F|M)?$/);
+    return sex.match(/^(F|M|H)?$/);
 }
 
 export const sexValidationMask = (sex) => {
-    return sex.match(/^(F|M)?$/);
+    return sex.match(/^(F|M|H)?$/);
 }
 
 export const sexTransformMask = (sex) => {
-    return sex.replace(/^(F|M).*$/,'$1');
+    return sex.replace(/^(F|M|H).*$/,'$1');
 }
