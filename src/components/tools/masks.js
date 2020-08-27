@@ -34,11 +34,11 @@ export const ageRangeTransformMask = (ageRangeString) => {
 }
 
 export const dateTypingMask = (dateString) => {
-    return dateString.match(/^(|0{0,4}?|1([8-9]\d{1,2}?)?|2(0\d{1,2})?|[0-3](\d(\/([0-1](\d(\/(1([8-9]\d{0,2})?|2(0\d{0,2})?)?)?)?)?)?)?)$/);
+    return dateString.match(/^(|<|>|0{0,4}?|\<?\>?1([8-9]\d{1,2}?)?|\<?\>?2(0\d{1,2})?|\<?\>?[0-3](\d(\/([0-1](\d(\/(1([8-9]\d{0,2})?|\<?\>?2(0\d{0,2})?)?)?)?)?)?)?)$/);
 }
 
 export const dateValidationMask = (dateString) => {
-    return dateString.match(/^(|0000|1([8-9]\d{2})|2(0\d{2})|[0-3](\d(\/([0-1](\d(\/(1([8-9]\d{2})|2(0\d{2}))))))))$/);
+    return dateString.match(/^(|0000|\<?\>?1([8-9]\d{2})|\<?\>?2(0\d{2})|\<?\>?[0-3](\d(\/([0-1](\d(\/(1([8-9]\d{2})|\<?\>?2(0\d{2}))))))))$/);
 }
 
 
@@ -73,13 +73,13 @@ export const dateRangeTransformMask = (dateRangeString) => {
 }
 
 export const sexTypingMask = (sex) => {
-    return sex.match(/^(F|M)?$/);
+    return sex.match(/^(F|M|H)?$/);
 }
 
 export const sexValidationMask = (sex) => {
-    return sex.match(/^(F|M)?$/);
+    return sex.match(/^(F|M|H)?$/);
 }
 
 export const sexTransformMask = (sex) => {
-    return sex.replace(/^(F|M).*$/,'$1');
+    return sex.replace(/^(F|M|H).*$/,'$1');
 }
