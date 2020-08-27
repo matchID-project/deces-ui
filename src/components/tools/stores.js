@@ -435,6 +435,7 @@ export const linkMinFields = writable(3);
 export const linkJob = writable(null);
 
 export const linkResults = writable(null);
+export const linkCompleteResults = writable(null);
 
 export const linkValidations = writable(null);
 

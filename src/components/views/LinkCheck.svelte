@@ -52,7 +52,7 @@
 {/if}
 
 <script>
-    import { linkResults, linkFileName, linkCsvType,
+    import { linkCompleteResults, linkResults, linkFileName, linkCsvType,
         linkCompleted, linkAutoCheckThreshold, linkValidations
     } from '../tools/stores.js';
     import LinkCheckTable from './LinkCheckTable.svelte';
@@ -108,14 +108,28 @@
     }
 
     const toCsv = (filter) => {
-        const header = $linkResults.header;
+        const header = $linkCompleteResults.header;
         header.push('valid');
         header.push('checked');
+        let rows, index, map;
+        if (filter) {
+            rows = $linkResults.rows.map(r => r.slice(0, -1))
+            index = (i) => i;
+        } else {
+            rows = $linkCompleteResults.rows;
+            map = {};
+            let j = 0;
+            $linkResults.rows.forEach(r => {
+                map[r.slice(-1)[0]] = j++;
+            });
+            index = (i) => map[i];
+        }
         return [
             header.map(h => protectField(h)).join($linkCsvType.sep) + '\r\n',
-            ...$linkResults.rows.map((r,i) => {
-                r.push($linkValidations[i] && $linkValidations[i].valid || '');
-                r.push($linkValidations[i] && ($linkValidations[i].checked ? (($linkValidations[i].checked === "auto") ? "auto": true) : false) || false);
+            ...rows.map((r,i) => {
+                const l = $linkValidations[index(i)];
+                r.push(l && l.valid || '');
+                r.push(l && (l.checked ? ((l.checked === "auto") ? "auto": true) : false) || false);
                 return r
                 })
                 .filter(row => !filter || row[header.indexOf('score')])

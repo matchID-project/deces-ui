@@ -42,7 +42,7 @@
     export let error=false;
 
     import { linkMapping, linkFile, linkJob, linkStep,
-        linkResults, linkCsvType, linkAutoCheckThreshold,
+        linkCompleteResults, linkResults, linkCsvType, linkAutoCheckThreshold,
         linkValidations
     } from '../tools/stores.js';
     let progressUpload = 0;
@@ -191,15 +191,27 @@
         const header = rows.shift();
         const headerMapping = {};
         header.map((h,i) => headerMapping[h] = i);
-        linkValidations.update(v => {
-            return rows.map(r => (r[headerMapping['score']] >= $linkAutoCheckThreshold) ?
-                        { valid: true, checked: "auto" } : { checked: false })
-        });
-        linkResults.update(v => {
+        console.log(rows.length);
+        linkCompleteResults.update(v => {
             return {
                 header: header,
                 rows: rows
             };
+        });
+        linkResults.update(v => {
+            let i = 0;
+            return {
+                header: [...header, 'index'],
+                rows: rows.map(r => {
+                    const s = r.slice(0, -1);
+                    s.push(i++);
+                    return s;
+                }).filter(r => r[headerMapping['score']])
+            }
+        })
+        linkValidations.update(v => {
+            return $linkResults.rows.map(r => (r[headerMapping['score']] >= $linkAutoCheckThreshold) ?
+                    { valid: true, checked: "auto" } : { checked: false })
         });
         $linkStep = 4;
     };
