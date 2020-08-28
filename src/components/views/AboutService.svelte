@@ -34,22 +34,15 @@
         <br/>
         - l'ajout des fichiers source INSEE et du champ âge et code commune INSEE
         <br/>
-        - la recherche par plage de dates, par sexe et âge au décès, et la désactivation de la recherche floue
+        - la recherche par plage de dates (et dates avant/après), par sexe et âge au décès, et la désactivation de la recherche floue
         <br/>
         - une vue géographique (pour visualiser les origines patronymiques)
         <br/>
         - une vue tableur comme vue complémentaire d'exploration des recherches
         <br/>
         - un téléchargement des résultats en tableur CSV
-    </p>
-    <p>
-        Nous avons également mis en place une fonction expérimentale pour
-        identifier au sein d'un fichier CSV les personnes décédées.
-        La fonction vise a permettre aux personnes morales d'appliquer le droit à l'oubli
-        (RGPD) au sein de leur fichier client. La fonction est bridée
-        à quelques dizaines de milliers de lignes pour l'instant, nous
-        cherchons un panel d'utilisateurs pour nous faire un retour sur
-        la pertinence de cette fonction pour le grand public.
+        <br/>
+        - une fonction de matching en masse (jusque 100Mo/1M de lignes) sur upload d'un fichier csv
     </p>
 <p><strong>Résolutions de bugs</strong></p>
     <ul>

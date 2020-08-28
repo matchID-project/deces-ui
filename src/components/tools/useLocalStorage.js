@@ -44,7 +44,8 @@ export const useLocalSync = async (store, key) => {
                 localStorage.setItem(key, stringValue);
             } else {
                 try {
-                    set(key, JSON.stringify(value));
+                    // lazy sync as storing idb hangs UI
+                    setTimeout(() => set(key, JSON.stringify(value)), 100);
                 } catch(err) {
                     console.log(`error while storing ${key} into IndexedDB:`, err);
                 }
