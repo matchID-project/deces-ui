@@ -152,7 +152,7 @@
         mappedColumns = $linkSourceHeader.filter(h => ($linkMapping.direct && $linkMapping.direct[h])).length;
         filteredRows = $linkResults.rows.map((r, index) => {
                 const row = r.slice(0);
-                row.push($linkValidations[index]);
+                row.push($linkValidations[index] || { checked: false });
                 row.push(index);
                 return row;
             })
@@ -207,7 +207,7 @@
         linkValidations.update(v => {
             v[row.slice(-1)[0]] = row[row.length - 2];
             return v;
-        })
+        });
         return row[row.length - 2].valid;
     }
 
@@ -256,7 +256,8 @@
     const autoCheckSimlarRows = (row, status) => {
         if (autoCheckSimilar) {
             const scores = JSON.parse(get(row,'scores'));
-            check(row, status, 'manual');
+            console.log(row, status, 'manual');
+            const c = check(row, status, 'manual');
             filteredRows.map(r => {
                 if (r !== row) {
                     const s = JSON.parse(get(r, 'scores'));
@@ -265,6 +266,7 @@
                     }
                 }
             });
+            return c;
         } else {
             return check(row, status, 'manual');
         }

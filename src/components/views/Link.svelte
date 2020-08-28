@@ -49,7 +49,7 @@
     import { onMount } from 'svelte';
     import { linkStep, linkFile, linkFileName, linkFileSizeLimit, linkMapping,
         linkSourceHeader, linkMinFields, linkJob,
-        linkResults, linkCsvType, linkCompleted, linkValidations
+        linkCompleteResults, linkResults, linkCsvType, linkCompleted, linkValidations
     } from '../tools/stores.js';
     import { clear } from 'idb-keyval'
     import FontAwesomeIcon from './FontAwesomeIcon.svelte';
@@ -98,7 +98,7 @@
         steps[2].label = `${sLinks} identifications potentielles`;
         const c = $linkResults.header.indexOf('check');
         const cLinks = $linkResults.rows
-            .filter((r, i) => r[s] && $linkValidations[i].checked).length;
+            .filter((r, i) => r[s] && $linkValidations[i] && $linkValidations[i].checked).length;
         steps[3].label = `${cLinks}/${sLinks} identifications validées`;
     }
 
@@ -121,6 +121,7 @@
         $linkFileName = undefined;
         $linkSourceHeader = undefined;
         $linkJob = undefined;
+        $linkCompleteResults = undefined;
         $linkResults = undefined;
         $linkValidations = undefined;
         $linkCompleted = false;
@@ -141,6 +142,7 @@
         await useLocalSync(linkCsvType, 'linkCsvType');
         await useLocalSync(linkMapping, 'linkMapping');
         await useLocalSync(linkValidations, 'linkValidations');
+        await useLocalSync(linkCompleteResults, 'linkCompleteResults');
         await useLocalSync(linkResults, 'linkResults');
         await useLocalSync(linkJob, 'linkJob');
         if (!$linkMapping || !$linkFileName || !$linkCsvType || !$linkSourceHeader || !$linkJob) {
