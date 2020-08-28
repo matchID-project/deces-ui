@@ -67,14 +67,15 @@ jobs:
             make deploy-remote FILES_TO_PROCESS=$FILES_TO_PROCESS_DEV GIT_BRANCH=$GIT_BRANCH NGINX_USER=$NGINX_USER NGINX_HOST=$NGINX_HOST remote_http_proxy=$remote_http_proxy remote_https_proxy=$remote_https_proxy remote_no_proxy=$remote_no_proxy NQ_TOKEN=$NQ_TOKEN_DEV GOOGLE_ANALYTICS_ID=$GOOGLE_ANALYTICS_ID;
           fi;
           if [[ ( "$GIT_BRANCH" == "master" ) ]]; then
-            make deploy-remote ES_MEM=$ES_MEM_MASTER SCW_FLAVOR=$SCW_FLAVOR_MASTER GIT_BACKEND_BRANCH=master GIT_BRANCH=$GIT_BRANCH NGINX_USER=$NGINX_USER NGINX_HOST=$NGINX_HOST remote_http_proxy=$remote_http_proxy remote_https_proxy=$remote_https_proxy remote_no_proxy=$remote_no_proxy NQ_TOKEN=$NQ_TOKEN_MASTER GOOGLE_ANALYTICS_ID=$GOOGLE_ANALYTICS_ID;
+            make deploy-remote BACKEND_CONCURRENCY=$BACKEND_CONCURRENCY_MASTER ES_MEM=$ES_MEM_MASTER SCW_FLAVOR=$SCW_FLAVOR_MASTER GIT_BACKEND_BRANCH=master GIT_BRANCH=$GIT_BRANCH NGINX_USER=$NGINX_USER NGINX_HOST=$NGINX_HOST remote_http_proxy=$remote_http_proxy remote_https_proxy=$remote_https_proxy remote_no_proxy=$remote_no_proxy NQ_TOKEN=$NQ_TOKEN_MASTER GOOGLE_ANALYTICS_ID=$GOOGLE_ANALYTICS_ID;
           fi;
           if [[ ( "$GIT_BRANCH" == "bulk" ) ]]; then
-            make deploy-remote API_MAX_BODY=100m ES_MEM=$ES_MEM_BULK SCW_FLAVOR=$SCW_FLAVOR_BULK GIT_BACKEND_BRANCH=master GIT_BRANCH=$GIT_BRANCH NGINX_USER=$NGINX_USER NGINX_HOST=$NGINX_HOST remote_http_proxy=$remote_http_proxy remote_https_proxy=$remote_https_proxy remote_no_proxy=$remote_no_proxy NQ_TOKEN=$NQ_TOKEN_BULK GOOGLE_ANALYTICS_ID=$GOOGLE_ANALYTICS_ID;
+            make deploy-remote ES_MEM=$ES_MEM_BULK SCW_FLAVOR=$SCW_FLAVOR_BULK GIT_BACKEND_BRANCH=master GIT_BRANCH=$GIT_BRANCH NGINX_USER=$NGINX_USER NGINX_HOST=$NGINX_HOST remote_http_proxy=$remote_http_proxy remote_https_proxy=$remote_https_proxy remote_no_proxy=$remote_no_proxy NQ_TOKEN=$NQ_TOKEN_BULK GOOGLE_ANALYTICS_ID=$GOOGLE_ANALYTICS_ID;
           fi;
 
         env:
           FILES_TO_PROCESS_DEV: deces-2020-m[0-1][0-9].txt.gz
+          BACKEND_CONCURRENCY_MASTER: ${{ secrets.BACKEND_CONCURRENCY_MASTER }}
           ES_MEM_MASTER: ${{ secrets.ES_MEM_MASTER }}
           ES_MEM_BULK: ${{ secrets.ES_MEM_BULK }}
           SCW_FLAVOR_MASTER: ${{ secrets.SCW_FLAVOR_MASTER }}
