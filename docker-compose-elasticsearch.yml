@@ -23,5 +23,6 @@ services:
       - ${ES_DATA}/node1:/usr/share/elasticsearch/data
     # ports:
     #   - 9200:9200
+    restart: always
 
 
