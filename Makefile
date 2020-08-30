@@ -213,7 +213,7 @@ backend-docker-check: backend-config
 
 backend: backend-config backend-docker-check
 	@BACKEND_APP_VERSION=$(shell cd ${APP_PATH}/${GIT_BACKEND} && git describe --tags);\
-	${MAKE} -C ${APP_PATH}/${GIT_BACKEND} backend-start DC_NETWORK=${DC_NETWORK} APP_VERSION=$$BACKEND_APP_VERSION GIT_BRANCH=${GIT_BACKEND_BRANCH} API_URL=${API_URL} API_EMAIL=${API_EMAIL} API_SSL=${API_SSL}
+	${MAKE} -C ${APP_PATH}/${GIT_BACKEND} backend-start APP=deces-backend DC_NETWORK=${DC_NETWORK} APP_VERSION=$$BACKEND_APP_VERSION GIT_BRANCH=${GIT_BACKEND_BRANCH} API_URL=${API_URL} API_EMAIL=${API_EMAIL} API_SSL=${API_SSL}
 
 backend-stop:
 	@BACKEND_APP_VERSION=$(shell cd ${APP_PATH}/${GIT_BACKEND} && git describe --tags);\
