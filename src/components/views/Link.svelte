@@ -40,20 +40,30 @@
 </Hero>
 
 <div class="content body">
-    {#if steps[$linkStep-1].body}
-        <svelte:component this={steps[$linkStep-1].body}/>
+    {#if wait}
+        <div class="wait-center">
+            <strong>{waitMessage}</strong>
+            <br/>
+            <FontAwesomeIcon icon={faSpinner} class="is-48 spin"/>
+        </div>
     {/if}
+    <div style={wait ? `display: none;` : ''}>
+        {#if steps[$linkStep-1].body}
+            <svelte:component this={steps[$linkStep-1].body}/>
+        {/if}
+    </div>
 </div>
 
 <script>
     import { onMount } from 'svelte';
-    import { linkStep, linkFile, linkFileName, linkFileSizeLimit, linkMapping,
+    import { linkWaiter, linkStep, linkFile, linkFileName, linkFileSize, linkFileSizeLimit, linkMapping,
         linkSourceHeader, linkMinFields, linkJob,
         linkCompleteResults, linkResults, linkCsvType, linkCompleted, linkValidations
     } from '../tools/stores.js';
     import { clear } from 'idb-keyval'
     import FontAwesomeIcon from './FontAwesomeIcon.svelte';
    import {
+      faSpinner,
       faTrash
     } from '@fortawesome/free-solid-svg-icons';
     import Hero from './Hero.svelte';
@@ -63,10 +73,31 @@
     import LinkJob from './LinkJob.svelte';
     import LinkCheck from './LinkCheck.svelte';
     import { clearAll, useLocalSync } from '../tools/useLocalStorage.js';
+    let wait = false;
+    let waitMessage = '';
+    const minWaitActivation = 0;
+    const minWaitDeactivation = 500;
+
+    $: if ($linkWaiter) {
+            setTimeout(() => {
+                if ($linkWaiter) {
+                    wait = Date.now();
+                    waitMessage = $linkWaiter;
+                }
+            }, minWaitActivation);
+        } else {
+            setTimeout(() => {
+                if (!$linkWaiter) {
+                    wait = false;
+                    waitMessage = false;
+                }
+            }, minWaitDeactivation + Date.now() - wait);
+        }
 
     $: if ($linkFile) {
         if ($linkFile.size <= $linkFileSizeLimit ) {
             $linkFileName = $linkFile.name ;
+            $linkFileSize = $linkFile.size;
             steps[0].error = false;
             $linkStep=2;
         } else {
@@ -75,7 +106,7 @@
         }
     };
 
-    $: if ($linkFileName) { steps[0].label = $linkFileName };
+    $: if ($linkFileName) { steps[0].label = `${$linkFileName}<br/>${10 * Math.round($linkFileSize / 1024**2) / 10}Mo`};
 
     $: if (Object.keys(($linkMapping && $linkMapping.direct) ? $linkMapping.direct : {}).length >= $linkMinFields) {
         steps[1].label = `colonnes: ${Object.keys($linkMapping.direct).join(', ')}`;
@@ -119,6 +150,7 @@
         $linkStep = 1;
         $linkFile = undefined;
         $linkFileName = undefined;
+        $linkFileSize = undefined;
         $linkSourceHeader = undefined;
         $linkJob = undefined;
         $linkCompleteResults = undefined;
@@ -137,7 +169,9 @@
     }
 
     onMount(async () => {
+        $linkWaiter = 'Chargement des données du navigateur';
         await useLocalSync(linkFileName, 'linkFileName');
+        await useLocalSync(linkFileSize, 'linkFileSize');
         await useLocalSync(linkSourceHeader, 'linkSourceHeader');
         await useLocalSync(linkCsvType, 'linkCsvType');
         await useLocalSync(linkMapping, 'linkMapping');
@@ -145,6 +179,7 @@
         await useLocalSync(linkCompleteResults, 'linkCompleteResults');
         await useLocalSync(linkResults, 'linkResults');
         await useLocalSync(linkJob, 'linkJob');
+        $linkWaiter = false;
         if (!$linkMapping || !$linkFileName || !$linkCsvType || !$linkSourceHeader || !$linkJob) {
             console.log('reset');
             reset();
@@ -248,5 +283,11 @@
     border-left: 20px solid transparent;
     border-bottom: 20px solid #e2011c;
 }
+  .wait-center {
+    text-align: center;
+    transform: translateY(50%);
+    height: 14rem;
+    additive-symbols: 14rem;
+  }
 
 </style>
