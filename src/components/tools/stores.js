@@ -418,9 +418,13 @@ export const themeDnum = writable(parseInt('__THEME_DNUM__'))
 
 export const linkFile = writable(null);
 
+export const linkWaiter = writable(false);
+
 export const linkFileSizeLimit = writable('__API_MAX_BODY__'.replace(/m$/,'000000'));
 
 export const linkFileName = writable(null);
+
+export const linkFileSize = writable(null);
 
 export const linkStep = writable(1);
 

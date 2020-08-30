@@ -1,69 +1,72 @@
-{#if $linkResults}
-    <div class="check-body content">
-        {#if (unCheckedLinks === 0) && (checkedLinks === 0)}
-            <p>
-                <strong>
-                    Aucune correspondance de personne décédée n'a été trouvée dans votre fichier
-                </strong>
-            </p>
-        {:else}
-            {#if checkedLinks && (unCheckedLinks === 0)}
+{#if !$linkWaiter}
+    {#if $linkResults}
+        <div class="check-body content">
+            {#if (unCheckedLinks === 0) && (checkedLinks === 0)}
                 <p>
-                    toutes les identé(s) ({checkedLinks}) ont été validées* !
-                    <br/>
-                    <span class="is-size-7">* validation automatique pour les scores > {Math.round($linkAutoCheckThreshold*100)}</span>
+                    <strong>
+                        Aucune correspondance de personne décédée n'a été trouvée dans votre fichier
+                    </strong>
                 </p>
+            {:else}
+                {#if checkedLinks && (unCheckedLinks === 0)}
+                    <p>
+                        toutes les identé(s) ({checkedLinks}) ont été validées* !
+                        <br/>
+                        <span class="is-size-7">* validation automatique pour les scores > {Math.round($linkAutoCheckThreshold*100)}</span>
+                    </p>
+                {/if}
+                <p>
+                    <span>
+                        téléchargez:<br/>
+                        {#if (unCheckedLinks === 0)}
+                            <span class="has-text-danger">
+                                <FontAwesomeIcon icon={faArrowAltCircleRight} class="is-24 is-low"/>
+                                &nbsp;
+                            </span>
+                        {/if}
+                        <button
+                            class='button is-info'
+                            on:click|preventDefault={e => download(false)}
+                        >
+                            le fichier complet
+                            {#if isDownloading === 'complete'}
+                                <div style="z-index:1200;position:absolute;witdth:100%;background-color:#fff;opacity:0.5;">
+                                    <FontAwesomeIcon icon={faSpinner} class="is-low spin"/>
+                                </div>
+                            {/if}
+                        </button>
+
+                        <button
+                            class="button is-danger"
+                            on:click|preventDefault={e => download(true)}
+                        >
+                            les décès identifiés
+                            {#if isDownloading === 'matched'}
+                                <div style="z-index:1200;position:absolute;witdth:100%;background-color:#fff;opacity:0.5;">
+                                    <FontAwesomeIcon icon={faSpinner} class="is-low spin"/>
+                                </div>
+                            {/if}
+                        </button>
+                        {#if (unCheckedLinks === 0)}
+                            <span class="has-text-danger">
+                                &nbsp;
+                                <FontAwesomeIcon icon={faArrowAltCircleLeft} class="is-24 is-low"/>
+                            </span>
+                        {/if}
+                    </span>
+                </p>
+
+                <LinkCheckTable filter={filterUnchecked} bind:rowSelect={rowSelect} sort={'scoreDesc'} master=true actionTitle={"à valider"} bind:size={unCheckedLinks}/>
+                <LinkCheckTable filter={ filterChecked } bind:rowSelect={rowSelect} sort={'scoreAsc'} actionTitle={"validées"} bind:size={checkedLinks}/>
+
             {/if}
-            <p>
-                <span>
-                    téléchargez:<br/>
-                    {#if (unCheckedLinks === 0)}
-                        <span class="has-text-danger">
-                            <FontAwesomeIcon icon={faArrowAltCircleRight} class="is-24 is-low"/>
-                            &nbsp;
-                        </span>
-                    {/if}
-                    <button
-                        class='button is-info'
-                        on:click|preventDefault={e => download(false)}
-                    >
-                        le fichier complet
-                        {#if isDownloading === 'complete'}
-                            <div style="z-index:1200;position:absolute;witdth:100%;background-color:#fff;opacity:0.5;">
-                                <FontAwesomeIcon icon={faSpinner} class="is-low spin"/>
-                            </div>
-                        {/if}
-                    </button>
+        </div>
 
-                    <button
-                        class="button is-danger"
-                        on:click|preventDefault={e => download(true)}
-                    >
-                        les décès identifiés
-                        {#if isDownloading === 'matched'}
-                            <div style="z-index:1200;position:absolute;witdth:100%;background-color:#fff;opacity:0.5;">
-                                <FontAwesomeIcon icon={faSpinner} class="is-low spin"/>
-                            </div>
-                        {/if}
-                    </button>
-                    {#if (unCheckedLinks === 0)}
-                        <span class="has-text-danger">
-                            &nbsp;
-                            <FontAwesomeIcon icon={faArrowAltCircleLeft} class="is-24 is-low"/>
-                        </span>
-                    {/if}
-                </span>
-            </p>
-
-            <LinkCheckTable filter={filterUnchecked} bind:rowSelect={rowSelect} sort={'scoreDesc'} master=true actionTitle={"à valider"} bind:size={unCheckedLinks}/>
-            <LinkCheckTable filter={ filterChecked } bind:rowSelect={rowSelect} sort={'scoreAsc'} actionTitle={"validées"} bind:size={checkedLinks}/>
-
-        {/if}
-    </div>
+    {/if}
 {/if}
 
 <script>
-    import { linkCompleteResults, linkResults, linkFileName, linkCsvType,
+    import { linkWaiter, linkCompleteResults, linkResults, linkFileName, linkCsvType,
         linkCompleted, linkAutoCheckThreshold, linkValidations
     } from '../tools/stores.js';
     import LinkCheckTable from './LinkCheckTable.svelte';
@@ -92,6 +95,10 @@
         $linkCompleted = true;
     } else {
         $linkCompleted = false;
+    }
+
+    $: if ($linkResults) {
+        $linkWaiter = false;
     }
 
     const protect = (sep) => {
@@ -160,4 +167,10 @@
     .check-body {
         text-align: center;
     }
+  .wait-center {
+    text-align: center;
+    transform: translateY(50%);
+    height: 14rem;
+    additive-symbols: 14rem;
+  }
 </style>
