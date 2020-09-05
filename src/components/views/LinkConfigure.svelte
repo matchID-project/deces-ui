@@ -56,19 +56,19 @@
     </div>
 </div>
 <script>
-    import { linkStep, linkMapping, linkMinFields, linkCsvType } from '../tools/stores.js';
+    import { linkStep, linkMapping, linkMinFields, linkSourceHeaderTypes, linkCsvType } from '../tools/stores.js';
     import LinkFields from './LinkFields.svelte';
     import LinkSampleTable from './LinkSampleTable.svelte';
     let mapping = {};
     let fields = [
-        { label: "nom", field: "lastName", mapTo: null, type: "lastName"},
-        { label: "prénom(s)", field: "firstName", mapTo: null, type: "firstName"},
-        { label: "sexe", field: "sex", mapTo: null, type: "sex"},
-        { label: "date de naissance", field: "birthDate", mapTo: null, type: "date", blockOnWarning: true,
+        { label: "nom", field: "lastName", mapTo: undefined, type: "lastName"},
+        { label: "prénom(s)", field: "firstName", mapTo: undefined, type: "firstName"},
+        { label: "sexe", field: "sex", mapTo: undefined, type: "sex"},
+        { label: "date de naissance", field: "birthDate", mapTo: undefined, type: "date", blockOnWarning: true,
             errorMessage: "le champ date ne supporte que les format JJ/MM/AAAA, JJ-MM-AAAA, AAAA/MM/JJ et AAAA-MM-JJ"},
-        { label: "commune de naissance", field: "birthCity", mapTo: null, type: "city"},
-        { label: "département de naissance", field: "birthDepartment", mapTo: null, type: "depCode"},
-        { label: "pays de naissance", field: "birthCountry", mapTo: null, type: "country"}
+        { label: "commune de naissance", field: "birthCity", mapTo: undefined, type: "city"},
+        { label: "département de naissance", field: "birthDepartment", mapTo: undefined, type: "depCode"},
+        { label: "pays de naissance", field: "birthCountry", mapTo: undefined, type: "country"}
     ];
     let done = false;
     let disabled = true;
@@ -82,6 +82,19 @@
     $: blockOnWarning = fields.some(f => (f.warning && f.blockOnWarning));
     $: notEnoughFields = (selectedFieldsNumber < $linkMinFields);
     $: disabled =  notEnoughFields || blockOnWarning ;
+
+    $: if ($linkSourceHeaderTypes) {
+        fields = fields.map(field => {
+            Object.keys($linkSourceHeaderTypes).forEach(col => {
+                if ((field.mapTo === undefined) && (field.type === $linkSourceHeaderTypes[col].type)) {
+                    field.guessedType = $linkSourceHeaderTypes[col].type;
+                    field.guessedFormat = $linkSourceHeaderTypes[col].format;
+                    field.mapTo = col;
+                }
+            });
+            return field;
+        });
+    };
 
     $: if ($linkCsvType && fields.filter(f => f.field === "birthDate")[0].guessedFormat) {
         linkCsvType.update(v => {
