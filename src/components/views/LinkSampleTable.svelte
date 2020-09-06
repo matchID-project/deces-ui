@@ -28,7 +28,7 @@
 </div>
 
 <script>
-    import { linkFile, resultsPerPage, linkStep, linkSourceHeader, linkCsvType } from '../tools/stores.js';
+    import { linkFile, resultsPerPage, linkStep, linkSourceHeader, linkSourceHeaderTypes, linkCsvType } from '../tools/stores.js';
 
     export let potentialSeparators = [';',',','|','\t'];
     export let potentialQuotes = ["'",'"'];
@@ -73,16 +73,28 @@
             .map(row => header.map(h => row[$linkSourceHeader.indexOf(h)]))
     }
 
+    $: rows && linkSourceHeaderTypes.update(v => {
+        const types = {};
+        $linkSourceHeader.forEach(col => {
+            types[col] = guessFieldType(rows.map(row => row[$linkSourceHeader.indexOf(col)]))
+        });
+        return types
+    });
+
     const norm = (s) => {
         return s ? s.normalize('NFKD').replace(/[\u0300-\u036f]/g, "").toLocaleLowerCase() : '';
     }
 
     const guessFieldType = (column) => {
-        return maxFreqTerm(column.map(f => {
+        const guess = maxFreqTerm(column.map(f => {
             let g = norm(f);
             guessTypeRegexp.map(r => g = g.replace(r[0],r[1]));
             return g;
         }).filter(x => x));
+        return guess && {
+            type: guess.replace(/:.*/,''),
+            format: /:/.test(guess) && guess.replace(/.*:/, '')
+        };
     };
 
     const maxFreqTerm = (a) => {
@@ -161,16 +173,15 @@
         const blob = $linkFile.slice(0, 32768);
         reader.onload = parseCsv;
         reader.readAsText(blob);
-    }
+    };
 
 	export function dragstart (ev, col) {
 		ev.dataTransfer.effectAllowed = 'move';
         ev.dataTransfer.dropEffect = 'move';
-        const type = guessFieldType(rows.map(row => row[$linkSourceHeader.indexOf(col)]));
         ev.dataTransfer.setData('text/plain', JSON.stringify({
                 col: col,
-                type: type && type.replace(/:.*/,''),
-                format: type && /:/.test(type) && type.replace(/.*:/, '')
+                type: $linkSourceHeaderTypes[col].type,
+                format: $linkSourceHeaderTypes[col].format
         }));
 	};
 
