@@ -126,7 +126,10 @@
             const link = document.createElement('a');
             link.href = URL.createObjectURL(blob);
             link.download = $linkFileName.replace(/\.(.*?)$/,'_deces_INSEE.$1');
+            document.body.appendChild(link);
             link.click();
+            document.body.removeChild(link);
+            window.URL.revokeObjectURL(link.href);
             isDownloading = false;
             $linkCompleted = true;
         }, 500);

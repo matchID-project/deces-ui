@@ -1,28 +1,16 @@
 import { set, get, del, clear } from 'idb-keyval';
 
-let db = undefined
-
 export const clearAll = async () => {
     clear();
 }
 
-
-export const useLocalStorage = (store, key) => {
-    const json = localStorage.getItem(key);
-    if (json) {
-        store.set(JSON.parse(json));
-    }
-    store.subscribe((value) => {
-        try {
-            localStorage.setItem(key, JSON.stringify(value));
-        } catch(err) {
-            console.log(`error while storing ${key} into localStorage:`, err);
-        }
-    });
-};
-
 export const useLocalSync = async (store, key) => {
-    const json = await get(key) || localStorage.getItem(key);
+    let json;
+    try {
+        json = await get(key) || localStorage.getItem(key);
+    } catch(e) {
+        json = localStorage.getItem(key);
+    }
     if (json) {
         try {
             store.set(JSON.parse(json));
