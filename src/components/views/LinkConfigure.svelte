@@ -86,7 +86,7 @@
     $: if ($linkSourceHeaderTypes) {
         fields = fields.map(field => {
             Object.keys($linkSourceHeaderTypes).forEach(col => {
-                if ((field.mapTo === undefined) && (field.type === $linkSourceHeaderTypes[col].type)) {
+                if ((field.mapTo === undefined) && $linkSourceHeaderTypes[col] && (field.type === $linkSourceHeaderTypes[col].type)) {
                     field.guessedType = $linkSourceHeaderTypes[col].type;
                     field.guessedFormat = $linkSourceHeaderTypes[col].format;
                     field.mapTo = col;
