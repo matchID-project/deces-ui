@@ -38,12 +38,7 @@
                     >
                         {#each header.filter((h,index) => index < mappedColumns).map(h => row[$linkResults.header.indexOf(h)]) as col, index}
                             <td title={col}>
-                                {@html coloredDiff([
-                                    col,
-                                    $linkMapping.direct[header[index]] === 'birthDate'
-                                        ? dateFormat( row[$linkResults.header.indexOf(headerMapping[$linkMapping.direct[header[index]]])])
-                                        : row[$linkResults.header.indexOf(headerMapping[$linkMapping.direct[header[index]]])]
-                                ])}
+                                {@html formatField(col, header[index], row)}
                             </td>
                         {/each}
                         <td
@@ -137,7 +132,8 @@
         birthDate: 'birth.date',
         birthCity: 'birth.city',
         birthDepartment: 'birth.departmentCode',
-        birthCountry: 'birth.country'
+        birthCountry: 'birth.country',
+        deathDate: 'death.date'
     };
 
     $: if ($linkResults || ($linkResults && subFilter)) {
@@ -209,6 +205,22 @@
             return v;
         });
         return row[row.length - 2].valid;
+    }
+
+    const formatField = (colA, colB, row) => {
+        if ($linkMapping.direct[colB] === 'birthDate') {
+            coloredDiff([
+                colA,
+                dateFormat(row[$linkResults.header.indexOf(headerMapping['birthDate'])])
+            ]);
+        } else if ($linkMapping.direct[colB] === 'deathDate') {
+            return `${colA ? colA + ' <br/> ' : ''}${dateFormat( row[$linkResults.header.indexOf(headerMapping['deathDate'])])} †`;
+        } else {
+            return coloredDiff([
+                colA,
+                row[$linkResults.header.indexOf(headerMapping[$linkMapping.direct[colB]])]
+            ]);
+        }
     }
 
     const coloredDiff = (doubleArray) => {

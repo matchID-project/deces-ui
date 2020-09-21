@@ -68,7 +68,9 @@
             errorMessage: "le champ date ne supporte que les format JJ/MM/AAAA, JJ-MM-AAAA, AAAA/MM/JJ et AAAA-MM-JJ"},
         { label: "commune de naissance", field: "birthCity", mapTo: undefined, type: "city"},
         { label: "département de naissance", field: "birthDepartment", mapTo: undefined, type: "depCode"},
-        { label: "pays de naissance", field: "birthCountry", mapTo: undefined, type: "country"}
+        { label: "pays de naissance", field: "birthCountry", mapTo: undefined, type: "country"},
+        { label: "décès ultérieur à (date)", field: { query: "lastSeenAliveDate", result: "deathDate" }, mapTo: undefined, type: "date", blockOnWarning: true,
+            errorMessage: "le champ date ne supporte que les format JJ/MM/AAAA, JJ-MM-AAAA, AAAA/MM/JJ et AAAA-MM-JJ"}
     ];
     let done = false;
     let disabled = true;
@@ -86,10 +88,13 @@
     $: if ($linkSourceHeaderTypes) {
         fields = fields.map(field => {
             Object.keys($linkSourceHeaderTypes).forEach(col => {
-                if ((field.mapTo === undefined) && $linkSourceHeaderTypes[col] && (field.type === $linkSourceHeaderTypes[col].type)) {
+                if ((field.mapTo === undefined) && $linkSourceHeaderTypes[col]
+                    && (field.type === $linkSourceHeaderTypes[col].type)
+                    && !($linkSourceHeaderTypes[col].mapped)) {
                     field.guessedType = $linkSourceHeaderTypes[col].type;
                     field.guessedFormat = $linkSourceHeaderTypes[col].format;
                     field.mapTo = col;
+                    $linkSourceHeaderTypes[col].mapped = field;
                 }
             });
             return field;
