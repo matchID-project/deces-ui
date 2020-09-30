@@ -7,7 +7,7 @@
 {:else if (status === undefined)}
     <a
         class="download"
-        href={src || '/'}
+        href={null}
         on:click|preventDefault={download}
         title="téléchargez l'ensemble des résultats en tableur CSV"
     >
@@ -27,19 +27,14 @@
 {/if}
 
 <script>
-    import { onMount, onDestroy } from 'svelte';
     import { tweened } from 'svelte/motion';
     import { sineInOut } from 'svelte/easing';
     import { faFileDownload, faCheck, faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
     import FontAwesomeIcon from './FontAwesomeIcon.svelte';
-    import { searchInput, mitmUrl } from '../tools/stores.js';
-    import { WritableStream } from 'web-streams-polyfill/ponyfill';
-    import streamSaver from '../tools/streamSaver.js';
+    import { searchInput } from '../tools/stores.js';
     import axios from 'axios';
 
     let status = undefined;
-    let writer = undefined;
-    let src=undefined;
     let fallback=false;
     const progress = tweened(0, {
       duration: 500,
@@ -49,91 +44,55 @@
 
     $: if ($searchInput) {status = undefined};
 
-    const handleStreamSaverMessage = (data) => {
-        if (data.download) {
-            src = data.download;
-        }
-        if (data.start) {
-            status = 'downloading';
-        }
-        if (data.end) {
-            status = data.end === 'success' ? data.end : 'fail';
-        }
-    }
-
-    onMount(() => {
-        streamSaver.mitm = $mitmUrl;
-        streamSaver.WritableStream = WritableStream;
-        streamSaver.onmessage = handleStreamSaverMessage;
-    });
-
     const fileName = () => {
         return `deces-${Object.keys($searchInput).map(k => {
             return ($searchInput[k].value && $searchInput[k].value.replace(/\s+/,"_").toUpperCase()) || undefined;
         }).filter(x => x).join('-')}.csv`;
     };
 
-    function sleep(ms) {
-        return new Promise(resolve => setTimeout(resolve, ms));
-    }
-
     const download = async (e) => {
-        max = 0;
-        await progress.set(0);
-        let fileStream;
-        const encoder = new TextEncoder();
-        while (status !== 'downloading') {
-            fileStream = await streamSaver.createWriteStream(fileName());
-            writer = await fileStream.getWriter();
-            await sleep(200);
-            if (status !== 'downloading') {
-                streamSaver.useBlobFallback = true;
-                fallback = true;
-                console.warn('download using blob fallback');
-                status = 'downloading';
-            }
+      max = 0;
+      await progress.set(0);
+      try {
+        const headers = {
+          'Accept': 'text/csv'
         }
-        try {
-          const headers = {
-            'Accept': 'text/csv'
+        const formData = {}
+        Object.keys($searchInput).forEach(k => {
+          if ($searchInput[k].value) {
+            if ($searchInput[k].backendQuery) {
+              formData[$searchInput[k].backendQuery] = $searchInput[k].value.replace(/\s+/,"_")
+            } else {
+              formData[k] = $searchInput[k].value.replace(/\s+/,"_").toUpperCase()
+            }
           }
-          const formData = {}
-          Object.keys($searchInput).forEach(k => {
-            if ($searchInput[k].value) {
-              if ($searchInput[k].backendQuery) {
-                formData[$searchInput[k].backendQuery] = $searchInput[k].value.replace(/\s+/,"_")
-              } else {
-                formData[k] = $searchInput[k].value.replace(/\s+/,"_").toUpperCase()
-              }
-            }
-          })
-          const res = await axios.post('__BACKEND_PROXY_PATH__/search', formData, {
-            headers,
-            onDownloadProgress: (progressEvent) => {
-              max = progressEvent.target.getResponseHeader('total-results');
-              progress.set(progressEvent.currentTarget.response.split('\n').length - 2)
-            }
-          })
-          await writer.write(encoder.encode(res.data));
-        } catch(err) {
-            throw(err);
-        }
-        if (status !== 'downloading') {
-            writer.abort();
-            console.warn('could not download');
-        } else {
-            writer.close();
-        }
-        fallback = false;
-        max = 0;
+        })
+        const res = await axios.post('__BACKEND_PROXY_PATH__/search', formData, {
+          headers,
+          onDownloadProgress: (progressEvent) => {
+            status = 'downloading';
+            max = progressEvent.target.getResponseHeader('total-results');
+            progress.set(progressEvent.currentTarget.response.split('\n').length - 1)
+          }
+        })
+        status = 'success';
+        const blob = new Blob([res.data], { type: 'text/csv' });
+        // Create an object URL for the blob object
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = fileName();
+        link.style.display = 'none';
+        document.body.appendChild(link);
+        link.click();
+        URL.revokeObjectURL(url);
+        link.remove();
+      } catch(err) {
+        status = 'fail'
+        throw(err);
+      }
+      max = 0;
     };
-
-    onDestroy(() => {
-        if (writer) {
-            writer.abort();
-        }
-        status = undefined;
-    });
 
 </script>
 
