@@ -30,52 +30,54 @@
                         {/if}
                     {/each}
                 </tr>
-                {#each subFilteredRows.slice((page-1)*page,page*pageSize) as row, rowNumber}
-                    <tr
-                        on:click={() => {rowSelect = row.slice(-1)[0]}}
-                        class:is-striped={rowNumber%2}
-                        class:has-text-grey-light={rowSelect !== row.slice(-1)[0]}
-                    >
-                        {#each header.filter((h,index) => index < mappedColumns).map(h => row[$linkResults.header.indexOf(h)]) as col, index}
-                            <td title={col}>
-                                {@html formatField(col, header[index], row)}
-                            </td>
-                        {/each}
-                        <td
-                            class="hcenter"
-                            title={get(row,'scores')}
+                {#each subFilteredRows.slice((page-1)*page,page*pageSize) as rowGroup, rowNumber}
+                    {#each rowGroup as row, candidateNumber}
+                        <tr
+                            on:click={() => {rowSelect = row[$linkResults.header.indexOf('sourceLineNumber')]}}
+                            class:is-striped={rowNumber%2}
+                            class:is-inactive={rowSelect !== row[$linkResults.header.indexOf('sourceLineNumber')]}
                         >
-                            {Math.round(get(row,'score')*100)}%
-                        </td>
-                        <td class="hcenter has-text-grey-light">
-                            <span
-                                class:has-text-danger={row[row.length - 2].valid === false}
-                                class:is-hidden={(row.slice(-1)[0] !== rowSelect) && (row[row.length - 2].valid !== false)}
-                                on:click={() => {row[row.length -2].valid = autoCheckSimlarRows(row, false);}}
-                                title="invalider l'appariement"
-                            >
-                                <FontAwesomeIcon icon={faWindowClose} class="is-lower"/>
-                            </span>
-                            {#if row.slice(-1)[0] === rowSelect}
-                                &nbsp;
-                            {/if}
-                            <span
-                                class:has-text-info={row[row.length - 2].valid === true}
-                                class:is-hidden={(row.slice(-1)[0] !== rowSelect) && (row[row.length - 2].valid !== true)}
-                                on:click={() => {row[row.length -2].valid = autoCheckSimlarRows(row, true);}}
-                                title="valider l'appariement"
-                            >
-                                    <FontAwesomeIcon icon={faCheck} class="is-lower"/>
-                            </span>
-                        </td>
-                        {#if displayUnmappedColumns}
-                            {#each header.filter((h,index) => index >= (mappedColumns+2)).map(h => row[$linkResults.header.indexOf(h)]) as col, index}
+                            {#each header.filter((h,index) => index < mappedColumns).map(h => row[$linkResults.header.indexOf(h)]) as col, index}
                                 <td title={col}>
-                                    {col}
+                                    {@html formatField(col, header[index], row)}
                                 </td>
                             {/each}
-                        {/if}
-                    </tr>
+                            <td
+                                class="hcenter"
+                                title={get(row,'scores')}
+                            >
+                                {Math.round(get(row,'score')*100)}%
+                            </td>
+                            <td class="hcenter has-text-grey-light">
+                                <span
+                                    class:has-text-danger={row[row.length - 2].valid === false}
+                                    class:is-hidden={(row[$linkResults.header.indexOf('sourceLineNumber')] !== rowSelect) && (row[row.length - 2].valid !== false)}
+                                    on:click={() => {row[row.length - 2].valid = autoCheckSimlarRows(row, candidateNumber, false);}}
+                                    title="invalider l'appariement"
+                                >
+                                    <FontAwesomeIcon icon={faWindowClose} class="is-lower"/>
+                                </span>
+                                {#if row[$linkResults.header.indexOf('sourceLineNumber')] === rowSelect}
+                                    &nbsp;
+                                {/if}
+                                <span
+                                    class:has-text-info={row[row.length - 2].valid === true}
+                                    class:is-hidden={(row[$linkResults.header.indexOf('sourceLineNumber')] !== rowSelect) && (row[row.length - 2].valid !== true)}
+                                    on:click={() => {row[row.length -2].valid = autoCheckSimlarRows(row, candidateNumber, true);}}
+                                    title="valider l'appariement"
+                                >
+                                        <FontAwesomeIcon icon={faCheck} class="is-lower"/>
+                                </span>
+                            </td>
+                            {#if displayUnmappedColumns}
+                                {#each header.filter((h,index) => index >= (mappedColumns+2)).map(h => row[$linkResults.header.indexOf(h)]) as col, index}
+                                    <td title={col}>
+                                        {col}
+                                    </td>
+                                {/each}
+                            {/if}
+                        </tr>
+                    {/each}
                 {/each}
                 {#if filteredRows.length > pageSize}
                     <tr>
@@ -120,8 +122,8 @@
     let autoCheckSimilar = false;
 
     const sorts = {
-        scoreDesc: (a, b) => get(a,'score') > get(b,'score') ? -1 : ( get(a,'score') < get(b,'score') ? 1 : 0 ),
-        scoreAsc: (a, b) => get(a,'score') > get(b,'score') ? 1 : ( get(a,'score') < get(b,'score') ? -1 : 0 )
+        scoreDesc: (a, b) => get(a[0],'score') > get(b[0],'score') ? -1 : ( get(a[0],'score') < get(b[0],'score') ? 1 : 0 ),
+        scoreAsc: (a, b) => get(a[0],'score') > get(b[0],'score') ? 1 : ( get(a[0],'score') < get(b[0],'score') ? -1 : 0 )
     }
     let filteredRows;
     let subFilteredRows;
@@ -146,25 +148,32 @@
                 .filter(x => x)
         ];
         mappedColumns = $linkSourceHeader.filter(h => ($linkMapping.direct && $linkMapping.direct[h])).length;
-        filteredRows = $linkResults.rows.map((r, index) => {
-                const row = r.slice(0);
-                row.push($linkValidations[index] || { checked: false });
-                row.push(index);
+        filteredRows = $linkResults.rows.map((r, i) => {
+                const row = r.slice(0).map((rr, j) => {
+                    rr.push($linkValidations[i][j] || { checked: false });
+                    rr.push(i);
+                    return rr;
+                })
                 return row;
             })
             .filter(row => applyFilter(row, filter))
             .sort(sorts[sort])
+    }
+
+    $: if (filteredRows) {
         if (master) {
-            if (!rowSelect) {
+            if (!rowSelect ||
+                ( filteredRows && filteredRows.length && !filteredRows.some(r => rowSelect === r[0][$linkResults.header.indexOf('sourceLineNumber')]))
+            ) {
                 if (filteredRows && filteredRows.length) {
-                    rowSelect = filteredRows[0].slice(-1)[0];
+                    rowSelect = filteredRows[0][0][$linkResults.header.indexOf('sourceLineNumber')];
                 } else {
                     rowSelect = -1;
                 }
             }
         } else {
             if (filteredRows && filteredRows.length && (rowSelect === -1)) {
-                rowSelect = filteredRows[0].slice(-1)[0];
+                rowSelect = filteredRows[0][0][$linkResults.header.indexOf('sourceLineNumber')];
             }
         }
     }
@@ -185,14 +194,14 @@
         if (!filter) { return true }
         return Object.keys(filter).every(k => {
             if (k === 'check') {
-                return filter[k](row[row.length - 2]);
+                return filter[k](row.map(r => r && r[r.length - 2]));
             } else {
-                return filter[k](row[$linkResults.header.indexOf(k)]);
+                return filter[k](row.map(r => r && r[$linkResults.header.indexOf(k)]));
             }
         });
     }
 
-    const check = (row, status, checkType = 'manual') => {
+    const check = (row, candidateNumber, status, checkType = 'manual') => {
         if (row[row.length - 2].valid === status) {
             row[row.length - 2].valid = undefined
             row[row.length - 2].checked = false
@@ -200,8 +209,13 @@
             row[row.length - 2].valid = status
             row[row.length - 2].checked = `${Date.now()} - ${checkType}`
         }
+        const sourceLineNumber = row[$linkResults.header.indexOf('sourceLineNumber')];
         linkValidations.update(v => {
-            v[row.slice(-1)[0]] = row[row.length - 2];
+            v.forEach(r => {
+                if (r[candidateNumber] && r[candidateNumber][$linkResults.header.indexOf('sourceLineNumber')] === sourceLineNumber) {
+                    r[candidateNumber] = row[row.length - 2];
+                }
+            });
             return v;
         });
         return row[row.length - 2].valid;
@@ -209,7 +223,7 @@
 
     const formatField = (colA, colB, row) => {
         if ($linkMapping.direct[colB] === 'birthDate') {
-            coloredDiff([
+            return coloredDiff([
                 colA,
                 dateFormat(row[$linkResults.header.indexOf(headerMapping['birthDate'])])
             ]);
@@ -265,22 +279,21 @@
         return dateString.replace(/(\d{4})(\d{2})(\d{2})/, format);
     };
 
-    const autoCheckSimlarRows = (row, status) => {
+    const autoCheckSimlarRows = (row, candidateNumber, status) => {
         if (autoCheckSimilar) {
             const scores = JSON.parse(get(row,'scores'));
-            console.log(row, status, 'manual');
-            const c = check(row, status, 'manual');
-            filteredRows.map(r => {
+            const c = check(row, candidateNumber, status, 'manual');
+            filteredRows.forEach(rg => rg.forEach (r => {
                 if (r !== row) {
                     const s = JSON.parse(get(r, 'scores'));
                     if (similarScores(scores, s)) {
-                        check(r, status, 'similar group');
+                        check(r, candidateNumber, status, 'similar group');
                     }
                 }
-            });
+            }));
             return c;
         } else {
-            return check(row, status, 'manual');
+            return check(row, candidateNumber, status, 'manual');
         }
     }
 
