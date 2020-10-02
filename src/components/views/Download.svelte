@@ -35,6 +35,7 @@
     import axios from 'axios';
 
     let status = undefined;
+    let lazyCountDate = 0;
     let fallback=false;
     const progress = tweened(0, {
       duration: 500,
@@ -72,9 +73,17 @@
           onDownloadProgress: (progressEvent) => {
             status = 'downloading';
             max = progressEvent.target.getResponseHeader('total-results');
-            progress.set(progressEvent.currentTarget.response.split('\n').length - 1)
+            if (max > 5000) {
+                const date = Date.now();
+                if (date > (lazyCountDate + 2000)) {
+                    lazyCountDate = date;
+                    progress.set(countLines(progressEvent.currentTarget.response))
+                }
+            } else {
+                progress.set(countLines(progressEvent.currentTarget.response))
+            }
           }
-        })
+        });
         status = 'success';
         const blob = new Blob([res.data], { type: 'text/csv' });
         // Create an object URL for the blob object
@@ -93,6 +102,16 @@
       }
       max = 0;
     };
+
+    const countLines = (data) => {
+        let idx = -1;
+        let n = -1;
+        do {
+        idx = data.indexOf(10, idx+1);
+        n++;
+        } while (idx !== -1);
+        return n;
+    }
 
 </script>
 
