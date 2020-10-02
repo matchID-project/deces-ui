@@ -81,12 +81,10 @@
 
     let rowSelect;
     const filterUnchecked = {
-        check: (v) => {return v.checked === false},
-        score: (v) => {return v && parseFloat(v)}
+        check: (r) => {return r.some(v => (!v || v.checked === false))},
     };
     const filterChecked = {
-        check: (v) => {return v.checked},
-        score: (v) => {return v && parseFloat(v)}
+        check: (r) => {return r.every(v => v && v.checked)},
     };
     let unCheckedLinks;
     let checkedLinks;
@@ -141,14 +139,14 @@
         header.push('checked');
         let rows, index, map;
         if (filter) {
-            rows = $linkResults.rows.map(r => r.slice(0, -1))
+            rows = $linkResults.rows;
             index = (i) => i;
         } else {
             rows = $linkCompleteResults.rows;
             map = {};
             let j = 0;
             $linkResults.rows.forEach(r => {
-                map[r.slice(-1)[0]] = j++;
+                map[r[0][$linkResults.header.indexOf('sourceLineNumber')]] = j++;
             });
             index = (i) => map[i];
         }
@@ -156,10 +154,13 @@
             header.map(h => protectField(h)).join($linkCsvType.sep) + '\r\n',
             ...rows.map((r,i) => {
                 const l = $linkValidations[index(i)];
-                r.push(l && l.valid || '');
-                r.push(l && (l.checked ? ((l.checked === "auto") ? "auto": true) : false) || false);
+                r.forEach((rr,j) => {
+                    rr.push(l && l[j] && l[j].valid || '');
+                    rr.push(l && l[j] && (l[j].checked ? ((l[j].checked === "auto") ? "auto": true) : false) || false);
+                });
                 return r
                 })
+                .flat()
                 .filter(row => !filter || row[header.indexOf('score')])
                 .map(row => header.map((col, i) => protectField(row[i])).join($linkCsvType.sep) + '\r\n')];
     }
