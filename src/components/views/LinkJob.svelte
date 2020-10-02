@@ -141,6 +141,7 @@
         progressUpload = 0;
         let formData = new FormData();
         formData.append('sep', $linkCsvType.sep);
+        formData.append('candidateNumber', 5);
         formData.append('dateFormat', $linkCsvType.dateFormat || 'DD/MM/YYYY');
         Object.keys($linkMapping && $linkMapping.reverse).map(k => formData.append(k,$linkMapping.reverse[k]));
         formData.append('csv', $linkFile);
@@ -199,7 +200,12 @@
         const sep = $linkCsvType.sep;
         const re = new RegExp(`^(${q}(([^${q}]|${q}${q})*?)${q}|([^${protect(sep)}]*))(\\${protect(sep)}(.*))?$`);
         const re2 = new RegExp(`${q}${q}`,'g');
-        const rows = data.split(/\s*\r?\n\s*/).map(r => {
+        const rows = [];
+        let header = undefined;
+        let sourceLineNumberIdx = -1;
+        let currentLineNumber = 1;
+        let currentLine = [];
+        data.split(/\s*\r?\n\s*/).map(r => {
             const row = [];
             let i = 0;
             while(r !== undefined) {
@@ -215,10 +221,22 @@
                     r = undefined;
                 }
             }
-            return row
+            return row;
+        }).forEach(row => {
+            if (!header) {
+                header = row;
+                sourceLineNumberIdx = header.indexOf('sourceLineNumber');
+            } else {
+                if (parseInt(row[sourceLineNumberIdx]) > currentLineNumber) {
+                    rows.push(currentLine);
+                    currentLine = [row];
+                    currentLineNumber = parseInt(row[sourceLineNumberIdx]);
+                } else {
+                    currentLine.push(row);
+                }
+            }
         });
-
-        const header = rows.shift();
+        rows.push(currentLine);
         const headerMapping = {};
         header.map((h,i) => headerMapping[h] = i);
         linkCompleteResults.update(v => {
@@ -230,17 +248,15 @@
         linkResults.update(v => {
             let i = 0;
             return {
-                header: [...header, 'index'],
-                rows: rows.map(r => {
-                    const s = r.slice(0, -1);
-                    s.push(i++);
-                    return s;
-                }).filter(r => r[headerMapping['score']])
+                header: [...header],
+                rows: rows.filter(r => r[0][headerMapping['score']])
             }
         })
         linkValidations.update(v => {
-            return $linkResults.rows.map(r => (r[headerMapping['score']] >= $linkAutoCheckThreshold) ?
+            return $linkResults.rows.map(r => {
+                return r.map(rr => (rr[headerMapping['score']] >= $linkAutoCheckThreshold) ?
                     { valid: true, checked: "auto" } : { checked: false })
+            });
         });
         $linkStep = 4;
     };

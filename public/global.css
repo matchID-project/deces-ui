@@ -84,6 +84,10 @@ th.is-active {
   color: #fff;
 }
 
+tr.is-inactive {
+  opacity: 40%;
+}
+
 /* required styles */
 
 .leaflet-pane,

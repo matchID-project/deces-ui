@@ -50,7 +50,8 @@
         [/^\d[0-9a-b]\d{3}/, 'guess:cityCode'],
         [/^[1-2]$/, 'guess:sex:12'],
         [/^(f|m)$/, 'guess:sex:fm'],
-        [/^(\d[0-9a-b]|97[1-5])$/, 'guess:depCode'],
+        [/^(f|h)$/, 'guess:sex:fh'],
+        [/^((0?|[1-9])[0-9a-b]|97[1-5]?|99)$/, 'guess:depCode'],
         [/^(petit|du(rand|bois|pon[dt]|val|mont|four)|mor(e(au|l)|in)|le(feb?vre|roy|grand|maire)|roux|fournier|girard|bonnet|lambert|fontaine|rousseau|muller|faure|mercier|blanc|guerin|boyer|garnier|chevalier|perrin|garcia|gauthier|robin|roussel|masson|meunier|meyer|giraud|blanchard|joly|martinez|brunet|barbier|payet|diallo|lacroix|vidal|schmi(dt|tt)|fabre|roche|renard|colin|caron|aubert)$/, 'guess:lastName'],
         [/^(marie|jean{2}e|francoise|monique|catherine|nathalie|isabel{2}e|jacqueline|sylvie|an{2}e|jean|pier{2}e|michel|andre|philip{2}e|louis|rene|alain|jacques)((\s*\w+)+)?$/, 'guess:firstName'],
         [/^\s*(((saint|st)(-|\s)\w+.*)|((paris|marseille|lyon)(\s.*?))|toulouse|nice|nantes|montpellier|strasbourg)\s*$/, 'guess:city'],
@@ -108,7 +109,11 @@
                 maxCount = dic[v]
             }
         });
-        return maxTerm;
+        if (maxCount > (a.length / 10)) {
+            return maxTerm;
+        } else {
+            return undefined;
+        }
     }
 
     const guessSeparator = (csv) => {
@@ -180,8 +185,8 @@
         ev.dataTransfer.dropEffect = 'move';
         ev.dataTransfer.setData('text/plain', JSON.stringify({
                 col: col,
-                type: $linkSourceHeaderTypes[col].type,
-                format: $linkSourceHeaderTypes[col].format
+                type: $linkSourceHeaderTypes[col] && $linkSourceHeaderTypes[col].type,
+                format: $linkSourceHeaderTypes[col] && $linkSourceHeaderTypes[col].format
         }));
 	};
 

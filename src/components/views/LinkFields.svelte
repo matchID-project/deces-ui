@@ -15,8 +15,8 @@
             reverse: {}
         };
         fields.filter(f => f.mapTo).map(f => {
-            mapping.direct[f.mapTo]=f.field;
-            mapping.reverse[f.field]=f.mapTo;
+            mapping.direct[f.mapTo]=f.field && (f.field.result || f.field);
+            mapping.reverse[f.field && (f.field.query || f.field)]=f.mapTo;
         });
     };
 
