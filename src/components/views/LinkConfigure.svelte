@@ -3,6 +3,10 @@
     <div class="wrap">
         <p>
             <strong>Choisissez les champs à apparier:</strong><br/>
+            <span class="is-size-7">
+            si une colonne automatiquement associée ci-dessous est erronnée, cliquez dessus
+            pour supprimer l'association
+            </span>
         </p>
         <LinkFields bind:mapping={mapping} bind:fields={fields}/>
         {#if warning}
@@ -48,7 +52,7 @@
         </button>
         <p>
             <strong>Depuis les colonnes ci-dessous:</strong><br/>
-            <span class="is-size-7">(glissez-collez une colonne du bas sur un champ au-dessus)</span>
+            <span class="is-size-7">glissez-collez une colonne du bas sur un champ au-dessus</span>
         </p>
         <div class="wrap-table">
             <LinkSampleTable bind:mapping={mapping} bind:fields={fields}/>
@@ -87,16 +91,23 @@
 
     $: if ($linkSourceHeaderTypes) {
         fields = fields.map(field => {
+            let possibleColumns = undefined
             Object.keys($linkSourceHeaderTypes).forEach(col => {
-                if ((field.mapTo === undefined) && $linkSourceHeaderTypes[col]
+                if ($linkSourceHeaderTypes[col]
                     && (field.type === $linkSourceHeaderTypes[col].type)
-                    && !($linkSourceHeaderTypes[col].mapped)) {
-                    field.guessedType = $linkSourceHeaderTypes[col].type;
-                    field.guessedFormat = $linkSourceHeaderTypes[col].format;
-                    field.mapTo = col;
-                    $linkSourceHeaderTypes[col].mapped = field;
+                    && !($linkSourceHeaderTypes[col].mapped)
+                    && (!field.guessedFreq || (field.guessedFreq < $linkSourceHeaderTypes[col].type))) {
+                        field.guessedType = $linkSourceHeaderTypes[col].type;
+                        field.guessedFormat = $linkSourceHeaderTypes[col].format;
+                        field.guessedFreq = $linkSourceHeaderTypes[col].freq;
+                        field.mapTo = col;
                 }
             });
+            if (field.mapTo) {
+                if ($linkSourceHeaderTypes[field.mapTo]) {
+                    $linkSourceHeaderTypes[field.mapTo].mapped = field;
+                }
+            }
             return field;
         });
     };

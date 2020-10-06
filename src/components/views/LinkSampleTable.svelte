@@ -42,23 +42,29 @@
     let header;
     let displayRows;
 
+    const guessBoost = {
+        city: 3,
+        firstName: 3,
+        lastName: 2
+    }
+
     const guessTypeRegexp = [
-        [/^[1-2]\d{3}\/[0-1]\d\/[0-3]\d$/, 'guess:date:YYYY/MM/DD'],
-        [/^[1-2]\d{3}-[0-1]\d-[0-3]\d$/, 'guess:date:YYYY-MM-DD'],
-        [/^[0-3]\d-[0-1]\d-[1-2]\d{3}$/, 'guess:date:DD-MM-YYYY'],
-        [/^[0-3]\d\/[0-1]\d\/[1-2]\d{3}$/, 'guess:date:DD/MM/YYYY'],
-        [/^\d[0-9a-b]\d{3}/, 'guess:cityCode'],
-        [/^[1-2]$/, 'guess:sex:12'],
-        [/^(f|m)$/, 'guess:sex:fm'],
-        [/^(f|h)$/, 'guess:sex:fh'],
-        [/^((0?|[1-9])[0-9a-b]|97[1-5]?|99)$/, 'guess:depCode'],
-        [/^(petit|du(rand|bois|pon[dt]|val|mont|four)|mor(e(au|l)|in)|le(feb?vre|roy|grand|maire)|roux|fournier|girard|bonnet|lambert|fontaine|rousseau|muller|faure|mercier|blanc|guerin|boyer|garnier|chevalier|perrin|garcia|gauthier|robin|roussel|masson|meunier|meyer|giraud|blanchard|joly|martinez|brunet|barbier|payet|diallo|lacroix|vidal|schmi(dt|tt)|fabre|roche|renard|colin|caron|aubert)$/, 'guess:lastName'],
-        [/^(marie|jean{2}e|francoise|monique|catherine|nathalie|isabel{2}e|jacqueline|sylvie|an{2}e|jean|pier{2}e|michel|andre|philip{2}e|louis|rene|alain|jacques)((\s*\w+)+)?$/, 'guess:firstName'],
-        [/^\s*(((saint|st)(-|\s)\w+.*)|((paris|marseille|lyon)(\s.*?))|toulouse|nice|nantes|montpellier|strasbourg)\s*$/, 'guess:city'],
-        [/^(ck|gnier|lais|meau|tit|veau|zat|bourg|cap|chy|fra|hal|lez|sey|gor|lus|quer|dieu|dis|gnat|moi|pes|vol|bran|rard|tha|boul|gier|hon|lion|ric|cer|dey|fri|je|laud|pra|zan|gard|ghe|mot|tat|gia|tey|baud|gna|beu|cle|glia|nac|card|dus|rac|res|cia|gat|quier|rus|pla|var|er|taud|nal|nois|sain|bus|lom|nec|zeau|guy|nan|ria|sol|doux|fel|gnet|nez|vy|cat|fal|tur|vas|poi|ram|rio|bis|bous|das|ke|rer|bach|ka|fu|ral|liere|gran|bey|chel|mond|pro|geon|gno|chot|chou|far|gnac|niere|mey|rez|pie|tie|jac|jar|gil|vier|grand|tro|nu|pal|dat|lain|rau|hi|zer|ben|tas|tau|en|lam|zon|thi|nau|blan|pau|gros|lor|mard|rous|tis|pier|chard|sac|tard|boi|bro|sat|tot|cos|mat|pan|zin|nar|cla|by|chas|main|mier|bin|mai|nis|gour|got|gu|guer|pre|cker|wa|dot|get|gri|por|bra|cre|pen|rol|bot|zel|cho|die|sot|bos|hau|or|fo|han|har|roux|bat|land|ney|gan|sard|tho|fran|leau|hou|pu|ros|raud|zet|mes|nas|ley|ban|rand|cam|gas|bet|seau|ki|cau|dal|tra|tar|guet|qui|ten|tor|hen|cel|mil|tal|dor|gel|my|sal|fau|tour|ven|for|zo|fou|lis|nie|bur|bri|vau|lie|gre|gnon|rey|tan|jou|min|mor|vo|nou|gra|vet|con|fon|cham|com|rier|lat|sar|chau|ju|pey|saint|nin|par|met|fre|cot|ho|col|lard|su|tet|four|bru|mu|den|naud|tri|cal|gen|deau|bor|quin|nard|dier|vel|pon|bois|gon|sier|bas|ker|mel|can|chon|men|jean|dau|sel|chet|dan|ras|ren|pel|tu|hu|rot|jo|vin|sin|quet|sau|nat|pin|the|ze|set|sen|bre|les|rat|her|cu|ru|gau|bau|dar|tre|cher|gar|zi|fi|bal|cour|det|fe|ty|char|mal|pou|din|mau|len|gui|cas|lar|lou|dou|san|mas|teau|lau|bert|mont|he|ner|vil|rin|beau|ran|chi|gue|not|fer|rie|sou|rel|tier|lu|ja|gou|za|mer|mou|lot|neau|nel|mann|ha|ser|der|ly|tel|bour|an|so|cor|po|ci|que|lon|nier|ler|fa|tin|rou|al|car|bon|gi|bel|lier|go|man|ar|ret|ter|lan|au|cou|bar|bi|del|son|ron|do|van|ver|bo|per|vi|mo|to|ve|pi|lin|va|des|che|mi|cha|lo|si|pe|mar|net|di|mon|no|bou|te|ne|pa|da|me|na|sa|be|se|co|ta|ga|ber|ro|ba|ti|ra|ri|du|li|ni|ca|ma|la|de)+$/, 'guess:lastName'],
-        [/^\s*(france|algerie)\s*$/, 'guess:country'],
-        [/^(?!guess:).*/, ''],
-        [/^guess:/, '']
+        [/^[1-2]\d{3}\/[0-1]\d\/[0-3]\d$/, 'date:YYYY/MM/DD'],
+        [/^[1-2]\d{3}-[0-1]\d-[0-3]\d$/, 'date:YYYY-MM-DD'],
+        [/^[1-2]\d{3}[0-1]\d[0-3]\d$/, 'date:YYYY-MM-DD'],
+        [/^[0-3]\d-[0-1]\d-[1-2]\d{3}$/, 'date:DD-MM-YYYY'],
+        [/^[0-3]\d\/[0-1]\d\/[1-2]\d{3}$/, 'date:DD/MM/YYYY'],
+        [/^[0-3]\d[0-1]\d[1-2]\d{3}$/, 'date:DDMMYYYY'],
+        [/^\d[0-9a-b]\d{3}/, 'cityCode'],
+        [/^[1-2]$/, 'sex:12'],
+        [/^[0-1]$/, 'sex:01'],
+        [/^(f|m)$/, 'sex:fm'],
+        [/^(f|h)$/, 'sex:fh'],
+        [/^((0?|[1-9])[0-9a-b]|97[1-5]?|99)$/, 'depCode'],
+        [/^(martin|bernard|thomas|petit|robert|richard|durand|dubois|moreau|simon|laurent|garcia|michel|lefebvre|leroy|david|martinez|bertrand|roux|morel|fournier|girard|lambert|dupont|bonnet|rousseau|fontaine|vincent|andre|muller|lefevre|guerin|mercier|faure|garnier|chevalier|blanc|francois|boyer|legrand|gauthier|lopez|perrin|clement|robin|da|morin|sanchez|henry|gautier|nicolas|roussel|masson|mathieu|duval|perez|marchand|denis|marie|noel|dumont|lemaire|lucas|dufour|meyer|blanchard|meunier|fernandez|joly|brun|brunet|riviere|barbier|gerard|giraud|gaillard|leroux|arnaud|vidal|roy|renard|schmitt|colin|roche|caron|rodriguez|roger|picard|pereira|aubert|nguyen|lemoine|fabre|renaud|pierre|olivier|ferreira|dumas|lacroix|leclerc|bourgeois|philippe|dos|benoit|rey|jean|guillaume|rolland|lecomte|leclercq|hubert|louis|payet|guillot|rodrigues|berger|fernandes|carpentier|dupuy|dupuis|moulin|deschamps|gonzalez|goncalves|huet|adam|vasseur|charles|fleury|menard|boucher|poirier|baron|jacquet|aubry|royer|paris|guyot|klein|bertin|renault|maillard|charpentier|carre|herve|gomez|schneider|marty|bailly|collet|le|bouvier|leger|julien|daniel|millet|martins|breton|germain|langlois|cousin|perrot|lebrun|prevost|besson|le|leveque|barre|le|pelletier|remy|weber|leblanc|hamon|marchal|monnier|hernandez|michaud|perrier|boulanger|etienne|tessier|mallet|jacob|guichard|chauvin|gillet|ruiz|collin|poulain|lemaitre|chevallier|antoine|bouchet|diallo|marechal|gay|pons|humbert|delaunay|benard|perret|hoarau|pasquier|da|grondin|gilbert|alexandre|lejeune|cordier|reynaud|briand|lamy|albert|besnard|pichon|georges|barthelemy|lopes|cohen|ollivier|launay|gros|carlier|buisson|charrier|guillou|lesage|voisin|vallee|legros|hebert|delattre|coulon|laporte|rossi|guillet|jacques|didier|marques|gomes|marin|camus|martel|paul|levy|lebreton|blanchet|barbe|bigot|pineau|leduc|ribeiro|navarro|mahe|lelievre|gaudin|pascal|sauvage|maillot|gregoire|coste|joubert|verdier|maury|bodin|bousquet|tanguy|masse|guillon|raynaud|hardy|colas|morvan|allard|alves|raymond|berthelot|delmas|devaux|laine|thibault|delorme|regnier|lebon|lenoir|blondel|courtois|seguin|joseph|valentin|ferrand|chauvet|clerc|bruneau|bonneau|brunel|costa|imbert|allain)$/, 'lastName'],
+        [/^(jean|marie|michel|pierre|philippe|alain|andre|claude|bernard|jacques|anne|daniel|christian|dominique|patrick|christophe|nathalie|nicolas|isabelle|gerard|catherine|sylvie|francoise|monique|eric|laurent|frederic|rene|francois|stephane|david|pascal|sebastien|martine|thierry|robert|julien|olivier|roger|christine|jacqueline|nicole|valerie|guy|georges|sandrine|marcel|didier|stephanie|sophie|veronique|marc|paul|mohamed|celine|bruno|alexandre|vincent|chantal|louis|henri|serge|jerome|yves|maria|christiane|thomas|patricia|guillaume|annie|joseph|brigitte|maurice|michele|antoine|helene|franck|gilles|laurence|aurelie|raymond|virginie|corinne|jose|julie|christelle|anthony|romain|emilie|gilbert|cedric|francis|danielle|elodie|caroline|denis|florence|maxime|cecile|joel)((\s*\w+)+)?$/, 'firstName'],
+        [/^\s*(paris|marseille|lyon|toulouse|nice|nantes|montpellier|strasbourg|bordeaux|lille|rennes|reims|saint.etienne|havre|toulon|grenoble|dijon|angers|nimes|villeurbanne|saint.denis|aix.en.provence|mans|clermont.ferrand|brest|tours|amiens|limoges|annecy|perpignan|boulogne.billancourt|metz|besani�on|orliaans|saint.denis|argenteuil|rouen|mulhouse|montreuil|saint.paul|caen|nancy|tourcoing|roubaix|nanterre|vitry.sur.seine|avignon|criateil|dunkerque|poitiers|aubervilliers|asnii�res.sur.seine|colombes|versailles|aulnay.sous.bois|saint.pierre|courbevoie|fort.de.france|cherbourg.en.cotentin|rueil.malmaison|champigny.sur.marne|tampon|pau|biaziers|la.rochelle|calais|saint.maur.des.fossias|cannes|antibes|mamoudzou|miarignac|drancy|colmar|saint.nazaire|ajaccio|issy.les.moulineaux|evry|noisy.le.grand|bourges|vianissieux|la.seyne.sur.mer|cergy|levallois.perret|quimper|valence|villeneuve.d.ascq|antony|pessac|ivry.sur.seine|troyes|cayenne|neuilly.sur.seine|montauban|clichy|chambiary|niort|sarcelles|lorient|beauvais|blanc.mesnil)\s*$/, 'city'],
+        [/^\s*(france|algerie|maroc|tunisie|italie|portugal|espagne)\s*$/, 'country'],
     ];
 
     $: $linkFile && read($linkFile);
@@ -89,12 +95,18 @@
     const guessFieldType = (column) => {
         const guess = maxFreqTerm(column.map(f => {
             let g = norm(f);
-            guessTypeRegexp.map(r => g = g.replace(r[0],r[1]));
-            return g;
-        }).filter(x => x));
+            const dic = {};
+            guessTypeRegexp.map(r => {
+                if (g.replace(r[0],r[1]) === r[1]) {
+                    dic[r[1]] = true;
+                }
+            });
+            return dic;
+        }));
         return guess && {
-            type: guess.replace(/:.*/,''),
-            format: /:/.test(guess) && guess.replace(/.*:/, '')
+            type: guess[0].replace(/:.*/,''),
+            format: /:/.test(guess[0]) && guess[0].replace(/.*:/, ''),
+            freq: guess[1]
         };
     };
 
@@ -102,15 +114,18 @@
         let maxCount = 0;
         let maxTerm = undefined;
         let dic = {};
-        a.map(v => {
-            dic[v] = dic[v] ? dic[v] + 1 : 1;
-            if (dic[v] > maxCount) {
-                maxTerm = v;
-                maxCount = dic[v]
-            }
+        a.map(d => {
+            Object.keys(d).forEach(v => {
+                const boost = guessBoost[dic[v]] ? guessBoost[dic[v]] : 1
+                dic[v] = dic[v] ? dic[v] + boost : boost;
+                if (dic[v] > maxCount) {
+                    maxTerm = v;
+                    maxCount = dic[v]
+                }
+            });
         });
-        if (maxCount > (a.length / 10)) {
-            return maxTerm;
+        if (maxCount > (a.length / 20)) {
+            return [maxTerm, Math.max(1, Math.round(100 * maxCount / Math.max(1, a.length)) / 100)];
         } else {
             return undefined;
         }
@@ -175,7 +190,7 @@
 
     const read = (ev) => {
         const reader = new FileReader();
-        const blob = $linkFile.slice(0, 32768);
+        const blob = $linkFile.slice(0, 100000);
         reader.onload = parseCsv;
         reader.readAsText(blob);
     };
@@ -186,7 +201,8 @@
         ev.dataTransfer.setData('text/plain', JSON.stringify({
                 col: col,
                 type: $linkSourceHeaderTypes[col] && $linkSourceHeaderTypes[col].type,
-                format: $linkSourceHeaderTypes[col] && $linkSourceHeaderTypes[col].format
+                format: $linkSourceHeaderTypes[col] && $linkSourceHeaderTypes[col].format,
+                freq: $linkSourceHeaderTypes[col] && $linkSourceHeaderTypes[col].freq
         }));
 	};
 

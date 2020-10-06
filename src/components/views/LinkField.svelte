@@ -17,10 +17,14 @@
 
 <script>
     export let field;
+    import { linkSourceHeaderTypes } from '../tools/stores.js';
 
     let hovering = false;
 
     const reset = () => {
+        if (field.mapTo) {
+            $linkSourceHeaderTypes[field.mapTo].mapped = undefined;
+        }
         field.mapTo = null;
         field.guessedType = undefined;
         field.guessedFormat = undefined;
