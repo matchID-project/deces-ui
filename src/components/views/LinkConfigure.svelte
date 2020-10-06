@@ -3,6 +3,10 @@
     <div class="wrap">
         <p>
             <strong>Choisissez les champs à apparier:</strong><br/>
+            <span class="is-size-7">
+            si une colonne automatiquement associée ci-dessous est erronnée, cliquez dessus
+            pour supprimer l'association
+            </span>
         </p>
         <LinkFields bind:mapping={mapping} bind:fields={fields}/>
         {#if warning}
@@ -48,7 +52,7 @@
         </button>
         <p>
             <strong>Depuis les colonnes ci-dessous:</strong><br/>
-            <span class="is-size-7">(glissez-collez une colonne du bas sur un champ au-dessus)</span>
+            <span class="is-size-7">glissez-collez une colonne du bas sur un champ au-dessus</span>
         </p>
         <div class="wrap-table">
             <LinkSampleTable bind:mapping={mapping} bind:fields={fields}/>
