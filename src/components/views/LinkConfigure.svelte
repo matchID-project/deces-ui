@@ -91,16 +91,23 @@
 
     $: if ($linkSourceHeaderTypes) {
         fields = fields.map(field => {
+            let possibleColumns = undefined
             Object.keys($linkSourceHeaderTypes).forEach(col => {
-                if ((field.mapTo === undefined) && $linkSourceHeaderTypes[col]
+                if ($linkSourceHeaderTypes[col]
                     && (field.type === $linkSourceHeaderTypes[col].type)
-                    && !($linkSourceHeaderTypes[col].mapped)) {
-                    field.guessedType = $linkSourceHeaderTypes[col].type;
-                    field.guessedFormat = $linkSourceHeaderTypes[col].format;
-                    field.mapTo = col;
-                    $linkSourceHeaderTypes[col].mapped = field;
+                    && !($linkSourceHeaderTypes[col].mapped)
+                    && (!field.guessedFreq || (field.guessedFreq < $linkSourceHeaderTypes[col].type))) {
+                        field.guessedType = $linkSourceHeaderTypes[col].type;
+                        field.guessedFormat = $linkSourceHeaderTypes[col].format;
+                        field.guessedFreq = $linkSourceHeaderTypes[col].freq;
+                        field.mapTo = col;
                 }
             });
+            if (field.mapTo) {
+                if ($linkSourceHeaderTypes[field.mapTo]) {
+                    $linkSourceHeaderTypes[field.mapTo].mapped = field;
+                }
+            }
             return field;
         });
     };
