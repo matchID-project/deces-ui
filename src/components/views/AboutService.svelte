@@ -42,11 +42,11 @@
         <br/>
         - un téléchargement des résultats en tableur CSV
         <br/>
-        - une fonction de matching en masse (jusque 100Mo/1M de lignes) sur upload d'un fichier csv
+        - une fonction de matching en masse (jusque 100Mo/1M de lignes) sur upload d'un fichier csv (nouveau: prise en compte des matchs multiples)
     </p>
 <p><strong>Evolutions futures</strong></p>
     <p>
-        Nous prévoyons prochainement (été 2020):
+        Nous prévoyons prochainement (fin 2020 - l'équipe cherche des renforts, n'hésitez pas à nous écrire) :
     </p>
     <ul>
         {#if !$themeDnum}
@@ -61,6 +61,7 @@
             une configuration avancée pour les requêtes floues (regex, phonétique, fuzzy : par champ)
         </li>
     </ul>
+
 
 <p><strong>Conditions d'usage et garanties (version bêta)</strong></p>
     <p>
