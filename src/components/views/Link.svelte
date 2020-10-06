@@ -125,11 +125,10 @@
     $: if ($linkResults) {
         $linkStep = 4;
         const s = $linkResults.header.indexOf('score');
-        const sLinks = $linkResults.rows.filter(r => r[s]).length;
+        const sLinks = $linkResults.rows.filter(r => r.some(rr => rr[s])).length;
         steps[2].label = `${sLinks} identifications potentielles`;
         const c = $linkResults.header.indexOf('check');
-        const cLinks = $linkResults.rows
-            .filter((r, i) => r[s] && $linkValidations[i] && $linkValidations[i].checked).length;
+        const cLinks = $linkValidations.filter(r => r.every(rr => rr && rr.checked)).length;
         steps[3].label = `${cLinks}/${sLinks} identifications validées`;
     }
 
