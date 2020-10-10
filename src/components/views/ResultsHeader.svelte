@@ -1,82 +1,110 @@
 {#if $wasSearched}
-    <div class="has-background-white">
-        <div class="columns is-vcentered is-mobile ">
-            <div class={`column padding ${$displayMode === 'geo' ? "is-9" : "is-4"} is-mobile-6 is-size-7`}>
-                <span>Résultats <strong>{from}</strong> à <strong>{to}</strong> parmi <strong>{$totalResults}</strong></span>
-                <span>pour: <i>{query}</i></span>
-            </div>
-            {#if (!($displayMode === 'geo'))}
-                <div
-                    class="column padding is-4 is-mobile-3 is-size-7 has-text-centered"
-                >
-                    <div
-                        on:click={() => {$sortInputDisplay=!$sortInputDisplay}}
-                        class="pointer"
-                        title="cliquez pour paramétrer le tri"
-                    >
-                        <span>tri:</span>
+    <div class="rf-col-12">
+        <table class="rf-table rf-table--narrow rf-text--xs rf-color--black rf-margin-bottom-0" style="width: 100%!important;">
+            <tr>
+                <td class="rf-hide--mobile rf-td--vcenter rf-text--left" style="width: 20px;">
+                    <Download/>
+                </td>
+                <!-- <td class="rf-td--vcenter {$displayMode === 'geo' ? "rf-col-9" : "rf-col-3"}"> -->
+                <td class="rf-td--vcenter">
                         <span>
-                        {#if ($sortInput.filter(s => s.order).length) > 0}
-                            {#each $sortInput.filter(s => s.order) as t}
-                                <span>
-                                    {t.label}
-                                    <span style="margin-left:-0.2rem">
-                                        {#if t.order === "desc"}
-                                            <FontAwesomeIcon icon={faSortDown} class="is-small is-low"/>
-                                        {:else}
-                                            <FontAwesomeIcon icon={faSortUp} class="is-small is-low"/>
-                                        {/if}
-                                    </span>
+                            résultats <strong>{from}</strong> à <strong>{to}</strong> parmi <strong>{$totalResults}</strong>
+                            pour: <i>{query}</i>
+                        </span>
+                </td>
+                <td class="rf-display--xl rf-td--vcenter rf-text--center">
+                    <Pagination/>
+                </td>
+                {#if (!($displayMode === 'geo'))}
+                    <td class="rf-hide--mobile rf-td--vcenter rf-text--center" style="width:100px;">
+                        <span>
+                            {#each displayChoices as choice}
+                                <span
+                                    class={choice.mode === "table" ? "rf-display--xl" : ""}
+                                    title={`${choice.mode === $displayMode ? "mode d'affichage actuel:" : "basculez au mode d'affichage:"} ${choice.label}`}
+                                    on:click|preventDefault={() => enableDisplayMode(choice.mode)}
+                                >
+                                    <FontAwesomeIcon icon={choice.icon} class={`is-24 is-high ${choice.mode === $displayMode ? "rf-color--bf" : "rf-color--g400"}`}/>
                                 </span>
                             {/each}
-                        {:else}
-                            aucun
-                        {/if}
                         </span>
-                    </div>
-                </div>
-                <div class="column padding is-4 is-mobile-3 has-text-right is-size-7 is-vcentered">
-                    <span class="is-hidden-mobile" style="margin-right:10px;">
-                        <Download/>
-                    </span>
+                    </td>
+                    <td class="rf-hide--mobile rf-td--vcenter rf-text--center" style="width: 100px;">
+                        <div
+                            on:click={() => {$sortInputDisplay=!$sortInputDisplay}}
+                            class="rf-href"
+                            title="cliquez pour paramétrer le tri"
+                        >
+                            <span>
 
-                    <span class="is-hidden-mobile">résultats </span>par page
-                    <span class="select is-size-7">
-                        <select bind:value={$resultsPerPage}>
+                            </span>
+                            <span>tri:</span>
+                            <span>
+                            {#if ($sortInput.filter(s => s.order).length) > 0}
+                                {#each $sortInput.filter(s => s.order) as t}
+                                    <span>
+                                        {t.label}
+                                        <span style="margin-left:-0.2rem">
+                                            {#if t.order === "desc"}
+                                                <FontAwesomeIcon icon={faSortDown} class="is-small is-low"/>
+                                            {:else}
+                                                <FontAwesomeIcon icon={faSortUp} class="is-small is-low"/>
+                                            {/if}
+                                        </span>
+                                    </span>
+                                {/each}
+                            {:else}
+                                aucun
+                            {/if}
+                            </span>
+                        </div>
+                    </td>
+                    <td class="rf-hide--mobile rf-td--vcenter rf-text--center rf-text--right" style="width: 100px;">
+                        par page
+                        <select class="rf-select rf-select--aside rf-text--xs rf-color--black" bind:value={$resultsPerPage}>
                             {#each resultsPerPageList as option}
                                 <option>{option}</option>
                             {/each}
                         </select>
-                    </span>
-                </div>
-            {:else}
-                <div class="column padding is-3 is-mobile-6 is-size-7 has-text-right">
-                    <slot></slot>
-                </div>
-            {/if}
-        </div>
+                    </td>
+                {:else}
+                    <td class="rf-col-3 rf-text--right">
+                        <slot></slot>
+                    </td>
+                {/if}
+            </tr>
+        </table>
         {#if (!($displayMode === 'geo'))}
-            <div class="columns">
-                <div class="column padding is-1"></div>
-                <div class="column padding is-10 is-vcentered has-text-centered"><SortInput/></div>
-                <div class="column padding is-1"></div>
+            <div class="rf-container-fluid">
+                <div class="rf-grid-row">
+                    <div class="rf-col-1"></div>
+                    <div class="rf-col-10 rf-text--center"><SortInput/></div>
+                    <div class="rf-col-1"></div>
+                </div>
             </div>
         {/if}
     </div>
 {/if}
 
 <script>
-    import { faSortUp, faSortDown, faPlus, faMinus } from '@fortawesome/free-solid-svg-icons';
+    import { faSortUp, faSortDown, faPlus, faMinus, faTable, faGripLines, faAddressCard } from '@fortawesome/free-solid-svg-icons';
     import FontAwesomeIcon from './FontAwesomeIcon.svelte';
     import { current, sortInput, sortInputDisplay, updateURL, totalResults, totalPages,
         resultsPerPage, searchInput, wasSearched, displayMode } from '../tools/stores.js'
     import { searchSubmit, searchURLUpdate } from '../tools/search.js'
     import SortInput from './SortInput.svelte';
     import Download from './Download.svelte';
+    import Pagination from './Pagination.svelte';
 
     let from, to, query;
 
     let resultsPerPageList;
+
+    const displayChoices = [
+        {mode: 'card', icon: faGripLines, label: "fiche compacte"},
+        {mode: 'card-expand', icon: faAddressCard, label: "fiche complète"},
+        {mode: 'table', icon: faTable, label: "tableur"},
+    ];
 
     $: resultsPerPageList = [20,40,60].includes($resultsPerPage) ? [20,40,60] : [$resultsPerPage,20,40,60].sort()
 
@@ -84,42 +112,17 @@
     $: to = Math.min($totalResults, $current * $resultsPerPage);
     $: query = $wasSearched;
 
+
+  const enableDisplayMode = async (mode) => {
+    if ($displayMode) {
+      $displayMode = mode;
+    }
+    searchURLUpdate();
+  }
+
 </script>
 
 <style>
-    .has-background-white {
-        background: rgba(255, 255, 255, 0.5);
-        margin-bottom: 12px;
-    }
-
-    .column.padding {
-        padding: 0rem 1rem 0rem 0.75rem!important;
-    }
-
-    .expand-icon {
-       margin-left:16px;
-       margin-right:10px;
-    }
-
-    @media print,screen and (max-width:768px) {
-        .is-hidden-mobile {
-            display: none!important;
-        }
-        .expand-icon {
-            line-height:2rem;
-        }
-    }
-
-    .has-text-primary {
-        color: #003189!important;
-    }
-
-    .has-text-right {
-        text-align: right!important;
-    }
-    .has-text-centered {
-        text-align: center!important;
-    }
 
     .select select.is-hovered, .select select:hover {
          border-color: #b5b5b5;
@@ -147,10 +150,5 @@
         padding-right: calc(.75em - 1px);
         position: relative;
     }
-
-    .pointer {
-        cursor: pointer;
-    }
-
 </style>
 
