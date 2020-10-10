@@ -1,0 +1,264 @@
+.rf-text--right {
+  text-align: right!important;
+}
+
+.rf-text--center {
+  text-align: center!important;
+}
+
+.rf-text--left {
+  text-align: left!important;
+}
+
+.rf-href:hover {
+  cursor: pointer;
+}
+
+@media print,screen and (max-width:768px) {
+  .rf-hide--mobile {
+      display: none!important;
+  }
+  .rf-padding-left-1N--mobile {
+    padding-left: 8px;
+  }
+  .rf-padding-right-1N--mobile {
+    padding-right: 8px;
+  }
+}
+
+@media print,screen and (min-width:768px) {
+  .rf-hide--desktop {
+      display: none!important;
+  }
+  .rf-padding-left-2N--desktop {
+    padding-left: 16px;
+  }
+}
+
+@media print,screen and (max-width:1200px) {
+  .rf-display--xl {
+      display: none!important;
+  }
+}
+
+.rf-field {
+  display: flex;
+  flex-direction: row;
+}
+
+.rf-field .rf-btn {
+width: 2.5rem;
+max-width: 2.5rem;
+min-width: 2.5rem;
+height: 2.5rem;
+max-height: 2.5rem;
+min-height: 2.5rem;
+padding: 0.6rem;
+text-align: center;
+padding: .5rem;
+border-radius: 0 .25rem 0 0;
+}
+
+.rf-input--btn {
+  width: calc(100% - 2.5rem)!important
+}
+
+.rf-background--bf {
+  background-color: var(--bf500)!important;
+}
+
+.rf-background--beige {
+  background-color: var(--beige)!important;
+}
+
+.rf-background--white {
+  background-color: var(--w)!important;
+}
+
+
+.rf-color--black {
+  color: #000!important;
+}
+
+.rf-background--g400 {
+  background-color: var(--g400)!important;
+}
+
+.rf-background--focus {
+  background-color: var(--focus)!important;
+}
+
+.rf-background--info {
+  background-color: var(--info)!important;
+}
+
+.rf-color--info {
+  color: var(--info)!important;
+}
+
+.rf-color--bf {
+  color: var(--bf500)!important;
+}
+
+.rf-color--g400 {
+  color: var(--g400)!important;
+}
+
+.rf-color--warning {
+  color: var(--warning)!important;
+}
+
+.rf-card.rf-card--sm {
+  min-height: 48px;
+  flex-direction: row;
+}
+
+.rf-card.rf-card--md {
+  min-height: 64px;
+  flex-direction: row;
+}
+
+.rf-card--sm .rf-card__img {
+  width: 48px !important;
+  min-width: 48px !important;
+  background: var(--beige)
+}
+
+.rf-card--md .rf-card__img {
+  width: 64px !important;
+  min-width: 64px !important;
+  background: var(--beige)
+}
+
+
+.rf-card--sm .rf-card__body {
+  padding: 1px 8px 2px 8px;
+  margin: 0px!important;
+}
+
+.rf-card--md .rf-card__body {
+  padding: 4px 8px 4px 8px;
+  margin: 0px!important;
+}
+
+.rf-card--sm .rf-card__body .rf-card__lead, .rf-card--md .rf-card__body .rf-card__lead  {
+  margin: 0px!imporant;
+}
+
+.rf-card--sm .rf-card__desc, .rf-card--md .rf-card__desc,  {
+  margin: 0px;
+}
+
+.rf-select--aside {
+  width: 32px!important;
+  padding: 2px!important;
+  --data-uri-svg: none!important;
+  display: inline!important;
+}
+
+.rf-table:not(:last-child) {
+	margin-bottom: 1em;
+}
+
+.rf-table {
+	width: 100%;
+}
+
+.rf-table td {
+	border: solid var(--g400);
+	border-width: 0 0 1px;
+	padding: .5em .75em;
+	vertical-align: top;
+}
+
+.rf-table tbody tr:last-child td,.rf-table tbody tr:last-child th {
+	border-bottom-width: 0;
+}
+
+.rf-table:not(:last-child) {
+	margin-bottom: 1.5rem;
+}
+
+.rf-table tbody {
+	background-color: transparent;
+}
+
+.rf-table.rf-table--fullwidth {
+	width: 100%;
+}
+
+.rf-table.rf-table--narrow td {
+	padding: .25em .5em;
+	text-align: left;
+}
+
+.rf-table.rf-table--striped tbody tr:not(.is-selected):nth-child(2n) {
+	background-color: var(--beige);
+}
+
+th .th-active {
+  background-color: var(--bf500);
+  color: var(--w);
+}
+
+tr .th-inactive {
+  opacity: 40%;
+}
+
+.rf-table-th--label {
+  height: 2.5rem;
+}
+
+.rf-table-th--sortable:hover {
+  color: var(--bf500);
+  cursor: pointer;
+}
+
+.rf-table--fixed {
+  table-layout:fixed
+}
+
+.rf-padding-left-4px {
+  padding-left: 4px;
+}
+.rf-padding-right-4px {
+  padding-right: 4px;
+}
+
+
+.rf-col--vcenter {
+  margin: 0;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -ms-transform: translate(-50%,-50%);
+  transform: translate(-50%, -50%);
+}
+
+.rf-table td.rf-td--vcenter {
+  vertical-align: middle!important;
+}
+
+.rf-table.rf-col-1 {
+  width: 8.33333%
+}
+
+.rf-table.rf-col-2 {
+  width: 16.666667%
+}
+
+.rf-table.rf-col-3 {
+  width: 25%
+}
+
+.rf-table.rf-col-4 {
+  width: 33.33333%
+}
+
+.rf-table.rf-col-6 {
+  width: 50%
+}
+
+.rf-table.rf-col-9 {
+  width: 66.66667%
+}
