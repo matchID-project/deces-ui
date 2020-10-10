@@ -29,7 +29,7 @@
         </div>
     </div>
 {:else if (result)}
-    <tr class={`is-size-7 ${(index%2) ? "is-striped" : "bof"}`} >
+    <tr class="{(index%2) ? "rf-background--beige" : ""}">
         <td><div class="expand-on-hover">{result.name && result.name.last || ''} </div></td>
         <td><div class="expand-on-hover">{(result.name && result.name.first && result.name.first.join(' ')) || '(aucun)'} </div></td>
         <td><div class="expand-on-hover">{result.sex || ''}</div></td>
@@ -106,115 +106,7 @@
     .expand-on-hover:hover {
         z-index: 1;
         width: auto;
-        background-color: #FFFFCC;
-    }
-
-
-    .is-striped {
-        background-color: #fafafa;
-    }
-    .block-flex {
-        flex: none!important;
-        width: 100%;
-    }
-
-    .has-text-centered {
-        text-align: center!important;
-    }
-
-    .has-text-left {
-        text-align: left!important;
-    }
-
-    .has-text-white {
-        color: #fff!important;
-    }
-
-    .has-text-primary {
-        color: #003189!important;
-    }
-
-    .has-background-white {
-        background-color: #fff!important;
-    }
-
-    .has-background-primary {
-        background-color: #00d1b2!important;
-    }
-
-    .has-background-danger {
-        background-color: hsl(348, 100%, 61%)!important;
-    }
-
-    figure, h1, html, li, ul {
-        margin: 0;
-        padding: 0;
-    }
-
-    .is-vcentered {
-        align-items: center;
-    }
-
-    .image.is-64x64 {
-        height: 64px;
-        width: 64px;
-    }
-
-    .image.is-48x48 {
-        height: 48px;
-        width: 48px;
-    }
-
-    .image img {
-        display: block;
-        height: auto;
-        width: 100%;
-    }
-
-    img {
-        height: auto;
-        max-width: 100%;
-    }
-
-    h1 {
-        font-size: 100%;
-        font-weight: 400;
-    }
-
-    .subtitle,.title {
-        word-break: break-word;
-    }
-
-    .title {
-        color: #363636;
-        font-size: 2rem;
-        font-weight: 600;
-        line-height: 1.125;
-    }
-
-    .subtitle:not(.is-spaced)+.title,.title:not(.is-spaced)+.subtitle {
-        margin-top: -1.25rem;
-    }
-
-    .title.is-size-4 {
-        font-size: 1.5rem;
-    }
-
-    .title.is-size-5 {
-        font-size: 1.25rem;
-    }
-
-    .subtitle {
-        color: #4a4a4a;
-        font-size: 1.25rem;
-        font-weight: 400;
-        line-height: 1.25;
-    }
-
-    @media screen and (max-width: 768px) {
-        .is-hidden-mobile {
-            display: none!important;
-        }
+        background-color: var(--yd500);
     }
 
 </style>
