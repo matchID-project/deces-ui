@@ -1,6 +1,6 @@
 {#if (result) && (result.error) }
-    <div class="column is-12">
-        <div class="card has-text-centered">
+    <div class="rf-col-12">
+        <div class="card rf-text--center">
             <div class="card-header has-background-danger">
                 <div class="level is-mobile is-vcentered">
                         <div class="level-left" style="margin-right:8px;margin-left:8px">
@@ -29,148 +29,147 @@
         </div>
     </div>
 {:else if (result)}
-    <div class={`column ${expand ? "is-12" : "is-6-12"}`}>
-        <div class="card has-text-centered">
-            <div
-                class={`card-header has-background-${expand ? "primary" : "white"}`}
-                on:click={() => { expand=!expand }}
-            >
-                <div class="level is-mobile is-vcentered" style="min-width: 100%;">
-                    <div class="level-left">
-                        <div class="level is-mobile is-vcentered">
-                            <div class="level-left" style="margin-right:16px">
-                                <figure class={`image is-${expand ? "64x64" : "48x48"} has-background-primary`}>
-                                    <img
-                                        alt={ result.sex }
-                                        src={ result.sex === 'M' ? '/male.svg' : '/female.svg' }
-                                    />
-                                </figure>
-                            </div>
-                            <div class="level-item has-text-left">
-                                <div>
-                                    <h1 class={`title is-size-${expand ? "4" : "5"} has-text-${expand ? "white" : "primary"}`}>
-                                        {result.name.last.toUpperCase()} { result.name.first ? result.name.first[0] : '' }
-                                    </h1>
-                                    <h1 class={`is-size-${expand ? "6" : "6-7"} has-text-${expand ? "white" : "primary"}`}>
-                                        <span class="is-hidden-mobile">
-                                            { cityString(result.birth.location.city) }
-                                        </span>
-                                        { dateFormat(result.birth.date) }
-                                        &nbsp; - &nbsp;
-                                        <span class="is-hidden-mobile">
-                                            { cityString(result.death.location.city) }
-                                        </span>
-                                        { dateFormat(result.death.date) }
-                                    </h1>
+    <div class="{expand ? "rf-col-12" : "rf-col-xs-12 rf-col-sm-12 rf-col-md-12 rf-col-lg-6 rf-col-xl-6"} rf-padding-1N rf-padding-left-2N rf-padding-right-2N">
+        <div class="rf-container-fluid">
+            <div class="rf-grid-row">
+                <div class="rf-col-12">
+                    <div
+                        class="rf-card rf-card--horizontal rf-card--no-arrow rf-card--{expand ? "md": "sm"}"
+                        on:click={() => { expand=!expand }}
+                    >
+                        <div class="rf-card__img">
+                            <img
+                                class="rf-background--g400"
+                                alt={ result.sex }
+                                src={ result.sex === 'M' ? '/male.svg' : '/female.svg' }
+                            />
+                        </div>
+                        <div class="rf-card__body">
+                            <h4 class="rf-card_lead rf-margin-0 {expand ? "" : "rf-text"}">
+                                <span class="rf-hide--mobile">
+                                    {result.name.last.toUpperCase()} { result.name.first ? result.name.first.join(' ') : '' }
+                                </span>
+                                <span class="rf-hide--desktop">
+                                    {result.name.last.toUpperCase()} { result.name.first ? result.name.first[0] : '' }
+                                </span>
+                            </h4>
+
+                            <p class="rf-card__desc rf-margin-0">
+                                <span class="{expand ? "" : "rf-text--xs"}">
+                                    <span class="rf-hide--mobile">
+                                        { cityString(result.birth.location.city) }
+                                    </span>
+                                    { dateFormat(result.birth.date) }
+                                    -
+                                    <span class="rf-hide--mobile">
+                                        { cityString(result.death.location.city) }
+                                    </span>
+                                    { dateFormat(result.death.date) }
+                                </span>
+                            </p>
+                        </div>
+                        <div style="position: absolute; bottom: 0px; right: 4px">
+                            <span class="rf-fi-arrow-{expand ? "left" : "right"}-line rf-color--bf rf-fi--lg"></span>
+                        </div>
+                    </div>
+                </div>
+                {#if expand}
+                    <div class="rf-col-12">
+                        <div class="rf-callout rf-background--white">
+                            <div class="rf-container-fluid">
+                                <div class="rf-grid-row">
+                                    <div class="rf-col-xs-12 rf-col-sm-12 rf-col-md-6 rf-cold-rf-col-xl-6">
+                                        <span><strong>Naissance</strong></span>
+                                        <table class="rf-table rf-table--narrow rf-table--striped">
+                                            <tbody>
+                                                <tr>
+                                                    <td>Nom</td>
+                                                    <td>{result.name.last}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Prénom(s)</td>
+                                                    <td>
+                                                        {
+                                                            result.name.first
+                                                                ? result.name.first.join(' ')
+                                                                : '(sans prénom)'
+                                                        }
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Sexe</td>
+                                                    <td>
+                                                        { result.sex === 'M' ? 'masculin' : 'féminin' }
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Date</td>
+                                                    <td>{dateFormat(result.birth.date)}</td>
+                                                </tr>
+                                                <PlaceInCard
+                                                    city={result.birth.location.city}
+                                                    cityCode={result.birth.location.cityCode}
+                                                    department={result.birth.location.departmentCode}
+                                                    country={result.birth.location.country}
+                                                    countryCode={result.birth.location.countryCode}
+                                                />
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="rf-col-xs-12 rf-col-sm-12 rf-col-md-6 rf-cold-rf-col-xl-6">
+                                        <span><strong>Décès</strong></span>
+                                        <table class="rf-table rf-table--narrow rf-table--striped">
+                                            <tbody>
+                                                <tr>
+                                                    <td>Date</td>
+                                                    <td>
+                                                        {dateFormat(result.death.date)}
+                                                    </td>
+                                                </tr>
+                                                {#if result.death.age && result.death.age>1}
+                                                    <tr>
+                                                        <td>Age</td>
+                                                        <td>{result.death.age} ans</td>
+                                                    </tr>
+                                                {/if}
+                                                <PlaceInCard
+                                                    city={result.death.location.city}
+                                                    cityCode={result.death.location.cityCode}
+                                                    department={result.death.location.departmentCode}
+                                                    country={result.death.location.country}
+                                                    countryCode={result.death.location.countryCode}
+                                                />
+                                                <tr>
+                                                    <td>Acte n°</td>
+                                                    <td>
+                                                        {
+                                                            result.death.certificateId
+                                                            ? result.death.certificateId
+                                                            : "ND"
+                                                        }
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Source INSEE</td>
+                                                    <td>
+                                                        {#if (result.source && $dataGouvCatalog)}
+                                                            <a href={$dataGouvCatalog[result.source]} target="_blank">
+                                                                fichier {result.source}
+                                                            </a>
+                                                        {:else}
+                                                            ND
+                                                        {/if}
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-
                     </div>
-                    <div
-                        class="level-right"
-                        title={expand ? "replier" : "plus de détail"}
-                    >
-                        <figure class={`image is-vcentered has-text-${expand ? "white" : "primary"}`} style="margin-right:16px">
-                            <FontAwesomeIcon icon={expand ? faMinus : faPlus} class="is-32"/>
-                        </figure>
-                    </div>
-                </div>
+                {/if}
             </div>
-            {#if expand}
-                <div class="card-content">
-                    <div class="content">
-                        <div class="columns">
-                            <div class="column is-6">
-                                <span class="is-grey is-uppercase is-small">Naissance</span>
-                                <table class="table is-narrow is-striped">
-                                    <tbody>
-                                        <tr>
-                                            <td>Nom</td>
-                                            <td>{result.name.last}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Prénom(s)</td>
-                                            <td>
-                                                {
-                                                    result.name.first
-                                                        ? result.name.first.join(' ')
-                                                        : '(sans prénom)'
-                                                }
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>Sexe</td>
-                                            <td>
-                                                { result.sex === 'M' ? 'masculin' : 'féminin' }
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>Date</td>
-                                            <td>{dateFormat(result.birth.date)}</td>
-                                        </tr>
-                                        <PlaceInCard
-                                            city={result.birth.location.city}
-                                            cityCode={result.birth.location.cityCode}
-                                            department={result.birth.location.departmentCode}
-                                            country={result.birth.location.country}
-                                            countryCode={result.birth.location.countryCode}
-                                        />
-                                    </tbody>
-                                </table>
-                            </div>
-                            <div class="column is-6">
-                                <span class="is-grey is-uppercase is-small">Décès</span>
-                                <table class="table is-narrow is-striped">
-                                    <tbody>
-                                        <tr>
-                                            <td>Date</td>
-                                            <td>
-                                                {dateFormat(result.death.date)}
-                                            </td>
-                                        </tr>
-                                        {#if result.death.age && result.death.age>1}
-                                            <tr>
-                                                <td>Age</td>
-                                                <td>{result.death.age} ans</td>
-                                            </tr>
-                                        {/if}
-                                        <PlaceInCard
-                                            city={result.death.location.city}
-                                            cityCode={result.death.location.cityCode}
-                                            department={result.death.location.departmentCode}
-                                            country={result.death.location.country}
-                                            countryCode={result.death.location.countryCode}
-                                        />
-                                        <tr>
-                                            <td>Acte n°</td>
-                                            <td>
-                                                {
-                                                    result.death.certificateId
-                                                    ? result.death.certificateId
-                                                    : "ND"
-                                                }
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>Source INSEE</td>
-                                            <td>
-                                                {#if (result.source && $dataGouvCatalog)}
-                                                    <a href={$dataGouvCatalog[result.source]} target="_blank">
-                                                        fichier {result.source}
-                                                    </a>
-                                                {:else}
-                                                    ND
-                                                {/if}
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            {/if}
         </div>
     </div>
 {/if}
@@ -220,235 +219,5 @@
 
 <style>
 
-    .has-text-centered {
-        text-align: center!important;
-    }
 
-    .has-text-left {
-        text-align: left!important;
-    }
-
-    .has-text-white {
-        color: #fff!important;
-    }
-
-    .has-text-primary {
-        color: #003189!important;
-    }
-
-    .has-background-white {
-        background-color: #fff!important;
-    }
-
-    .has-background-primary {
-        background-color: #003189!important;
-    }
-
-    .has-background-danger {
-        background-color: hsl(348, 100%, 61%)!important;
-    }
-
-    figure, h1, html, li, ul {
-        margin: 0;
-        padding: 0;
-    }
-
-    .is-vcentered {
-        align-items: center;
-    }
-
-    .image.is-64x64 {
-        height: 64px;
-        width: 64px;
-    }
-
-    .image.is-48x48 {
-        height: 48px;
-        width: 48px;
-    }
-
-    .image img {
-        display: block;
-        height: auto;
-        width: 100%;
-    }
-
-    img {
-        height: auto;
-        max-width: 100%;
-    }
-
-    h1 {
-        font-size: 100%;
-        font-weight: 400;
-    }
-
-
-    .subtitle,.title {
-        word-break: break-word;
-    }
-
-    .title {
-        color: #363636;
-        font-size: 2rem;
-        font-weight: 600;
-        line-height: 1.125;
-    }
-
-    .subtitle:not(.is-spaced)+.title,.title:not(.is-spaced)+.subtitle {
-        margin-top: -1.25rem;
-    }
-
-    .title.is-size-4 {
-        font-size: 1.5rem;
-    }
-
-    .title.is-size-5 {
-        font-size: 1.25rem;
-    }
-
-    .subtitle {
-        color: #4a4a4a;
-        font-size: 1.25rem;
-        font-weight: 400;
-        line-height: 1.25;
-    }
-
-    .card {
-        background-color: #fff;
-        box-shadow: 0 2px 3px rgba(10,10,10,.1),0 0 0 1px rgba(10,10,10,.1);
-        color: #4a4a4a;
-        max-width: 100%;
-        position: relative;
-    }
-
-    .card-content,.card-header {
-        background-color: transparent;
-    }
-
-    .card-header {
-        align-items: stretch;
-        box-shadow: 0 1px 2px rgba(10,10,10,.1);
-        display: flex;
-    }
-
-    .card-content {
-        padding: 1.5rem;
-    }
-
-    .level {
-    align-items: center;
-    justify-content: space-between;
-    }
-
-    .level code {
-    border-radius: 4px;
-    }
-
-    .level img {
-    display: inline-block;
-    vertical-align: top;
-    }
-
-    .level.is-mobile {
-    display: flex;
-    }
-
-    .level.is-mobile .level-left,
-    .level.is-mobile .level-right {
-    display: flex;
-    }
-
-    .level.is-mobile .level-left + .level-right {
-    margin-top: 0;
-    }
-
-    .level.is-mobile .level-item:not(:last-child) {
-    margin-bottom: 0;
-    margin-right: 0.75rem;
-    }
-
-    .level.is-mobile .level-item:not(.is-narrow) {
-    flex-grow: 1;
-    }
-
-    @media screen and (min-width: 769px), print {
-    .level {
-        display: flex;
-    }
-    .level > .level-item:not(.is-narrow) {
-        flex-grow: 1;
-    }
-    }
-
-    .level-item {
-    align-items: center;
-    display: flex;
-    flex-basis: auto;
-    flex-grow: 0;
-    flex-shrink: 0;
-    justify-content: center;
-    }
-
-    .level-item .title,
-    .level-item .subtitle {
-    margin-bottom: 0;
-    }
-
-    @media screen and (max-width: 768px) {
-    .is-hidden-mobile {
-        display: none!important;
-    }
-
-    .level-item:not(:last-child) {
-        margin-bottom: 0.75rem;
-    }
-    }
-
-    .level-left,
-    .level-right {
-    flex-basis: auto;
-    flex-grow: 0;
-    flex-shrink: 0;
-    }
-
-    .level-left .level-item.is-flexible,
-    .level-right .level-item.is-flexible {
-    flex-grow: 1;
-    }
-
-    @media screen and (min-width: 769px), print {
-    .level-left .level-item:not(:last-child),
-    .level-right .level-item:not(:last-child) {
-        margin-right: 0.75rem;
-    }
-    }
-
-    .level-left {
-    align-items: center;
-    justify-content: flex-start;
-    }
-
-    @media screen and (max-width: 768px) {
-    .level-left + .level-right {
-        margin-top: 1.5rem;
-    }
-    }
-
-    @media screen and (min-width: 769px), print {
-    .level-left {
-        display: flex;
-    }
-    }
-
-    .level-right {
-    align-items: center;
-    justify-content: flex-end;
-    }
-
-    @media screen and (min-width: 769px), print {
-    .level-right {
-        display: flex;
-    }
-    }
 </style>
