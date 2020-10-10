@@ -1,30 +1,34 @@
-{#if status === 'downloading'}
-    <span
-        title={`${fallback ? 'préparation du téléchargement' : 'téléchargement en cours'} ${Math.round($progress/max*100)}%`}
-    >
-        <progress class="progress is-info is-small download-bar" value={$progress} max={max}/>
-    </span>
-{:else if (status === undefined)}
-    <a
-        class="download"
-        href={null}
-        on:click|preventDefault={download}
-        title="téléchargez l'ensemble des résultats en tableur CSV"
-    >
-        téléchargement des résultats
-        <FontAwesomeIcon icon={faFileDownload} class="is-lower"/>
-    </a>
-{:else if (status === 'success')}
-    <span class="is-primary">
-        téléchargement terminé
-        <FontAwesomeIcon icon={faCheck} class="is-small"/>
-    </span>
-{:else if (status === 'fail')}
-    <span class="is-danger">
-        le téléchargement a échoué
-        <FontAwesomeIcon icon={faExclamationTriangle} class="is-small"/>
-    </span>
-{/if}
+<span>
+    {#if status === 'downloading'}
+        <span
+            title={`${fallback ? 'préparation du téléchargement' : 'téléchargement en cours'} ${Math.round($progress/max*100)}%`}
+        >
+            <progress class="rf-margin-top-1N progress is-info is-small download-bar" value={$progress} max={max}/>
+        </span>
+    {:else if (status === undefined)}
+        <span
+            class="download rf-fi-file-download-line rf-fi--lg"
+            href={null}
+            on:click|preventDefault={download}
+            title="téléchargez l'ensemble des résultats en tableur CSV"
+        >
+        </span>
+    {:else if (status === 'success')}
+        <span class="is-primary">
+            <span
+                title="téléchargement terminé"
+                class="rf-fi-check-line rf-text--lg"
+            >
+            </span>
+        </span>
+    {:else if (status === 'fail')}
+        <span class="is-danger">
+            <span title="le téléchargement a échoué">
+                <FontAwesomeIcon icon={faExclamationTriangle} class="is-small"/>
+            </span>
+        </span>
+    {/if}
+</span>
 
 <script>
     import { tweened } from 'svelte/motion';
@@ -161,7 +165,4 @@
         height: .75rem;
     }
 
-    *, ::after, ::before {
-        box-sizing: inherit;
-    }
 </style>
