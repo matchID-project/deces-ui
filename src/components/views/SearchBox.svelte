@@ -1,50 +1,49 @@
-<GoogleAnalytics {...tag}/>
-<div
-  class="container margin column is-8"
->
-    <form
-       class="columns is-vcentered is-multiline"
-      on:submit|preventDefault={handleSubmit}
-    >
-      <div class="column is-11">
-          <div class="columns is-multiline is-mobile">
-            {#each inputsKeys as key}
-              {#if isActive[key]}
-                {#if $searchInput[key].section}
-                  <span class="column is-higher is-right-desktop is-2 is-mobile-fullwidth is-mobile-centered">{$searchInput[key].section}</span>
+<div class="rf-container-fluid">
+  <form on:submit|preventDefault={handleSubmit}>
+    <div class="rf-grid-row">
+      <div class="rf-col-12">
+        <div class="rf-container-fluid">
+            <div class="rf-grid-row">
+              {#each inputsKeys as key}
+                {#if isActive[key]}
+                    {#if $searchInput[key].section}
+                      <div class="rf-col-12 rf-margin-top-2N rf-padding-left-4px">
+                          <strong>
+                            {$searchInput[key].section}
+                          </strong>
+                      </div>
+                    {/if}
+
+                    <div class="rf-margin-top-1N rf-padding-left-4px rf-padding-right-4px {$searchInput[key].size}">
+                      <label class="rf-label" for={$searchInput[key].path}>{$searchInput[key].label}</label>
+                      <div class="rf-field">
+                        <input
+                          id={$searchInput[key].path}
+                          name={$searchInput[key].path}
+                          autoComplete="off"
+                          placeholder={$searchInput[key].placeholder}
+                          class="rf-input {!$advancedSearch ? "rf-input--btn" : ""} {isValid(key) ? "" : "is-danger"}"
+                          bind:value={$searchInput[key].value}
+                          title={$searchInput[key].title}
+                          on:input={() => handleInput(key)}
+                          on:blur={focusInput(key,false)}
+                          on:focus={focusInput(key,true)}
+                          disabled={$searchInput[key].disabled}
+                        />
+                        {#if !$advancedSearch}
+                          <button class="rf-btn">
+                            <span class="rf-fi-search-line rf-fi--lg"></span>
+                          </button>
+                        {/if}
+                      </div>
+                    </div>
                 {/if}
-                <div class={`column low-padding is-${$searchInput[key].size}`}>
-                  <div class="field padding" style="flex-direction:column;text-align:left!important;">
-                    <input
-                      autoComplete="off"
-                      placeholder={$searchInput[key].placeholder}
-                      class={`padding is-size-5 ${isValid(key) ? "" : "is-danger"}`}
-                      bind:value={$searchInput[key].value}
-                      title={$searchInput[key].title}
-                      on:input={() => handleInput(key)}
-                      on:blur={focusInput(key,false)}
-                      on:focus={focusInput(key,true)}
-                      disabled={$searchInput[key].disabled}
-                    />
-                  </div>
-                </div>
-              {/if}
-            {/each}
-          </div>
+              {/each}
+            </div>
+        </div>
       </div>
-      <div class="column is-1">
-        <button
-          type="reset"
-          class="button is-fullwidth is-size-5 is-white small-margin-mobile"
-          on:click|preventDefault={ toggleAdvancedSearch }
-          title={ $advancedSearch ? "retour à la recherche simple" : "activer la recherche avancée" }
-        >
-          <FontAwesomeIcon icon={ $advancedSearch ? faMinus : faPlus }/>
-        </button>
-      </div>
-        <div class="column is-2 is-hidden-mobile" style="margin-bottom:-1rem!important;"></div>
       {#if $advancedSearch}
-        <div class={`column is-${$displayMode === 'geo' ? "12" : "5" } is-size-5`}>
+        <div class="rf-margin-top-2N rf-col-12" style="text-align: center">
           <div
             class="field is-centered small-margin-mobile"
             style="margin-top:-0.25rem;margin-bottom:-1rem!important;"
@@ -58,25 +57,8 @@
           </div>
         </div>
       {/if}
-      {#if ($displayMode !== 'geo')}
-        <div class="is-hidden-mobile column is-${$advancedSearch ? "3" : "12" } is-size-5">
-          <div
-            class="field small-margin-mobile"
-            style="margin-top:0.5rem;margin-bottom:-1rem!important;"
-          >
-
-            {#each displayChoices as choice}
-              <span style="margin: 0.25rem;"
-                title={`${choice.mode === $displayMode ? "mode d'affichage actuel:" : "basculez au mode d'affichage:"} ${choice.label}`}
-                on:click|preventDefault={() => enableDisplayMode(choice.mode)}>
-                <FontAwesomeIcon icon={choice.icon} class={`is-36 is-higher ${choice.mode === $displayMode ? "is-info" : ""}`}/>
-              </span>
-            {/each}
-          </div>
-        </div>
-      {/if}
-        <div class="column is-2 is-hidden-mobile" style="margin-bottom:-1rem!important;"></div>
-    </form>
+    </div>
+  </form>
 </div>
 {#if infoDisplay}
   <div
@@ -220,314 +202,4 @@
 </script>
 
 <style>
-.label {
- color:#363636;
- display:block;
- font-size:1rem;
- font-weight:700
-}
-.label:not(:last-child) {
- margin-bottom:.5em
-}
-.label.is-small {
- font-size:.75rem
-}
-.label.is-medium {
- font-size:1.25rem
-}
-.label.is-large {
- font-size:1.5rem
-}
-.help {
- display:block;
- font-size:.75rem;
- margin-top:.25rem
-}
-.help.is-white {
- color:#fff
-}
-.help.is-black {
- color:#0a0a0a
-}
-.help.is-light {
- color:#f5f5f5
-}
-.help.is-dark {
- color:#363636
-}
-.help.is-primary {
- color:#00d1b2
-}
-.help.is-link {
- color:#3273dc
-}
-.help.is-info {
- color:#3298dc
-}
-.help.is-success {
- color:#48c774
-}
-.help.is-warning {
- color:#ffdd57
-}
-.help.is-danger {
- color:#f14668
-}
-.field:not(:last-child) {
- margin-bottom:.75rem
-}
-.field.has-addons {
- display:flex;
- justify-content:flex-start
-}
-.field.has-addons .control:not(:last-child) {
- margin-right:-1px
-}
-.field.has-addons .control:not(:first-child):not(:last-child) .button,
-.field.has-addons .control:not(:first-child):not(:last-child) .input,
-.field.has-addons .control:not(:first-child):not(:last-child) .select select {
- border-radius:0
-}
-.field.has-addons .control:first-child:not(:only-child) .button,
-.field.has-addons .control:first-child:not(:only-child) .input,
-.field.has-addons .control:first-child:not(:only-child) .select select {
- border-bottom-right-radius:0;
- border-top-right-radius:0
-}
-.field.has-addons .control:last-child:not(:only-child) .button,
-.field.has-addons .control:last-child:not(:only-child) .input,
-.field.has-addons .control:last-child:not(:only-child) .select select {
- border-bottom-left-radius:0;
- border-top-left-radius:0
-}
-.field.has-addons .control .button:not([disabled]).is-hovered,
-.field.has-addons .control .button:not([disabled]):hover,
-.field.has-addons .control .input:not([disabled]).is-hovered,
-.field.has-addons .control .input:not([disabled]):hover,
-.field.has-addons .control .select select:not([disabled]).is-hovered,
-.field.has-addons .control .select select:not([disabled]):hover {
- z-index:2
-}
-.field.has-addons .control .button:not([disabled]).is-active,
-.field.has-addons .control .button:not([disabled]).is-focused,
-.field.has-addons .control .button:not([disabled]):active,
-.field.has-addons .control .button:not([disabled]):focus,
-.field.has-addons .control .input:not([disabled]).is-active,
-.field.has-addons .control .input:not([disabled]).is-focused,
-.field.has-addons .control .input:not([disabled]):active,
-.field.has-addons .control .input:not([disabled]):focus,
-.field.has-addons .control .select select:not([disabled]).is-active,
-.field.has-addons .control .select select:not([disabled]).is-focused,
-.field.has-addons .control .select select:not([disabled]):active,
-.field.has-addons .control .select select:not([disabled]):focus {
- z-index:3
-}
-.field.has-addons .control .button:not([disabled]).is-active:hover,
-.field.has-addons .control .button:not([disabled]).is-focused:hover,
-.field.has-addons .control .button:not([disabled]):active:hover,
-.field.has-addons .control .button:not([disabled]):focus:hover,
-.field.has-addons .control .input:not([disabled]).is-active:hover,
-.field.has-addons .control .input:not([disabled]).is-focused:hover,
-.field.has-addons .control .input:not([disabled]):active:hover,
-.field.has-addons .control .input:not([disabled]):focus:hover,
-.field.has-addons .control .select select:not([disabled]).is-active:hover,
-.field.has-addons .control .select select:not([disabled]).is-focused:hover,
-.field.has-addons .control .select select:not([disabled]):active:hover,
-.field.has-addons .control .select select:not([disabled]):focus:hover {
- z-index:4
-}
-.field.has-addons .control.is-expanded {
- flex-grow:1;
- flex-shrink:1
-}
-.field.has-addons.has-addons-centered {
- justify-content:center
-}
-.field.has-addons.has-addons-right {
- justify-content:flex-end
-}
-.field.has-addons.has-addons-fullwidth .control {
- flex-grow:1;
- flex-shrink:0
-}
-.field.is-grouped {
- display:flex;
- justify-content:flex-start
-}
-.field.is-grouped>.control {
- flex-shrink:0
-}
-.field.is-grouped>.control:not(:last-child) {
- margin-bottom:0;
- margin-right:.75rem
-}
-.field.is-grouped>.control.is-expanded {
- flex-grow:1;
- flex-shrink:1
-}
-.field.is-grouped.is-grouped-centered {
- justify-content:center
-}
-.field.is-grouped.is-grouped-right {
- justify-content:flex-end
-}
-.field.is-grouped.is-grouped-multiline {
- flex-wrap:wrap
-}
-.field.is-grouped.is-grouped-multiline>.control:last-child,
-.field.is-grouped.is-grouped-multiline>.control:not(:last-child) {
- margin-bottom:.75rem
-}
-.field.is-grouped.is-grouped-multiline:last-child {
- margin-bottom:-.75rem
-}
-.field.is-grouped.is-grouped-multiline:not(:last-child) {
- margin-bottom:0
-}
-@media screen and (min-width:769px),print {
- .field.is-horizontal {
-  display:flex
- }
-}
-.field-label .label {
- font-size:inherit
-}
-@media screen and (max-width:768px) {
- .field-label {
-  margin-bottom:.5rem
- }
-}
-@media screen and (min-width:769px),print {
- .field-label {
-  flex-basis:0;
-  flex-grow:1;
-  flex-shrink:0;
-  margin-right:1.5rem;
-  text-align:right
- }
- .field-label.is-small {
-  font-size:.75rem;
-  padding-top:.375em
- }
-}
-
-
-  input {
-    height: 2.35em;
-    width: 100%;
-  }
-
-  input[type="checkbox"], input[type="radio"] {
-      vertical-align: baseline;
-  }
-
-  @media screen and (min-width:769px) {
-    .container.margin {
-      margin-top: 2rem!important;
-    }
-  }
-
-  @media screen and (max-width:768px) {
-    .container.margin {
-      /* margin-top: -1.75rem!important; */
-    }
-  }
-
-  @media print,screen and (min-width:769px) {
-    .is-right-desktop {
-     text-align:right!important;
-    }
-  }
-
-  .is-left {
-    text-align: left!important;
-  }
-
-  @media print,screen and (max-width:768px) {
-    .info-footer {
-      color: #e2011c;
-      z-index: 40;
-      width: 100%;
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      padding: 5px;
-      background: rgba(255, 255, 255, 0.8);
-      border-top: solid 1px #e2011c;
-      vertical-align: center;
-      justify-content: center;
-      display: inline-block;
-    }
-
-    .small-margin-mobile {
-      margin-top: 1rem!important;
-      margin-bottom:-1rem!important;
-    }
-
-    [placeholder]{
-      text-align:center;
-    }
-
-    .is-mobile-centered {
-      text-align: center!important;
-    }
-
-    .is-hidden-mobile {
-      display: none;
-    }
-
-  }
-
-  @media print,screen and (min-width:769px) {
-    .info-footer {
-      display: none;
-    }
-
-    .is-hidden-desktop {
-      display: none;
-    }
-  }
-
-  .is-danger {
-    border: 3px solid hsl(348, 100%, 61%)!important;
-    border-radius: 4px;
-  }
-
-  .field {
-    display: flex;
-    justify-content: center;
-  }
-
-  [placeholder]{
-      text-overflow:ellipsis;
-  }
-
-  @media screen and (max-width:768px) {
-    .low-padding {
-      padding:0!important;
-    }
-  }
-  @media screen and (min-width:769px) {
-    .low-padding {
-      padding:0 .15rem!important;
-    }
-  }
-
-  .help.low-margin {
-    margin:.15rem!important;
-  }
-
-  .is-higher {
-  }
-
-  *, ::after, ::before {
-    box-sizing: inherit;
-  }
-
-  input.padding {
-    padding-left: .35rem;
-    padding-right: .35rem;
-  }
-
 </style>
