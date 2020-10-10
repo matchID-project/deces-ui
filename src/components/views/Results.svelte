@@ -1,48 +1,56 @@
 {#if searchTrigger($searchInput) }
-  <div class="results-body">
-    <div class="container">
-      <div class="margin">
-        <ResultsHeader/>
-        {#if ($displayMode && ['card','card-expand'].includes($displayMode))}
-          <div class="columns is-vcentered is-multiline is-mobile">
-            {#each $searchResults as result, index}
-              <ResultCard result={result}/>
-            {/each}
-          </div>
-        {:else }
-          <div class="content">
-            <table class="table is-narrow is-striped is-size-7" style="margin-top:24px!important;">
-              {#each columns as column}
-                <col style={column.width ? `width: ${column.width};`: ""}/>
-              {/each}
-              <tr class="is-grey" >
-                <th colspan="3" scope="colgroup">état civil</th>
-                <th colspan="5" scope="colgroup">naissance</th>
-                <th colspan="8" scope="colgroup">décès</th>
-              </tr>
-              <tr class="is-grey" >
-                {#each columns as column, index}
-                  <th class={`th-label ${column.field ? "th-sortable" : ""}`} scope="col"
-                    on:click={e => toggleSort(column.field)}
-                    title={column.field ? "cliquez pour activer/désactiver le tri" : undefined}
-                  >
-                    {column.label}
-                    {#if column.order}
-                      <FontAwesomeIcon icon={column.order === "desc" ? faSortDown : faSortUp } class="is-small is-low"/>
-                    {/if}
-                  </th>
+    <div class="rf-container-fluid rf-margin-top-4N rf-padding-left-2N--desktop rf-padding-left-1N--mobile rf-padding-right-1N--mobile">
+      <div class="rf-grid-row rf-text--sm">
+        <div class="rf-col-12">
+          <ResultsHeader/>
+        </div>
+        <div class="rf-col-12">
+          {#if ($displayMode && ['card','card-expand'].includes($displayMode))}
+            <div class="rf-container-fluid">
+              <div class="rf-grid-row is-vcentered">
+                {#each $searchResults as result, index}
+                  <ResultCard result={result}/>
                 {/each}
-              </tr>
-              {#each $searchResults as result, index}
-                <ResultRow result={result} index={index}/>
-              {/each}
-            </table>
-          </div>
-        {/if}
-        <Pagination/>
+              </div>
+            </div>
+          {:else }
+            <div class="content">
+              <table class="rf-table rf-table--narrow rf-table--striped rf-text--xs rf-color--black rf-margin-top-1N">
+                {#each columns as column}
+                  <col style={column.width ? `width: ${column.width};`: ""}/>
+                {/each}
+                <tr class="is-grey" >
+                  <th colspan="3" scope="colgroup">état civil</th>
+                  <th colspan="5" scope="colgroup">naissance</th>
+                  <th colspan="8" scope="colgroup">décès</th>
+                </tr>
+                <tr class="is-grey" >
+                  {#each columns as column, index}
+                    <th
+                      class="rf-table-th--label {column.field ? "rf-table-th--sortable" : ""}"
+                      scope="col"
+                      on:click={e => toggleSort(column.field)}
+                      title={column.field ? "cliquez pour activer/désactiver le tri" : undefined}
+                    >
+                      {column.label}
+                      {#if column.order}
+                        <FontAwesomeIcon icon={column.order === "desc" ? faSortDown : faSortUp } class="is-small is-low"/>
+                      {/if}
+                    </th>
+                  {/each}
+                </tr>
+                {#each $searchResults as result, index}
+                  <ResultRow result={result} index={index}/>
+                {/each}
+              </table>
+            </div>
+          {/if}
+        </div>
+        <div class="rf-col-12 rf-content--center">
+          <Pagination/>
+        </div>
       </div>
     </div>
-  </div>
 {/if}
 
 <script>
@@ -103,50 +111,4 @@
 </script>
 
 <style>
-
-  .table {
-    table-layout:fixed
-  }
-  .th-label {
-    height: 2.5rem;
-  }
-
-  .th-sortable:hover {
-        color: #209cee;
-        cursor: pointer;
-    }
-
-  .is-grey {
-    background-color: #fafafa;
-  }
-  .results-body {
-      max-width: 1235px;
-      margin-left: auto;
-      margin-right: auto;
-      display: flex;
-      padding: 0 24px;
-  }
-
-  @media (max-width: 800px) {
-    .results-body {
-        width: 100%;
-        display: block;
-        padding: 0 15px;
-     }
-  }
-
-  .margin {
-      padding: 24px 0px 32px 0px;
-  }
-
-  @media (max-width: 800px) {
-    .margin {
-        width: 100%;
-        padding-left: 0;
-    }
-  }
-
-  *, ::after, ::before {
-    box-sizing: inherit;
-  }
 </style>
