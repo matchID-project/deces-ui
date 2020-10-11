@@ -155,13 +155,26 @@ export const toggleAdvancedSearch = async () => {
       });
       return v
     });
+    await advancedSearch.update(v => Object.keys(mySearchCanvas).some(key => mySearchCanvas[key].active === mySearchCanvas[key].advanced))
     await searchInput.update(v => {
-      Object.keys(v).map(key => {
-        v[key].value = '';
+        let fullText = '';
+        let firstName = '';
+        let lastName = '';
+        if (myAdvancedSearch) {
+            const names = v.fullText.value.split(/\s+/);
+            lastName = names.length && names[0] || '';
+            firstName = (names.length > 0) && names[1] || '';
+        } else {
+            fullText =  [v.lastName.value, v.firstName.value].filter(x => x).join(' ') || '';
+        }
+        Object.keys(v).map(key => {
+            if (key === 'fullText') { v[key].value = fullText; }
+            else if (key === 'firstName') { v[key].value = firstName; }
+            else if (key === 'lastName') { v[key].value = lastName; }
+            else { v[key].value = ''; }
       });
       return v
     });
-    await advancedSearch.update(v => Object.keys(mySearchCanvas).some(key => mySearchCanvas[key].active === mySearchCanvas[key].advanced))
     await searchURLUpdate();
 };
 
