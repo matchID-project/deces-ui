@@ -1,6 +1,6 @@
 
 {#if $wasSearched}
-    <div class="rf-container-fluid" style="height:45px; overflow: hidden;">
+    <div class="rf-container-fluid" style="padding-top:6px; margin-top:-8px;margin-bottom:-8px;height:45px; overflow: hidden;">
         <div class="rf-grid-row" style="justify-content: center;">
             <nav class="rf-pagination" role="navigation" aria-label="pagination">
                 {#if $totalPages > 1}

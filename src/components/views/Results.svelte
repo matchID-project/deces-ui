@@ -1,5 +1,5 @@
 {#if searchTrigger($searchInput) }
-    <div class="rf-container-fluid rf-margin-top-4N rf-padding-left-2N--desktop rf-padding-left-1N--mobile rf-padding-right-1N--mobile">
+    <div class="rf-container-fluid rf-margin-top-1N rf-padding-left-2N--desktop rf-padding-left-1N--mobile rf-padding-right-1N--mobile">
       <div class="rf-grid-row rf-text--sm">
         <div class="rf-col-12">
           <ResultsHeader/>
@@ -13,42 +13,45 @@
                 {/each}
               </div>
             </div>
-          {:else }
-            <div class="content">
-              <table class="rf-table rf-table--narrow rf-table--striped rf-text--xs rf-color--black rf-margin-top-1N">
-                {#each columns as column}
-                  <col style={column.width ? `width: ${column.width};`: ""}/>
+          {:else if (($displayMode === 'table') && $wasSearched)}
+            <table class="rf-table rf-table--narrow rf-table--striped rf-text--xs rf-color--black rf-margin-top-1N">
+              {#each columns as column}
+                <col style={column.width ? `width: ${column.width};`: ""}/>
+              {/each}
+              <tr class="is-grey" >
+                <th colspan="3" scope="colgroup">état civil</th>
+                <th colspan="5" scope="colgroup">naissance</th>
+                <th colspan="8" scope="colgroup">décès</th>
+              </tr>
+              <tr class="is-grey" >
+                {#each columns as column, index}
+                  <th
+                    class="rf-table-th--label {column.field ? "rf-table-th--sortable" : ""}"
+                    scope="col"
+                    on:click={e => toggleSort(column.field)}
+                    title={column.field ? "cliquez pour activer/désactiver le tri" : undefined}
+                  >
+                    {column.label}
+                    {#if column.order}
+                      <FontAwesomeIcon icon={column.order === "desc" ? faSortDown : faSortUp } class="is-small is-low"/>
+                    {/if}
+                  </th>
                 {/each}
-                <tr class="is-grey" >
-                  <th colspan="3" scope="colgroup">état civil</th>
-                  <th colspan="5" scope="colgroup">naissance</th>
-                  <th colspan="8" scope="colgroup">décès</th>
-                </tr>
-                <tr class="is-grey" >
-                  {#each columns as column, index}
-                    <th
-                      class="rf-table-th--label {column.field ? "rf-table-th--sortable" : ""}"
-                      scope="col"
-                      on:click={e => toggleSort(column.field)}
-                      title={column.field ? "cliquez pour activer/désactiver le tri" : undefined}
-                    >
-                      {column.label}
-                      {#if column.order}
-                        <FontAwesomeIcon icon={column.order === "desc" ? faSortDown : faSortUp } class="is-small is-low"/>
-                      {/if}
-                    </th>
-                  {/each}
-                </tr>
-                {#each $searchResults as result, index}
-                  <ResultRow result={result} index={index}/>
-                {/each}
-              </table>
-            </div>
+              </tr>
+              {#each $searchResults as result, index}
+                <ResultRow result={result} index={index}/>
+              {/each}
+            </table>
+
+          {:else if ($displayMode === 'geo')}
+              <Geo/>
           {/if}
         </div>
-        <div class="rf-col-12 rf-content--center">
-          <Pagination/>
-        </div>
+        {#if !($displayMode === 'geo')}
+          <div class="rf-col-12 rf-content--center">
+            <Pagination/>
+          </div>
+        {/if}
       </div>
     </div>
 {/if}
@@ -57,13 +60,14 @@
   import { onMount } from 'svelte';
   import getDataGouvCatalog from '../tools/getDataGouvCatalog.js';
   import { searchResults, searchInput,
-    sortInput, displayMode } from '../tools/stores.js';
+    sortInput, displayMode, wasSearched } from '../tools/stores.js';
   import { searchTrigger } from '../tools/search.js';
-  import ResultsHeader from './ResultsHeader.svelte';
+  import FontAwesomeIcon from './FontAwesomeIcon.svelte';
+  import Geo from './Geo.svelte';
+  import Pagination from './Pagination.svelte';
   import ResultCard from "./ResultCard.svelte";
   import ResultRow from "./ResultRow.svelte";
-  import Pagination from './Pagination.svelte';
-  import FontAwesomeIcon from './FontAwesomeIcon.svelte';
+  import ResultsHeader from './ResultsHeader.svelte';
   import { faSortUp, faSortDown } from '@fortawesome/free-solid-svg-icons';
 
   onMount(async () => { getDataGouvCatalog() });

@@ -112,7 +112,7 @@ export const buildURLParams = () => {
     } else {
         params.delete('fuzzy');
     }
-    if (['table','card-expand'].includes(myDisplayMode)) {
+    if (['geo','table','card-expand'].includes(myDisplayMode)) {
         params.set('view', myDisplayMode);
     } else {
         params.delete('view');

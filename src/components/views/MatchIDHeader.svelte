@@ -31,9 +31,6 @@
                             </span>
                         </li>
                         <li class="rf-shortcuts__item">
-                            <a href="/geo?advanced=true&fuzzy=false" class="rf-link rf-fi-world-line rf-link--icon-left" target="_self">vue géographique</a>
-                        </li>
-                        <li class="rf-shortcuts__item">
                             <a href="/link" class="rf-link rf-fi-db-line rf-link--icon-left">appariement</a>
                         </li>
                         <li class="rf-shortcuts__item">
