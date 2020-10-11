@@ -1,7 +1,15 @@
-<div class="rf-container-fluid">
+<div class="rf-container-fluid" style="margin-top: -16px;">
   <form on:submit|preventDefault={handleSubmit}>
-    <div class="rf-grid-row">
+    <div class="rf-grid-row" style="position:relative;">
       <div class="rf-col-12">
+        <span
+          title={$advancedSearch ? "recherche simplifiée" : "recherche avancée"}
+          on:click|preventDefault={toggleAdvancedSearch}
+          class="rf-color--bf"
+          style="position: absolute;top: 16px; right: 8px;"
+        >
+          <FontAwesomeIcon icon={$advancedSearch ? faMinus : faPlus} class="rf-margin-2px is-24 is-high"/>
+        </span>
         <div class="rf-container-fluid">
             <div class="rf-grid-row">
               {#each inputsKeys as key}

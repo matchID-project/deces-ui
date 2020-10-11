@@ -4,7 +4,7 @@
             <div class="rf-header__brand">
                 <a class="rf-logo" href="#" title="République Française">
                     <span class="rf-logo__title">
-                        Répulique
+                        République
                         <br>Française
                     </span>
                 </a>

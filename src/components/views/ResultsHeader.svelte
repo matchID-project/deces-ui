@@ -122,7 +122,9 @@
 
     if ($displayMode) {
         if (($displayMode === 'geo') && (mode !== 'geo')) {
-            $searchResults = $searchResults.splice(0, $defaultResultsPerPage);
+            if ($searchResults.length >  $defaultResultsPerPage) {
+                $searchResults = $searchResults.splice(0, $defaultResultsPerPage);
+            }
             $resultsPerPage = $defaultResultsPerPage;
         }
       $displayMode = mode;
