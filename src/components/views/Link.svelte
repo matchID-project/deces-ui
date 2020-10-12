@@ -1,55 +1,56 @@
-<div class="image">
+<div class="rf-container-fluid rf-padding-right-1N" style="position: relative">
     <div class="badge">
         beta
     </div>
-</div>
-<Hero height={"14rem"}>
-    <span slot="title">
-      fichier des décès
-      {#if ($linkStep > 1)}
-        <div style="position: absolute;top:.5rem;right:.5rem;">
-            <button
-                class="button is-danger"
-                title="réinitialiser le traitement"
-                on:click|preventDefault={reset}
-            >
-                réinitialiser &nbsp;
-                <span>
-                    <FontAwesomeIcon icon={faTrash} class="is-low"/>
-                </span>
-            </button>
-        </div>
-      {/if}
-    </span>
-    <span slot="subtitle">
-        appariement
-    </span>
-    <span slot="content">
-        <div class="columns">
-            {#each steps as step, i}
-                <div class="column is-3">
-                    {#if ((i+1) === $linkStep) && step.hero}
-                        <svelte:component this={step.hero} step={i+1} label={step.label} error={step.error}/>
-                    {:else}
-                        <LinkStep step={i+1} label={step.label} error={step.error}/>
-                    {/if}
+    <div class="rf-grid-row">
+        {#if ($linkStep <= 1)}
+            <div class="rf-col-3"></div>
+        {/if}
+        <div
+            class="rf-padding-left-2N--desktop rf-padding-left-1N--mobile rf-padding-right-1N--mobile rf-padding-top-2N rf-col-xs-12 rf-col-sm-12 rf-col-md-{size.md} rf-col-lg-{size.lg} rf-col-xl-{size.xl} {margin}"
+            style="position: relative"
+        >
+            <strong>
+                appariement
+            </strong>
+            {#if ($linkStep > 1)}
+                <div style="position: absolute;top: 12px;right: 0px;">
+                    <span
+                        title="réinitialiser le traitement"
+                        on:click|preventDefault={reset}
+                        class="rf-color--rm rf-fi-delete-line rf-fi--lg"
+                    >
+                    </span>
                 </div>
-            {/each}
+            {/if}
+            <div class="rf-container-fluid">
+                <div class="rf-grid-row">
+                    {#each steps as step, i}
+                        <div class="rf-col-12 rf-padding-1N">
+                            {#if ((i+1) === $linkStep) && step.hero}
+                                <svelte:component this={step.hero} step={i+1} title={step.title} label={step.label} error={step.error}/>
+                            {:else}
+                                <LinkStep step={i+1} title={step.title} label={step.label} error={step.error}/>
+                            {/if}
+                        </div>
+                    {/each}
+                </div>
+            </div>
         </div>
-    </span>
-</Hero>
-
-<div class="content body">
-    {#if wait}
-        <div class="wait-center">
-            <strong>{waitMessage}</strong>
-            <br/>
-            <FontAwesomeIcon icon={faSpinner} class="is-48 spin"/>
-        </div>
-    {/if}
-    <div style={wait ? `display: none;` : ''}>
-        {#if steps[$linkStep-1].body}
-            <svelte:component this={steps[$linkStep-1].body}/>
+        {#if wait && (linkStep > 1)}
+            <div class="rf-col-12">
+                <div class="wait-center">
+                    <strong>{waitMessage}</strong>
+                    <br/>
+                    <FontAwesomeIcon icon={faSpinner} class="is-48 spin"/>
+                </div>
+            </div>
+        {:else}
+            <div class="rf-padding-left-2N rf-col-xs-12 rf-col-sm-12 rf-col-md-8 rf-col-lg-9 rf-col-xl-9">
+                {#if steps[$linkStep-1].body}
+                    <svelte:component this={steps[$linkStep-1].body}/>
+                {/if}
+            </div>
         {/if}
     </div>
 </div>
@@ -78,6 +79,15 @@
     const minWaitActivation = 0;
     const minWaitDeactivation = 500;
 
+    $: size = {
+        md: ($linkStep>1) ? 4 : 6,
+        lg: ($linkStep>1) ? 3 : 6,
+        xl: ($linkStep>1) ? 2 : 6
+    };
+
+    $: margin = ($linkStep>1) ? "" : "rf-margin-top-6N";
+
+
     $: if ($linkWaiter) {
             setTimeout(() => {
                 if ($linkWaiter) {
@@ -101,7 +111,8 @@
             steps[0].error = false;
             $linkStep=2;
         } else {
-            steps[0].label = `${$linkFile.name }: volume > ${Math.round($linkFileSizeLimit / 1000**2)}Mo`
+            steps[0].label = `${$linkFile.name }: volume > ${Math.round($linkFileSizeLimit / 1000**2)}Mo<br>
+                                réessayez avec un fichier plus petit`
             steps[0].error = true
         }
     };
@@ -133,15 +144,15 @@
     }
 
     const step0Label = `glissez un fichier ici <br/> (${Math.round($linkFileSizeLimit / 1000**2)}Mo maximum)`;
-    const step1Label = "choisissez les colonnes à apparier";
-    const step2Label="lancez le traitement";
-    const step3Label="vérifiez les identifications";
+    const step1Label = 'choisissez les colonnes à apparier';
+    const step2Label= 'attendez le traitement de l\'appariement';
+    const step3Label= 'vérifiez les identités appariées';
 
     const steps = [
-        { label: step0Label, hero: LinkFile},
-        { label: step1Label, body: LinkConfigure},
-        { label: step2Label, body: LinkJob },
-        { label: step3Label, body: LinkCheck }
+        { title: 'fichier', label: step0Label, hero: LinkFile},
+        { title: 'configuration', label: step1Label, body: LinkConfigure},
+        { title: 'traitement', label: step2Label, body: LinkJob },
+        { title: 'validez', label: step3Label, body: LinkCheck }
     ];
 
     const reset = async () => {
@@ -188,70 +199,10 @@
 </script>
 
 <style>
-
-    .body {
-        max-width: 1235px;
-        margin-left: auto;
-        margin-right: auto;
-    }
-
-    *, ::after, ::before {
-        box-sizing: inherit;
-    }
-
-        .delete {
-        -moz-appearance:none;
-        -webkit-appearance:none;
-        background-color:rgba(10,10,10,.2);
-        border:none;
-        border-radius:290486px;
-        cursor:pointer;
-        pointer-events:auto;
-        display:inline-block;
-        flex-grow:0;
-        flex-shrink:0;
-        font-size:0;
-        height:20px;
-        max-height:20px;
-        max-width:20px;
-        min-height:20px;
-        min-width:20px;
-        outline:none;
-        position:relative;
-        vertical-align:top;
-        width:20px
-    }
-    .delete:after,
-    .delete:before {
-        background-color:#fff;
-        content:"";
-        display:block;
-        left:50%;
-        position:absolute;
-        top:50%;
-        transform:translateX(-50%) translateY(-50%) rotate(45deg);
-        transform-origin:center center
-    }
-    .delete:before {
-        height:2px;
-        width:50%
-    }
-    .delete:after {
-        height:50%;
-        width:2px
-    }
-    .delete:focus,
-    .delete:hover {
-        background-color:rgba(10,10,10,.3)
-    }
-    .delete.is-danger {
-        background-color: #e2011c;
-    }
-
 .badge {
   position: absolute;
   left: -7px;
-  top: 4.80rem;
+  top: 1.50rem;
   z-index: 900;
   background-color: #e2011c;
   -webkit-transform: rotate(-45deg) scale(1) skew(0deg) translate(10px);
@@ -272,7 +223,7 @@
     right: -1.23rem;
     top: 0px;
     border-right: 20px solid transparent;
-    border-bottom: 20px solid #e2011c;
+    border-bottom: 20px solid var(--rm500);
 }
 .badge:before {
     content: ' ';
@@ -280,7 +231,7 @@
     left: -1.23rem;
     top: 0px;
     border-left: 20px solid transparent;
-    border-bottom: 20px solid #e2011c;
+    border-bottom: 20px solid var(--rm500);
 }
   .wait-center {
     text-align: center;
