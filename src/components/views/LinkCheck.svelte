@@ -1,6 +1,6 @@
 {#if !$linkWaiter}
     {#if $linkResults}
-        <div class="check-body content">
+        <div class="rf-container-fluid rf-text--center">
             {#if (unCheckedLinks === 0) && (checkedLinks === 0)}
                 <p>
                     <strong>
@@ -12,20 +12,23 @@
                     <p>
                         toutes les identé(s) ({checkedLinks}) ont été validées* !
                         <br/>
-                        <span class="is-size-7">* validation automatique pour les scores > {Math.round($linkAutoCheckThreshold*100)}</span>
+                        <span class="rf-text--sm">* validation automatique pour les scores > {Math.round($linkAutoCheckThreshold*100)}</span>
                     </p>
                 {/if}
                 <p>
                     <span>
-                        téléchargez:<br/>
                         {#if (unCheckedLinks === 0)}
-                            <span class="has-text-danger">
-                                <FontAwesomeIcon icon={faArrowAltCircleRight} class="is-24 is-low"/>
-                                &nbsp;
+                            <span class="rf-color--rm rf-fi-arrow-right-line rf-fi">
                             </span>
                         {/if}
+                        <span>téléchargez:</span>
+                        {#if (unCheckedLinks === 0)}
+                            <span class="rf-color--rm rf-fi-arrow-left-line rf-fi">
+                            </span>
+                        {/if}
+                        <br/>
                         <button
-                            class='button is-info'
+                            class="rf-btn"
                             on:click|preventDefault={e => download(false)}
                         >
                             le fichier complet
@@ -37,7 +40,7 @@
                         </button>
 
                         <button
-                            class="button is-danger"
+                            class="rf-btn rf-background--rm"
                             on:click|preventDefault={e => download(true)}
                         >
                             les décès identifiés
@@ -47,12 +50,6 @@
                                 </div>
                             {/if}
                         </button>
-                        {#if (unCheckedLinks === 0)}
-                            <span class="has-text-danger">
-                                &nbsp;
-                                <FontAwesomeIcon icon={faArrowAltCircleLeft} class="is-24 is-low"/>
-                            </span>
-                        {/if}
                     </span>
                 </p>
 

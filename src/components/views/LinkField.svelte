@@ -6,7 +6,7 @@
     on:drop|preventDefault={drop}
     ondragover="return false"
     class:rf-inactive={(!field || !field.mapTo)}
-    class:rf-text--bf={(field && field.mapTo)}
+    class:rf-color--bf={(field && field.mapTo)}
     class:rf-text--error={field && field.warning}
     class:hovering={hovering === true}
     on:click|preventDefault={reset}
