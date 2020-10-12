@@ -12,14 +12,14 @@
             </div>
         {:else}
             <div class="rf-col-3"></div>
+            <div class="rf-col-12">
+                <Footer/>
+            </div>
         {/if}
     </div>
 </div>
 
-<Footer/>
-
 <script>
-    import { onMount } from 'svelte';
     import { advancedSearch, displayMode, searchInput } from '../tools/stores.js';
     import { searchTrigger } from '../tools/search.js';
 	import SearchBox from './SearchBox.svelte';
