@@ -1,61 +1,62 @@
-<div class="content">
-
-    <div class="wrap">
-        <p>
-            <strong>Choisissez les champs à apparier:</strong><br/>
-            <span class="is-size-7">
-            si une colonne automatiquement associée ci-dessous est erronnée, cliquez dessus
-            pour supprimer l'association
-            </span>
-        </p>
-        <LinkFields bind:mapping={mapping} bind:fields={fields}/>
-        {#if warning}
-            <p class="is-size-6-7">
-                Le contenu des colonnes suivantes n'est pas reconnu :
-                {#each fields.filter(f => (f.warning && !f.blockOnWarning)) as field}
-                    <strong>{field.label} ({field.mapTo})</strong>,
-                {/each}
-                <br/>
-                ceci n'est pas bloquant pour le traitement mais pourrait conduire à une absence de résultats.
-            </p>
-        {/if}
-        {#if disabled}
+<div class="rf-container-fluid">
+    <div class="rf-grid-row rf-margin-top-2N rf-text--center">
+        <div class="rf-col-12">
             <p>
-            {#if notEnoughFields}
-                <span class="is-size-6-7 has-text-danger">
-                    vous devez choisir au minimum {$linkMinFields} champs à apparier
-                    {#if selectedFieldsNumber}
-                        ({selectedFieldsNumber} champ(s) sélectionné(s))
-                    {:else}
-                        (aucun champ sélectionné)
-                    {/if}
+                <strong>Choisissez les champs à apparier:</strong><br/>
+                <span class="rf-text--sm">
+                si une colonne automatiquement associée ci-dessous est erronnée, <br>
+                cliquez dessus pour supprimer l'association
                 </span>
-                <br/>
-            {/if}
-            {#if blockOnWarning}
-                {#each fields.filter(f => (f.warning && f.blockOnWarning)) as field}
-                    <span class="is-size-6-7 has-text-danger">
-                        {field.errorMessage}
-                    </span>
-                    <br/>
-                {/each}
-            {/if}
             </p>
-        {/if}
-        <button
-            type="button"
-            class="button is-info"
-            disabled={disabled}
-            on:click|preventDefault={validate}
-        >
-            valider
-        </button>
-        <p>
-            <strong>Depuis les colonnes ci-dessous:</strong><br/>
-            <span class="is-size-7">glissez-collez une colonne du bas sur un champ au-dessus</span>
-        </p>
-        <div class="wrap-table">
+            <LinkFields bind:mapping={mapping} bind:fields={fields}/>
+            {#if warning}
+                <p class="rf-text--sm">
+                    Le contenu des colonnes suivantes n'est pas reconnu :
+                    {#each fields.filter(f => (f.warning && !f.blockOnWarning)) as field}
+                        <strong>{field.label} ({field.mapTo})</strong>,
+                    {/each}
+                    <br/>
+                    ceci n'est pas bloquant pour le traitement mais pourrait conduire à une absence de résultats.
+                </p>
+            {/if}
+            {#if disabled}
+                {#if notEnoughFields}
+                    <div class="rf-col-12">
+                        <span class="rf-text--sm rf-text--error">
+                            vous devez choisir au minimum {$linkMinFields} champs à apparier
+                            {#if selectedFieldsNumber}
+                                ({selectedFieldsNumber} champ(s) sélectionné(s))
+                            {:else}
+                                (aucun champ sélectionné)
+                            {/if}
+                        </span>
+                        <br/>
+                    </div>
+                {/if}
+                {#if blockOnWarning}
+                    {#each fields.filter(f => (f.warning && f.blockOnWarning)) as field}
+                        <span class="rf-text--sm rf-text--error">
+                            {field.errorMessage}
+                        </span>
+                        <br/>
+                    {/each}
+                {/if}
+            {/if}
+            <button
+                type="button"
+                class="rf-btn rf-margin-1N"
+                disabled={disabled}
+                on:click|preventDefault={validate}
+            >
+                valider
+            </button>
+            <p>
+                <strong>Depuis les colonnes ci-dessous:</strong><br/>
+                <span class="rf-text--sm">glissez-collez une colonne du bas sur un champ au-dessus</span>
+            </p>
+
             <LinkSampleTable bind:mapping={mapping} bind:fields={fields}/>
+
         </div>
     </div>
 </div>
