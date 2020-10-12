@@ -1,30 +1,39 @@
-<div class="container">
-    <div
-        on:drop|preventDefault={drop}
-        ondragover="return false"
-        on:dragenter={() => {hovering = true}}
-        on:dragleave={() => hovering = false}
-        class:hovering={(hovering === true) || $linkFile}
-        class="dropzone"
-        class:error={error}
-        on:click|preventDefault={chooseFile}
-    >
-        <div class="vcenter overflow-hidden">
-            {#if $linkFile}
-                <span>étape {step}</span> &nbsp;
-                <span>
-                    <FontAwesomeIcon
-                        icon={error ? faExclamationTriangle : faCheck}
-                        class="is-low"
-                    />
-                </span>
-                <br/>
-                <span class="is-size-6-7">{@html label}</span>
+<div class="rf-tile"
+    on:drop|preventDefault={drop}
+    ondragover="return false"
+    on:dragover={() => {hovering = true}}
+    on:dragleave={() => hovering = false}
+    class:hovering={((hovering === true) || $linkFile) && !error}
+    class:rf-text--error={error}
+    on:click|preventDefault={chooseFile}
+>
+    <div class="rf-tile__body">
+        <h4
+            class="rf-tile__title"
+            style="position: relative"
+            class:rf-text--error={error}
+        >
+            <span class="rf-margin-right-3N">étape {step}. {title}</span>
+            {#if error}
+                <span
+                    class="rf-fi-alert-line rf-fi--lg"
+                    style="position: absolute;top: 0px;right:0px;"
+                ></span>
+            {:else if $linkFile}
+                <span
+                    class="rf-fi-checkbox-line rf-fi--lg"
+                    style="position: absolute;top: 0px;right:0px;"
+                ></span>
             {:else}
-                <span>étape {step}</span><br/>
-                <span class="is-size-6-7">{@html label}</span>
+                <span
+                    class="rf-fi-play-line rf-fi--lg"
+                    style="position: absolute;top: 0px;right:0px;"
+                ></span>
             {/if}
-        </div>
+        </h4>
+        <p class="rf-tile__desc rf-text--center">
+            {@html label}
+        </p>
     </div>
 </div>
 <script>
@@ -32,6 +41,7 @@
     import FontAwesomeIcon from './FontAwesomeIcon.svelte';
     import { faCheck, faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
     export let label;
+    export let title;
     export let step;
     export let error;
 
@@ -40,7 +50,7 @@
 		if (hovering === false) {
 			drop(ev)
 		}
-	};
+    };
 
     const drop = (ev) => {
 
@@ -72,43 +82,11 @@
 </script>
 
 <style>
-	.dropzone {
-		box-sizing: border-box;
-		margin: -10px 0 0px;
-		border: 1px dashed #eee;
-        min-height: 80px;
-        position: relative;
-	}
-
-	.hovering {
-		background-color:#209cee;
-	}
-	.hovering * {
-		pointer-events: none; /* so that a child hover child is not a "dragleave" event */
-	}
-
-    .vcenter {
-        margin: 0;
-        padding: 10px;
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        -ms-transform: translate(-50%,-50%);
-        transform: translate(-50%, -50%);
-        width: 100%;
+    .hovering {
+    background-color: var(--yd500);
     }
 
-    .overflow-hidden {
-        overflow: hidden;
-        text-overflow: ellipsis;
+    .hovering * {
+    pointer-events: none;
     }
-
-    .has-text-left {
-        text-align: left!important;
-    }
-
-    .error {
-        background-color:#e2011c;
-    }
-
 </style>
