@@ -26,7 +26,7 @@
     </p>
 <p><strong>Date de mise à jour des données</strong></p>
   <p>
-    14 septembre 2020 (date de publication data.gouv.fr du fichier deces-2020-m08.txt - 25351952 enregistrements)
+    12 octobre 2020 (date de publication data.gouv.fr du fichier deces-2020-m09.txt - 25400542 enregistrements)
   </p>
 <p><strong>Evolutions récentes</strong></p>
     <p>
