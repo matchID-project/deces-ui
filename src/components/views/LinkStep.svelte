@@ -30,7 +30,7 @@
                 ></span>
             {/if}
         </h4>
-        <p class="rf-tile__desc rf-text--center">
+        <p class="rf-tile__desc rf-text--center" style="overflow:clip;text-overflow:ellipsis;">
             {@html label}
         </p>
     </div>

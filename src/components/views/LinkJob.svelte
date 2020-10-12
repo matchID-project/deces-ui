@@ -289,15 +289,15 @@
     }
 
     .progress.is-info::-moz-progress-bar {
-        background-color: #003189;
+        background-color: var(--bf500);
     }
 
     .progress::-moz-progress-bar {
-        background-color: #4a4a4a;
+        background-color: var(--g500);
     }
 
     .progress.is-info::-webkit-progress-value {
-        background-color: #003189;
+        background-color: var(--bf500);
     }
 
     .progress {
