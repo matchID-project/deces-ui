@@ -14,7 +14,11 @@
   cursor: pointer;
 }
 
-@media print,screen and (max-width:768px) {
+.rf-hide {
+  display: none!important;
+}
+
+@media (max-width:768px) {
   .rf-hide--mobile {
       display: none!important;
   }
@@ -42,7 +46,7 @@
   padding: 2px;
 }
 
-@media print,screen and (min-width:769px) {
+@media (min-width:769px) {
   .rf-hide--desktop {
       display: none!important;
   }
@@ -51,7 +55,7 @@
   }
 }
 
-@media print,screen and (max-width:1200px) {
+@media (max-width:1200px) {
   .rf-display--xl {
       display: none!important;
   }
@@ -89,6 +93,22 @@ border-radius: 0 .25rem 0 0;
 
 .rf-color--rm {
   color: var(--rm500)!important;
+}
+
+.rf-text--error {
+  color: var(--rm500);
+}
+
+.rf-hovering {
+  background-color: var(--yd500);
+}
+
+.rf-hovering * {
+  pointer-events: none;
+}
+
+.rf-inactive {
+  opacity: 0.5;
 }
 
 .rf-background--beige {
@@ -218,6 +238,9 @@ border-radius: 0 .25rem 0 0;
 
 .rf-table.rf-table--striped tbody tr:not(.is-selected):nth-child(2n) {
 	background-color: var(--beige);
+}
+.rf-table.rf-table--striped tbody tr:not(.is-selected):nth-child(2n+1) {
+	background-color: var(--w);
 }
 
 th .th-active {
