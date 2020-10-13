@@ -1,28 +1,24 @@
 {#if $sortInputDisplay}
-        <div class="">
-            <div class="container">
-                <p><b>clés de tri</b></p>
-                <DraggableList
-                    bind:items={$sortInput}
-                    activeKey={'order'}
-                    statusKey={'order'}
-                    status={['asc','desc']}
-                    let:item
-                    let:index
-                >
-                    <div class="no-pointer-events">
-                        {item.label}
-                        <span>
-                        {#if item.order === "desc"}
-                            <FontAwesomeIcon icon={faSortDown} class="is-low"/>
-                        {:else if item.order === "asc"}
-                            <FontAwesomeIcon icon={faSortUp} class="is-low"/>
-                        {/if}
-                        </span>
-                    </div>
-                </DraggableList>
-            </div>
-        </div>
+  <p><b>clés de tri</b></p>
+  <DraggableList
+      bind:items={$sortInput}
+      activeKey={'order'}
+      statusKey={'order'}
+      status={['asc','desc']}
+      let:item
+      let:index
+  >
+    <div class="no-pointer-events">
+        {item.label} <br>
+        <span>
+        {#if item.order === "desc"}
+            <span class="rf-fi-arrow-down-s-line rf-fi--xl"></span>
+        {:else if item.order === "asc"}
+            <span class="rf-fi-arrow-up-s-line rf-fi--xl"></span>
+        {/if}
+        </span>
+    </div>
+  </DraggableList>
 {/if}
 
 <script>

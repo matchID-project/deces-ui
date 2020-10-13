@@ -47,9 +47,9 @@
                                     {t.label}
                                     <span style="margin-left:-0.2rem">
                                         {#if t.order === "desc"}
-                                            <FontAwesomeIcon icon={faSortDown} class="is-small is-low"/>
+                                            <span class="rf-fi-arrow-down-s-line"></span>
                                         {:else}
-                                            <FontAwesomeIcon icon={faSortUp} class="is-small is-low"/>
+                                            <span class="rf-fi-arrow-up-s-line"></span>
                                         {/if}
                                     </span>
                                 </span>
@@ -79,9 +79,9 @@
     {#if (!($displayMode === 'geo') && $sortInputDisplay)}
         <div class="rf-container-fluid">
             <div class="rf-grid-row">
-                <div class="rf-col-1"></div>
-                <div class="rf-col-10 rf-text--center"><SortInput/></div>
-                <div class="rf-col-1"></div>
+                <div class="rf-col-1 rf-hide--mobile"></div>
+                <div class="rf-col-xl-10 rf-col-lg-10 rf-col-md-12 rf-col-sm-12 rf-col-xs-12 rf-text--center"><SortInput/></div>
+                <div class="rf-col-1 rf-hide--mobile"></div>
             </div>
         </div>
     {/if}
