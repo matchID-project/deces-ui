@@ -1,17 +1,21 @@
 <svelte:window on:resize={resize} />
 <div class="map" bind:this={mapContainer}>
-  <div class="control">
+  <div class="control rf-padding-bottom-0">
     {#each Object.keys(possibleLayers) as layer, index}
         <span
-            style={`color: ${layerParams[layer].color};`}
             on:click|preventDefault={(e) => {toggleLayer(layer)}}
         >
             <input
-              style="position:relative!important;opacity:1!important;"
+              id={possibleLayers[layer]}
               type="checkbox"
               checked={displayLayers.includes(possibleLayers[layer])}
             >
-            {possibleLayers[layer]}
+            <label
+              class="rf-label rf-padding-0" for={possibleLayers[layer]}
+              style={`color: ${layerParams[layer].color};`}
+            >
+              {possibleLayers[layer]}
+            </label>
         </span>
         <br/>
     {/each}
