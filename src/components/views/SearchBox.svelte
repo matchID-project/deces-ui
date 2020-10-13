@@ -23,7 +23,13 @@
                     {/if}
 
                     <div class="rf-margin-top-1N rf-padding-left-4px rf-padding-right-4px {$searchInput[key].size}">
-                      <label class="rf-label" for={$searchInput[key].path}>{$searchInput[key].label}</label>
+                      <label
+                        class="rf-label"
+                        for={$searchInput[key].path}
+                        style="overflow:clip;text-overflow:ellipsis;"
+                      >
+                        {$searchInput[key].label}
+                      </label>
                       <div class="rf-field">
                         <input
                           id={$searchInput[key].path}
