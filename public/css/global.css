@@ -310,6 +310,59 @@ tr .th-inactive {
   width: 66.66667%
 }
 
+.rf-badge {
+  position: absolute;
+  left: -7px;
+  top: 1.50rem;
+  z-index: 900;
+  background-color: var(--rm500);
+  -webkit-transform: rotate(-45deg) scale(1) skew(0deg) translate(10px);
+  -moz-transform: rotate(-45deg) scale(1) skew(0deg) translate(10px);
+  -o-transform: rotate(-45deg) scale(1) skew(0deg) translate(10px);
+  -ms-transform: rotate(-45deg) scale(1) skew(0deg) translate(10px);
+  transform: rotate(-45deg) scale(1) skew(0deg) translate(10px);
+  text-align: center;
+  color: white;
+  padding: 0 .5em;
+  border-top: 0px;
+  line-height: 20px;
+  margin: 0;
+}
+.rf-badge:after {
+    content: ' ';
+    position: absolute;
+    right: -1.23rem;
+    top: 0px;
+    border-right: 20px solid transparent;
+    border-bottom: 20px solid var(--rm500);
+}
+.rf-badge:before {
+    content: ' ';
+    position: absolute;
+    left: -1.23rem;
+    top: 0px;
+    border-left: 20px solid transparent;
+    border-bottom: 20px solid var(--rm500);
+}
+.rf-wait-container {
+  height: 90%;
+  width: inherit;
+  z-index: 1150;
+  position:absolute;
+  background: rgba(255, 255, 255, 0.5);
+
+  -webkit-transition: background .5s ease-out;
+  -moz-transition: background .5s ease-out;
+    -o-transition: background .5s ease-out;
+       transition: background .5s ease-out;
+}
+.rf-wait-content {
+  text-align: center;
+  transform: translateY(50%);
+  height: inherit;
+  width: 100%;
+}
+
 /* Leaflet */
 /* required styles */
 

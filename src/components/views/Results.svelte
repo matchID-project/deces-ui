@@ -13,7 +13,7 @@
                 {/each}
               </div>
             </div>
-          {:else if (($displayMode === 'table') && $wasSearched)}
+          {:else if (($displayMode === 'table') && $wasSearched && ($searchResults.length > 0))}
             <table class="rf-table rf-table--narrow rf-table--striped rf-text--xs rf-color--black rf-margin-top-1N">
               {#each columns as column}
                 <col style={column.width ? `width: ${column.width};`: ""}/>

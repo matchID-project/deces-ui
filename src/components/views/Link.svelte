@@ -1,5 +1,14 @@
+{#if wait}
+    <div class="rf-wait-container" style="width:100%" in:fade out:fade>
+        <div class="rf-wait-content">
+            <strong>{waitMessage || ''}</strong>
+            <br/>
+            <FontAwesomeIcon icon={faSpinner} class="is-48 spin"/>
+        </div>
+    </div>
+{/if}
 <div class="rf-container-fluid rf-padding-right-1N" style="position: relative">
-    <div class="badge">
+    <div class="rf-badge">
         beta
     </div>
     <div class="rf-grid-row">
@@ -37,26 +46,17 @@
                 </div>
             </div>
         </div>
-        {#if wait && (linkStep > 1)}
-            <div class="rf-col-12">
-                <div class="wait-center">
-                    <strong>{waitMessage}</strong>
-                    <br/>
-                    <FontAwesomeIcon icon={faSpinner} class="is-48 spin"/>
-                </div>
-            </div>
-        {:else}
-            <div class="rf-padding-left-2N rf-col-xs-12 rf-col-sm-12 rf-col-md-8 rf-col-lg-9 rf-col-xl-9">
-                {#if steps[$linkStep-1].body}
-                    <svelte:component this={steps[$linkStep-1].body}/>
-                {/if}
-            </div>
-        {/if}
+        <div class="rf-padding-left-2N rf-col-xs-12 rf-col-sm-12 rf-col-md-8 rf-col-lg-9 rf-col-xl-9">
+            {#if steps[$linkStep-1].body}
+                <svelte:component this={steps[$linkStep-1].body}/>
+            {/if}
+        </div>
     </div>
 </div>
 
 <script>
     import { onMount } from 'svelte';
+    import { fade } from 'svelte/transition';
     import { linkWaiter, linkStep, linkFile, linkFileName, linkFileSize, linkFileSizeLimit, linkMapping,
         linkSourceHeader, linkMinFields, linkJob,
         linkCompleteResults, linkResults, linkCsvType, linkCompleted, linkValidations
@@ -199,45 +199,4 @@
 </script>
 
 <style>
-.badge {
-  position: absolute;
-  left: -7px;
-  top: 1.50rem;
-  z-index: 900;
-  background-color: #e2011c;
-  -webkit-transform: rotate(-45deg) scale(1) skew(0deg) translate(10px);
-  -moz-transform: rotate(-45deg) scale(1) skew(0deg) translate(10px);
-  -o-transform: rotate(-45deg) scale(1) skew(0deg) translate(10px);
-  -ms-transform: rotate(-45deg) scale(1) skew(0deg) translate(10px);
-  transform: rotate(-45deg) scale(1) skew(0deg) translate(10px);
-  text-align: center;
-  color: white;
-  padding: 0 .5em;
-  border-top: 0px;
-  line-height: 20px;
-  margin: 0;
-}
-.badge:after {
-    content: ' ';
-    position: absolute;
-    right: -1.23rem;
-    top: 0px;
-    border-right: 20px solid transparent;
-    border-bottom: 20px solid var(--rm500);
-}
-.badge:before {
-    content: ' ';
-    position: absolute;
-    left: -1.23rem;
-    top: 0px;
-    border-left: 20px solid transparent;
-    border-bottom: 20px solid var(--rm500);
-}
-  .wait-center {
-    text-align: center;
-    transform: translateY(50%);
-    height: 14rem;
-    additive-symbols: 14rem;
-  }
-
 </style>

@@ -1,3 +1,14 @@
+<div style="width:100%">
+    {#if ($waitSearch && !($displayMode === 'geo'))}
+        <div class="rf-wait-container" in:fade out:fade>
+            <div class="rf-wait-content">
+                <strong>recherche en cours</strong>
+                <br/>
+                <FontAwesomeIcon icon={faSpinner} class="is-48 spin"/>
+            </div>
+        </div>
+    {/if}
+</div>
 <div class="rf-container-fluid">
     <div class="rf-grid-row">
         {#if !displayResults}
@@ -20,17 +31,20 @@
 </div>
 
 <script>
-    import { advancedSearch, displayMode, searchInput } from '../tools/stores.js';
+    import { fade } from 'svelte/transition';
+    import { advancedSearch, displayMode, searchInput, waitSearch} from '../tools/stores.js';
     import { searchTrigger } from '../tools/search.js';
 	import SearchBox from './SearchBox.svelte';
     import Results from './Results.svelte';
     import Footer from './Footer.svelte';
+    import { faSpinner } from '@fortawesome/free-solid-svg-icons'
+    import FontAwesomeIcon from './FontAwesomeIcon.svelte'
 
     let displayResults;
     let size;
     let margin;
 
-    $: displayResults = searchTrigger($searchInput);
+    $: displayResults = Object.keys($searchInput).some(k => $searchInput[k].value);
     $: size = {
         md: displayResults ? 4 : 6,
         lg: displayResults ? 3 : 6,
@@ -41,4 +55,5 @@
 </script>
 
 <style>
+
 </style>

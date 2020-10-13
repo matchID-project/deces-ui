@@ -17,7 +17,7 @@
     {/each}
   </div>
   {#if $waitSearch}
-    <div class="wait" in:fade>
+    <div class="wait" in:fade out:fade>
         <div class="wait-center">
             <FontAwesomeIcon icon={faSpinner} class="icon is-48" spin={true}/>
         </div>
