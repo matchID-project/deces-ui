@@ -36,7 +36,7 @@
                           name={$searchInput[key].path}
                           autoComplete="off"
                           placeholder={$searchInput[key].placeholder}
-                          class="rf-input {!$advancedSearch ? "rf-input--btn" : ""} {isValid(key) ? "" : "is-danger"}"
+                          class="rf-input {!$advancedSearch ? "rf-input--btn" : ""} {isValid(key) ? "" : "rf-color--rm rf-input--error"}"
                           bind:value={$searchInput[key].value}
                           title={$searchInput[key].title}
                           on:input={() => handleInput(key)}
