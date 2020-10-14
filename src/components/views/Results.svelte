@@ -52,6 +52,12 @@
             <Pagination/>
           </div>
         {/if}
+        {#if $wasSearched && ($searchResults.length === 0)}
+          <div class="rf-col-12">
+            <h4 class="rf-h4 rf-text--center">Oups... pas de résultats pour votre recherche</h4>
+            <Info filter={true}/>
+          </div>
+        {/if}
       </div>
     </div>
 {/if}
@@ -68,6 +74,7 @@
   import ResultCard from "./ResultCard.svelte";
   import ResultRow from "./ResultRow.svelte";
   import ResultsHeader from './ResultsHeader.svelte';
+  import Info from './Info.svelte';
   import { faSortUp, faSortDown } from '@fortawesome/free-solid-svg-icons';
 
   onMount(async () => { getDataGouvCatalog() });
