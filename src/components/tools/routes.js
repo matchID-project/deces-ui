@@ -3,28 +3,14 @@ import Search from '../views/Search.svelte';
 import Link from '../views/Link.svelte';
 
 import {
-    advancedSearch,
-    current,
-    displayMode,
-    fuzzySearch,
-    resultsPerPage,
-    searchCanvas,
-    searchInput,
-    updateURL,
     route
 } from './stores.js'
 
-import { URLSearchSubmit } from './search.js';
-
-let mySearchInput;
-let myUpdateURL;
-let myFuzzySearch;
 let myRoute;
 
-const s = searchInput.subscribe((value) => { mySearchInput=value });
-const u = updateURL.subscribe((value) => { myUpdateURL=value });
-const f = fuzzySearch.subscribe((value) => { myFuzzySearch=value });
-const r = route.subscribe((value) => { myFuzzySearch=value });
+import { URLSearchSubmit } from './search.js';
+
+const r = route.subscribe((value) => { myRoute=value });
 
 export const routes = {
     '/': { component: Search },
@@ -34,15 +20,14 @@ export const routes = {
         'dd','dc','ddep','dco','dage'],
         cb: (query) => URLSearchSubmit(new URLSearchParams(query))
     },
-    '/about/service': { component: About, props: { page: 'service'} },
-    '/about/data': { component: About, props: { page: 'data'} },
+    '/about': { component: About },
     '/link': { component: Link }
 };
 
 export const redirect = () => {
     const mySearchParams = new URLSearchParams(location.search);
     const query = {};
-    mySearchParams.forEach((key, value) => query[key] =  value);
+    mySearchParams.forEach((key, value) => query[value] =  key);
     if (location.pathname === '/') {
         if (`${location.search}`) {
             window.history.replaceState({}, '', `/search${location.search}`);

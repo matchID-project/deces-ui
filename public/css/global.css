@@ -193,6 +193,22 @@ border-radius: 0 .25rem 0 0;
   margin: 0px;
 }
 
+.rf-card.rf-card--left-arrow .rf-card__body::after {
+  content: "\f108"!important;
+}
+
+.rf-card.rf-card--sm .rf-card__body::after {
+  position: absolute;
+  bottom: 4px;
+  right: 4px;
+}
+
+.rf-card.rf-card--md .rf-card__body::after {
+  position: absolute;
+  bottom: 6px;
+  right: 6px;
+}
+
 .rf-select--aside {
   width: 32px!important;
   padding: 2px!important;

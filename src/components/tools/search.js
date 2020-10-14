@@ -8,7 +8,6 @@ import {
     sortInput,
     totalResults,
     totalPages,
-    facets,
     current,
     updateURL,
     resultsPerPage,
@@ -36,6 +35,7 @@ let mySearchMinLength;
 let myWaitSearch;
 let myFuzzySearch;
 let myDisplayMode;
+let myUpdateURL;
 
 const s = searchInput.subscribe((value) => { mySearchInput=value });
 const so = sortInput.subscribe((value) => { mySortInput=value });
@@ -47,6 +47,7 @@ const av = advancedSearch.subscribe((value) => { myAdvancedSearch=value });
 const w = waitSearch.subscribe((value) => { myWaitSearch=value });
 const f = fuzzySearch.subscribe((value) => {myFuzzySearch = value});
 const d = displayMode.subscribe((value) => {myDisplayMode = value});
+const u = updateURL.subscribe((value) => { myUpdateURL=value });
 
 const computeTotalPages = (resultsPerPage, totalResults) => {
     if (!resultsPerPage) return 0;

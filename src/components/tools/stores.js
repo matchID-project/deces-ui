@@ -353,7 +353,7 @@ export const current = writable(1);
 
 export const scrollId = writable(null);
 
-export const route = writable({path: '/search'});
+export const route = writable({});
 
 export const scrollIdTimeout = 59000;
 

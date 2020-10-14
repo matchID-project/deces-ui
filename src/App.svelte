@@ -17,7 +17,7 @@
 		redirect();
 	})
 
-	$: if (location.path === '/search') (URLSearchSubmit(new URLSearchParams(location.search)));
+	$: if ($route.path === '/search') (URLSearchSubmit(new URLSearchParams(location.search)));
 	$: element = document.getElementById('infoNotWorking');
 	$: element.parentNode  && element.parentNode.removeChild(element);
 
