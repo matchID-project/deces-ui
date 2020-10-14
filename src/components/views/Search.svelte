@@ -23,9 +23,11 @@
             </div>
         {:else}
             <div class="rf-col-3"></div>
-            <div class="rf-col-12">
-                <Footer/>
-            </div>
+            {#if !$advancedSearch}
+                <div class="rf-col-12">
+                    <PunchMessage/>
+                </div>
+            {/if}
         {/if}
     </div>
 </div>
@@ -36,7 +38,7 @@
     import { searchTrigger } from '../tools/search.js';
 	import SearchBox from './SearchBox.svelte';
     import Results from './Results.svelte';
-    import Footer from './Footer.svelte';
+    import PunchMessage from './PunchMessage.svelte';
     import { faSpinner } from '@fortawesome/free-solid-svg-icons'
     import FontAwesomeIcon from './FontAwesomeIcon.svelte'
 
