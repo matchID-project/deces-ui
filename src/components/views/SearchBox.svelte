@@ -25,14 +25,14 @@
                     <div class="rf-margin-top-1N rf-padding-left-4px rf-padding-right-4px {$searchInput[key].size}">
                       <label
                         class="rf-label"
-                        for={$searchInput[key].path}
+                        for={$searchInput[key].url}
                         style="overflow:clip;text-overflow:ellipsis;"
                       >
                         {$searchInput[key].label}
                       </label>
                       <div class="rf-field">
                         <input
-                          id={$searchInput[key].path}
+                          id={$searchInput[key].url}
                           name={$searchInput[key].path}
                           autoComplete="off"
                           placeholder={$searchInput[key].placeholder}

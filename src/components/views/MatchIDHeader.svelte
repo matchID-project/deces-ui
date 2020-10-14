@@ -2,18 +2,18 @@
     <div class="rf-container">
         <div class="rf-header__body">
             <div class="rf-header__brand">
-                <a class="rf-logo" href="#" title="République Française">
+                <span class="rf-logo" title="République Française">
                     <span class="rf-logo__title">
                         République
                         <br>Française
                     </span>
-                </a>
+                </span>
             </div>
             <div class="rf-header__navbar">
                 <div class="rf-service">
-                    <a class="rf-service__title" href="#" title="Nom du service">
+                    <span class="rf-service__title" title="Nom du service">
                         fichier des décès
-                    </a>
+                    </span>
                     <p class="rf-service__tagline">
                         recherche libre parmi <strong>25 millions de décès</strong> depuis 1970
                     </p>

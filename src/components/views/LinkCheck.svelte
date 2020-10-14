@@ -40,7 +40,7 @@
                         </button>
 
                         <button
-                            class="rf-btn rf-background--rm"
+                            class="rf-btn rf-btn--secondary"
                             on:click|preventDefault={e => download(true)}
                         >
                             les décès identifiés
