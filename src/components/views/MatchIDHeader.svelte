@@ -52,7 +52,7 @@
                         <li class="rf-shortcuts__item">
                             <span
                                 class="rf-link rf-href rf-fi-question-line rf-link--icon-left"
-                                on:click|preventDefault={() => goTo({path: '/about/service'})}
+                                on:click|preventDefault={() => goTo({path: '/about'})}
                             >
                                 à propos
                             </span>
