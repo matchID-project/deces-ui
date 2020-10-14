@@ -34,7 +34,8 @@
             <div class="rf-grid-row">
                 <div class="rf-col-12">
                     <div
-                        class="rf-card rf-card--horizontal rf-card--no-arrow rf-card--{expand ? "md": "sm"}"
+                        class="rf-card rf-card--horizontal rf-card--{expand ? "md": "sm"}"
+                        class:rf-card--left-arrow={expand}
                         on:click={() => { expand=!expand }}
                     >
                         <div class="rf-card__img">
@@ -67,9 +68,6 @@
                                     { dateFormat(result.death.date) }
                                 </span>
                             </p>
-                        </div>
-                        <div style="position: absolute; bottom: 0px; right: 4px">
-                            <span class="rf-fi-arrow-{expand ? "left" : "right"}-line rf-color--bf rf-fi--lg"></span>
                         </div>
                     </div>
                 </div>
