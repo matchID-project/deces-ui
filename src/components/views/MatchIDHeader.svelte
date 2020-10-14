@@ -24,17 +24,38 @@
                     <ul class="rf-shortcuts__list">
                         <li class="rf-shortcuts__item">
                             <span
-                                class="rf-link rf-fi-change-line rf-link--icon-left"
-                                on:click|preventDefault={ toggleAdvancedSearch }
+                                class="rf-link rf-href rf-fi-change-line rf-link--icon-left"
+                                on:click|preventDefault={() => {
+                                    if ($route.path !== '/search') {
+                                        goTo({path: '/search'});
+                                    } else {
+                                        toggleAdvancedSearch();
+                                    }
+                                }}
                             >
-                                recherche {$advancedSearch ? 'simplifiée' : 'avancée'}
+                                recherche
+                                {
+                                    ($route.path === '/search')
+                                        ? ( $advancedSearch ? 'simplifiée' : 'avancée' )
+                                        : ''
+                                }
                             </span>
                         </li>
                         <li class="rf-shortcuts__item">
-                            <a href="/link" class="rf-link rf-fi-db-line rf-link--icon-left">appariement</a>
+                            <span
+                                class="rf-link rf-href rf-fi-db-line rf-link--icon-left"
+                                on:click|preventDefault={() => goTo({path: '/link'})}
+                            >
+                            appariement
+                            </span>
                         </li>
                         <li class="rf-shortcuts__item">
-                            <a href="/about" class="rf-link rf-fi-question-line rf-link--icon-left">&nbsp;</a>
+                            <span
+                                class="rf-link rf-href rf-fi-question-line rf-link--icon-left"
+                                on:click|preventDefault={() => goTo({path: '/about/service'})}
+                            >
+                                à propos
+                            </span>
                         </li>
                     </ul>
                 </div>
@@ -223,6 +244,8 @@
     import FontAwesomeIcon from './FontAwesomeIcon.svelte';
     import SearchBox from './SearchBox.svelte';
     import { toggleAdvancedSearch } from '../tools/search.js';
+    import { goTo } from '../tools/routes.js';
+    import { route } from '../tools/stores.js';
 
     import {
         faAddressCard,

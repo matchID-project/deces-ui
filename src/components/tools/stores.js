@@ -16,7 +16,7 @@ import {
     firstNameQuery,
     fuzzyTermQuery,
     matchQuery
-} from './queries.js'
+} from './queries.js';
 
 export const searchInput = writable({
     fullText: {
@@ -352,6 +352,8 @@ export const resultsPerPageDefault = 20;
 export const current = writable(1);
 
 export const scrollId = writable(null);
+
+export const route = writable({path: '/search'});
 
 export const scrollIdTimeout = 59000;
 

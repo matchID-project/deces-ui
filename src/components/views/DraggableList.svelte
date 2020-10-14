@@ -141,7 +141,6 @@
 		hovering = null;
 	};
 
-	$: console.log(hovering);
 </script>
 
 <style>

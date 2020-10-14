@@ -15,7 +15,7 @@ export const useLocalSync = async (store, key) => {
         try {
             store.set(JSON.parse(json));
         } catch(err) {
-            console.log(err);
+            console.log(`error: ${err}`);
         }
     }
     store.subscribe(async (value) => {
