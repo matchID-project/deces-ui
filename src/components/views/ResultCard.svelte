@@ -72,7 +72,7 @@
                     </div>
                 </div>
                 {#if expand}
-                    <div class="rf-col-12">
+                    <div class="rf-col-12" transition:slide|local>
                         <div class="rf-callout rf-background--white">
                             <div class="rf-container-fluid">
                                 <div class="rf-grid-row">
@@ -174,6 +174,7 @@
 
 
 <script>
+    import { slide } from 'svelte/transition';
     import { dataGouvCatalog, displayMode } from '../tools/stores.js';
     import PlaceInCard from './PlaceInCard.svelte';
     import FontAwesomeIcon from './FontAwesomeIcon.svelte';

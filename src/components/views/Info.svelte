@@ -19,13 +19,13 @@
                 </div>
               </div>
             </div>
-            <div class="rf-col-12">
-              {#if currentPage === index}
-                <div class="rf-callout rf-background--white" transition:slide|local>
+            {#if currentPage === index}
+              <div class="rf-col-12" transition:slide|local>
+                <div class="rf-callout rf-background--white">
                   {@html page.content}
                 </div>
-              {/if}
-            </div>
+              </div>
+            {/if}
           </div>
         </div>
       </div>
