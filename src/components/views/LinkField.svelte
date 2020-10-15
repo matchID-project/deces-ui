@@ -1,5 +1,5 @@
 <div
-    class="rf-tile"
+    class="rf-tile hover-parent"
     class:rf-background--hovering={(hovering === true)}
     on:dragover={() => {hovering = true}}
     on:dragleave={() => {hovering = false}}
@@ -65,7 +65,7 @@
     background-color: var(--yd500);
     }
 
-    .hovering * {
-    pointer-events: none;
+    .hover-parent * {
+        pointer-events: none;
     }
 </style>
