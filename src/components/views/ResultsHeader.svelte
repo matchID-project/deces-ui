@@ -129,33 +129,8 @@
   }
 
 </script>
+
 <style>
 
-    .select select.is-hovered, .select select:hover {
-         border-color: #b5b5b5;
-    }
-    .select select {
-        cursor: pointer;
-        display: block;
-        font-size: .75rem;
-        max-width: 100%;
-        outline: 0;
-        background-color: #fff;
-        border-color: #dbdbdb;
-        border-radius: 4px;
-        color: inherit;
-        -moz-appearance: none;
-        -webkit-appearance: none;
-        align-items: center;
-        border: 1px solid;
-        border-radius: 4px;
-        box-shadow: none;
-        display: inline-flex;
-        justify-content: flex-start;
-        line-height: 1.5;
-        padding-left: calc(.75em - 1px);
-        padding-right: calc(.75em - 1px);
-        position: relative;
-    }
 </style>
 
