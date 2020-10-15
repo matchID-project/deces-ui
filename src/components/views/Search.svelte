@@ -14,7 +14,10 @@
         {#if !displayResults}
             <div class="rf-col-3"></div>
         {/if}
-        <div class="rf-padding-left-2N--desktop rf-padding-left-1N--mobile rf-padding-right-1N--mobile rf-padding-top-2N rf-col-xs-12 rf-col-sm-12 rf-col-md-{size.md} rf-col-lg-{size.lg} rf-col-xl-{size.xl} {margin}">
+        <div
+            class="rf-padding-left-2N--desktop rf-padding-left-1N--mobile rf-padding-right-1N--mobile rf-padding-top-2N rf-col-xs-12 rf-col-sm-12 rf-col-md-{size.md} rf-col-lg-{size.lg} rf-col-xl-{size.xl} {margin}"
+            style="transition: all 300ms ease;"
+        >
             <SearchBox/>
         </div>
         {#if displayResults}
