@@ -45,7 +45,7 @@
                           disabled={$searchInput[key].disabled}
                         />
                         {#if !$advancedSearch}
-                          <button class="rf-btn">
+                          <button class="rf-btn" title="recherche">
                             <span class="rf-fi-search-line rf-fi--lg"></span>
                           </button>
                         {/if}
