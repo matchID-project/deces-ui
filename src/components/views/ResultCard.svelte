@@ -1,34 +1,4 @@
-{#if (result) && (result.error) }
-    <div class="rf-col-12">
-        <div class="card rf-text--center">
-            <div class="card-header has-background-danger">
-                <div class="level is-mobile is-vcentered">
-                        <div class="level-left" style="margin-right:8px;margin-left:8px">
-                            <figure class="image is-48x48 has-text-white">
-                                <FontAwesomeIcon icon={faExclamationTriangle} class="is-48 is-vcentered"/>
-                            </figure>
-                        </div>
-                        <div class="level-item has-text-left">
-                            <div>
-                                <h1 class="title is-size-5 has-text-white">Erreur {result.status}</h1>
-                                <h1 class="is-size-6-7 has-text-white">
-                                    {result.statusText} {result.msg && result.msg}
-                                </h1>
-                            </div>
-                        </div>
-                </div>
-            </div>
-            <div class="card-content">
-                <div class="content">
-                    {result.status === 429
-                        ? "Le service est momentanément saturé, veuillez réessayer."
-                        : "Erreur de service. Le service est en version alpha, à ce stade tous les cas d'erreur ne sont pas gérés. Si l'erreur perdure, veuillez nous contacter matchid-project@gmail.com"
-                    }
-                </div>
-            </div>
-        </div>
-    </div>
-{:else if (result)}
+{#if (result) && !(result.error) }
     <div class="{expand ? "rf-col-12" : "rf-col-xs-12 rf-col-sm-12 rf-col-md-12 rf-col-lg-6 rf-col-xl-6"} rf-padding-1N rf-padding-left-2N rf-padding-right-2N">
         <div class="rf-container-fluid">
             <div class="rf-grid-row">

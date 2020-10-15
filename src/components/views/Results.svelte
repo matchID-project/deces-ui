@@ -1,62 +1,79 @@
 {#if searchTrigger($searchInput) }
     <div class="rf-container-fluid rf-margin-top-1N rf-padding-left-2N--desktop rf-padding-left-1N--mobile rf-padding-right-1N--mobile">
       <div class="rf-grid-row rf-text--sm">
-        <div class="rf-col-12">
-          <ResultsHeader/>
-        </div>
-        <div class="rf-col-12">
-          {#if ($displayMode && ['card','card-expand'].includes($displayMode))}
-            <div class="rf-container-fluid">
-              <div class="rf-grid-row is-vcentered">
-                {#each $searchResults as result, index}
-                  <ResultCard result={result}/>
-                {/each}
-              </div>
-            </div>
-          {:else if (($displayMode === 'table') && $wasSearched && ($searchResults.length > 0))}
-            <table class="rf-table rf-table--narrow rf-table--striped rf-text--xs rf-color--black rf-margin-top-1N">
-              {#each columns as column}
-                <col style={column.width ? `width: ${column.width};`: ""}/>
-              {/each}
-              <tr class="is-grey" >
-                <th colspan="3" scope="colgroup">état civil</th>
-                <th colspan="5" scope="colgroup">naissance</th>
-                <th colspan="8" scope="colgroup">décès</th>
-              </tr>
-              <tr class="is-grey" >
-                {#each columns as column, index}
-                  <th
-                    class="rf-table-th--label {column.field ? "rf-table-th--sortable" : ""}"
-                    scope="col"
-                    on:click={e => toggleSort(column.field)}
-                    title={column.field ? "cliquez pour activer/désactiver le tri" : undefined}
-                  >
-                    {column.label}
-                    {#if column.order}
-                      <FontAwesomeIcon icon={column.order === "desc" ? faSortDown : faSortUp } class="is-small is-low"/>
-                    {/if}
-                  </th>
-                {/each}
-              </tr>
-              {#each $searchResults as result, index}
-                <ResultRow result={result} index={index}/>
-              {/each}
-            </table>
-
-          {:else if ($displayMode === 'geo')}
-              <Geo/>
-          {/if}
-        </div>
-        {#if !($displayMode === 'geo')}
-          <div class="rf-col-12 rf-content--center">
-            <Pagination/>
-          </div>
-        {/if}
         {#if $wasSearched && ($searchResults.length === 0)}
           <div class="rf-col-12">
             <h4 class="rf-h4 rf-text--center">Oups... pas de résultats pour votre recherche</h4>
             <Info filter={true}/>
           </div>
+        {:else if $wasSearched && ($searchResults.length === 1) && ($searchResults[0].error)}
+            <div class="rf-col-xl-3 rf-col-lg-2 rf-col-md-1 rf-col-sm-12 rf-col-xs-12"></div>
+            <div class="rf-col-xl-6 rf-col-lg-8 rf-col-md-10 rf-col-sm-12 rf-col-xs-12 rf-margin-top-4N">
+                <h4 class="rf-h4 rf-text--center rf-color--rm">
+                    <span class="rf-fi-alert-line rf-fi--xl">
+                    </span>
+                    <br>
+                    {$searchResults[0].status} {$searchResults[0].statusText} {$searchResults[0].msg || ""}
+                </h4>
+                <p class="rf-text--left rf-padding-left-2N rf-padding-right-2N">
+                    {@html $searchResults[0].status === 429
+                        ? "Le service est momentanément saturé, veuillez réessayer dans quelques secondes."
+                        : "Le service est indisponible. Veuillez réessayer dans quelques minutes. Si l'erreur perdure, veuillez nous contacter matchid-project@gmail.com"
+                    }
+                </p>
+            </div>
+        {:else}
+          <div class="rf-col-12">
+            <ResultsHeader/>
+          </div>
+          <div class="rf-col-12">
+            {#if ($displayMode && ['card','card-expand'].includes($displayMode))}
+              <div class="rf-container-fluid">
+                <div class="rf-grid-row is-vcentered">
+                  {#each $searchResults as result, index}
+                    <ResultCard result={result}/>
+                  {/each}
+                </div>
+              </div>
+            {:else if (($displayMode === 'table') && $wasSearched && ($searchResults.length > 0))}
+              <table class="rf-table rf-table--narrow rf-table--striped rf-text--xs rf-color--black rf-margin-top-1N">
+                {#each columns as column}
+                  <col style={column.width ? `width: ${column.width};`: ""}/>
+                {/each}
+                <tr class="is-grey" >
+                  <th colspan="3" scope="colgroup">état civil</th>
+                  <th colspan="5" scope="colgroup">naissance</th>
+                  <th colspan="8" scope="colgroup">décès</th>
+                </tr>
+                <tr class="is-grey" >
+                  {#each columns as column, index}
+                    <th
+                      class="rf-table-th--label {column.field ? "rf-table-th--sortable" : ""}"
+                      scope="col"
+                      on:click={e => toggleSort(column.field)}
+                      title={column.field ? "cliquez pour activer/désactiver le tri" : undefined}
+                    >
+                      {column.label}
+                      {#if column.order}
+                        <FontAwesomeIcon icon={column.order === "desc" ? faSortDown : faSortUp } class="is-small is-low"/>
+                      {/if}
+                    </th>
+                  {/each}
+                </tr>
+                {#each $searchResults as result, index}
+                  <ResultRow result={result} index={index}/>
+                {/each}
+              </table>
+
+            {:else if ($displayMode === 'geo')}
+                <Geo/>
+            {/if}
+          </div>
+          {#if !($displayMode === 'geo')}
+            <div class="rf-col-12 rf-content--center">
+              <Pagination/>
+            </div>
+          {/if}
         {/if}
       </div>
     </div>

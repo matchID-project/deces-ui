@@ -1,34 +1,4 @@
-{#if (result) && (result.error) }
-    <div class="column is-12">
-        <div class="card has-text-centered">
-            <div class="card-header has-background-danger">
-                <div class="level is-mobile is-vcentered">
-                        <div class="level-left" style="margin-right:8px;margin-left:8px">
-                            <figure class="image is-48x48 has-text-white">
-                                <FontAwesomeIcon icon={faExclamationTriangle} class="is-48 is-vcentered"/>
-                            </figure>
-                        </div>
-                        <div class="level-item has-text-left">
-                            <div>
-                                <h1 class="title is-size-5 has-text-white">Erreur {result.status}</h1>
-                                <h1 class="is-size-6-7 has-text-white">
-                                    {result.statusText} {result.msg && result.msg}
-                                </h1>
-                            </div>
-                        </div>
-                </div>
-            </div>
-            <div class="card-content">
-                <div class="content">
-                    {result.status === 429
-                        ? "Le service est momentanément saturé, veuillez réessayer."
-                        : "Erreur de service. Le service est en version alpha, à ce stade tous les cas d'erreur ne sont pas gérés. Si l'erreur perdure, veuillez nous contacter matchid.result@gmail.com"
-                    }
-                </div>
-            </div>
-        </div>
-    </div>
-{:else if (result)}
+{#if (result) && !(result.error) }
     <tr class="{(index%2) ? "rf-background--beige" : ""}">
         <td><div class="expand-on-hover">{result.name && result.name.last || ''} </div></td>
         <td><div class="expand-on-hover">{(result.name && result.name.first && result.name.first.join(' ')) || '(aucun)'} </div></td>
