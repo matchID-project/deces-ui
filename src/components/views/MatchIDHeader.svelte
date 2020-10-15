@@ -11,7 +11,7 @@
             </div>
             <div class="rf-header__navbar">
                 <div class="rf-service">
-                    <span class="rf-service__title" title="Nom du service">
+                    <span class="rf-service__title" title="matchID - moteur de recherche des personnes décédées">
                         fichier des décès
                     </span>
                     <p class="rf-service__tagline">
