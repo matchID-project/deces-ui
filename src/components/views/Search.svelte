@@ -45,8 +45,12 @@
     let displayResults;
     let size;
     let margin;
+    let firstTime=true;
 
-    $: displayResults = Object.keys($searchInput).some(k => $searchInput[k].value);
+    $: if (Object.keys($searchInput).some(k => $searchInput[k].value)) {
+        firstTime = false;
+    };
+    $: displayResults = (Object.keys($searchInput).some(k => $searchInput[k].value) || !firstTime);
     $: size = {
         md: displayResults ? 4 : 6,
         lg: displayResults ? 3 : 6,

@@ -2,10 +2,9 @@
     <div class="rf-container">
         <div class="rf-header__body">
             <div class="rf-header__brand">
-                <span class="rf-logo" title="République Française">
+                <span class="rf-logo" title="{organization.replace(/<br>/,' ')}">
                     <span class="rf-logo__title">
-                        République
-                        <br>Française
+                        {@html organization}
                     </span>
                 </span>
             </div>
@@ -16,7 +15,9 @@
                     </span>
                     <p class="rf-service__tagline">
                         recherche libre parmi <strong>25 millions de décès</strong>
-                        <span class="rf-hide--mobile">depuis 1970</span>
+                        {#if !$themeDnum}
+                            <span class="rf-hide--mobile">depuis 1970</span>
+                        {/if}
                     </p>
                 </div>
                 <span
@@ -60,6 +61,15 @@
                     </ul>
                 </div>
             </div>
+            {#if $themeDnum}
+                    <img
+                        src={"/dnum-logo-round.svg"}
+                        style="position:relative;z-index:1200;top:0px;right:0px;"
+                        alt="DNUM Logo"
+                        height="80px"
+                        width="80px"
+                    />
+            {/if}
             <div
                 class="rf-header__popin"
                 class:rf-header__popin--expanded={burgerState}
@@ -138,6 +148,8 @@
     // const dispatch = createEventDispatcher();
 
     let burgerState = false;
+    let organization;
+
     let aboutMenu = [
       {
         url: '/about/service',
@@ -156,6 +168,9 @@
       }
     ]
 
+
+    $: organization = $themeDnum ? 'Ministère<br>de l\'Intérieur' : 'République<br>Française';
+
     function toggleBurger() {
         burgerState = !burgerState
     }
@@ -170,4 +185,3 @@
     }
 
 </script>
-

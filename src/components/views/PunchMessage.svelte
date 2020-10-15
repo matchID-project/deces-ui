@@ -1,9 +1,9 @@
 <div class="rf-container-fluid rf-text--center rf-margin-top-8N">
-  <a class="logo is-hidden-mobile" href="/search">
+  <span class="rf-hide--mobile">
     {#if $themeDnum}
-      <img src={"/dnum-logo.svg"} alt="DNUM Logo" width="50" height="50" />
+      <img src={"/dnum-logo.svg"} alt="DNUM Logo" width="64" height="64" />
     {/if}
-  </a>
+  </span>
   <p>
     {#if $themeDnum}
       <strong>DNUM</strong> - Sous direction de l'innovation et de la transformation numérique
