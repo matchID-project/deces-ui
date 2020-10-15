@@ -147,13 +147,6 @@
     import { slide } from 'svelte/transition';
     import { dataGouvCatalog, displayMode } from '../tools/stores.js';
     import PlaceInCard from './PlaceInCard.svelte';
-    import FontAwesomeIcon from './FontAwesomeIcon.svelte';
-
-    import {
-        faExclamationTriangle,
-        faMinus,
-        faPlus
-    } from '@fortawesome/free-solid-svg-icons';
 
     export let result;
     export let forceExpand;

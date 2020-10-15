@@ -53,8 +53,6 @@
     import { tweened } from 'svelte/motion';
 	import { sineInOut } from 'svelte/easing';
     import axios from 'axios';
-    import { faSpinner } from '@fortawesome/free-solid-svg-icons';
-    import FontAwesomeIcon from './FontAwesomeIcon.svelte';
     let estimator;
     export let error=false;
 

@@ -88,7 +88,7 @@
 {/if}
 
 <script>
-    import { faSortUp, faSortDown, faPlus, faMinus, faTable, faGlobeEurope, faGripLines, faAddressCard } from '@fortawesome/free-solid-svg-icons';
+    import { faTable, faGlobeEurope, faGripLines, faAddressCard } from '@fortawesome/free-solid-svg-icons';
     import FontAwesomeIcon from './FontAwesomeIcon.svelte';
     import { current, searchResults, sortInput, sortInputDisplay, updateURL, totalResults, totalPages,
         resultsPerPage, defaultResultsPerPage, searchInput, wasSearched, displayMode } from '../tools/stores.js'

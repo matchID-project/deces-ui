@@ -69,8 +69,6 @@
     import LinkCheckTable from './LinkCheckTable.svelte';
     import FontAwesomeIcon from './FontAwesomeIcon.svelte';
     import {
-      faArrowAltCircleLeft,
-      faArrowAltCircleRight,
       faSpinner
     } from '@fortawesome/free-solid-svg-icons';
 

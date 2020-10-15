@@ -74,58 +74,28 @@
     </div>
   </form>
 </div>
-{#if infoDisplay}
-  <div
-    class="info-footer"
-    on:click={infoDisplay=false}
-  >
-      <p><FontAwesomeIcon icon={faQuestionCircle} class="is-lower"/></p>
-      <p>
-      {#each inputsKeys as key}
-        {#if $searchInputFocus[key] && $searchInputFocus[key].focus}
-          {$searchInput[key].title}
-        {/if}
-      {/each}
-      </p>
-  </div>
-{/if}
 
 <script>
   import FontAwesomeIcon from './FontAwesomeIcon.svelte'
 
-  import { advancedSearch, searchInput, searchCanvas, infoDisplayOption,
+  import { advancedSearch, searchInput, searchCanvas,
     sortInput, resultsPerPage, searchInputFocus,
-    searchTyping, fuzzySearch, displayMode } from '../tools/stores.js';
+    searchTyping, fuzzySearch } from '../tools/stores.js';
   import { search, searchString, searchSubmit, searchURLUpdate, toggleAdvancedSearch, toggleFuzzySearch } from '../tools/search.js';
   import GoogleAnalytics from './GoogleAnalytics.svelte';
 
   import {
-      faAddressCard,
-      faGlobeEurope,
-      faGripLines,
       faMinus,
-      faPlus,
-      faQuestionCircle,
-      faTable
+      faPlus
   } from '@fortawesome/free-solid-svg-icons';
 
   let lastInput = {}
 
   let tag={};
 
-  let displayChoices = [
-    {mode: 'card', icon: faGripLines, label: "fiche compacte"},
-    {mode: 'card-expand', icon: faAddressCard, label: "fiche complète"},
-    {mode: 'table', icon: faTable, label: "tableur"},
-  ];
-
   let inputsKeys;
 
-  let infoDisplay;
-
   $: inputsKeys = Object.keys($searchInput);
-
-  $: infoDisplay=$infoDisplayOption && Object.keys($searchInputFocus).some(key => $searchInputFocus[key].focus);
 
   $: handleSubmit($resultsPerPage);
   $: handleSubmit($sortInput);
@@ -204,13 +174,6 @@
           console.log("key input limiter")
         } }, 355)
     }
-  }
-
-  const enableDisplayMode = async (mode) => {
-    if ($displayMode) {
-      $displayMode = mode;
-    }
-    searchURLUpdate();
   }
 
 </script>

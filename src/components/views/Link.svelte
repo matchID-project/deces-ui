@@ -65,9 +65,7 @@
     import FontAwesomeIcon from './FontAwesomeIcon.svelte';
    import {
       faSpinner,
-      faTrash
     } from '@fortawesome/free-solid-svg-icons';
-    import Hero from './Hero.svelte';
     import LinkStep from './LinkStep.svelte';
     import LinkFile from './LinkFile.svelte';
     import LinkConfigure from './LinkConfigure.svelte';

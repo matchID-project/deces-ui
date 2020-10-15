@@ -37,8 +37,6 @@
 </div>
 <script>
     import { linkStep, linkCompleted } from '../tools/stores.js';
-    import FontAwesomeIcon from './FontAwesomeIcon.svelte';
-    import { faCheck, faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
 
     export let step;
     export let title;

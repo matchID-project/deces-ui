@@ -38,8 +38,6 @@
 </div>
 <script>
     import { linkFile, linkStep } from '../tools/stores.js';
-    import FontAwesomeIcon from './FontAwesomeIcon.svelte';
-    import { faCheck, faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
     export let label;
     export let title;
     export let step;

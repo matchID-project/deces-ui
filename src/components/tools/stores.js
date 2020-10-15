@@ -424,8 +424,6 @@ export const sortInputDisplay = writable(false);
 
 export const dataGouvCatalog = writable(null);
 
-export const infoDisplayOption = writable(false);
-
 export const liveConfig = writable(null);
 
 export const mitmUrl = writable('__MITM_URL__');

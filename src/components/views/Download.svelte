@@ -22,10 +22,7 @@
             </span>
         </span>
     {:else if (status === 'fail')}
-        <span class="is-danger">
-            <span title="le téléchargement a échoué">
-                <FontAwesomeIcon icon={faExclamationTriangle} class="is-small"/>
-            </span>
+        <span class="rf-fi-alert-line rf-fi--lg rf-color--rm">
         </span>
     {/if}
 </span>
@@ -33,8 +30,6 @@
 <script>
     import { tweened } from 'svelte/motion';
     import { sineInOut } from 'svelte/easing';
-    import { faFileDownload, faCheck, faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
-    import FontAwesomeIcon from './FontAwesomeIcon.svelte';
     import { searchInput } from '../tools/stores.js';
     import axios from 'axios';
 

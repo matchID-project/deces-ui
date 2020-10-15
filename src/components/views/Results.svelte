@@ -53,9 +53,13 @@
                       on:click={e => toggleSort(column.field)}
                       title={column.field ? "cliquez pour activer/désactiver le tri" : undefined}
                     >
-                      {column.label}
-                      {#if column.order}
-                        <FontAwesomeIcon icon={column.order === "desc" ? faSortDown : faSortUp } class="is-small is-low"/>
+
+                      {#if column.order === "desc"}
+                        <span class="rf-fi-arrow-down-s-line rf-fi--md">{column.label}</span>
+                      {:else if column.order === "asc"}
+                        <span class="rf-fi-arrow-up-s-line rf-fi--md">{column.label}</span>
+                      {:else}
+                        {column.label}
                       {/if}
                     </th>
                   {/each}
@@ -85,14 +89,12 @@
   import { searchResults, searchInput,
     sortInput, displayMode, wasSearched } from '../tools/stores.js';
   import { searchTrigger } from '../tools/search.js';
-  import FontAwesomeIcon from './FontAwesomeIcon.svelte';
   import Geo from './Geo.svelte';
   import Pagination from './Pagination.svelte';
   import ResultCard from "./ResultCard.svelte";
   import ResultRow from "./ResultRow.svelte";
   import ResultsHeader from './ResultsHeader.svelte';
   import Info from './Info.svelte';
-  import { faSortUp, faSortDown } from '@fortawesome/free-solid-svg-icons';
 
   onMount(async () => { getDataGouvCatalog() });
 

@@ -22,8 +22,6 @@
 {/if}
 
 <script>
-    import { faSortUp, faSortDown } from '@fortawesome/free-solid-svg-icons';
-    import FontAwesomeIcon from './FontAwesomeIcon.svelte'
     import { sortInput, sortInputDisplay } from '../tools/stores';
     import DraggableList from './DraggableList.svelte';
 </script>

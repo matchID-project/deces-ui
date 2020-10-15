@@ -117,7 +117,6 @@
 
 <script>
     import { themeDnum, advancedSearch, displayMode } from '../tools/stores.js';
-    import FontAwesomeIcon from './FontAwesomeIcon.svelte';
     import SearchBox from './SearchBox.svelte';
     import { toggleAdvancedSearch } from '../tools/search.js';
     import { goTo } from '../tools/routes.js';

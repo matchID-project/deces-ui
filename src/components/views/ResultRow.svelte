@@ -28,13 +28,6 @@
 
 <script>
     import { dataGouvCatalog } from '../tools/stores.js';
-    import FontAwesomeIcon from './FontAwesomeIcon.svelte';
-
-    import {
-        faExclamationTriangle,
-        faMinus,
-        faPlus
-    } from '@fortawesome/free-solid-svg-icons';
 
     export let result;
     export let index;
