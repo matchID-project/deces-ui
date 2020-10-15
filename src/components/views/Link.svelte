@@ -15,10 +15,7 @@
         {#if ($linkStep <= 1)}
             <div class="rf-col-3"></div>
         {/if}
-        <div
-            class="rf-padding-left-2N--desktop rf-padding-left-1N--mobile rf-padding-right-1N--mobile rf-padding-top-2N rf-col-xs-12 rf-col-sm-12 rf-col-md-{size.md} rf-col-lg-{size.lg} rf-col-xl-{size.xl} {margin}"
-            style="position: relative"
-        >
+        <div class="rf-padding-left-2N--desktop rf-padding-left-1N--mobile rf-padding-right-1N--mobile rf-padding-top-2N rf-col-xs-12 rf-col-sm-12 rf-col-md-{size.md} rf-col-lg-{size.lg} rf-col-xl-{size.xl} {margin}">
             <strong>
                 appariement
             </strong>
@@ -46,7 +43,7 @@
                 </div>
             </div>
         </div>
-        <div class="rf-padding-left-2N rf-col-xs-12 rf-col-sm-12 rf-col-md-8 rf-col-lg-9 rf-col-xl-9">
+        <div class="rf-padding-left-2N rf-col-xs-12 rf-col-sm-12 rf-col-md-8 rf-col-lg-8 rf-col-xl-8">
             {#if steps[$linkStep-1].body}
                 <svelte:component this={steps[$linkStep-1].body}/>
             {/if}
@@ -81,8 +78,8 @@
 
     $: size = {
         md: ($linkStep>1) ? 4 : 6,
-        lg: ($linkStep>1) ? 3 : 6,
-        xl: ($linkStep>1) ? 2 : 6
+        lg: ($linkStep>1) ? 4 : 6,
+        xl: ($linkStep>1) ? 3 : 6
     };
 
     $: margin = ($linkStep>1) ? "" : "rf-margin-top-6N";

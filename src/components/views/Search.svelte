@@ -21,7 +21,7 @@
             <SearchBox/>
         </div>
         {#if displayResults}
-            <div class="rf-col-xs-12 rf-col-sm-12 rf-col-md-8 rf-col-lg-9 rf-col-xl-9">
+            <div class="rf-col-xs-12 rf-col-sm-12 rf-col-md-8 rf-col-lg-8 rf-col-xl-8">
                 <Results/>
             </div>
         {:else}
@@ -56,8 +56,8 @@
     $: displayResults = (Object.keys($searchInput).some(k => $searchInput[k].value) || !firstTime);
     $: size = {
         md: displayResults ? 4 : 6,
-        lg: displayResults ? 3 : 6,
-        xl: displayResults ? 2 : 6
+        lg: displayResults ? 4 : 6,
+        xl: displayResults ? 3 : 6
     };
     $: margin = displayResults ? "" : ($advancedSearch ? "" : "rf-margin-top-8N")
 
