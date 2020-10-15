@@ -116,10 +116,6 @@
 
 
   const enableDisplayMode = async (mode) => {
-    if (mode !== 'geo') {
-        $resultsPerPage = $defaultResultsPerPage;
-    }
-
     if ($displayMode) {
         if (($displayMode === 'geo') && (mode !== 'geo')) {
             if ($searchResults.length >  $defaultResultsPerPage) {
