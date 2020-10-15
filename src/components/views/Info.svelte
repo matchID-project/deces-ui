@@ -2,7 +2,7 @@
   <div class="rf-grid-row">
     {#each pages.filter(x => filter ? x.filter : true) as page, index}
       <div
-        class="rf-col-{currentPage === index ? "12" : "6"} rf-padding-1N"
+        class="{currentPage === index ? "rf-col-12" : "rf-col-xl-6 rf-col-lg-6 rf-col-md-12 rf-col-sm-12 rf-col-xs-12"} rf-padding-1N"
       >
         <div class="rf-container-fluid">
           <div class="rf-grid-row">
