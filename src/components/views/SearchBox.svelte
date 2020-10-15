@@ -26,7 +26,7 @@
                       <label
                         class="rf-label"
                         for={$searchInput[key].url}
-                        style="overflow:clip;text-overflow:ellipsis;"
+                        style="overflow:hidden;text-overflow:ellipsis;"
                       >
                         {$searchInput[key].label}
                       </label>
