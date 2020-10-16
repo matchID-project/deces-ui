@@ -29,10 +29,10 @@
                         <br/>
                         <button
                             title="télécharger le fichier complet"
-                            class="rf-btn"
+                            class="rf-btn rf-margin-1N"
                             on:click|preventDefault={e => download(false)}
                         >
-                            le fichier complet
+                            <span class="rf-text--center">le fichier complet</span>
                             {#if isDownloading === 'complete'}
                                 <div style="z-index:1200;position:absolute;witdth:100%;right:45%;color:#fff;opacity:0.5;">
                                     <FontAwesomeIcon icon={faSpinner} class="is-low spin"/>
@@ -42,7 +42,7 @@
 
                         <button
                             title="télécharger les décès identifiés"
-                            class="rf-btn rf-btn--secondary"
+                            class="rf-btn rf-btn--secondary rf-margin-1N"
                             on:click|preventDefault={e => download(true)}
                         >
                             les décès identifiés
