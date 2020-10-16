@@ -10,7 +10,7 @@
             </p>
             <LinkFields bind:mapping={mapping} bind:fields={fields}/>
             {#if warning}
-                <p class="rf-text--sm">
+                <p class="rf-text--sm rf-color--rm">
                     Le contenu des colonnes suivantes n'est pas reconnu :
                     {#each fields.filter(f => (f.warning && !f.blockOnWarning)) as field}
                         <strong>{field.label} ({field.mapTo})</strong>,
@@ -22,7 +22,7 @@
             {#if disabled}
                 {#if notEnoughFields}
                     <div class="rf-col-12">
-                        <span class="rf-text--sm rf-text--error">
+                        <span class="rf-text--sm rf-color--rm">
                             vous devez choisir au minimum {$linkMinFields} champs à apparier
                             {#if selectedFieldsNumber}
                                 ({selectedFieldsNumber} champ(s) sélectionné(s))
@@ -35,7 +35,7 @@
                 {/if}
                 {#if blockOnWarning}
                     {#each fields.filter(f => (f.warning && f.blockOnWarning)) as field}
-                        <span class="rf-text--sm rf-text--error">
+                        <span class="rf-text--sm rf-color--rm">
                             {field.errorMessage}
                         </span>
                         <br/>
