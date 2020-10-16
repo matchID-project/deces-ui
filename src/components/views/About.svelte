@@ -1,57 +1,18 @@
-<Hero>
-  <span slot="title">
-    À propos
-  </span>
-  <span slot="subtitle">
-    {title[page]}
-  </span>
-</Hero>
-
-<div class="about-body">
-  <div class="container">
-    <div class="margin">
-      <svelte:component this={component[page]}/>
+<div class="rf-container">
+  <div class="rf-grid-row">
+    <div class="rf-col-12 rf-padding-top-3N rf-padding-bottom-1N">
+      <h2 class="rf-h2 rf-text--center">
+        à propos
+      </h2>
     </div>
+    <Info/>
   </div>
 </div>
 
 <script>
-  export let page;
-  import Hero from './Hero.svelte';
-  import AboutService from './AboutService.svelte';
-  import AboutData from './AboutData.svelte';
-
-  let title = {
-    data: 'des données INSEE',
-    service: 'de ce service'
-  }
-  let component = {
-    data: AboutData,
-    service: AboutService
-  }
-
+  import Info from './Info.svelte';
 </script>
 
 <style>
-
-  .about-body {
-      max-width: 1235px;
-      margin-left: auto;
-      margin-right: auto;
-      display: flex;
-      padding: 0 24px;
-  }
-
-  @media print,screen and (max-width:768px) {
-    .margin {
-      padding: 0 16px;
-    }
-  }
-
-  @media print,screen and (min-width:769px) {
-    .margin {
-      padding: 0 48px;
-      }
-  }
 
 </style>

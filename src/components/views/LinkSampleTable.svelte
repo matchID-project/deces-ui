@@ -1,26 +1,32 @@
-<div class="table-body content is-size-6-7">
+<div class="rf-container-fluid">
     {#if $linkSourceHeader}
-        <div class="columns">
+        <div class="rf-grid-row">
             {#each header as col, colNumber}
                 <div
-                    class="column"
+                    class="rf-col"
                     draggable={true}
                     on:dragstart={event => dragstart(event, col)}
                 >
-                    <table class="table is-narrow">
-                        <tr>
-                            <th
-                                class:is-active={mapping && mapping.direct && mapping.direct[col]}
-                            >{col}</th>
-                        </tr>
-                        {#each displayRows as row, rowNumber}
-                            <tr class:is-striped={rowNumber%2}>
-                                <td
-                                    title={row[colNumber]}
-                                >{row[colNumber]}</td>
-                            </tr>
-                        {/each}
-                    </table>
+                    <div class="rf-tile">
+                        <table
+                            class="rf-table rf-table--narrow rf-table--striped"
+                            class:rf-inactive={!(mapping && mapping.direct && mapping.direct[col])}
+                        >
+                            <tbody>
+                                <tr>
+                                    <th
+                                    >{col}</th>
+                                </tr>
+                                {#each displayRows as row, rowNumber}
+                                    <tr class="rf-text--sm">
+                                        <td
+                                            title={row[colNumber]}
+                                        >{row[colNumber]}</td>
+                                    </tr>
+                                {/each}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             {/each}
         </div>

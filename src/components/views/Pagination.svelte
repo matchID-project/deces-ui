@@ -1,43 +1,48 @@
 
 {#if $wasSearched}
-    <nav class="pagination is-centered is-small" role="navigation" aria-label="pagination">
-        {#if $totalPages > 1}
-            {#if $current === 1}
-                <a class="pagination-previous" href="{pageLink($current-1)}"
-                on:click|preventDefault={goTo($current-1)} disabled> &lt; </a>
-            {:else}
-                <a class="pagination-previous" href="{pageLink($current-1)}"
-                on:click|preventDefault={goTo($current-1)}> &lt; </a>
-            {/if}
-            {#if $current === $totalPages}
-                <a class="pagination-next" href="{pageLink($current+1)}"
-                on:click|preventDefault={goTo($current+1)} disabled> &gt; </a>
-            {:else}
-                <a class="pagination-next" href="{pageLink($current+1)}"
-                on:click|preventDefault={goTo($current+1)}> &gt; </a>
-            {/if}
-            <ul class="pagination-list">
-                {#each pages as page}
-                    {#if page === '.'}
-                        <li><span class="pagination-ellipsis">&hellip;</span></li>
+    <div class="rf-container-fluid" style="padding-top:6px; margin-top:-8px;margin-bottom:-8px;height:45px; overflow: hidden;">
+        <div class="rf-grid-row" style="justify-content: center;">
+            <nav class="rf-pagination" role="navigation" aria-label="pagination">
+                {#if $totalPages > 1}
+                    <ul class="rf-pagination__list rf-text--xs">
+                    {#if $current === 1}
+                        <li class="rf-pagination__item--prev rf-pagination__item rf-pagination__item--disabled"></li>
                     {:else}
-                        <li>
-                            <a
-                                class="pagination-link"
-                                class:is-current={$current === page}
-                                href="{pageLink(page)}"
+                        <li
+                            class="rf-href rf-pagination__item--prev rf-pagination__item"
+                            title="{pageLink($current-1)}"
+                            on:click|preventDefault={goTo($current-1)}
+                        >
+                        </li>
+                    {/if}
+                    {#each pages as page}
+                        {#if page === '.'}
+                            <li class="rf-pagination__item rf-pagination__item--from-md">&hellip;</li>
+                        {:else}
+                            <li
+                                class="rf-href rf-pagination__item {$current === page ? "rf-pagination__item--active" : ""} rf-pagination__item--from-md"
+                                title="{pageLink(page)}"
                                 on:click|preventDefault={goTo(page)}
                             >
                                 {page}
-                            </a>
+                            </li>
+                        {/if}
+                    {/each}
+                    {#if $current === $totalPages}
+                        <li class="rf-pagination__item--next rf-pagination__item rf-pagination__item--disabled"></li>
+                    {:else}
+                        <li
+                            class="rf-href rf-pagination__item--next rf-pagination__item"
+                            title="{pageLink($current+1)}"
+                            on:click|preventDefault={goTo($current+1)}
+                        >
                         </li>
                     {/if}
-                {/each}
-            </ul>
-        {:else}
-            <ul><li><i class="pagination-link border-is-white"></i></li></ul>
-        {/if}
-    </nav>
+                    </ul>
+                {/if}
+            </nav>
+        </div>
+    </div>
 {/if}
 
 <script>
@@ -92,222 +97,5 @@
 
 </script>
 
-<style>
 
-    .button,
-    .file-cta,
-    .file-name,
-    .input,
-    .pagination-ellipsis,
-    .pagination-link,
-    .pagination-next,
-    .pagination-previous,
-    .select select,
-    .textarea {
-    -moz-appearance:none;
-    -webkit-appearance:none;
-    align-items:center;
-    border:1px solid transparent;
-    border-radius:4px;
-    box-shadow:none;
-    display:inline-flex;
-    font-size:1rem;
-    height:2.5em;
-    justify-content:flex-start;
-    line-height:1.5;
-    padding-bottom:calc(.5em - 1px);
-    padding-left:calc(.75em - 1px);
-    padding-right:calc(.75em - 1px);
-    padding-top:calc(.5em - 1px);
-    position:relative;
-    vertical-align:top;
-    text-decoration: none;
-    }
-
-    .button[disabled],
-    .file-cta[disabled],
-    .file-name[disabled],
-    .input[disabled],
-    .pagination-ellipsis[disabled],
-    .pagination-link[disabled],
-    .pagination-next[disabled],
-    .pagination-previous[disabled],
-    .select fieldset[disabled] select,
-    .select select[disabled],
-    .textarea[disabled],
-    fieldset[disabled] .button,
-    fieldset[disabled] .file-cta,
-    fieldset[disabled] .file-name,
-    fieldset[disabled] .input,
-    fieldset[disabled] .pagination-ellipsis,
-    fieldset[disabled] .pagination-link,
-    fieldset[disabled] .pagination-next,
-    fieldset[disabled] .pagination-previous,
-    fieldset[disabled] .select select,
-    fieldset[disabled] .textarea {
-    cursor:not-allowed
-    }
-
-    .pagination {
-        font-size:1rem;
-        margin:-0.25rem;
-        padding-left: 1rem;
-        padding-right: 1rem;
-    }
-
-    .pagination.is-medium {
-    font-size:1.25rem
-    }
-    .pagination.is-large {
-    font-size:1.5rem
-    }
-    .pagination.is-rounded .pagination-next,
-    .pagination.is-rounded .pagination-previous {
-    padding-left:1em;
-    padding-right:1em;
-    border-radius:290486px
-    }
-    .pagination.is-rounded .pagination-link {
-    border-radius:290486px
-    }
-    .pagination,
-    .pagination-list {
-    align-items:center;
-    display:flex;
-    justify-content:center;
-    text-align:center
-    }
-    .pagination-ellipsis,
-    .pagination-link,
-    .pagination-next,
-    .pagination-previous {
-    font-size:1em;
-    justify-content:center;
-    margin:.25rem;
-    padding-left:.5em;
-    padding-right:.5em;
-    text-align:center
-    }
-    .pagination-link,
-    .pagination-next,
-    .pagination-previous {
-    border-color:#dbdbdb;
-    color:#363636;
-    min-width:2.5em
-    }
-    .pagination-link:hover,
-    .pagination-next:hover,
-    .pagination-previous:hover {
-    border-color:#b5b5b5;
-    color:#363636
-    }
-    .pagination-link:focus,
-    .pagination-next:focus,
-    .pagination-previous:focus {
-    border-color:#003189
-    }
-    .pagination-link:active,
-    .pagination-next:active,
-    .pagination-previous:active {
-    box-shadow:inset 0 1px 2px rgba(10,10,10,.2)
-    }
-    .pagination-link[disabled],
-    .pagination-next[disabled],
-    .pagination-previous[disabled] {
-    background-color:#dbdbdb;
-    border-color:#dbdbdb;
-    box-shadow:none;
-    color:#7a7a7a;
-    opacity:.5
-    }
-    .pagination-next,
-    .pagination-previous {
-    padding-left:.75em;
-    padding-right:.75em;
-    white-space:nowrap
-    }
-    .pagination-link.is-current {
-    background-color:#003189;
-    border-color:#003189;
-    color:#fff
-    }
-    .pagination-ellipsis {
-    color:#b5b5b5;
-    pointer-events:none
-    }
-    .pagination-list {
-    flex-wrap:wrap
-    }
-    @media screen and (max-width:768px) {
-    .pagination {
-    flex-wrap:wrap
-    }
-    .pagination-next,
-    .pagination-previous {
-        display: none;
-    }
-    .pagination-list li {
-    flex-grow:1;
-    flex-shrink:1
-    }
-    }
-    @media screen and (min-width:769px),print {
-    .pagination-list {
-    flex-grow:1;
-    flex-shrink:1;
-    justify-content:flex-start;
-    order:1
-    }
-    .pagination-previous {
-    order:2
-    }
-    .pagination-next {
-    order:3
-    }
-    .pagination {
-    justify-content:space-between
-    }
-    .pagination.is-centered .pagination-previous {
-    order:1
-    }
-    .pagination.is-centered .pagination-list {
-    justify-content:center;
-    order:2
-    }
-    .pagination.is-centered .pagination-next {
-    order:3
-    }
-    .pagination.is-right .pagination-previous {
-    order:1
-    }
-    .pagination.is-right .pagination-next {
-    order:2
-    }
-    .pagination.is-right .pagination-list {
-    justify-content:flex-end;
-    order:3
-    }
-    }
-
-    ul {
-       list-style: none;
-    }
-
-    .remove-border {
-        border:1px solid transparent;
-    }
-    .border-is-white {
-        border-color: #fff;
-    }
-
-    .has-text-right {
-        text-align: right!important;
-    }
-
-    ul {
-        margin:0;
-        padding:0
-    }
-
-</style>
 
