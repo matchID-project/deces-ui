@@ -32,6 +32,7 @@ let myCurrent;
 let myResultsPerPage;
 let myAdvancedSearch;
 let mySearchMinLength;
+let mySearchResults;
 let myWaitSearch;
 let myFuzzySearch;
 let myDisplayMode;
@@ -40,6 +41,7 @@ let myUpdateURL;
 const s = searchInput.subscribe((value) => { mySearchInput=value });
 const so = sortInput.subscribe((value) => { mySortInput=value });
 const sc = searchCanvas.subscribe((value) => { mySearchCanvas=value });
+const sr = searchResults.subscribe((value) => { mySearchResults=value });
 const sm = searchMinLength.subscribe((value) => { mySearchMinLength=value });
 const c = current.subscribe((value) => { myCurrent=value });
 const r = resultsPerPage.subscribe((value) => { myResultsPerPage=value });
@@ -48,6 +50,19 @@ const w = waitSearch.subscribe((value) => { myWaitSearch=value });
 const f = fuzzySearch.subscribe((value) => {myFuzzySearch = value});
 const d = displayMode.subscribe((value) => {myDisplayMode = value});
 const u = updateURL.subscribe((value) => { myUpdateURL=value });
+
+export const enableDisplayMode = async (mode) => {
+    if (myDisplayMode) {
+        if ((myDisplayMode === 'geo') && (mode !== 'geo')) {
+            if (mySearchResults.length >  resultsPerPageDefault) {
+                searchResults.update(v => v.splice(0, resultsPerPageDefault));
+            }
+            resultsPerPage.update(v => resultsPerPageDefault);
+        }
+      displayMode.update(v => mode);
+    }
+    searchURLUpdate();
+  }
 
 const computeTotalPages = (resultsPerPage, totalResults) => {
     if (!resultsPerPage) return 0;
@@ -149,34 +164,36 @@ export const searchURLUpdate = async () => {
     updateURL.update(v => false);
 };
 
-export const toggleAdvancedSearch = async () => {
-    await searchCanvas.update(v => {
-      Object.keys(v).map(key => {
-        v[key].active = !v[key].active;
-      });
-      return v
-    });
-    await advancedSearch.update(v => Object.keys(mySearchCanvas).some(key => mySearchCanvas[key].active === mySearchCanvas[key].advanced))
-    await searchInput.update(v => {
-        let fullText = '';
-        let firstName = '';
-        let lastName = '';
-        if (myAdvancedSearch) {
-            const names = v.fullText.value.split(/\s+/);
-            lastName = names.length && names[0] || '';
-            firstName = (names.length > 0) && names[1] || '';
-        } else {
-            fullText =  [v.lastName.value, v.firstName.value].filter(x => x).join(' ') || '';
-        }
+export const toggleAdvancedSearch = async (arg) => {
+    if (arg !== myAdvancedSearch) {
+        await searchCanvas.update(v => {
         Object.keys(v).map(key => {
-            if (key === 'fullText') { v[key].value = fullText; }
-            else if (key === 'firstName') { v[key].value = firstName; }
-            else if (key === 'lastName') { v[key].value = lastName; }
-            else { v[key].value = ''; }
-      });
-      return v
-    });
-    await searchURLUpdate();
+            v[key].active = !v[key].active;
+        });
+        return v
+        });
+        await advancedSearch.update(v => Object.keys(mySearchCanvas).some(key => mySearchCanvas[key].active === mySearchCanvas[key].advanced))
+        await searchInput.update(v => {
+            let fullText = '';
+            let firstName = '';
+            let lastName = '';
+            if (myAdvancedSearch) {
+                const names = v.fullText.value.split(/\s+/);
+                lastName = names.length && names[0] || '';
+                firstName = (names.length > 0) && names[1] || '';
+            } else {
+                fullText =  [v.lastName.value, v.firstName.value].filter(x => x).join(' ') || '';
+            }
+            Object.keys(v).map(key => {
+                if (key === 'fullText') { v[key].value = fullText; }
+                else if (key === 'firstName') { v[key].value = firstName; }
+                else if (key === 'lastName') { v[key].value = lastName; }
+                else { v[key].value = ''; }
+        });
+        return v
+        });
+        await searchURLUpdate();
+    }
 };
 
 export const toggleFuzzySearch = async () => {

@@ -91,8 +91,8 @@
     import { faTable, faGlobeEurope, faGripLines, faAddressCard } from '@fortawesome/free-solid-svg-icons';
     import FontAwesomeIcon from './FontAwesomeIcon.svelte';
     import { current, searchResults, sortInput, sortInputDisplay, updateURL, totalResults, totalPages,
-        resultsPerPage, defaultResultsPerPage, searchInput, wasSearched, displayMode } from '../tools/stores.js'
-    import { searchSubmit, searchURLUpdate } from '../tools/search.js'
+        resultsPerPage, searchInput, wasSearched, displayMode } from '../tools/stores.js'
+    import { enableDisplayMode } from '../tools/search.js'
     import SortInput from './SortInput.svelte';
     import Download from './Download.svelte';
     import Pagination from './Pagination.svelte';
@@ -114,19 +114,6 @@
     $: to = Math.min($totalResults, $current * $resultsPerPage);
     $: query = $wasSearched;
 
-
-  const enableDisplayMode = async (mode) => {
-    if ($displayMode) {
-        if (($displayMode === 'geo') && (mode !== 'geo')) {
-            if ($searchResults.length >  $defaultResultsPerPage) {
-                $searchResults = $searchResults.splice(0, $defaultResultsPerPage);
-            }
-            $resultsPerPage = $defaultResultsPerPage;
-        }
-      $displayMode = mode;
-    }
-    searchURLUpdate();
-  }
 
 </script>
 

@@ -380,6 +380,16 @@ tr .th-inactive {
   width: 100%;
 }
 
+.rf-nav__item.rf-nav__item--hoverable:hover .rf-menu{
+  opacity: 1;
+  visibility: visible;
+  max-height: 99999px;
+}
+
+.rf-nav__item.rf-nav__item--hoverable:hover .rf-menu::before {
+  margin-top: 0;
+}
+
 /* Leaflet */
 /* required styles */
 
