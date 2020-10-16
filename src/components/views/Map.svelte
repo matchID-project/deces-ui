@@ -1,38 +1,42 @@
 <svelte:window on:resize={resize} />
 <div class="map" bind:this={mapContainer}>
-  <div class="control">
+  <div class="control rf-padding-bottom-0">
     {#each Object.keys(possibleLayers) as layer, index}
         <span
-            style={`color: ${layerParams[layer].color};`}
             on:click|preventDefault={(e) => {toggleLayer(layer)}}
         >
-            <input type="checkbox" checked={displayLayers.includes(possibleLayers[layer])}> {possibleLayers[layer]}
+            <input
+              id={possibleLayers[layer]}
+              type="checkbox"
+              checked={displayLayers.includes(possibleLayers[layer])}
+            >
+            <label
+              class="rf-label rf-padding-0" for={possibleLayers[layer]}
+              style={`color: ${layerParams[layer].color};`}
+            >
+              {possibleLayers[layer]}
+            </label>
         </span>
         <br/>
     {/each}
   </div>
   {#if $waitSearch}
-    <div class="wait" in:fade>
+    <div class="wait" in:fade out:fade>
         <div class="wait-center">
             <FontAwesomeIcon icon={faSpinner} class="icon is-48" spin={true}/>
         </div>
     </div>
   {/if}
   <slot />
-  <div class="search leaflet-top-of bottom hide-mobile">
-    <SearchBox/>
-  </div>
   <div
-    class="results-header leaflet-top-of bottom"
+    class="fullscreen-link leaflet-top-of bottom"
     on:click|preventDefault={toggleFullScreen}
   >
-        <ResultsHeader>
-            {#if isFull}
-                Cliquez ici pour sortir du plein écran
-            {:else}
-                Cliquez ici pour le plein écran
-            {/if}
-        </ResultsHeader>
+    {#if isFull}
+        Cliquez ici pour sortir du plein écran
+    {:else}
+        Cliquez ici pour le plein écran
+    {/if}
   </div>
 
   {#if showResult}
@@ -80,7 +84,7 @@
   let forceExpand = false;
   let control;
 
-  export let center = [46.5, 2.3];
+  export let center = [47, 2.3];
   export let zoom = 6;
   import {
     searchResults,
@@ -91,14 +95,14 @@
   $: scale = leafletMap &&  (leafletMap.getZoom() ** 1.5) * 0.05 * (2 - Math.log(Math.max(1, $searchResults.length))/Math.log(maxBase)) ** 3;
   $: layerParams = {
       birth: {
-          color:'#003189',
+          color:'var(--bf500)',
           opacity: 0.8,
           radius: 1.5 * scale,
           weight: scale,
           pane: 'birth'
       },
       death: {
-          color: '#e2011c',
+          color: 'var(--rm500)',
           opacity: 0.8,
           radius: 2 * scale,
           weight: scale,
@@ -322,13 +326,10 @@
       margin-top: 300px;
   }
 
-  .search {
-    width: 100%;
-    bottom: 28px;
-  }
-   .results-header {
+  .fullscreen-link {
     width: 100%;
     bottom: 0;
+    margin-left: 4px;
   }
 
   .leaflet-top-of {

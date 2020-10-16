@@ -1,61 +1,93 @@
-<div class="image">
-    <div class="badge">
-        beta
-    </div>
-</div>
-<Hero height={"14rem"}>
-    <span slot="title">
-      fichier des décès
-      {#if ($linkStep > 1)}
-        <div style="position: absolute;top:.5rem;right:.5rem;">
-            <button
-                class="button is-danger"
-                title="réinitialiser le traitement"
-                on:click|preventDefault={reset}
-            >
-                réinitialiser &nbsp;
-                <span>
-                    <FontAwesomeIcon icon={faTrash} class="is-low"/>
-                </span>
-            </button>
-        </div>
-      {/if}
-    </span>
-    <span slot="subtitle">
-        appariement
-    </span>
-    <span slot="content">
-        <div class="columns">
-            {#each steps as step, i}
-                <div class="column is-3">
-                    {#if ((i+1) === $linkStep) && step.hero}
-                        <svelte:component this={step.hero} step={i+1} label={step.label} error={step.error}/>
-                    {:else}
-                        <LinkStep step={i+1} label={step.label} error={step.error}/>
-                    {/if}
-                </div>
-            {/each}
-        </div>
-    </span>
-</Hero>
-
-<div class="content body">
-    {#if wait}
-        <div class="wait-center">
-            <strong>{waitMessage}</strong>
+{#if wait}
+    <div class="rf-wait-container" style="width:100%" in:fade out:fade>
+        <div class="rf-wait-content">
+            <strong>{waitMessage || ''}</strong>
             <br/>
             <FontAwesomeIcon icon={faSpinner} class="is-48 spin"/>
         </div>
-    {/if}
-    <div style={wait ? `display: none;` : ''}>
-        {#if steps[$linkStep-1].body}
-            <svelte:component this={steps[$linkStep-1].body}/>
+    </div>
+{/if}
+<div class="rf-container-fluid rf-padding-right-1N" style="position: relative">
+    <div class="rf-badge">
+        beta
+    </div>
+    <div class="rf-grid-row">
+        {#if ($linkStep <= 1)}
+            <div class="rf-col-3"></div>
         {/if}
+        <div
+            class="rf-padding-left-2N--desktop rf-padding-left-1N--mobile rf-padding-right-1N--mobile rf-padding-top-2N rf-col-xs-12 rf-col-sm-12 rf-col-md-{size.md} rf-col-lg-{size.lg} rf-col-xl-{size.xl} {margin}"
+            style="position: relative;"
+        >
+            <strong>
+                appariement
+            </strong>
+            {#if ($linkStep > 1)}
+                <div style="position: absolute;top: 12px;right: 0px;">
+                    <span
+                        title="réinitialiser le traitement"
+                        on:click|preventDefault={reset}
+                        class="rf-color--rm rf-fi-delete-line rf-fi--lg"
+                    >
+                    </span>
+                </div>
+            {/if}
+            <div class="rf-container-fluid">
+                <div class="rf-grid-row">
+                    {#each steps as step, i}
+                        <div class="rf-col-12 rf-padding-1N">
+                            <div class="rf-container-fluid">
+                                <div class="rf-grid-row">
+                                    <div
+                                        class="rf-col-12 rf-padding-1N"
+                                        class:rf-hide--desktop={$linkStep > 1}
+                                        class:rf-hide--mobile={$linkStep != (i+1)}
+                                    >
+                                        {@html step.text}
+                                    </div>
+                                    <div
+                                        class="rf-col-12 rf-padding-1N"
+                                        class:rf-hide--mobile={$linkStep != (i+1)}
+                                    >
+                                        {#if ((i+1) === $linkStep) && step.card}
+                                            <svelte:component this={step.card} step={i+1} title={step.title} label={step.label} error={step.error}/>
+                                        {:else}
+                                            <LinkStep step={i+1} title={step.title} label={step.label} error={step.error}/>
+                                        {/if}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {/each}
+                </div>
+            </div>
+        </div>
+        <div class="rf-padding-left-2N rf-col-xs-12 rf-col-sm-12 rf-col-md-8 rf-col-lg-8 rf-col-xl-8">
+            <div class="rf-container-fluid">
+                <div class="rf-grid-row">
+                    {#if ($linkStep > 1)}
+                        <div class="rf-col-12 rf-padding-3N rf-hide--mobile">
+                            <strong>
+                                étape {$linkStep}
+                            </strong>
+                            <br>
+                            {@html steps[$linkStep-1].text}
+                        </div>
+                    {/if}
+                    {#if steps[$linkStep-1].body}
+                        <div class="rf-col-12 rf-padding-1N">
+                            <svelte:component this={steps[$linkStep-1].body}/>
+                        </div>
+                    {/if}
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
 <script>
     import { onMount } from 'svelte';
+    import { fade } from 'svelte/transition';
     import { linkWaiter, linkStep, linkFile, linkFileName, linkFileSize, linkFileSizeLimit, linkMapping,
         linkSourceHeader, linkMinFields, linkJob,
         linkCompleteResults, linkResults, linkCsvType, linkCompleted, linkValidations
@@ -64,9 +96,7 @@
     import FontAwesomeIcon from './FontAwesomeIcon.svelte';
    import {
       faSpinner,
-      faTrash
     } from '@fortawesome/free-solid-svg-icons';
-    import Hero from './Hero.svelte';
     import LinkStep from './LinkStep.svelte';
     import LinkFile from './LinkFile.svelte';
     import LinkConfigure from './LinkConfigure.svelte';
@@ -77,6 +107,15 @@
     let waitMessage = '';
     const minWaitActivation = 0;
     const minWaitDeactivation = 500;
+
+    $: size = {
+        md: ($linkStep>1) ? 4 : 6,
+        lg: ($linkStep>1) ? 4 : 6,
+        xl: ($linkStep>1) ? 3 : 6
+    };
+
+    $: margin = ($linkStep>1) ? "" : "rf-margin-top-6N";
+
 
     $: if ($linkWaiter) {
             setTimeout(() => {
@@ -101,7 +140,8 @@
             steps[0].error = false;
             $linkStep=2;
         } else {
-            steps[0].label = `${$linkFile.name }: volume > ${Math.round($linkFileSizeLimit / 1000**2)}Mo`
+            steps[0].label = `${$linkFile.name }: volume > ${Math.round($linkFileSizeLimit / 1000**2)}Mo<br>
+                                réessayez avec un fichier plus petit`
             steps[0].error = true
         }
     };
@@ -132,16 +172,85 @@
         steps[3].label = `${cLinks}/${sLinks} identifications validées`;
     }
 
-    const step0Label = `glissez un fichier ici <br/> (${Math.round($linkFileSizeLimit / 1000**2)}Mo maximum)`;
-    const step1Label = "choisissez les colonnes à apparier";
-    const step2Label="lancez le traitement";
-    const step3Label="vérifiez les identifications";
+    const step0Label = `glissez un fichier au format CSV ici <br/> (${Math.round($linkFileSizeLimit / 1000**2)}Mo maximum)`;
+    const step1Label = 'choisissez les colonnes à apparier';
+    const step2Label= 'attendez le traitement de l\'appariement';
+    const step3Label= 'vérifiez les identités appariées';
 
     const steps = [
-        { label: step0Label, hero: LinkFile},
-        { label: step1Label, body: LinkConfigure},
-        { label: step2Label, body: LinkJob },
-        { label: step3Label, body: LinkCheck }
+        { title: 'fichier',
+          label: step0Label,
+          card: LinkFile,
+          text: `
+            <p>
+                L'appariement est une fonction de rapprochement vous permettant de soumettre une <strong>liste de personnes
+                pour y retrouver d' éventuels décès</strong>.
+            </p>
+            <p>Le service est offert gratuitement pour
+                assurer notamment la <strong>mise en conformité RGPD </strong>("droit à l'oubli"). La limite du service est liée à la taille
+                du fichier (100Mo, soit 1 à 2 millions d'enregistrements). Il doit permettre en quelques minutes le traitement
+                de fichiers clients de quelques dizaines de milliers de lignes. Les données transmises sont chiffrées (AES-256) et effacées 1h après
+                la fin du traitement.
+            </p>
+            <p>
+                Le fichier doit être au <strong>format CSV</strong> ('enregistrer sous...' dans votre tableur préféré) et déposé ci-dessous.
+            </p>
+          `
+        },
+        { title: 'configuration',
+          label: step1Label,
+          body: LinkConfigure,
+          text: `
+            <p>
+                Ensuite, vous pouvez configurer les colonnes à rapprocher pour assurer l'appariement. Il est considéré
+                qu'une identité est <strong>fiable</strong> à partir du moment où les quatre champs sont disponibles: <strong>nom, prénom, lieu et date de naissance.</strong>
+                Une colonne de date "décès ultérieur à" est également à votre disposition (par exemple, à rapprocher avec une date de dernier rendez-vous).
+            </p>
+            <p>
+                Attention: si un champ n'est pas de qualité, il est susceptible de générer du silence. N'hésitez pas à tester plusieurs configurations.
+            </p>
+          `
+        },
+        { title: 'traitement',
+          label: step2Label,
+          body: LinkJob,
+          text: `
+            <p>
+                C'est peut-être le temps d'une pause ?
+            </p>
+            <p>
+                Le traitement peut nécessiter un peu de <strong>patience</strong> (quelques minutes pour plusieurs
+                dizaines de milliers d'enregistrements). Nous traitons envion 50 enregistrements par seconde, il faudra donc attendre
+                quelques heures pour un fichier d'un million de personnes. Le temps d'attente est estimé automatiquement.
+            </p>
+            <p>
+                Vous pouvez quitter la page et <strong>revenir ultérieurement</strong>,
+                les données de références sont enregistrées dans le navigateur, et vous permettront de retrouver vos résultats. Attention
+                néanmoins, ceux-ci sont effacés au bout d'une heure si vous n'avez pas consulté la page.
+            </p>
+          `
+        },
+        { title: 'validez',
+          label: step3Label,
+          body: LinkCheck,
+          text: `
+            <p>
+                <strong>Dernière étape!</strong>
+            </p>
+            <p>
+                Une application vous aide à <strong>valider</strong> les identités appariées.
+                Cette étape est essentielle pour s'assurer de la
+                bonne qualité du traitement.
+            </p>
+            <p>
+                Vous pouvez néanmoins d'ores et déjà télécharger les données et les traiter dans votre tableur.
+            </p>
+            <p>
+                Si les résultats sont effacés du serveur au bout d'une heure, ils restent enregistrés sur
+                votre navigateur, tant que vous n'avez pas cliqué sur l'icône <span class="rf-fi-delete-line"></span>
+            </p>
+          `
+        }
     ];
 
     const reset = async () => {
@@ -188,105 +297,4 @@
 </script>
 
 <style>
-
-    .body {
-        max-width: 1235px;
-        margin-left: auto;
-        margin-right: auto;
-    }
-
-    *, ::after, ::before {
-        box-sizing: inherit;
-    }
-
-        .delete {
-        -moz-appearance:none;
-        -webkit-appearance:none;
-        background-color:rgba(10,10,10,.2);
-        border:none;
-        border-radius:290486px;
-        cursor:pointer;
-        pointer-events:auto;
-        display:inline-block;
-        flex-grow:0;
-        flex-shrink:0;
-        font-size:0;
-        height:20px;
-        max-height:20px;
-        max-width:20px;
-        min-height:20px;
-        min-width:20px;
-        outline:none;
-        position:relative;
-        vertical-align:top;
-        width:20px
-    }
-    .delete:after,
-    .delete:before {
-        background-color:#fff;
-        content:"";
-        display:block;
-        left:50%;
-        position:absolute;
-        top:50%;
-        transform:translateX(-50%) translateY(-50%) rotate(45deg);
-        transform-origin:center center
-    }
-    .delete:before {
-        height:2px;
-        width:50%
-    }
-    .delete:after {
-        height:50%;
-        width:2px
-    }
-    .delete:focus,
-    .delete:hover {
-        background-color:rgba(10,10,10,.3)
-    }
-    .delete.is-danger {
-        background-color: #e2011c;
-    }
-
-.badge {
-  position: absolute;
-  left: -7px;
-  top: 4.80rem;
-  z-index: 900;
-  background-color: #e2011c;
-  -webkit-transform: rotate(-45deg) scale(1) skew(0deg) translate(10px);
-  -moz-transform: rotate(-45deg) scale(1) skew(0deg) translate(10px);
-  -o-transform: rotate(-45deg) scale(1) skew(0deg) translate(10px);
-  -ms-transform: rotate(-45deg) scale(1) skew(0deg) translate(10px);
-  transform: rotate(-45deg) scale(1) skew(0deg) translate(10px);
-  text-align: center;
-  color: white;
-  padding: 0 .5em;
-  border-top: 0px;
-  line-height: 20px;
-  margin: 0;
-}
-.badge:after {
-    content: ' ';
-    position: absolute;
-    right: -1.23rem;
-    top: 0px;
-    border-right: 20px solid transparent;
-    border-bottom: 20px solid #e2011c;
-}
-.badge:before {
-    content: ' ';
-    position: absolute;
-    left: -1.23rem;
-    top: 0px;
-    border-left: 20px solid transparent;
-    border-bottom: 20px solid #e2011c;
-}
-  .wait-center {
-    text-align: center;
-    transform: translateY(50%);
-    height: 14rem;
-    additive-symbols: 14rem;
-  }
-
 </style>

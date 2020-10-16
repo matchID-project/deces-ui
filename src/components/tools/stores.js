@@ -16,35 +16,39 @@ import {
     firstNameQuery,
     fuzzyTermQuery,
     matchQuery
-} from './queries.js'
+} from './queries.js';
 
 export const searchInput = writable({
     fullText: {
+        section: "recherche simplifiée",
+        label: "nom, prénom, date de naissance ou de décès",
         path: "fullText",
         url: "q",
         backendQuery: "q",
         value: "",
         field: "fullText",
-        placeholder: "nom, prénom, date de naissance ou de décès (JJ/MM/AAAA), ... e.g. Pompidou Georges",
+        placeholder: "Pompidou Georges 02/04/1974",
         title: "saisissez en recherche libre nom, prénom, date de naissance ou de décès",
-        size: 12,
+        size: "rf-col-12",
         active: true,
     },
     lastName: {
+        section: "recherche avancée",
+        label: "nom",
         path: "name",
         url: "ln",
         value: "",
-        section:"nom/prénoms",
         field: "NOM",
         sortField: "NOM.raw",
         query: fuzzyTermQuery,
         fuzzy: "auto",
         placeholder: "Pompidou",
         title: "saisissez le nom",
-        size: "5-5",
+        size: "rf-col-12",
         active: true,
     },
     firstName: {
+        label: "prénom",
         path: "name",
         url: "fn",
         value: "",
@@ -54,10 +58,11 @@ export const searchInput = writable({
         fuzzy: "auto",
         placeholder: "Georges",
         title: "saisissez le prénom",
-        size: "4-4",
+        size: "rf-col-8",
         active: true,
     },
     sex: {
+        label: "genre",
         path: "birth.location",
         url: "sex",
         value: "",
@@ -71,14 +76,15 @@ export const searchInput = writable({
             validation: sexValidationMask,
             transform: sexTransformMask
         },
-        size: "1-3",
+        size: "rf-col-4",
         active: true,
     },
     birthDate: {
+        section: "naissance",
+        label: "date",
         path: "birth.date",
         url: "bd",
         before: "le",
-        section:"naissance",
         value: "",
         field: "DATE_NAISSANCE",
         sortField: "DATE_NAISSANCE.raw",
@@ -91,10 +97,11 @@ export const searchInput = writable({
             validation: dateRangeValidationMask,
             transform: dateRangeTransformMask
         },
-        size: 2,
+        size: "rf-col-6",
         active: true
     },
     birthCity: {
+        label: "commune",
         path: "birth.location",
         url: "bc",
         before: "à",
@@ -103,12 +110,13 @@ export const searchInput = writable({
         sortField: "COMMUNE_NAISSANCE.raw",
         query: fuzzyTermQuery,
         fuzzy: "auto",
-        placeholder: "commune: Montboudif",
+        placeholder: "Montboudif",
         title:"saisissez la commune de naissance",
-        size: "3l",
+        size: "rf-col-6",
         active: true,
     },
     birthDepartment: {
+        label: "département",
         path: "birth.location",
         url: "bdep",
         before: "dans le",
@@ -117,12 +125,13 @@ export const searchInput = writable({
         sortField: "DEPARTEMENT_NAISSANCE",
         query: matchQuery,
         fuzzy: false,
-        placeholder: "dépt: 15",
+        placeholder: "15",
         title:"saisissez le département de naissance",
-        size: "1l",
+        size: "rf-col-6",
         active: true,
     },
     birthCountry: {
+        label: "pays",
         path: "birth.location",
         url: "bco",
         before: "en/au",
@@ -132,11 +141,12 @@ export const searchInput = writable({
         query: fuzzyTermQuery,
         fuzzy: "auto",
         title:"saisissez le pays de naissance",
-        placeholder: "pays: France",
-        size: 3,
+        placeholder: "France",
+        size: "rf-col-6",
         active: true,
     },
     deathDate: {
+        label: "date",
         path: "death.date",
         url: "dd",
         before: "le",
@@ -154,10 +164,11 @@ export const searchInput = writable({
             validation: dateRangeValidationMask,
             transform: dateRangeTransformMask
         },
-        size: "2-8",
+        size: "rf-col-6",
         active: true,
     },
     deathAge: {
+        label: "âge",
         path: "death.location",
         url: "dage",
         value: "",
@@ -166,17 +177,18 @@ export const searchInput = writable({
         query: ageRangeStringQuery,
         fuzzy: false,
         title: "saisissez l'âge au décès, ou une plage d'âge : 75-80",
-        placeholder: "âge: 78",
+        placeholder: "78",
         multiQuery: "range",
         mask: {
             typing: ageRangeTypingMask,
             validation: ageRangeValidationMask,
             transform: ageRangeTransformMask
         },
-        size: "1l-4",
+        size: "rf-col-6",
         active: true
     },
     deathCity: {
+        label: "commune",
         path: "death.location",
         url: "dc",
         before: "à",
@@ -186,11 +198,12 @@ export const searchInput = writable({
         query: fuzzyTermQuery,
         fuzzy: "auto",
         title:"saisissez la commune de décès",
-        placeholder: "commune: Paris",
-        size: "3-4",
+        placeholder: "Paris",
+        size: "rf-col-4",
         active: true,
     },
     deathDepartment: {
+        label:"département",
         path: "death.location",
         url: "ddep",
         before: "dans le",
@@ -199,12 +212,13 @@ export const searchInput = writable({
         sortField: "DEPARTEMENT_DECES",
         query: matchQuery,
         fuzzy: false,
-        placeholder: "dépt: 75",
+        placeholder: "75",
         title:"saisissez le département de décès",
-        size: "1l-4",
+        size: "rf-col-4",
         active: true,
     },
     deathCountry: {
+        label: "pays",
         path: "death.location",
         url: "dco",
         before: "en/au",
@@ -213,9 +227,9 @@ export const searchInput = writable({
         sortField: "PAYS_DECES.raw",
         query: fuzzyTermQuery,
         fuzzy: "auto",
-        placeholder: "pays: France",
+        placeholder: "France",
         title:"saisissez le pays de décès",
-        size: "2-4",
+        size: "rf-col-4",
         active: true,
     }
 });
@@ -327,6 +341,8 @@ export const filters = writable(false);
 
 export const resultsPerPage = writable(20);
 
+export const defaultResultsPerPage = writable(20);
+
 export const maxResults = writable(__ES_MAX_RESULTS__);
 
 export const maxResultsPerPage = writable(__ES_MAX_RESULTS__);
@@ -337,6 +353,8 @@ export const current = writable(1);
 
 export const scrollId = writable(null);
 
+export const route = writable({});
+
 export const scrollIdTimeout = 59000;
 
 export const updateURL = writable(false);
@@ -344,8 +362,6 @@ export const updateURL = writable(false);
 export const displayMode = writable('card');
 
 export const searchTyping = writable(0);
-
-export const socialIcons = writable(false);
 
 export const sortInput = writable([
     {
@@ -407,8 +423,6 @@ export const sortInput = writable([
 export const sortInputDisplay = writable(false);
 
 export const dataGouvCatalog = writable(null);
-
-export const infoDisplayOption = writable(false);
 
 export const liveConfig = writable(null);
 

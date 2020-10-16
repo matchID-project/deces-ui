@@ -1,76 +1,45 @@
-<div class="container">
+<div
+    class="rf-tile"
+    class:rf-inactive={step > $linkStep}
+    class:rf-success={ (step < $linkStep) || $linkCompleted }
+    class:rf-text--error={error}
+>
     <div
-        class="step"
-        class:inactive={step > $linkStep}
-        class:done={ (step < $linkStep) || $linkCompleted }
-        class:error={error}
+        class="rf-tile__body"
     >
-        <div class="vcenter overflow-hidden">
-            <span>étape {step}</span>
-            {#if ($linkStep > step) || ($linkCompleted)}
-                &nbsp;
-                <span>
-                    <FontAwesomeIcon
-                        icon={error ? faExclamationTriangle : faCheck}
-                        class="is-low"
-                    />
-                </span>
+        <h4
+            class="rf-tile__title"
+            style="position: relative"
+            class:rf-text--error={error}
+        >
+            <span class="rf-margin-right-3N">étape {step}. {title}</span>
+            {#if error}
+                <span
+                    class="rf-fi-alert-line rf-fi--lg"
+                    style="position: absolute;top: 0px;right:0px;"
+                ></span>
+            {:else if ($linkStep > step) || ($linkCompleted)}
+                <span
+                    class="rf-fi-checkbox-line rf-fi--lg"
+                    style="position: absolute;top: 0px;right:0px;"
+                ></span>
+            {:else if ($linkStep === step)}
+                <span
+                    class="rf-fi-play-line rf-fi--lg"
+                    style="position: absolute;top: 0px;right:0px;"
+                ></span>
             {/if}
-            <br/>
-            <span class="is-size-6-7">{@html label}</span>
-
-        </div>
+        </h4>
+        <p class="rf-tile__desc rf-text--center" style="overflow:hidden;text-overflow:ellipsis;">
+            {@html label}
+        </p>
     </div>
 </div>
 <script>
     import { linkStep, linkCompleted } from '../tools/stores.js';
-    import FontAwesomeIcon from './FontAwesomeIcon.svelte';
-    import { faCheck, faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
 
     export let step;
+    export let title;
     export let label;
     export let error;
 </script>
-
-<style>
-	.step {
-		box-sizing: border-box;
-		margin: -10px 0 0px;
-		border: 1px dashed #eee;
-        min-height: 80px;
-        position: relative;
-    }
-
-    .inactive {
-        color: #8099c7;
-    }
-
-    .done {
-        background-color:#209cee;
-    }
-
-    .error {
-        background-color:#e2011c;
-    }
-
-    .vcenter {
-        margin: 0;
-        padding: 10px;
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        -ms-transform: translate(-50%,-50%);
-        transform: translate(-50%, -50%);
-        width: 100%;
-    }
-
-    .overflow-hidden {
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-
-    *, ::after, ::before {
-        box-sizing: inherit;
-    }
-
-</style>

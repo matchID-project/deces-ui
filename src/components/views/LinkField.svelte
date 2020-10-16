@@ -1,16 +1,30 @@
-<div class="container">
-    <div
-        on:drop|preventDefault={drop}
-        ondragover="return false"
-        on:dragenter={() => {hovering = true}}
-        on:dragleave={() => hovering = false}
-        class:hovering={(hovering === true) || (field && field.mapTo)}
-        class="dropzone"
-        class:warning={field && field.warning}
-        on:click|preventDefault={reset}
-    >
-        <div class="vcenter is-size-6-7">
-            {field.label}: <strong>{field.mapTo || 'aucun'}</strong>
+<div
+    class="rf-tile hover-parent"
+    class:rf-background--hovering={(hovering === true)}
+    on:dragover={() => {hovering = true}}
+    on:dragleave={() => {hovering = false}}
+    on:drop|preventDefault={drop}
+    ondragover="return false"
+    class:rf-inactive={(!field || !field.mapTo)}
+    class:rf-color--bf={(field && field.mapTo && !field.warning)}
+    class:rf-color--rm={field && field.warning}
+    class:hovering={hovering === true}
+    on:click|preventDefault={reset}
+>
+    <div class="rf-tile__body">
+        <div class="rf-tile_desc">
+            {field.label}<br/>
+            {#if field && field.mapTo}
+                <span class="rf-fi-arrow-down-s-line rf-fi--lg"></span>
+                <br/>
+                <strong>
+                    {field.mapTo}
+                </strong>
+            {:else}
+                <span class="rf-text--sm">
+                    <br> non associé
+                </span>
+            {/if}
         </div>
     </div>
 </div>
@@ -47,35 +61,11 @@
 </script>
 
 <style>
-	.dropzone {
-		border: 1px dashed #003189;
-        position: relative;
-        padding: .5rem;
-        margin: .5rem;
-        border-radius: 24px;
-        position: relative;
-        min-height: 80px;
-	}
-
-    .vcenter {
-        margin: 0;
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        -ms-transform: translate(-50%,-50%);
-        transform: translate(-50%, -50%);
-        width: 100%;
-        padding: .5rem;
+    .hovering {
+    background-color: var(--yd500);
     }
 
-	.hovering {
-        background-color:#003189;
-        color: #fff;
-	}
-	.hovering * {
-		pointer-events: none; /* so that a child hover child is not a "dragleave" event */
-	}
-    .warning {
-        background-color:#e2011c;
+    .hover-parent * {
+        pointer-events: none;
     }
 </style>

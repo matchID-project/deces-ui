@@ -1,75 +1,102 @@
-<div class="columns">
-	<div class="column padding is-6">
-		<i>actives</i>
-		<ul
-			on:drop|preventDefault={event => dropTop(event, status[0], undefined, -1)}
-			ondragover="return false"
-		>
-			{#if items.filter(x => isActive(x)).length === 0}
-				<li
-					on:drop|preventDefault={event => drop(event, status[0], undefined, -1)}
-					ondragover="return false"
-					on:dragenter={() => hovering = -1}
-					on:dragleave={() => hovering = false}
-					class:hovering={hovering === -1}
-				>
-					<i>glissez un filtre ici</i>
-				</li>
-			{/if}
-			{#each items as item, index (getKey(item))}
-				<li draggable={true}
-					on:drop|preventDefault={event => drop(event, status[0], item, index)}
-					ondragover="return false"
-					on:dragenter={() => hovering = index}
-					on:dragleave={() => hovering = false}
-					class="is-info has-text-white"
-					class:hovering={hovering === index}
-					class:is-hidden={!isActive(item)}
-					on:dragstart={event => dragstart(event, status[0], item, index)}
-					on:click={nextStatus(item, index)}
-					animate:flip={{ duration: 300 }}
-					id={item}>
-					<slot {item} {index}>
-						<p>{getKey(item)}</p>
-					</slot>
-				</li>
-			{/each}
-		</ul>
-	</div>
-	<div class="column padding is-6">
-		<i>inactives</i>
-		<ul
-			on:drop|preventDefault={event => dropTop(event, undefined, undefined, -1)}
-			ondragover="return false"
-		>
-			{#if items.filter(x => !isActive(x)).length === 0}
-				<li
-					on:drop|preventDefault={event => drop(event, undefined, undefined, -1)}
-					ondragover="return false"
-					on:dragenter={() => hovering = -1}
-					on:dragleave={() => hovering = false}
-					class:hovering={hovering === -1}
-				>
-					<i>glissez un filtre ici</i>
-				</li>
-			{/if}
-			{#each items as item, index (getKey(item))}
-				<li draggable={true}
-					on:drop|preventDefault={event => drop(event, undefined, item, index)}
-					ondragover="return false"
-					on:dragenter={() => hovering = index}
-					on:dragleave={() => hovering = false}
-					class:hovering={hovering === index}
-					class:is-hidden={isActive(item)}
-					on:dragstart={event => dragstart(event, undefined, item, index)}
-					animate:flip={{ duration: 300 }}
-					id={item}>
-					<slot {item} {index}>
-						<p>{getKey(item)}</p>
-					</slot>
-				</li>
-			{/each}
-		</ul>
+<div class="rf-container-fluid">
+	<div class="rf-grid-row">
+		<div class="rf-col-6 rf-padding-1N">
+			<strong>actives</strong>
+			<div
+				class="rf-container-fuild"
+				on:drop|preventDefault={event => dropTop(event, status[0], undefined, -1)}
+				ondragover="return false"
+			>
+				<div class="rf-grid-row bordered rf-text--xs">
+					{#if items.filter(x => isActive(x)).length === 0}
+						<div
+							class="rf-col-12 rf-text--center rf-padding-top-3N rf-padding-bottom-3N"
+							on:drop|preventDefault={event => drop(event, status[0], undefined, -1)}
+							ondragover="return false"
+							on:dragenter={() => hovering = -1}
+							on:dragleave={() => hovering = false}
+							class:hovering={hovering === -1}
+						>
+							<span>glissez un filtre ici</span>
+						</div>
+					{/if}
+					{#each items as item, index (getKey(item))}
+						<div
+							class="rf-col-xl-3 rf-col-lg-4 rf-col-md-6 rf-col-sm-6 rf-col-xs-6 rf-padding-1N"
+							draggable={true}
+							on:drop|preventDefault={event => drop(event, status[0], item, index)}
+							on:dragover={() => hovering = index}
+							on:dragleave={() => hovering = false}
+							class:rf-hide={!isActive(item)}
+							on:dragstart={event => dragstart(event, status[0], item, index)}
+							on:click={nextStatus(item, index)}
+							animate:flip={{ duration: 300 }}
+							id={item}
+						>
+							<div class="rf-card rf-card--no-arrow rf-margin-0 rf-padding-0">
+								<div
+									class="rf-card__body rf-margin-0 rf-padding-1N rf-text--center"
+									style="overflow:hidden;text-overflow:ellipsis;"
+									class:hovering={hovering === index}
+								>
+									<slot {item} {index}>
+										<p>{getKey(item)}</p>
+									</slot>
+								</div>
+							</div>
+						</div>
+					{/each}
+				</div>
+			</div>
+		</div>
+		<div class="rf-col-6 rf-padding-1N">
+			<strong>inactives</strong>
+			<div
+				class="rf-container-fuild"
+				on:drop|preventDefault={event => dropTop(event, undefined, undefined, -1)}
+				ondragover="return false"
+			>
+				<div class="rf-grid-row bordered rf-text--xs">
+					{#if items.filter(x => !isActive(x)).length === 0}
+						<div
+							class="rf-col-12 rf-text--center rf-padding-top-3N rf-padding-bottom-3N"
+							on:drop|preventDefault={event => drop(event, undefined, undefined, -1)}
+							ondragover="return false"
+							on:dragenter={() => hovering = -1}
+							on:dragleave={() => hovering = false}
+							class:hovering={hovering === -1}
+						>
+							<span>glissez un filtre ici</span>
+						</div>
+					{/if}
+					{#each items as item, index (getKey(item))}
+						<div
+							class="rf-col-xl-3 rf-col-lg-4 rf-col-md-6 rf-col-sm-6 rf-col-xs-6 rf-padding-1N"
+							draggable={true}
+							on:drop|preventDefault={event => drop(event, undefined, item, index)}
+							on:dragover={() => hovering = index}
+							on:dragleave={() => hovering = false}
+							class:rf-hide={isActive(item)}
+							on:dragstart={event => dragstart(event, undefined, item, index)}
+							animate:flip={{ duration: 300 }}
+							id={item}
+						>
+							<div class="rf-card rf-card--no-arrow rf-margin-0 rf-padding-0">
+								<div
+									class="rf-card__body rf-margin-0 rf-padding-1N rf-text--center"
+									style="overflow:hidden;text-overflow:ellipsis;"
+									class:hovering={hovering === index}
+								>
+									<slot {item} {index}>
+										<p>{getKey(item)}</p>
+									</slot>
+								</div>
+							</div>
+						</div>
+					{/each}
+				</div>
+			</div>
+		</div>
 	</div>
 </div>
 <script>
@@ -113,50 +140,18 @@
 		items[i >= 0 ? i : obj.id] = obj.item;
 		hovering = null;
 	};
+
 </script>
 
 <style>
-	ul {
-		box-sizing: border-box;
-		margin: 10px 0 20px;
-		padding: 10px 0 0 10px;
-		border: 1px solid #eee;
-		min-height: 60px;
-	}
-	ul li {
-		box-sizing: border-box;
-		padding: 6px;
-		list-style-type: none;
-		margin:0 6px 6px 0;
-		background: #f9f9f9;
-		display: inline-block;
-		cursor: pointer;
-		border-radius: 4px;
-		border: 1px solid transparent;
-	}
-	.is-hidden {
-		display: none!important
+	.bordered {
+		border: 2px solid var(--beige);
 	}
 	.hovering {
-		border: 1px solid orange;
+		background-color: var(--yd500)!important;
 	}
 	.hovering * {
 		pointer-events: none; /* so that a child hover child is not a "dragleave" event */
 	}
-
-	.is-info {
-		background-color:#209cee;
-	}
-
-	.has-text-white {
-		color:#fff!important;
-	}
-    .has-text-left {
-        text-align: left!important;
-	}
-
-	.column.padding {
-        padding: 0rem 1rem 0rem 0.75rem;
-    }
 
 </style>

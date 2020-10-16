@@ -1,30 +1,32 @@
 {#if (header && filteredRows && size)}
-    <div style="width: 100%">
+    <div class="rf-container-fluid">
         <p>
         <strong>{filteredRows.length} identités {actionTitle || ''} :</strong>
         </p>
-        <div class="columns header-margin">
-            <div class="column is-4 has-text-right">
-                afficher les colonnes non appariées
-                <input type="checkbox" bind:checked={displayUnmappedColumns}/>
+        <div class="rf-grid-row">
+            <div class="rf-col-4 rf-text--right">
+                <input id="displayColumns"type="checkbox" bind:checked={displayUnmappedColumns}/>
+                <label for="displayColumns">afficher les colonnes non appariées</label>
             </div>
-            <div class="column is-4">
-                <span class="is-size-6-7">
-                    <strong>filtre:</strong>
-                    <input bind:value={subFilter}/>
-                </span>
+            <div class="rf-col-4 rf-padding-left-2N rf-padding-right-2N">
+                <input
+                    class="rf-input"
+                    style="height:1.75rem;margin-top:12px;"
+                    placeholder="filtre"
+                    bind:value={subFilter}
+                />
             </div>
-            <div class="column is-4">
-                valider automatiquement les paires similaires
-                <input type="checkbox" bind:checked={autoCheckSimilar}/>
+            <div class="rf-col-4">
+                <input id="autocheck" type="checkbox" bind:checked={autoCheckSimilar}/>
+                <label for="autocheck">valider automatiquement les paires similaires</label>
             </div>
         </div>
         {#if subFilteredRows.length}
-            <table class="table is-narrow is-size-6-7">
+            <table class="rf-table rf-table--narrow rf-text--sm">
                 <tr>
                     {#each header as col, index}
                         {#if displayUnmappedColumns || (index < mappedColumns+2)}
-                            <th class:is-active={($linkMapping.direct[col] || ['score', 'check'].includes(col))}>
+                            <th class:is-active={!($linkMapping.direct[col] || ['score', 'check'].includes(col))}>
                                 {col}
                             </th>
                         {/if}
@@ -34,8 +36,8 @@
                     {#each rowGroup as row, candidateNumber}
                         <tr
                             on:click={() => {rowSelect = row[$linkResults.header.indexOf('sourceLineNumber')]}}
-                            class:is-striped={rowNumber%2}
-                            class:is-inactive={rowSelect !== row[$linkResults.header.indexOf('sourceLineNumber')]}
+                            class:rf-background--beige={rowNumber%2}
+                            class:rf-inactive={rowSelect !== row[$linkResults.header.indexOf('sourceLineNumber')]}
                         >
                             {#each header.filter((h,index) => index < mappedColumns).map(h => row[$linkResults.header.indexOf(h)]) as col, index}
                                 <td title={col}>
@@ -50,23 +52,21 @@
                             </td>
                             <td class="hcenter has-text-grey-light">
                                 <span
-                                    class:has-text-danger={row[row.length - 2].valid === false}
+                                    class="rf-fi-close-circle-line rf-fi--lg {(row[row.length - 2].valid === false) ? "rf-color--rm" : "rf-inactive"}"
                                     class:is-hidden={(row[$linkResults.header.indexOf('sourceLineNumber')] !== rowSelect) && (row[row.length - 2].valid !== false)}
                                     on:click={() => {row[row.length - 2].valid = autoCheckSimlarRows(row, candidateNumber, false);}}
                                     title="invalider l'appariement"
                                 >
-                                    <FontAwesomeIcon icon={faWindowClose} class="is-lower"/>
                                 </span>
                                 {#if row[$linkResults.header.indexOf('sourceLineNumber')] === rowSelect}
                                     &nbsp;
                                 {/if}
                                 <span
-                                    class:has-text-info={row[row.length - 2].valid === true}
+                                    class="rf-fi-checkbox-line rf-fi--lg {(row[row.length - 2].valid === true) ? "rf-color--bf" : "rf-inactive"}"
                                     class:is-hidden={(row[$linkResults.header.indexOf('sourceLineNumber')] !== rowSelect) && (row[row.length - 2].valid !== true)}
                                     on:click={() => {row[row.length -2].valid = autoCheckSimlarRows(row, candidateNumber, true);}}
                                     title="valider l'appariement"
                                 >
-                                        <FontAwesomeIcon icon={faCheck} class="is-lower"/>
                                 </span>
                             </td>
                             {#if displayUnmappedColumns}
@@ -101,11 +101,6 @@
         linkSourceHeader, linkMapping, linkValidations,
         linkCsvType
     } from '../tools/stores.js';
-    import FontAwesomeIcon from './FontAwesomeIcon.svelte';
-    import {
-      faCheck,
-      faWindowClose
-    } from '@fortawesome/free-solid-svg-icons';
     import jsdiff from 'diff';
 
     export let actionTitle;
@@ -253,9 +248,9 @@
 
         diff.forEach(function (part) {
             if (part.added) {
-            right += '<strong style="color: #e2011c;">' + part.value + '</strong>'
+            right += '<strong style="color: var(--bf500);">' + part.value + '</strong>'
             } else if (part.removed) {
-            left += '<strong style="color: #e2011c;">' + part.value + '</strong>'
+            left += '<strong style="color: var(--rm500);">' + part.value + '</strong>'
             } else {
             left += part.value
             right += part.value

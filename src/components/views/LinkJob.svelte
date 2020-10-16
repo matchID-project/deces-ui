@@ -1,49 +1,51 @@
-<div class="content">
-    <div class="wrap">
-        {#if !$linkWaiter}
-            {#if !$linkJob}
-                <p><strong>votre fichier est en cours de chargement {progressUpload}%</strong></p>
-                <progress class="progress is-info" value={$progressBarUpload}/>
-            {:else}
-                <p> téléchargement terminé </p>
-                <progress class="progress is-info" value={100}/>
-                {#if (progressDownload < 5)}
-                    {#if !error}
-                        {#if !waiting}
-                            <p><strong> traitement en cours {Math.round(progressJob)}%
-                                {#if (jobPredictor && jobPredictor.end)}
-                                    (fin dans environ {Math.round(jobPredictor.end/1000)} secondes)
-                                {/if}
-                            </strong></p>
-                            <progress class="progress is-info" value={$progressBarJob}/>
+<div class="rf-container-fluid">
+    <div class="rf-grid-row">
+        <div class="rf-col-12 rf-padding-2N rf-text--center">
+            {#if !$linkWaiter}
+                {#if !$linkJob}
+                    <p><strong>votre fichier est en cours de chargement {progressUpload}%</strong></p>
+                    <progress class="progress is-info" value={$progressBarUpload}/>
+                {:else}
+                    <p> téléchargement terminé </p>
+                    <progress class="progress is-info" value={100}/>
+                    {#if (progressDownload < 5)}
+                        {#if !error}
+                            {#if !waiting}
+                                <p><strong> traitement en cours {Math.round(progressJob)}%
+                                    {#if (jobPredictor && jobPredictor.end)}
+                                        (fin dans environ {Math.round(jobPredictor.end/1000)} secondes)
+                                    {/if}
+                                </strong></p>
+                                <progress class="progress is-info" value={$progressBarJob}/>
+                            {:else}
+                                <p><strong> traitement en attente
+                                    {#if (queuePredictor && queuePredictor.end)}
+                                        (lancement dans environ {Math.round(queuePredictor.end/1000)} secondes)
+                                    {/if}
+                                </strong></p>
+                                <progress class="progress is-info" value={$progressBarQueue}/>
+                            {/if}
                         {:else}
-                            <p><strong> traitement en attente
-                                {#if (queuePredictor && queuePredictor.end)}
-                                    (lancement dans environ {Math.round(queuePredictor.end/1000)} secondes)
-                                {/if}
-                            </strong></p>
-                            <progress class="progress is-info" value={$progressBarQueue}/>
+                            <p>
+                                <strong>Le traitement a échoué</strong>
+                            </p>
+                            <p>
+                                {error}
+                            </p>
                         {/if}
                     {:else}
+                        <p> traitement terminé </p>
+                        <progress class="progress is-info" value={100}/>
                         <p>
-                            <strong>Le traitement a échoué</strong>
+                            <strong>téléchargement des résultats
+                                {Math.round(Math.min(progressDownload, 100))}%
+                            </strong>
                         </p>
-                        <p>
-                            {error}
-                        </p>
+                        <progress class="progress is-info" value={$progressBarDownload}/>
                     {/if}
-                {:else}
-                    <p> traitement terminé </p>
-                    <progress class="progress is-info" value={100}/>
-                    <p>
-                        <strong>téléchargement des résultats
-                            {Math.round(Math.min(progressDownload, 100))}%
-                        </strong>
-                    </p>
-                    <progress class="progress is-info" value={$progressBarDownload}/>
                 {/if}
             {/if}
-        {/if}
+        </div>
     </div>
 </div>
 <script>
@@ -51,8 +53,6 @@
     import { tweened } from 'svelte/motion';
 	import { sineInOut } from 'svelte/easing';
     import axios from 'axios';
-    import { faSpinner } from '@fortawesome/free-solid-svg-icons';
-    import FontAwesomeIcon from './FontAwesomeIcon.svelte';
     let estimator;
     export let error=false;
 
@@ -280,24 +280,16 @@
 
 <style>
 
-    .wrap {
-        max-width: 1024px;
-        margin-left: auto;
-        margin-right: auto;
-        padding: 8px;
-        text-align: center;
-    }
-
     .progress.is-info::-moz-progress-bar {
-        background-color: #003189;
+        background-color: var(--bf500);
     }
 
     .progress::-moz-progress-bar {
-        background-color: #4a4a4a;
+        background-color: var(--g500);
     }
 
     .progress.is-info::-webkit-progress-value {
-        background-color: #003189;
+        background-color: var(--bf500);
     }
 
     .progress {

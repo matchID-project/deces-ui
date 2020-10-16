@@ -1,7 +1,11 @@
-<div class="container fields-container">
-    {#each fields as field}
-        <LinkField bind:field={field}/>
-    {/each}
+<div class="rf-container--fluid">
+    <div class="rf-grid-row">
+        {#each fields as field}
+            <div class="rf-col rf-margin-1N">
+                <LinkField bind:field={field}/>
+            </div>
+        {/each}
+    </div>
 </div>
 
 <script>

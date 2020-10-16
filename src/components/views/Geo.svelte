@@ -1,31 +1,11 @@
-<Hero height={"6rem"}>
-    <span slot="title">
-      fichier des décès
-    </span>
-    <span slot="content">
-        <div class="hide-desktop">
-            <SearchBox/>
-        </div>
-    </span>
-</Hero>
-
-<div class="geo-container">
-    <div class="results-body">
-        <div class="container">
-            <div class="margin">
-                <div class="map-container">
-                    <Map>
-                        <TileLayer tileServer='cartodb.positron'/>
-                    </Map>
-                </div>
-            </div>
-        </div>
-    </div>
+<div class="map-container">
+    <Map>
+        <TileLayer tileServer='cartodb.positron'/>
+    </Map>
 </div>
 
+
 <script>
-    import Hero from './Hero.svelte';
-    import SearchBox from './SearchBox.svelte';
 	import Map from './Map.svelte';
     import TileLayer from './TileLayer.svelte';
 
