@@ -8,7 +8,7 @@
           <div class="rf-grid-row">
             <div class="rf-col-12">
               <div
-                class="rf-card rf-card--md rf-card--horizontal"
+                class="rf-card rf-card--md rf-card--horizontal rf-href"
                 class:rf-card--left-arrow={currentPage === index}
                 on:click={() => { togglePage(index) }}
               >
