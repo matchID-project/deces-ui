@@ -172,8 +172,10 @@
     let expandMenu = false;
     let organization;
     let searchMenu;
+    let searchOptions;
+    let viewOptions;
 
-    $: searchMenu = [
+    $: searchOptions = [
         { title: 'recherche simplifiée',
           mode: 'simple',
           isActive: !$advancedSearch
@@ -181,7 +183,10 @@
         { title: 'recherche avancée',
           mode: 'advanced',
           isActive: $advancedSearch
-        },
+        }
+    ];
+
+    $: viewOptions = [
         { title: 'affichage simple',
           mode: 'card',
           isActive: $displayMode === 'card'
@@ -199,6 +204,8 @@
           isActive: $displayMode === 'geo'
         }
     ]
+
+    $: searchMenu = ($route.path === '/search') ? [...searchOptions, ...viewOptions] : searchOptions;
 
     $: organization = $themeDnum ? 'Ministère<br>de l\'Intérieur' : 'République<br>Française';
 
