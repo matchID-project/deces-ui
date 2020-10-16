@@ -1,4 +1,4 @@
-<div class="rf-container-fluid rf-text--center rf-margin-top-8N">
+<div class="rf-container-fluid rf-text--center rf-margin-top-8N rf-padding-right-1N rf-padding-left-1N">
   <span class="rf-hide--mobile">
     {#if $themeDnum}
       <img src={"/dnum-logo.svg"} alt="DNUM Logo" width="64" height="64" />
