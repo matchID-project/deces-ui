@@ -14,7 +14,7 @@
                         fichier des décès
                     </span>
                     <p class="rf-service__tagline">
-                        recherche libre parmi <strong>25 millions de décès</strong>
+                        recherche <span class="rf-hide--mobile">libre</span> parmi <strong>25 millions de décès</strong>
                         {#if !$themeDnum}
                             <span class="rf-hide--mobile">depuis 1970</span>
                         {/if}
