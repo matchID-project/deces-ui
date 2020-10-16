@@ -36,20 +36,51 @@
                 <div class="rf-grid-row">
                     {#each steps as step, i}
                         <div class="rf-col-12 rf-padding-1N">
-                            {#if ((i+1) === $linkStep) && step.hero}
-                                <svelte:component this={step.hero} step={i+1} title={step.title} label={step.label} error={step.error}/>
-                            {:else}
-                                <LinkStep step={i+1} title={step.title} label={step.label} error={step.error}/>
-                            {/if}
+                            <div class="rf-container-fluid">
+                                <div class="rf-grid-row">
+                                    <div
+                                        class="rf-col-12 rf-padding-1N"
+                                        class:rf-hide--desktop={$linkStep > 1}
+                                        class:rf-hide--mobile={$linkStep != (i+1)}
+                                    >
+                                        {@html step.text}
+                                    </div>
+                                    <div
+                                        class="rf-col-12 rf-padding-1N"
+                                        class:rf-hide--mobile={$linkStep != (i+1)}
+                                    >
+                                        {#if ((i+1) === $linkStep) && step.card}
+                                            <svelte:component this={step.card} step={i+1} title={step.title} label={step.label} error={step.error}/>
+                                        {:else}
+                                            <LinkStep step={i+1} title={step.title} label={step.label} error={step.error}/>
+                                        {/if}
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     {/each}
                 </div>
             </div>
         </div>
         <div class="rf-padding-left-2N rf-col-xs-12 rf-col-sm-12 rf-col-md-8 rf-col-lg-8 rf-col-xl-8">
-            {#if steps[$linkStep-1].body}
-                <svelte:component this={steps[$linkStep-1].body}/>
-            {/if}
+            <div class="rf-container-fluid">
+                <div class="rf-grid-row">
+                    {#if ($linkStep > 1)}
+                        <div class="rf-col-12 rf-padding-3N rf-hide--mobile">
+                            <strong>
+                                étape {$linkStep}
+                            </strong>
+                            <br>
+                            {@html steps[$linkStep-1].text}
+                        </div>
+                    {/if}
+                    {#if steps[$linkStep-1].body}
+                        <div class="rf-col-12 rf-padding-1N">
+                            <svelte:component this={steps[$linkStep-1].body}/>
+                        </div>
+                    {/if}
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -141,16 +172,75 @@
         steps[3].label = `${cLinks}/${sLinks} identifications validées`;
     }
 
-    const step0Label = `glissez un fichier ici <br/> (${Math.round($linkFileSizeLimit / 1000**2)}Mo maximum)`;
+    const step0Label = `glissez un fichier au format CSV ici <br/> (${Math.round($linkFileSizeLimit / 1000**2)}Mo maximum)`;
     const step1Label = 'choisissez les colonnes à apparier';
     const step2Label= 'attendez le traitement de l\'appariement';
     const step3Label= 'vérifiez les identités appariées';
 
     const steps = [
-        { title: 'fichier', label: step0Label, hero: LinkFile},
-        { title: 'configuration', label: step1Label, body: LinkConfigure},
-        { title: 'traitement', label: step2Label, body: LinkJob },
-        { title: 'validez', label: step3Label, body: LinkCheck }
+        { title: 'fichier',
+          label: step0Label,
+          card: LinkFile,
+          text: `
+            <p>
+                L'appariement est une fonction de rapprochement vous permettant de soumettre une <strong>liste de personnes
+                pour y retrouver les personnes potentiellement décédées</strong>.
+            </p>
+            <p>Le service est offert gratuitement pour
+                assurer notamment la <strong>mise en conformité RGPD ("droit à l'oubli")</strong>. La limite du service est liée à la taille
+                du fichier (100Mo, soit 1 à 2 millions d'enregistrements). Il doit permettre en quelques minutes le traitement
+                de fichiers clients de quelques dizaines de milliers de lignes. Les données transmises sont chiffrées (AES-256) et effacées 1h après
+                la fin du traitement.
+            </p>
+            <p>
+                Le fichier doit être au <strong>format CSV</strong> ('enregistrer sous...'' dans votre tableur préféré) et déposé ci-dessous.
+            </p>
+          `
+        },
+        { title: 'configuration',
+          label: step1Label,
+          body: LinkConfigure,
+          text: `
+            <p>
+                Ensuite, vous pouvez configurer les colonnes de rapprochement. Il est considéré
+                qu'une identité est <strong>fiable</strong> à partir du moment où les quatre champs (nom, prénom, lieu et date de naissance)
+                sont disponibles. Une colonne de date "décès ultérieur à" est également disponible (e.g date de dernier rendez-vous).
+                Si un champ n'est pas de qualité, il est susceptible de générer du silence.
+            </p>
+            <p>
+                N'hésitez pas à tester plusieurs configurations.
+            </p>
+          `
+        },
+        { title: 'traitement',
+          label: step2Label,
+          body: LinkJob,
+          text: `
+            <p>
+                Le traitement peut nécessiter un peu de patience (quelques minutes pour plusieurs
+                dizaines de milliers d'enregistrements). Nous traitons envion 50 enregistrements par seconde, il faudra donc attendre
+                quelques heures pour un fichier d'un million de personnes. Vous pouvez quitter la page et revenir ultérieurement,
+                les données de références sont stockées dans le navigateur, et vous permettront de retrouver vos résultats.
+            </p>
+          `
+        },
+        { title: 'validez',
+          label: step3Label,
+          body: LinkCheck,
+          text: `
+            <p>
+                Dernière étape!
+            </p>
+            <p>
+                Une application vous aide à confirmer les identités appariées,
+                et vous pourrez les télécharger (étape 4). Cette étape est essentielle pour s'assurer de la
+                bonne qualité des appariements.
+            </p>
+            <p>
+                Vous pouvez néanmoins d'ores et déjà télécharger les données et les traiter dans votre tableur.
+            </p>
+          `
+        }
     ];
 
     const reset = async () => {
