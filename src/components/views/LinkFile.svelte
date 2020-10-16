@@ -1,4 +1,4 @@
-<div class="rf-tile hover-parent"
+<div class="rf-tile hover-parent rf-href"
     on:drop|preventDefault={drop}
     ondragover="return false"
     on:dragover={() => {hovering = true}}
@@ -81,7 +81,7 @@
 
 <style>
     .hovering {
-    background-color: var(--yd500);
+        background-color: var(--yd500);
     }
 
     .hover-parent * {

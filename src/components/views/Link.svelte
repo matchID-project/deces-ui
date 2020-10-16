@@ -184,16 +184,16 @@
           text: `
             <p>
                 L'appariement est une fonction de rapprochement vous permettant de soumettre une <strong>liste de personnes
-                pour y retrouver les personnes potentiellement décédées</strong>.
+                pour y retrouver d' éventuels décès</strong>.
             </p>
             <p>Le service est offert gratuitement pour
-                assurer notamment la <strong>mise en conformité RGPD ("droit à l'oubli")</strong>. La limite du service est liée à la taille
+                assurer notamment la <strong>mise en conformité RGPD </strong>("droit à l'oubli"). La limite du service est liée à la taille
                 du fichier (100Mo, soit 1 à 2 millions d'enregistrements). Il doit permettre en quelques minutes le traitement
                 de fichiers clients de quelques dizaines de milliers de lignes. Les données transmises sont chiffrées (AES-256) et effacées 1h après
                 la fin du traitement.
             </p>
             <p>
-                Le fichier doit être au <strong>format CSV</strong> ('enregistrer sous...'' dans votre tableur préféré) et déposé ci-dessous.
+                Le fichier doit être au <strong>format CSV</strong> ('enregistrer sous...' dans votre tableur préféré) et déposé ci-dessous.
             </p>
           `
         },
@@ -202,13 +202,12 @@
           body: LinkConfigure,
           text: `
             <p>
-                Ensuite, vous pouvez configurer les colonnes de rapprochement. Il est considéré
-                qu'une identité est <strong>fiable</strong> à partir du moment où les quatre champs (nom, prénom, lieu et date de naissance)
-                sont disponibles. Une colonne de date "décès ultérieur à" est également disponible (e.g date de dernier rendez-vous).
-                Si un champ n'est pas de qualité, il est susceptible de générer du silence.
+                Ensuite, vous pouvez configurer les colonnes à rapprocher pour assurer l'appariement. Il est considéré
+                qu'une identité est <strong>fiable</strong> à partir du moment où les quatre champs sont disponibles: <strong>nom, prénom, lieu et date de naissance.</strong>
+                Une colonne de date "décès ultérieur à" est également à votre disposition (par exemple, à rapprocher avec une date de dernier rendez-vous).
             </p>
             <p>
-                N'hésitez pas à tester plusieurs configurations.
+                Attention: si un champ n'est pas de qualité, il est susceptible de générer du silence. N'hésitez pas à tester plusieurs configurations.
             </p>
           `
         },
@@ -217,10 +216,17 @@
           body: LinkJob,
           text: `
             <p>
-                Le traitement peut nécessiter un peu de patience (quelques minutes pour plusieurs
+                C'est peut-être le temps d'une pause ?
+            </p>
+            <p>
+                Le traitement peut nécessiter un peu de <strong>patience</strong> (quelques minutes pour plusieurs
                 dizaines de milliers d'enregistrements). Nous traitons envion 50 enregistrements par seconde, il faudra donc attendre
-                quelques heures pour un fichier d'un million de personnes. Vous pouvez quitter la page et revenir ultérieurement,
-                les données de références sont stockées dans le navigateur, et vous permettront de retrouver vos résultats.
+                quelques heures pour un fichier d'un million de personnes. Le temps d'attente est estimé automatiquement.
+            </p>
+            <p>
+                Vous pouvez quitter la page et <strong>revenir ultérieurement</strong>,
+                les données de références sont enregistrées dans le navigateur, et vous permettront de retrouver vos résultats. Attention
+                néanmoins, ceux-ci sont effacés au bout d'une heure si vous n'avez pas consulté la page.
             </p>
           `
         },
@@ -229,15 +235,19 @@
           body: LinkCheck,
           text: `
             <p>
-                Dernière étape!
+                <strong>Dernière étape!</strong>
             </p>
             <p>
-                Une application vous aide à confirmer les identités appariées,
-                et vous pourrez les télécharger (étape 4). Cette étape est essentielle pour s'assurer de la
-                bonne qualité des appariements.
+                Une application vous aide à <strong>valider</strong> les identités appariées.
+                Cette étape est essentielle pour s'assurer de la
+                bonne qualité du traitement.
             </p>
             <p>
                 Vous pouvez néanmoins d'ores et déjà télécharger les données et les traiter dans votre tableur.
+            </p>
+            <p>
+                Si les résultats sont effacés du serveur au bout d'une heure, ils restent enregistrés sur
+                votre navigateur, tant que vous n'avez pas cliqué sur l'icône <span class="rf-fi-delete-line"></span>
             </p>
           `
         }
