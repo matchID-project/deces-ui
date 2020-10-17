@@ -24,9 +24,6 @@
             </div>
         {:else}
           <div class="rf-col-12">
-            <ResultsHeader/>
-          </div>
-          <div class="rf-col-12">
             {#if ($displayMode && ['card','card-expand'].includes($displayMode))}
               <div class="rf-container-fluid">
                 <div class="rf-grid-row is-vcentered">
@@ -36,38 +33,40 @@
                 </div>
               </div>
             {:else if (($displayMode === 'table') && $wasSearched && ($searchResults.length > 0))}
-              <table class="rf-table rf-table--narrow rf-table--striped rf-text--xs rf-color--black rf-margin-top-1N">
-                {#each columns as column}
-                  <col style={column.width ? `width: ${column.width};`: ""}/>
-                {/each}
-                <tr class="is-grey" >
-                  <th colspan="3" scope="colgroup">état civil</th>
-                  <th colspan="5" scope="colgroup">naissance</th>
-                  <th colspan="8" scope="colgroup">décès</th>
-                </tr>
-                <tr class="is-grey" >
-                  {#each columns as column, index}
-                    <th
-                      class="rf-table-th--label {column.field ? "rf-table-th--sortable" : ""}"
-                      scope="col"
-                      on:click={e => toggleSort(column.field)}
-                      title={column.field ? "cliquez pour activer/désactiver le tri" : undefined}
-                    >
-
-                      {#if column.order === "desc"}
-                        <span class="rf-fi-arrow-down-s-line rf-fi--md">{column.label}</span>
-                      {:else if column.order === "asc"}
-                        <span class="rf-fi-arrow-up-s-line rf-fi--md">{column.label}</span>
-                      {:else}
-                        {column.label}
-                      {/if}
-                    </th>
+              <div style="overflow-x: auto">
+                <table class="rf-table rf-table--narrow rf-table--striped rf-text--xs rf-color--black rf-margin-top-1N">
+                  {#each columns as column}
+                    <col style={column.width ? `width: ${column.width};`: ""}/>
                   {/each}
-                </tr>
-                {#each $searchResults as result, index}
-                  <ResultRow result={result} index={index}/>
-                {/each}
-              </table>
+                  <tr class="is-grey" >
+                    <th colspan="3" scope="colgroup">état civil</th>
+                    <th colspan="5" scope="colgroup">naissance</th>
+                    <th colspan="8" scope="colgroup">décès</th>
+                  </tr>
+                  <tr class="is-grey" >
+                    {#each columns as column, index}
+                      <th
+                        class="rf-table-th--label {column.field ? "rf-table-th--sortable" : ""}"
+                        scope="col"
+                        on:click={e => toggleSort(column.field)}
+                        title={column.field ? "cliquez pour activer/désactiver le tri" : undefined}
+                      >
+
+                        {#if column.order === "desc"}
+                          <span class="rf-fi-arrow-down-s-line rf-fi--md">{column.label}</span>
+                        {:else if column.order === "asc"}
+                          <span class="rf-fi-arrow-up-s-line rf-fi--md">{column.label}</span>
+                        {:else}
+                          {column.label}
+                        {/if}
+                      </th>
+                    {/each}
+                  </tr>
+                  {#each $searchResults as result, index}
+                    <ResultRow result={result} index={index}/>
+                  {/each}
+                </table>
+              </div>
 
             {:else if ($displayMode === 'geo')}
                 <Geo/>
