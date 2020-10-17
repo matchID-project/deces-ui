@@ -30,7 +30,7 @@
                 <div class="rf-shortcuts" role="navigation" aria-label="Menu principal">
                     <ul class="rf-nav__list">
                         <li
-                            class="rf-nav__item rf-nav__item--hoverable"
+                            class="rf-nav__item rf-nav__item--hoverable rf-nav__item--shadow"
                             class:rf-nav__item--active={($route.path === '/search')}
                             aria-expanded={expandMenu}
                             aria-controls="rf-recherche"
@@ -46,11 +46,37 @@
                                 id="rf-recherche"
                             >
                                 <ul class="rf-menu__list">
-                                    {#each searchMenu as item}
+                                    <li class="rf-menu__item">
+                                        <strong>mode de recherche</strong>
+                                    </li>
+                                    {#each searchOptions as item}
                                         <li
-                                            class="rf-menu__item rf-href"
+                                            class="rf-menu__item rf-href rf-margin-left-2N"
                                             class:rf-menu__item--active={($route.path === '/search') && item.isActive}
                                             on:click|preventDefault={() => goToPage('search',item.mode)}
+                                        >
+                                            <span class="rf-link">
+                                                {item.title}
+                                            </span>
+                                        </li>
+                                    {/each}
+                                    <li
+                                        class="rf-menu__item"
+                                        class:rf-inactive={!viewOptionsActive}
+                                    >
+                                        <strong>mode d'affichage</strong>
+                                    </li>
+                                    {#each viewOptions as item}
+                                        <li
+                                            class="rf-menu__item rf-margin-left-2N"
+                                            class:rf-menu__item--active={($route.path === '/search') && item.isActive}
+                                            class:rf-href={viewOptionsActive}
+                                            class:rf-inactive={!viewOptionsActive}
+                                            on:click|preventDefault={() => {
+                                                if (viewOptionsActive) {
+                                                    goToPage('search',item.mode)
+                                                }
+                                            }}
                                         >
                                             <span class="rf-link">
                                                 {item.title}
@@ -92,7 +118,7 @@
                     />
             {/if}
             <div
-                class="rf-header__popin"
+                class="rf-header__popin rf-hide--desktop"
                 class:rf-header__popin--expanded={burgerState}
             >
                 <span
@@ -118,9 +144,12 @@
                                 id="rf-recherche"
                             >
                                 <ul class="rf-menu__list">
-                                    {#each searchMenu as item}
+                                    <li class="rf-menu__item">
+                                        <strong>mode de recherche</strong>
+                                    </li>
+                                    {#each searchOptions as item}
                                         <li
-                                            class="rf-menu__item rf-href"
+                                            class="rf-menu__item rf-href rf-margin-left-2N"
                                             class:rf-menu__item--active={($route.path === '/search') && item.isActive}
                                             on:click|preventDefault={() => goToPage('search',item.mode)}
                                         >
@@ -128,6 +157,31 @@
                                                 {item.title}
                                             </span>
                                         </li>
+                                    {/each}
+                                    <li
+                                        class="rf-menu__item"
+                                        class:rf-inactive={!viewOptionsActive}
+                                    >
+                                        <strong>mode d'affichage</strong>
+                                    </li>
+                                    {#each viewOptions as item}
+                                        {#if item.mode !== 'table'}
+                                            <li
+                                                class="rf-menu__item rf-margin-left-2N"
+                                                class:rf-menu__item--active={($route.path === '/search') && item.isActive}
+                                                class:rf-href={viewOptionsActive}
+                                                class:rf-inactive={!viewOptionsActive}
+                                                on:click|preventDefault={() => {
+                                                    if (viewOptionsActive) {
+                                                        goToPage('search',item.mode)
+                                                    }
+                                                }}
+                                            >
+                                                <span class="rf-link">
+                                                    {item.title}
+                                                </span>
+                                            </li>
+                                        {/if}
                                     {/each}
                                 </ul>
                             </div>
@@ -158,7 +212,7 @@
 </header>
 
 <script>
-    import { themeDnum, advancedSearch, displayMode } from '../tools/stores.js';
+    import { themeDnum, advancedSearch, displayMode, wasSearched } from '../tools/stores.js';
     import SearchBox from './SearchBox.svelte';
     import { toggleAdvancedSearch, enableDisplayMode } from '../tools/search.js';
     import { goTo } from '../tools/routes.js';
@@ -171,41 +225,41 @@
     let burgerState = false;
     let expandMenu = false;
     let organization;
-    let searchMenu;
     let searchOptions;
     let viewOptions;
+    let viewOptionsActive;
 
     $: searchOptions = [
-        { title: 'recherche simplifiée',
+        { title: 'simple',
           mode: 'simple',
           isActive: !$advancedSearch
         },
-        { title: 'recherche avancée',
+        { title: 'avancé',
           mode: 'advanced',
           isActive: $advancedSearch
         }
     ];
 
     $: viewOptions = [
-        { title: 'affichage simple',
+        { title: 'simple',
           mode: 'card',
           isActive: $displayMode === 'card'
         },
-        { title: 'affichage complet',
+        { title: 'complet',
           mode: 'card-expand',
           isActive: $displayMode === 'card-expand'
         },
-        { title: 'affichage tableau',
+        { title: 'tableur',
           mode: 'table',
           isActive: $displayMode === 'table'
         },
-        { title: 'affichage géoraphique',
+        { title: 'géoraphique',
           mode: 'geo',
           isActive: $displayMode === 'geo'
         }
-    ]
+    ];
 
-    $: searchMenu = ($route.path === '/search') ? [...searchOptions, ...viewOptions] : searchOptions;
+    $: viewOptionsActive = ($route && ($route.path === '/search')) && $wasSearched;
 
     $: organization = $themeDnum ? 'Ministère<br>de l\'Intérieur' : 'République<br>Française';
 
