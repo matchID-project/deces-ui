@@ -16,13 +16,11 @@
                             />
                         </div>
                         <div class="rf-card__body">
-                            <h4 class="rf-card_lead rf-margin-0 {expand ? "" : "rf-text"}">
-                                <span class="rf-hide--mobile">
-                                    {result.name.last.toUpperCase()} { result.name.first ? result.name.first.join(' ') : '' }
-                                </span>
-                                <span class="rf-hide--desktop">
-                                    {result.name.last.toUpperCase()} { result.name.first ? result.name.first[0] : '' }
-                                </span>
+                            <h4
+                                class="rf-card_lead rf-margin-0 {expand ? "" : "rf-text"}"
+                                style="overflow: hidden; text-overflow:ellipsis; {expand ? "" : "height: 1.5rem;"}"
+                            >
+                                {result.name.last.toUpperCase()} { result.name.first ? result.name.first.join(' ') : '' }
                             </h4>
 
                             <p class="rf-card__desc rf-margin-0">

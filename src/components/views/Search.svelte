@@ -21,8 +21,20 @@
             <SearchBox/>
         </div>
         {#if displayResults}
-            <div class="rf-col-xs-12 rf-col-sm-12 rf-col-md-8 rf-col-lg-8 rf-col-xl-8">
-                <Results/>
+            <div
+                class="rf-col-xs-12 rf-col-sm-12 rf-col-md-{12 - size.md} rf-col-lg-{12 - size.lg} rf-col-xl-{12 - size.xl}"
+                style="transition: all 300ms ease;"
+            >
+                <div class="rf-container--fluid">
+                    <div class="rf-grid-row">
+                        <div class="rf-col-xs-12 rf-col-sm-12 rf-col-md-12 rf-col-lg-12 rf-col-xl-10">
+                            <ResultsHeader/>
+                        </div>
+                        <div class="rf-col-xs-12 rf-col-sm-12 rf-col-md-12 rf-col-lg-12 rf-col-xl-{$displayMode === 'table' ? "12" : "10"}">
+                            <Results/>
+                        </div>
+                    </div>
+                </div>
             </div>
         {:else}
             <div class="rf-col-3"></div>
@@ -40,6 +52,7 @@
     import { advancedSearch, displayMode, searchInput, waitSearch} from '../tools/stores.js';
     import { searchTrigger } from '../tools/search.js';
 	import SearchBox from './SearchBox.svelte';
+    import ResultsHeader from './ResultsHeader.svelte';
     import Results from './Results.svelte';
     import PunchMessage from './PunchMessage.svelte';
     import { faSpinner } from '@fortawesome/free-solid-svg-icons'
@@ -56,8 +69,8 @@
     $: displayResults = (Object.keys($searchInput).some(k => $searchInput[k].value) || !firstTime);
     $: size = {
         md: displayResults ? 4 : 6,
-        lg: displayResults ? 4 : 6,
-        xl: displayResults ? 3 : 6
+        lg: displayResults ? (['table', 'geo'].includes($displayMode) ? 3 : 4) : 6,
+        xl: displayResults ? (['table', 'geo'].includes($displayMode) ? 2 : 3) : 6
     };
     $: margin = displayResults ? "" : ($advancedSearch ? "" : "rf-margin-top-8N")
 

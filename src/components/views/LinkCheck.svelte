@@ -54,10 +54,8 @@
                         </button>
                     </span>
                 </p>
-
                 <LinkCheckTable filter={filterUnchecked} bind:rowSelect={rowSelect} sort={'scoreDesc'} master=true actionTitle={"à valider"} bind:size={unCheckedLinks}/>
                 <LinkCheckTable filter={ filterChecked } bind:rowSelect={rowSelect} sort={'scoreAsc'} actionTitle={"validées"} bind:size={checkedLinks}/>
-
             {/if}
         </div>
 
