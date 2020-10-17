@@ -4,9 +4,13 @@
         <strong>{filteredRows.length} identités {actionTitle || ''} :</strong>
         </p>
         <div class="rf-grid-row">
-            <div class="rf-col-4 rf-text--right">
-                <input id="displayColumns"type="checkbox" bind:checked={displayUnmappedColumns}/>
-                <label for="displayColumns">afficher les colonnes non appariées</label>
+            <div class="rf-col-4 rf-content--center">
+                <div style="overflow:hidden;text-overflow:ellipsis">
+                    <input id="displayColumns" type="checkbox" bind:checked={displayUnmappedColumns}/>
+                    <label class="rf-label" for="displayColumns">
+                        afficher toutes les colonnes
+                    </label>
+                </div>
             </div>
             <div class="rf-col-4 rf-padding-left-2N rf-padding-right-2N">
                 <input
@@ -16,84 +20,92 @@
                     bind:value={subFilter}
                 />
             </div>
-            <div class="rf-col-4">
-                <input id="autocheck" type="checkbox" bind:checked={autoCheckSimilar}/>
-                <label for="autocheck">valider automatiquement les paires similaires</label>
+            <div class="rf-col-4 rf-content--center">
+                <div style="overflow:hidden;text-overflow:ellipsis">
+                    <input id="autocheck" type="checkbox" bind:checked={autoCheckSimilar}/>
+                    <label class="rf-label" for="autocheck">
+                        valider les paires similaires
+                    </label>
+                </div>
             </div>
         </div>
-        {#if subFilteredRows.length}
-            <table class="rf-table rf-table--narrow rf-text--sm">
-                <tr>
-                    {#each header as col, index}
-                        {#if displayUnmappedColumns || (index < mappedColumns+2)}
-                            <th class:is-active={!($linkMapping.direct[col] || ['score', 'check'].includes(col))}>
-                                {col}
-                            </th>
-                        {/if}
-                    {/each}
-                </tr>
-                {#each subFilteredRows.slice((page-1)*page,page*pageSize) as rowGroup, rowNumber}
-                    {#each rowGroup as row, candidateNumber}
-                        <tr
-                            on:click={() => {rowSelect = row[$linkResults.header.indexOf('sourceLineNumber')]}}
-                            class:rf-background--beige={rowNumber%2}
-                            class:rf-inactive={rowSelect !== row[$linkResults.header.indexOf('sourceLineNumber')]}
-                        >
-                            {#each header.filter((h,index) => index < mappedColumns).map(h => row[$linkResults.header.indexOf(h)]) as col, index}
-                                <td title={col}>
-                                    {@html formatField(col, header[index], row)}
-                                </td>
-                            {/each}
-                            <td
-                                class="hcenter"
-                                title={get(row,'scores')}
-                            >
-                                {Math.round(get(row,'score')*100)}%
-                            </td>
-                            <td class="hcenter has-text-grey-light">
-                                <span
-                                    class="rf-fi-close-circle-line rf-fi--lg {(row[row.length - 2].valid === false) ? "rf-color--rm" : "rf-inactive"}"
-                                    class:is-hidden={(row[$linkResults.header.indexOf('sourceLineNumber')] !== rowSelect) && (row[row.length - 2].valid !== false)}
-                                    on:click={() => {row[row.length - 2].valid = autoCheckSimlarRows(row, candidateNumber, false);}}
-                                    title="invalider l'appariement"
-                                >
-                                </span>
-                                {#if row[$linkResults.header.indexOf('sourceLineNumber')] === rowSelect}
-                                    &nbsp;
-                                {/if}
-                                <span
-                                    class="rf-fi-checkbox-line rf-fi--lg {(row[row.length - 2].valid === true) ? "rf-color--bf" : "rf-inactive"}"
-                                    class:is-hidden={(row[$linkResults.header.indexOf('sourceLineNumber')] !== rowSelect) && (row[row.length - 2].valid !== true)}
-                                    on:click={() => {row[row.length -2].valid = autoCheckSimlarRows(row, candidateNumber, true);}}
-                                    title="valider l'appariement"
-                                >
-                                </span>
-                            </td>
-                            {#if displayUnmappedColumns}
-                                {#each header.filter((h,index) => index >= (mappedColumns+2)).map(h => row[$linkResults.header.indexOf(h)]) as col, index}
-                                    <td title={col}>
+        <div class="rf-col-12">
+            {#if subFilteredRows.length}
+                <div style="overflow-x:auto">
+                    <table class="rf-table rf-table--narrow rf-text--sm">
+                        <tr>
+                            {#each header as col, index}
+                                {#if displayUnmappedColumns || (index < mappedColumns+2)}
+                                    <th class:is-active={!($linkMapping.direct[col] || ['score', 'check'].includes(col))}>
                                         {col}
-                                    </td>
-                                {/each}
-                            {/if}
+                                    </th>
+                                {/if}
+                            {/each}
                         </tr>
-                    {/each}
-                {/each}
-                {#if filteredRows.length > pageSize}
-                    <tr>
-                        {#each header as col, index}
-                            {#if displayUnmappedColumns || (index < mappedColumns+2)}
-                                <td>
-                                    ...
-                                </td>
-                            {/if}
+                        {#each subFilteredRows.slice((page-1)*page,page*pageSize) as rowGroup, rowNumber}
+                            {#each rowGroup as row, candidateNumber}
+                                <tr
+                                    on:click={() => {rowSelect = row[$linkResults.header.indexOf('sourceLineNumber')]}}
+                                    class:rf-background--beige={rowNumber%2}
+                                    class:rf-inactive={rowSelect !== row[$linkResults.header.indexOf('sourceLineNumber')]}
+                                >
+                                    {#each header.filter((h,index) => index < mappedColumns).map(h => row[$linkResults.header.indexOf(h)]) as col, index}
+                                        <td title={col}>
+                                            {@html formatField(col, header[index], row)}
+                                        </td>
+                                    {/each}
+                                    <td
+                                        class="hcenter"
+                                        title={get(row,'scores')}
+                                    >
+                                        {Math.round(get(row,'score')*100)}%
+                                    </td>
+                                    <td class="hcenter has-text-grey-light">
+                                        <span
+                                            class="rf-fi-close-circle-line rf-fi--lg {(row[row.length - 2].valid === false) ? "rf-color--rm" : "rf-inactive"}"
+                                            class:is-hidden={(row[$linkResults.header.indexOf('sourceLineNumber')] !== rowSelect) && (row[row.length - 2].valid !== false)}
+                                            on:click={() => {row[row.length - 2].valid = autoCheckSimlarRows(row, candidateNumber, false);}}
+                                            title="invalider l'appariement"
+                                        >
+                                        </span>
+                                        {#if row[$linkResults.header.indexOf('sourceLineNumber')] === rowSelect}
+                                            &nbsp;
+                                        {/if}
+                                        <span
+                                            class="rf-fi-checkbox-line rf-fi--lg {(row[row.length - 2].valid === true) ? "rf-color--bf" : "rf-inactive"}"
+                                            class:is-hidden={(row[$linkResults.header.indexOf('sourceLineNumber')] !== rowSelect) && (row[row.length - 2].valid !== true)}
+                                            on:click={() => {row[row.length -2].valid = autoCheckSimlarRows(row, candidateNumber, true);}}
+                                            title="valider l'appariement"
+                                        >
+                                        </span>
+                                    </td>
+                                    {#if displayUnmappedColumns}
+                                        {#each header.filter((h,index) => index >= (mappedColumns+2)).map(h => row[$linkResults.header.indexOf(h)]) as col, index}
+                                            <td title={col}>
+                                                {col}
+                                            </td>
+                                        {/each}
+                                    {/if}
+                                </tr>
+                            {/each}
                         {/each}
-                    </tr>
-                {/if}
-            </table>
-        {:else if subFilter}
-            <p>attention, le filtre <strong>{subFilter}</strong> est trop restrictif </p>
-        {/if}
+                        {#if filteredRows.length > pageSize}
+                            <tr>
+                                {#each header as col, index}
+                                    {#if displayUnmappedColumns || (index < mappedColumns+2)}
+                                        <td>
+                                            ...
+                                        </td>
+                                    {/if}
+                                {/each}
+                            </tr>
+                        {/if}
+                    </table>
+                </div>
+            {:else if subFilter}
+                <p>attention, le filtre <strong>{subFilter}</strong> est trop restrictif </p>
+            {/if}
+        </div>
     </div>
 {/if}
 <script>
