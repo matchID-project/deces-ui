@@ -1,4 +1,4 @@
-{#if $wasSearched || ($displayMode === 'geo')}
+{#if ($wasSearched || ($displayMode === 'geo')) && !(($searchResults.length === 1) && ($searchResults[0].error))}
     <table class="rf-table rf-table--narrow rf-text--xs rf-color--black rf-margin-bottom-0" style="width: 100%!important;">
         <tr>
             <td class="rf-hide--mobile rf-td--vcenter rf-text--left" style="width: 20px;">
