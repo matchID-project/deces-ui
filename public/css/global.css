@@ -96,7 +96,7 @@ border-radius: 0 .25rem 0 0;
 }
 
 .rf-text--error {
-  color: var(--rm500);
+  color: var(--rm500)!important;
 }
 
 .rf-hovering {
@@ -380,6 +380,10 @@ tr .th-inactive {
   width: 100%;
 }
 
+.rf-nav__item.rf-nav__item--shadow:hover {
+  box-shadow:0 8px 8px rgba(10,10,10,0.1);
+}
+
 .rf-nav__item.rf-nav__item--hoverable:hover .rf-menu{
   opacity: 1;
   visibility: visible;
@@ -388,6 +392,10 @@ tr .th-inactive {
 
 .rf-nav__item.rf-nav__item--hoverable:hover .rf-menu::before {
   margin-top: 0;
+}
+
+.rf-nav__item.rf-nav__item--shadow .rf-menu__list {
+  box-shadow:0 8px 8px rgba(10,10,10,0.1);
 }
 
 /* Leaflet */
