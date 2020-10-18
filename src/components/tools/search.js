@@ -167,10 +167,10 @@ export const searchURLUpdate = async () => {
 export const toggleAdvancedSearch = async (arg) => {
     if (arg !== myAdvancedSearch) {
         await searchCanvas.update(v => {
-        Object.keys(v).map(key => {
-            v[key].active = !v[key].active;
-        });
-        return v
+            Object.keys(v).map(key => {
+                v[key].active = !v[key].active;
+            });
+            return v
         });
         await advancedSearch.update(v => Object.keys(mySearchCanvas).some(key => mySearchCanvas[key].active === mySearchCanvas[key].advanced))
         await searchInput.update(v => {
@@ -189,9 +189,10 @@ export const toggleAdvancedSearch = async (arg) => {
                 else if (key === 'firstName') { v[key].value = firstName; }
                 else if (key === 'lastName') { v[key].value = lastName; }
                 else { v[key].value = ''; }
+            });
+            return v
         });
-        return v
-        });
+        await searchSubmit();
         await searchURLUpdate();
     }
 };
