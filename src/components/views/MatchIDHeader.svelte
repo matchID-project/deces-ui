@@ -257,7 +257,7 @@
           mode: 'table',
           isActive: $displayMode === 'table'
         },
-        { title: 'géoraphique',
+        { title: 'géographique',
           mode: 'geo',
           isActive: $displayMode === 'geo'
         }
