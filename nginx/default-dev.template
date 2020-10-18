@@ -21,7 +21,7 @@ server {
   # frontend (dev, npm server)
 
   location / {
-    limit_req zone=app burst=10 nodelay;
+    limit_req zone=app burst=30 nodelay;
     limit_req_status 429;
     rewrite "^/[a-zA-Z0-9\/]+$" / break;
     proxy_pass http://frontend-dev;
