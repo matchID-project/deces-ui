@@ -43,6 +43,7 @@
                             </span>
                             <div
                                 class="rf-menu"
+                                class:rf-menu--expanded={expandMenu}
                                 id="rf-recherche"
                             >
                                 <ul class="rf-menu__list">
@@ -123,25 +124,27 @@
             >
                 <span
                     class="rf-btn rf-fi-close-line"
-                    on:click|preventDefault={toggleBurger}
+                    on:click={toggleBurger}
                 >
                 </span>
+                <nav role="navigation" aria-label="Menu mobile">
                     <ul class="rf-nav__list">
                         <li
-                            class="rf-nav__item rf-nav__item--hoverable"
+                            class="rf-nav__item"
                             class:rf-nav__item--active={($route.path === '/search')}
                             aria-expanded={expandMenu}
-                            aria-controls="rf-recherche"
-                            on:click|preventDefault={() => {expandMenu = !expandMenu}}
+                            aria-controls="rf-recherche-popin"
                         >
                             <span
                                 class="rf-btn"
+                                on:click|preventDefault={() => {expandMenu = !expandMenu}}
                             >
                                 recherche
                             </span>
                             <div
                                 class="rf-menu"
-                                id="rf-recherche"
+                                class:rf-menu--expanded={expandMenu}
+                                id="rf-recherche-popin"
                             >
                                 <ul class="rf-menu__list">
                                     <li class="rf-menu__item">
@@ -206,6 +209,7 @@
                             </span>
                         </li>
                     </ul>
+                </nav>
             </div>
         </div>
     </div>

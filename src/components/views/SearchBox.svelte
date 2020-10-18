@@ -1,3 +1,4 @@
+<GoogleAnalytics {...tag}/>
 <div class="rf-container-fluid" style="margin-top: -16px;">
   <form on:submit|preventDefault={handleSubmit}>
     <div class="rf-grid-row" style="position:relative;">
