@@ -139,8 +139,9 @@
 
     const guessSeparator = (csv) => {
         let max = 0;
+        const csvLines = csv.split(/(\r\n|\n\r|\n|\r)/).map(r => r.trim()).filter(r => r);
         potentialSeparators.map(c => {
-            const n = csv.split(/\s*\r?\n\r?\s*/).filter(r => r.length).map(r => r.split(c).length).reduce((a,b) => Math.min(a,b))
+            const n = csvLines.map(r => r.split(c).length).reduce((a,b) => Math.min(a,b))
             if (n > max) { max = n; sep = c}
         });
     };
@@ -151,7 +152,7 @@
             const re = new RegExp(`^(${q}(([^${q}]|${q}${q})*?)${q}|([^${protect(sep)}]*))(\\${protect(sep)}(.*))?$`);
             const re2 = new RegExp(`${q}${q}`,'g');
             const quoteCounts = [0, 0];
-            rows = csv.split(/\s*\r?\n\r?\s*/).filter(r => r.length).map(r => {
+            rows = csv.split(/(\r\n|\n\r|\n|\r)/).map(r => r.trim()).filter(r => r).map(r => {
                 const row = [];
                 let i = 0;
                 while(r !== undefined) {
