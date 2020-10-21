@@ -142,7 +142,8 @@
         birthCity: 'birth.city',
         birthDepartment: 'birth.departmentCode',
         birthCountry: 'birth.country',
-        deathDate: 'death.date'
+        deathDate: 'death.date',
+        sex: 'sex'
     };
 
     $: if ($linkResults || ($linkResults && subFilter)) {
@@ -247,7 +248,7 @@
     const coloredDiff = (doubleArray) => {
         doubleArray = doubleArray.filter(x => x);
         if (doubleArray.length !== 2) {
-            return `<strong style="color: #e2011c;">${doubleArray.join(' ') || '<vide>'}</strong>`
+            return `<strong style="color: var(--rm500);">${doubleArray.join(' ') || '<vide>'}</strong>`
         }
         if (doubleArray[0] === doubleArray[1]) return doubleArray[0]
 
@@ -327,14 +328,6 @@
 
   td.hcenter {
     text-align: center;
-  }
-
-  .is-striped {
-    background-color: #fafafa;
-  }
-
-  .has-text-right {
-      text-align: right!important;
   }
 
 </style>
