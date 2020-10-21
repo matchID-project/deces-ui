@@ -23,7 +23,11 @@
             <div class="rf-col-4 rf-content--center">
                 <div style="overflow:hidden;text-overflow:ellipsis">
                     <input id="autocheck" type="checkbox" bind:checked={autoCheckSimilar}/>
-                    <label class="rf-label" for="autocheck">
+                    <label
+                        class="rf-label"
+                        for="autocheck"
+                        title="cette option validera automatiquement toute les paires ayant le même profil de rapprochement"
+                    >
                         valider les paires similaires
                     </label>
                 </div>
