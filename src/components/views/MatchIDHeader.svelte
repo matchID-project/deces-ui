@@ -34,7 +34,6 @@
                             class:rf-nav__item--active={($route.path === '/search')}
                             aria-expanded={expandMenu}
                             aria-controls="rf-recherche"
-                            on:click|preventDefault={() => {expandMenu = !expandMenu}}
                         >
                             <span
                                 class="rf-btn"
@@ -43,7 +42,6 @@
                             </span>
                             <div
                                 class="rf-menu"
-                                class:rf-menu--expanded={expandMenu}
                                 id="rf-recherche"
                             >
                                 <ul class="rf-menu__list">
