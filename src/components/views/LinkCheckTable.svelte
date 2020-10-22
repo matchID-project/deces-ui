@@ -23,7 +23,11 @@
             <div class="rf-col-4 rf-content--center">
                 <div style="overflow:hidden;text-overflow:ellipsis">
                     <input id="autocheck" type="checkbox" bind:checked={autoCheckSimilar}/>
-                    <label class="rf-label" for="autocheck">
+                    <label
+                        class="rf-label"
+                        for="autocheck"
+                        title="cette option validera automatiquement toute les paires ayant le même profil de rapprochement"
+                    >
                         valider les paires similaires
                     </label>
                 </div>
@@ -142,7 +146,8 @@
         birthCity: 'birth.city',
         birthDepartment: 'birth.departmentCode',
         birthCountry: 'birth.country',
-        deathDate: 'death.date'
+        deathDate: 'death.date',
+        sex: 'sex'
     };
 
     $: if ($linkResults || ($linkResults && subFilter)) {
@@ -156,12 +161,12 @@
         ];
         mappedColumns = $linkSourceHeader.filter(h => ($linkMapping.direct && $linkMapping.direct[h])).length;
         filteredRows = $linkResults.rows.map((r, i) => {
-                const row = r.slice(0).map((rr, j) => {
-                    rr.push($linkValidations[i][j] || { checked: false });
-                    rr.push(i);
-                    return rr;
-                })
-                return row;
+                return r.map((rr, j) => {
+                    const rrr = rr.slice(0);
+                    rrr.push($linkValidations[i][j] || { checked: false });
+                    rrr.push(i);
+                    return rrr;
+                });
             })
             .filter(row => applyFilter(row, filter))
             .sort(sorts[sort])
@@ -247,7 +252,7 @@
     const coloredDiff = (doubleArray) => {
         doubleArray = doubleArray.filter(x => x);
         if (doubleArray.length !== 2) {
-            return `<strong style="color: #e2011c;">${doubleArray.join(' ') || '<vide>'}</strong>`
+            return `<strong style="color: var(--rm500);">${doubleArray.join(' ') || '<vide>'}</strong>`
         }
         if (doubleArray[0] === doubleArray[1]) return doubleArray[0]
 
@@ -327,14 +332,6 @@
 
   td.hcenter {
     text-align: center;
-  }
-
-  .is-striped {
-    background-color: #fafafa;
-  }
-
-  .has-text-right {
-      text-align: right!important;
   }
 
 </style>
