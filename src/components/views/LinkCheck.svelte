@@ -183,14 +183,3 @@
 
 </script>
 
-<style>
-    .check-body {
-        text-align: center;
-    }
-  .wait-center {
-    text-align: center;
-    transform: translateY(50%);
-    height: 14rem;
-    additive-symbols: 14rem;
-  }
-</style>
