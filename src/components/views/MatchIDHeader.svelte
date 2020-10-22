@@ -1,5 +1,5 @@
 <header class="rf-header">
-    <div class="rf-container">
+    <div class="rf-container rf-container__header">
         <div class="rf-header__body">
             <div class="rf-header__brand">
                 <span class="rf-logo" title="{organization.replace(/<br>/,' ')}">
@@ -20,13 +20,6 @@
                         {/if}
                     </p>
                 </div>
-                <button
-                    class="rf-btn rf-fi-menu-fill rf-btn--icon"
-                    aria-control="header-nav-popin"
-                    on:click|preventDefault={toggleBurger}
-                    title="ouvrir le menu"
-                >
-                </button>
             </div>
             <div class="rf-header__tools">
                 <div class="rf-shortcuts" role="navigation" aria-label="Menu principal">
@@ -118,8 +111,17 @@
                         width="80px"
                     />
             {/if}
+            <div class="rf-hide--desktop" style="position: absolute; top: 8px; right: 8px">
+                    <button
+                        class="rf-btn rf-fi-menu-fill rf-btn--icon rf-background--white rf-color--black"
+                        aria-control="header-nav-popin"
+                        on:click|preventDefault={toggleBurger}
+                        title="ouvrir le menu"
+                    >
+                    </button>
+                <div>
             <div
-                id="header-tools-popin"
+                id="header-nav-popin"
                 class="rf-header__tools rf-header__popin rf-hide--desktop"
                 class:rf-header__popin--expanded={burgerState}
             >
@@ -127,7 +129,7 @@
                     class="rf-btn rf-fi-close-line rf-btn--icon-right rf-btn--sm"
                     on:click={toggleBurger}
                     title="fermer"
-                    aria-controls="header-tools-popin"
+                    aria-controls="header-nav-popin"
                 >
                     <span>
                         fermer
