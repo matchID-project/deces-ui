@@ -129,9 +129,7 @@
     }
 
     const toCsv = (filter) => {
-        const header = $linkCompleteResults.header;
-        header.push('valid');
-        header.push('checked');
+        const header = [...$linkCompleteResults.header, 'valid', 'checked'];
         let rows, index, map;
         if (filter) {
             rows = $linkResults.rows;
