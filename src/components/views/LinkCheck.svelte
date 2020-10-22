@@ -108,7 +108,7 @@
                 return field
             }
         } else {
-            return field ? protectField(JSON.stringify(field)) : '';
+            return [null, undefined].includes(field) ? '' : protectField(JSON.stringify(field));
         }
     }
 
