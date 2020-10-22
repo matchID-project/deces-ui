@@ -147,12 +147,12 @@
             header.map(h => protectField(h)).join($linkCsvType.sep) + '\r\n',
             ...flatten(rows.map((r,i) => {
                     const l = $linkValidations[index(i)];
-                    const row = r.slice(0).map((rr,j) => {
+                    return r.map((rr,j) => {
+                        const rrr = rr.slice(0);
                         rr.push(l && l[j] && [true, false].includes(l[j].valid) ? l[j].valid : '');
                         rr.push(l && l[j] && (l[j].checked ? ((l[j].checked === "auto") ? "auto": true) : undefined) || undefined);
                         return rr;
                     });
-                    return row;
                 }),1)
                 .filter(row => !filter || row[header.indexOf('score')])
                 .map(row => header.map((col, i) => protectField(row[i])).join($linkCsvType.sep) + '\r\n')];

@@ -161,12 +161,12 @@
         ];
         mappedColumns = $linkSourceHeader.filter(h => ($linkMapping.direct && $linkMapping.direct[h])).length;
         filteredRows = $linkResults.rows.map((r, i) => {
-                const row = r.slice(0).map((rr, j) => {
-                    rr.push($linkValidations[i][j] || { checked: false });
-                    rr.push(i);
-                    return rr;
-                })
-                return row;
+                return r.map((rr, j) => {
+                    const rrr = rr.slice(0);
+                    rrr.push($linkValidations[i][j] || { checked: false });
+                    rrr.push(i);
+                    return rrr;
+                });
             })
             .filter(row => applyFilter(row, filter))
             .sort(sorts[sort])
