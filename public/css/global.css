@@ -394,6 +394,9 @@ tr .th-inactive {
   margin-top: 0;
 }
 
+.rf-nav__item.rf-nav__item--hoverable:hover .rf-btn::before {
+  transform: rotate(-180deg); }
+
 .rf-nav__item.rf-nav__item--shadow .rf-menu__list {
   box-shadow:0 8px 8px rgba(10,10,10,0.1);
 }

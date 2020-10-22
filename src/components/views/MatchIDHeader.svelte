@@ -20,11 +20,13 @@
                         {/if}
                     </p>
                 </div>
-                <span
-                    class="rf-btn rf-fi-menu-fill"
+                <button
+                    class="rf-btn rf-fi-menu-fill rf-btn--icon"
+                    aria-control="header-nav-popin"
                     on:click|preventDefault={toggleBurger}
+                    title="ouvrir le menu"
                 >
-                </span>
+                </button>
             </div>
             <div class="rf-header__tools">
                 <div class="rf-shortcuts" role="navigation" aria-label="Menu principal">
@@ -32,14 +34,14 @@
                         <li
                             class="rf-nav__item rf-nav__item--hoverable rf-nav__item--shadow"
                             class:rf-nav__item--active={($route.path === '/search')}
-                            aria-expanded={expandMenu}
-                            aria-controls="rf-recherche"
                         >
-                            <span
+                            <button
                                 class="rf-btn"
+                                aria-expanded={expandMenu}
+                                aria-controls="rf-recherche"
                             >
                                 recherche
-                            </span>
+                            </button>
                             <div
                                 class="rf-menu"
                                 id="rf-recherche"
@@ -117,14 +119,20 @@
                     />
             {/if}
             <div
-                class="rf-header__popin rf-hide--desktop"
+                id="header-tools-popin"
+                class="rf-header__tools rf-header__popin rf-hide--desktop"
                 class:rf-header__popin--expanded={burgerState}
             >
-                <span
-                    class="rf-btn rf-fi-close-line"
+                <button
+                    class="rf-btn rf-fi-close-line rf-btn--icon-right rf-btn--sm"
                     on:click={toggleBurger}
+                    title="fermer"
+                    aria-controls="header-tools-popin"
                 >
-                </span>
+                    <span>
+                        fermer
+                    </span>
+                </button>
                 <nav role="navigation" aria-label="Menu mobile">
                     <ul class="rf-nav__list">
                         <li
@@ -133,12 +141,13 @@
                             aria-expanded={expandMenu}
                             aria-controls="rf-recherche-popin"
                         >
-                            <span
+                            <button
                                 class="rf-btn"
+                                aria-expanded={expandMenu}
                                 on:click|preventDefault={() => {expandMenu = !expandMenu}}
                             >
                                 recherche
-                            </span>
+                            </button>
                             <div
                                 class="rf-menu"
                                 class:rf-menu--expanded={expandMenu}
