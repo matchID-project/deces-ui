@@ -141,21 +141,21 @@
             map = {};
             let j = 0;
             $linkResults.rows.forEach(r => {
-                map[r[0][$linkResults.header.indexOf('sourceLineNumber')]] = j++;
+                map[r[0][$linkResults.header.indexOf('sourceLineNumber')] - 1] = j++;
             });
             index = (i) => map[i];
         }
         return [
             header.map(h => protectField(h)).join($linkCsvType.sep) + '\r\n',
-            ...rows.map((r,i) => {
-                const l = $linkValidations[index(i)];
-                r.forEach((rr,j) => {
-                    rr.push(l && l[j] && l[j].valid || '');
-                    rr.push(l && l[j] && (l[j].checked ? ((l[j].checked === "auto") ? "auto": true) : false) || false);
-                });
-                return r
-                })
-                .map(row => flatten(row, 1))
+            ...flatten(rows.map((r,i) => {
+                    const l = $linkValidations[index(i)];
+                    const row = r.slice(0).map((rr,j) => {
+                        rr.push(l && l[j] && [true, false].includes(l[j].valid) ? l[j].valid : '');
+                        rr.push(l && l[j] && (l[j].checked ? ((l[j].checked === "auto") ? "auto": true) : undefined) || undefined);
+                        return rr;
+                    });
+                    return row;
+                }),1)
                 .filter(row => !filter || row[header.indexOf('score')])
                 .map(row => header.map((col, i) => protectField(row[i])).join($linkCsvType.sep) + '\r\n')];
     }
