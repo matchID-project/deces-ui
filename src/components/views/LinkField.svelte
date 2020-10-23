@@ -36,7 +36,7 @@
     let hovering = false;
 
     const reset = () => {
-        if (field.mapTo) {
+        if (field.mapTo && $linkSourceHeaderTypes[field.mapTo]) {
             $linkSourceHeaderTypes[field.mapTo].mapped = undefined;
         }
         field.mapTo = null;

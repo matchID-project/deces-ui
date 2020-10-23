@@ -30,7 +30,7 @@
                                 <strong>Le traitement a échoué</strong>
                             </p>
                             <p>
-                                {error}
+                                {@html error}
                             </p>
                         {/if}
                     {:else}
@@ -58,7 +58,7 @@
 
     import { linkWaiter, linkMapping, linkFile, linkFileSize, linkJob, linkStep,
         linkCompleteResults, linkResults, linkCsvType, linkAutoCheckThreshold,
-        linkValidations
+        linkValidations, themeDnum
     } from '../tools/stores.js';
     let progressUpload = 0;
     let progressJob = 0;
@@ -69,6 +69,13 @@
     let jobPredictor = null;
     let queuePredictor = null;
     let waiting = null;
+
+    let mailTo
+
+    $: mailTo = $themeDnum ?
+    `<a href="mailto:datalab@interieur.gouv.fr">datalab@interieur.gouv.fr</a>`
+    : `<a href="mailto:matchid.project@gmail.com">matchid.project@gmail.com</a>`;
+
 
     const progressBarUpload = tweened(0, {
 		duration: 500,
@@ -145,11 +152,15 @@
         formData.append('dateFormat', $linkCsvType.dateFormat || 'DD/MM/YYYY');
         Object.keys($linkMapping && $linkMapping.reverse).map(k => formData.append(k,$linkMapping.reverse[k]));
         formData.append('csv', $linkFile);
-        const res = await axios.post('__BACKEND_PROXY_PATH__/search/csv', formData, axiosUploadConfig);
-        if(res.status == 200){
-            if ((res.data.msg === "started") && res.data.id) {
-                $linkJob = res.data.id;
+        try {
+            const res = await axios.post('__BACKEND_PROXY_PATH__/search/csv', formData, axiosUploadConfig);
+            if(res.status == 200){
+                if ((res.data.msg === "started") && res.data.id) {
+                    $linkJob = res.data.id;
+                }
             }
+        } catch(err) {
+            error = formatError(err);
         }
     }
 
@@ -158,9 +169,10 @@
     }
 
     const watchJob = async () =>  {
+        let res
         if ($linkJob && !error) {
             try {
-                const res = await axios.get(`__BACKEND_PROXY_PATH__/search/csv/${$linkJob}`, axiosDownloadConfig);
+                res = await axios.get(`__BACKEND_PROXY_PATH__/search/csv/${$linkJob}`, axiosDownloadConfig);
                 if (typeof(res.data) !== 'string') {
                     if ((res.data.status === 'failed') || (res.data.msg === "job doesn't exists")) {
                         error = `${res.data && res.data.msg || 'erreur inconnue'}`;
@@ -181,11 +193,11 @@
                     progressJob = 100;
                     parseLinkResults(res.data);
                 }
-            } catch(err) {
-                error = `Erreur ${err}`;
+            } catch(err) {;
+                error = formatError(err);
             }
         }
-    }
+    };
 
     $: if (error) {$linkJob = 'failed'}
 
@@ -193,6 +205,33 @@
 
     const protect = (sep) => {
         return sep === '|' ? '\|' : sep;
+    }
+
+    const formatError = (err) => {
+        let error;
+        if (err.response) {
+            error = `Erreur ${err.response.status}`;
+            if (err.response.data && err.response.data.msg) {
+                if (/column header mismatch/.test(err.response.data.msg)) {
+                    error += `<br>le nombre de colonnes n'est pas conforme à l'entête CSV`;
+                } else {
+                    error = error + '<br>' + JSON.stringify(err.response.data.msg);
+                }
+            } else {
+                if (err.response.status === 400) {
+                    error += `<br>problème dans le format des données, merci de nous contacter à ${mailTo}`
+                } else if (err.response.status === 502) {
+                    error += `<br>le serveur est indisponible, veuiller réessayer ultérieurement ou nous contacter à ${mailTo}`
+                } else if (err.response.status === 500) {
+                    error += `<br>le fichier a provoqué une erreur serveur, merci de nous contacter à ${mailTo}`
+                } else {
+                    error += `<br>erreur inconnue, merci de nous contacter à ${mailTo}`
+                }
+            }
+        } else {
+            error = `${err}`;
+        }
+        return error;
     }
 
     const parseLinkResults = (data) => {

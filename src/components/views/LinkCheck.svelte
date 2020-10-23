@@ -108,7 +108,7 @@
                 return field
             }
         } else {
-            return field ? protectField(JSON.stringify(field)) : '';
+            return [null, undefined].includes(field) ? '' : protectField(JSON.stringify(field));
         }
     }
 
@@ -129,9 +129,7 @@
     }
 
     const toCsv = (filter) => {
-        const header = $linkCompleteResults.header;
-        header.push('valid');
-        header.push('checked');
+        const header = [...$linkCompleteResults.header, 'valid', 'checked'];
         let rows, index, map;
         if (filter) {
             rows = $linkResults.rows;
@@ -141,21 +139,21 @@
             map = {};
             let j = 0;
             $linkResults.rows.forEach(r => {
-                map[r[0][$linkResults.header.indexOf('sourceLineNumber')]] = j++;
+                map[r[0][$linkResults.header.indexOf('sourceLineNumber')] - 1] = j++;
             });
             index = (i) => map[i];
         }
         return [
             header.map(h => protectField(h)).join($linkCsvType.sep) + '\r\n',
-            ...rows.map((r,i) => {
-                const l = $linkValidations[index(i)];
-                r.forEach((rr,j) => {
-                    rr.push(l && l[j] && l[j].valid || '');
-                    rr.push(l && l[j] && (l[j].checked ? ((l[j].checked === "auto") ? "auto": true) : false) || false);
-                });
-                return r
-                })
-                .map(row => flatten(row, 1))
+            ...flatten(rows.map((r,i) => {
+                    const l = $linkValidations[index(i)];
+                    return r.map((rr,j) => {
+                        const rrr = rr.slice(0);
+                        rr.push(l && l[j] && [true, false].includes(l[j].valid) ? l[j].valid : '');
+                        rr.push(l && l[j] && (l[j].checked ? ((l[j].checked === "auto") ? "auto": true) : undefined) || undefined);
+                        return rr;
+                    });
+                }),1)
                 .filter(row => !filter || row[header.indexOf('score')])
                 .map(row => header.map((col, i) => protectField(row[i])).join($linkCsvType.sep) + '\r\n')];
     }
@@ -185,14 +183,3 @@
 
 </script>
 
-<style>
-    .check-body {
-        text-align: center;
-    }
-  .wait-center {
-    text-align: center;
-    transform: translateY(50%);
-    height: 14rem;
-    additive-symbols: 14rem;
-  }
-</style>
