@@ -55,17 +55,17 @@
     }
 
     const guessTypeRegexp = [
-        [/^[1-2]\d{3}\/[0-1]\d\/[0-3]\d$/, 'date:YYYY/MM/DD'],
-        [/^[1-2]\d{3}-[0-1]\d-[0-3]\d$/, 'date:YYYY-MM-DD'],
-        [/^[1-2]\d{3}[0-1]\d[0-3]\d$/, 'date:YYYY-MM-DD'],
-        [/^[0-3]\d-[0-1]\d-[1-2]\d{3}$/, 'date:DD-MM-YYYY'],
-        [/^[0-3]\d\/[0-1]\d\/[1-2]\d{3}$/, 'date:DD/MM/YYYY'],
-        [/^[0-3]\d[0-1]\d[1-2]\d{3}$/, 'date:DDMMYYYY'],
+        [/^[1-2]\d{3}\/[0-1]\d\/[0-3]\d$/, 'date=YYYY/MM/DD'],
+        [/^[1-2]\d{3}-[0-1]\d-[0-3]\d$/, 'date=YYYY-MM-DD'],
+        [/^[1-2]\d{3}[0-1]\d[0-3]\d$/, 'date=YYYY-MM-DD'],
+        [/^[0-3]\d-[0-1]\d-[1-2]\d{3}$/, 'date=DD-MM-YYYY'],
+        [/^[0-3]\d\/[0-1]\d\/[1-2]\d{3}$/, 'date=DD/MM/YYYY'],
+        [/^[0-3]\d[0-1]\d[1-2]\d{3}$/, 'date=DDMMYYYY'],
         [/^\d[0-9a-b]\d{3}/, 'cityCode'],
-        [/^[1-2]$/, 'sex:12'],
-        [/^[0-1]$/, 'sex:01'],
-        [/^(f|m)$/, 'sex:fm'],
-        [/^(f|h)$/, 'sex:fh'],
+        [/^[1-2]$/, 'sex=12'],
+        [/^[0-1]$/, 'sex=01'],
+        [/^(f|m)$/, 'sex=fm'],
+        [/^(f|h)$/, 'sex=fh'],
         [/^((0?|[1-9])[0-9a-b]|97[1-5]?|99)$/, 'depCode'],
         [/^(martin|bernard|thomas|petit|robert|richard|durand|dubois|moreau|simon|laurent|garcia|michel|lefebvre|leroy|david|martinez|bertrand|roux|morel|fournier|girard|lambert|dupont|bonnet|rousseau|fontaine|vincent|andre|muller|lefevre|guerin|mercier|faure|garnier|chevalier|blanc|francois|boyer|legrand|gauthier|lopez|perrin|clement|robin|da|morin|sanchez|henry|gautier|nicolas|roussel|masson|mathieu|duval|perez|marchand|denis|marie|noel|dumont|lemaire|lucas|dufour|meyer|blanchard|meunier|fernandez|joly|brun|brunet|riviere|barbier|gerard|giraud|gaillard|leroux|arnaud|vidal|roy|renard|schmitt|colin|roche|caron|rodriguez|roger|picard|pereira|aubert|nguyen|lemoine|fabre|renaud|pierre|olivier|ferreira|dumas|lacroix|leclerc|bourgeois|philippe|dos|benoit|rey|jean|guillaume|rolland|lecomte|leclercq|hubert|louis|payet|guillot|rodrigues|berger|fernandes|carpentier|dupuy|dupuis|moulin|deschamps|gonzalez|goncalves|huet|adam|vasseur|charles|fleury|menard|boucher|poirier|baron|jacquet|aubry|royer|paris|guyot|klein|bertin|renault|maillard|charpentier|carre|herve|gomez|schneider|marty|bailly|collet|le|bouvier|leger|julien|daniel|millet|martins|breton|germain|langlois|cousin|perrot|lebrun|prevost|besson|le|leveque|barre|le|pelletier|remy|weber|leblanc|hamon|marchal|monnier|hernandez|michaud|perrier|boulanger|etienne|tessier|mallet|jacob|guichard|chauvin|gillet|ruiz|collin|poulain|lemaitre|chevallier|antoine|bouchet|diallo|marechal|gay|pons|humbert|delaunay|benard|perret|hoarau|pasquier|da|grondin|gilbert|alexandre|lejeune|cordier|reynaud|briand|lamy|albert|besnard|pichon|georges|barthelemy|lopes|cohen|ollivier|launay|gros|carlier|buisson|charrier|guillou|lesage|voisin|vallee|legros|hebert|delattre|coulon|laporte|rossi|guillet|jacques|didier|marques|gomes|marin|camus|martel|paul|levy|lebreton|blanchet|barbe|bigot|pineau|leduc|ribeiro|navarro|mahe|lelievre|gaudin|pascal|sauvage|maillot|gregoire|coste|joubert|verdier|maury|bodin|bousquet|tanguy|masse|guillon|raynaud|hardy|colas|morvan|allard|alves|raymond|berthelot|delmas|devaux|laine|thibault|delorme|regnier|lebon|lenoir|blondel|courtois|seguin|joseph|valentin|ferrand|chauvet|clerc|bruneau|bonneau|brunel|costa|imbert|allain)$/, 'lastName'],
         [/^(jean|marie|michel|pierre|philippe|alain|andre|claude|bernard|jacques|anne|daniel|christian|dominique|patrick|christophe|nathalie|nicolas|isabelle|gerard|catherine|sylvie|francoise|monique|eric|laurent|frederic|rene|francois|stephane|david|pascal|sebastien|martine|thierry|robert|julien|olivier|roger|christine|jacqueline|nicole|valerie|guy|georges|sandrine|marcel|didier|stephanie|sophie|veronique|marc|paul|mohamed|celine|bruno|alexandre|vincent|chantal|louis|henri|serge|jerome|yves|maria|christiane|thomas|patricia|guillaume|annie|joseph|brigitte|maurice|michele|antoine|helene|franck|gilles|laurence|aurelie|raymond|virginie|corinne|jose|julie|christelle|anthony|romain|emilie|gilbert|cedric|francis|danielle|elodie|caroline|denis|florence|maxime|cecile|joel)((\s*\w+)+)?$/, 'firstName'],
@@ -110,8 +110,8 @@
             return dic;
         }));
         return guess && {
-            type: guess[0].replace(/:.*/,''),
-            format: /:/.test(guess[0]) && guess[0].replace(/.*:/, ''),
+            type: guess[0].replace(/=.*/,''),
+            format: /=/.test(guess[0]) && guess[0].replace(/.*=/, ''),
             freq: guess[1]
         };
     };
@@ -216,20 +216,12 @@
 </script>
 
 <style>
-  .table-body {
-      overflow-x: scroll;
-      overflow-y: hidden;
-  }
 
   td {
     max-width: 120px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-  }
-
-  .is-striped {
-    background-color: #fafafa;
   }
 
 </style>

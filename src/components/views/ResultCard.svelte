@@ -146,8 +146,8 @@
     import { dataGouvCatalog, displayMode } from '../tools/stores.js';
     import PlaceInCard from './PlaceInCard.svelte';
 
-    export let result;
-    export let forceExpand;
+    export let result  = undefined;
+    export let forceExpand = undefined;
 
     let expand = forceExpand || ($displayMode === 'card-expand');
 

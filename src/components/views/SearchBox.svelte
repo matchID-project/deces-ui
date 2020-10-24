@@ -7,9 +7,9 @@
           title={$advancedSearch ? "recherche simplifiée" : "recherche avancée"}
           on:click|preventDefault={toggleAdvancedSearch}
           class="rf-color--bf"
-          style="position: absolute;top: 16px; right: 8px;"
+          style="position: absolute;top: 12px; right: 10px;"
         >
-          <FontAwesomeIcon icon={$advancedSearch ? faMinus : faPlus} class="rf-margin-2px is-24 is-high"/>
+          <Icon icon={$advancedSearch ? 'ri:zoom-out-line' : 'ri:zoom-in-line'} class="rf-fi--lg"/>
         </span>
         <div class="rf-container-fluid">
             <div class="rf-grid-row">
@@ -58,13 +58,11 @@
         </div>
       </div>
       {#if $advancedSearch}
-        <div class="rf-margin-top-2N rf-col-12" style="text-align: center">
+        <div class="rf-margin-top-1N rf-col-12" style="text-align: center">
           <div
-            class="field is-centered small-margin-mobile"
-            style="margin-top:-0.25rem;margin-bottom:-1rem!important;"
             on:click|preventDefault={ toggleFuzzySearch }
           >
-            <input style="width:0px" id="switchRoundedInfo" type="checkbox" name="switchRoundedInfo" class="switch is-rounded is-white is-unchecked-grey" bind:checked={$fuzzySearch}>
+            <input style="width: 0px" id="switchRoundedInfo" type="checkbox" name="switchRoundedInfo" class="switch is-rounded is-white is-unchecked-grey" bind:checked={$fuzzySearch}>
             <label for="switchRoundedInfo">
               {#if $fuzzySearch} recherche floue
               {:else} <strike> recherche floue</strike>{/if}
@@ -77,18 +75,13 @@
 </div>
 
 <script>
-  import FontAwesomeIcon from './FontAwesomeIcon.svelte'
+  import Icon from './Icon.svelte'
 
   import { advancedSearch, searchInput, searchCanvas,
     sortInput, resultsPerPage, searchInputFocus,
     searchTyping, fuzzySearch } from '../tools/stores.js';
   import { search, searchString, searchSubmit, searchURLUpdate, toggleAdvancedSearch, toggleFuzzySearch } from '../tools/search.js';
   import GoogleAnalytics from './GoogleAnalytics.svelte';
-
-  import {
-      faMinus,
-      faPlus
-  } from '@fortawesome/free-solid-svg-icons';
 
   let lastInput = {}
 

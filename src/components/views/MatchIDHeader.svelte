@@ -45,13 +45,18 @@
                                     </li>
                                     {#each searchOptions as item}
                                         <li
-                                            class="rf-menu__item rf-href rf-margin-left-2N"
+                                            class="rf-menu__item rf-href"
                                             class:rf-menu__item--active={($route.path === '/search') && item.isActive}
                                             on:click|preventDefault={() => goToPage('search',item.mode)}
                                         >
-                                            <span class="rf-link">
-                                                {item.title}
-                                            </span>
+                                            <tr>
+                                                <td class="rf-td--vcenter rf-padding-right-1N">
+                                                    <Icon class="rf-fi" icon={item.icon}/>
+                                                </td>
+                                                <td class="rf-td--vcenter">
+                                                    {item.title}
+                                                </td>
+                                            </tr>
                                         </li>
                                     {/each}
                                     <li
@@ -62,7 +67,7 @@
                                     </li>
                                     {#each viewOptions as item}
                                         <li
-                                            class="rf-menu__item rf-margin-left-2N"
+                                            class="rf-menu__item"
                                             class:rf-menu__item--active={($route.path === '/search') && item.isActive}
                                             class:rf-href={viewOptionsActive}
                                             class:rf-inactive={!viewOptionsActive}
@@ -72,9 +77,14 @@
                                                 }
                                             }}
                                         >
-                                            <span class="rf-link">
-                                                {item.title}
-                                            </span>
+                                            <tr>
+                                                <td class="rf-td--vcenter rf-padding-right-1N">
+                                                    <Icon icon={item.icon}/>
+                                                </td>
+                                                <td class="rf-td--vcenter">
+                                                    {item.title}
+                                                </td>
+                                            </tr>
                                         </li>
                                     {/each}
                                 </ul>
@@ -161,13 +171,18 @@
                                     </li>
                                     {#each searchOptions as item}
                                         <li
-                                            class="rf-menu__item rf-href rf-margin-left-2N"
+                                            class="rf-menu__item rf-href"
                                             class:rf-menu__item--active={($route.path === '/search') && item.isActive}
                                             on:click|preventDefault={() => goToPage('search',item.mode)}
                                         >
-                                            <span class="rf-link">
-                                                {item.title}
-                                            </span>
+                                            <tr>
+                                                <td class="rf-td--vcenter rf-padding-right-1N">
+                                                    <Icon class="rf-fi" icon={item.icon}/>
+                                                </td>
+                                                <td class="rf-td--vcenter">
+                                                    {item.title}
+                                                </td>
+                                            </tr>
                                         </li>
                                     {/each}
                                     <li
@@ -177,23 +192,26 @@
                                         <strong>mode d'affichage</strong>
                                     </li>
                                     {#each viewOptions as item}
-                                        {#if item.mode !== 'table'}
-                                            <li
-                                                class="rf-menu__item rf-margin-left-2N"
-                                                class:rf-menu__item--active={($route.path === '/search') && item.isActive}
-                                                class:rf-href={viewOptionsActive}
-                                                class:rf-inactive={!viewOptionsActive}
-                                                on:click|preventDefault={() => {
-                                                    if (viewOptionsActive) {
-                                                        goToPage('search',item.mode)
-                                                    }
-                                                }}
-                                            >
-                                                <span class="rf-link">
+                                        <li
+                                            class="rf-menu__item"
+                                            class:rf-menu__item--active={($route.path === '/search') && item.isActive}
+                                            class:rf-href={viewOptionsActive}
+                                            class:rf-inactive={!viewOptionsActive}
+                                            on:click|preventDefault={() => {
+                                                if (viewOptionsActive) {
+                                                    goToPage('search',item.mode)
+                                                }
+                                            }}
+                                        >
+                                            <tr>
+                                                <td class="rf-td--vcenter rf-padding-right-1N">
+                                                    <Icon icon={item.icon}/>
+                                                </td>
+                                                <td class="rf-td--vcenter">
                                                     {item.title}
-                                                </span>
-                                            </li>
-                                        {/if}
+                                                </td>
+                                            </tr>
+                                        </li>
                                     {/each}
                                 </ul>
                             </div>
@@ -226,6 +244,7 @@
 
 <script>
     import { themeDnum, advancedSearch, displayMode, wasSearched } from '../tools/stores.js';
+    import Icon from './Icon.svelte';
     import SearchBox from './SearchBox.svelte';
     import { toggleAdvancedSearch, enableDisplayMode } from '../tools/search.js';
     import { goTo } from '../tools/routes.js';
@@ -245,10 +264,12 @@
     $: searchOptions = [
         { title: 'simple',
           mode: 'simple',
+          icon: 'ri:search-line',
           isActive: !$advancedSearch
         },
         { title: 'avancé',
           mode: 'advanced',
+          icon: 'ri:zoom-in-line',
           isActive: $advancedSearch
         }
     ];
@@ -256,18 +277,22 @@
     $: viewOptions = [
         { title: 'simple',
           mode: 'card',
+          icon: 'ri:list-check-2',
           isActive: $displayMode === 'card'
         },
         { title: 'complet',
           mode: 'card-expand',
+          icon: 'ri:profile-line',
           isActive: $displayMode === 'card-expand'
         },
         { title: 'tableur',
           mode: 'table',
+          icon: 'ri:table-line',
           isActive: $displayMode === 'table'
         },
         { title: 'géographique',
           mode: 'geo',
+          icon: 'ri:earth-line',
           isActive: $displayMode === 'geo'
         }
     ];

@@ -129,17 +129,3 @@
 
 </script>
 
-<style>
-    .wrap {
-        max-width: 1024px;
-        margin-left: auto;
-        margin-right: auto;
-        padding: 8px;
-        text-align: center;
-    }
-    .wrap-table {
-        border: 1px solid;
-        overflow-x: hidden;
-        overflow-y: hidden;
-    }
-</style>

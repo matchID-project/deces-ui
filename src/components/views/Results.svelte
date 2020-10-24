@@ -73,7 +73,7 @@
             {/if}
           </div>
           {#if !($displayMode === 'geo')}
-            <div class="rf-col-12 rf-content--center">
+            <div class="rf-col-12 rf-content--center rf-margin-top-1N rf-margin-bottom-2N">
               <Pagination/>
             </div>
           {/if}

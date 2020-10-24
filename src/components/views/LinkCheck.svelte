@@ -34,8 +34,8 @@
                         >
                             <span class="rf-text--center">le fichier complet</span>
                             {#if isDownloading === 'complete'}
-                                <div style="z-index:1200;position:absolute;witdth:100%;right:45%;color:#fff;opacity:0.5;">
-                                    <FontAwesomeIcon icon={faSpinner} class="is-low spin"/>
+                                <div style="z-index: 1200;position: absolute;right: 45%;top: 2px;color: #fff;opacity: 0.8;">
+                                    <Icon icon="ri:loader-line" class="rf-fi--lg rf-margin-top-1N" spin center/>
                                 </div>
                             {/if}
                         </button>
@@ -47,8 +47,8 @@
                         >
                             les décès identifiés
                             {#if isDownloading === 'matched'}
-                                <div style="z-index:1200;position:absolute;witdth:100%;right:45%;background-color:#fff;opacity:0.5;">
-                                    <FontAwesomeIcon icon={faSpinner} class="is-low spin"/>
+                                <div style="z-index: 1200;position: absolute;right: 45%;top: 2px;background-color: #fff;opacity: 0.5;">
+                                  <Icon icon="ri:loader-line" class="rf-fi--lg rf-margin-top-1N" spin center/>
                                 </div>
                             {/if}
                         </button>
@@ -67,10 +67,7 @@
         linkCompleted, linkAutoCheckThreshold, linkValidations
     } from '../tools/stores.js';
     import LinkCheckTable from './LinkCheckTable.svelte';
-    import FontAwesomeIcon from './FontAwesomeIcon.svelte';
-    import {
-      faSpinner
-    } from '@fortawesome/free-solid-svg-icons';
+    import Icon from './Icon.svelte';
 
     let isDownloading = false;
 
