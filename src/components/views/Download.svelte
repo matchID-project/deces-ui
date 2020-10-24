@@ -14,10 +14,8 @@
             <Icon icon="{disabled ? "ri:file-forbid-line" : "ri:file-download-line"}" class="rf-fi--lg {disabled ? "rf-color--g400 rf-href" : "rf-color--bf"}"/>
         </span>
     {:else if (status === 'success')}
-        <span class="is-primary">
-            <span title="téléchargement terminé">
-                <Icon icon="ri:checkbox-circle-fill" class="rf-fi--lg {disabled ? "rf-color--g400 rf-href" : "rf-color--bf"}"/>
-            </span>
+        <span title="téléchargement terminé">
+            <Icon icon="ri:checkbox-circle-fill" class="rf-fi--lg {disabled ? "rf-color--g400 rf-href" : "rf-color--bf"}"/>
         </span>
     {:else if (status === 'fail')}
         <span
@@ -118,50 +116,3 @@
 
 </script>
 
-<style>
-
-    a {
-         text-decoration: none;
-         color: #003189;
-    }
-    .is-primary {
-        color: #003189;
-    }
-    .is-danger {
-        color:  hsl(348, 100%, 61%);
-    }
-
-    .download:hover {
-        color: #209cee;
-        cursor: pointer;
-    }
-
-    .download-bar {
-        width: 50%!important;
-        display: inline!important;
-    }
-
-    .progress.is-info::-moz-progress-bar {
-        background-color: var(--bf);
-    }
-    .progress::-moz-progress-bar {
-        background-color: #4a4a4a;
-    }
-
-    .progress {
-        -moz-appearance: none;
-        -webkit-appearance: none;
-        border: none;
-        border-radius: 290486px;
-        display: block;
-        height: 1rem;
-        overflow: hidden;
-        padding: 0;
-        width: 100%;
-    }
-
-    .progress.is-small {
-        height: .75rem;
-    }
-
-</style>
