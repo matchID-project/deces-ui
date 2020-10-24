@@ -7,22 +7,23 @@
         </span>
     {:else if (status === undefined)}
         <span
-            class="download rf-fi-file-download-line rf-fi--lg"
-            href={null}
             on:click|preventDefault={download}
-            title="téléchargez l'ensemble des résultats en tableur CSV"
+            title={disabled ? "téléchargement limité à 500000 lignes"
+                : "téléchargez l'ensemble des résultats en tableur CSV"}
         >
+            <Icon icon="{disabled ? "ri:file-forbid-line" : "ri:file-download-line"}" class="rf-fi--lg {disabled ? "rf-color--g400 rf-href" : "rf-color--bf"}"/>
         </span>
     {:else if (status === 'success')}
         <span class="is-primary">
-            <span
-                title="téléchargement terminé"
-                class="rf-fi-check-line rf-text--lg"
-            >
+            <span title="téléchargement terminé">
+                <Icon icon="ri:checkbox-circle-fill" class="rf-fi--lg {disabled ? "rf-color--g400 rf-href" : "rf-color--bf"}"/>
             </span>
         </span>
     {:else if (status === 'fail')}
-        <span class="rf-fi-alert-line rf-fi--lg rf-color--rm">
+        <span
+            title="problème de téléchargement"
+        >
+            <Icon icon="ri:file-warning-line" class="rf-fi--lg rf-color--rm"/>
         </span>
     {/if}
 </span>
@@ -31,8 +32,10 @@
     import { tweened } from 'svelte/motion';
     import { sineInOut } from 'svelte/easing';
     import { searchInput } from '../tools/stores.js';
+    import Icon from './Icon.svelte';
     import axios from 'axios';
 
+    export let disabled = false;
     let status = undefined;
     let lazyCountDate = 0;
     let fallback=false;
@@ -51,6 +54,7 @@
     };
 
     const download = async (e) => {
+      if (disabled) { return }
       max = 0;
       await progress.set(0);
       try {
@@ -138,7 +142,7 @@
     }
 
     .progress.is-info::-moz-progress-bar {
-        background-color: #003189;
+        background-color: var(--bf);
     }
     .progress::-moz-progress-bar {
         background-color: #4a4a4a;
