@@ -70,7 +70,7 @@ export default {
 	],
 	watch: {
 		clearScreen: false,
-		exclude:["public/build/icons.js"]
+		exclude:['src/components/tools/icons.js']
 	}
 };
 
