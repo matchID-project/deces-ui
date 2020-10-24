@@ -3,7 +3,7 @@
         <span
             title={`${fallback ? 'préparation du téléchargement' : 'téléchargement en cours'} ${Math.round($progress/max*100)}%`}
         >
-            <progress class="rf-margin-top-1N progress is-info is-small download-bar" value={$progress} max={max}/>
+            <PieChart percent={$progress/max}/>
         </span>
     {:else if (status === undefined)}
         <span
@@ -31,6 +31,7 @@
     import { sineInOut } from 'svelte/easing';
     import { searchInput } from '../tools/stores.js';
     import Icon from './Icon.svelte';
+    import PieChart from './PieChart.svelte';
     import axios from 'axios';
 
     export let disabled = false;
