@@ -35,7 +35,7 @@
         </div>
         <div class="rf-col-12">
             {#if subFilteredRows.length}
-                <div style="overflow-x:auto">
+                <div style="overflow-x: auto">
                     <table class="rf-table rf-table--narrow rf-text--sm">
                         <tr>
                             {#each header as col, index}
