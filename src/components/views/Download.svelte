@@ -3,26 +3,25 @@
         <span
             title={`${fallback ? 'préparation du téléchargement' : 'téléchargement en cours'} ${Math.round($progress/max*100)}%`}
         >
-            <progress class="rf-margin-top-1N progress is-info is-small download-bar" value={$progress} max={max}/>
+            <PieChart percent={$progress/max}/>
         </span>
     {:else if (status === undefined)}
         <span
-            class="download rf-fi-file-download-line rf-fi--lg"
-            href={null}
             on:click|preventDefault={download}
-            title="téléchargez l'ensemble des résultats en tableur CSV"
+            title={disabled ? "téléchargement limité à 500000 lignes"
+                : "téléchargez l'ensemble des résultats en tableur CSV"}
         >
+            <Icon icon="{disabled ? "ri:file-forbid-line" : "ri:file-download-line"}" class="rf-fi--lg {disabled ? "rf-color--g400 rf-href" : "rf-color--bf"}"/>
         </span>
     {:else if (status === 'success')}
-        <span class="is-primary">
-            <span
-                title="téléchargement terminé"
-                class="rf-fi-check-line rf-text--lg"
-            >
-            </span>
+        <span title="téléchargement terminé">
+            <Icon icon="ri:checkbox-circle-fill" class="rf-fi--lg {disabled ? "rf-color--g400 rf-href" : "rf-color--bf"}"/>
         </span>
     {:else if (status === 'fail')}
-        <span class="rf-fi-alert-line rf-fi--lg rf-color--rm">
+        <span
+            title="problème de téléchargement"
+        >
+            <Icon icon="ri:file-warning-line" class="rf-fi--lg rf-color--rm"/>
         </span>
     {/if}
 </span>
@@ -31,8 +30,11 @@
     import { tweened } from 'svelte/motion';
     import { sineInOut } from 'svelte/easing';
     import { searchInput } from '../tools/stores.js';
+    import Icon from './Icon.svelte';
+    import PieChart from './PieChart.svelte';
     import axios from 'axios';
 
+    export let disabled = false;
     let status = undefined;
     let lazyCountDate = 0;
     let fallback=false;
@@ -51,6 +53,7 @@
     };
 
     const download = async (e) => {
+      if (disabled) { return }
       max = 0;
       await progress.set(0);
       try {
@@ -114,50 +117,3 @@
 
 </script>
 
-<style>
-
-    a {
-         text-decoration: none;
-         color: #003189;
-    }
-    .is-primary {
-        color: #003189;
-    }
-    .is-danger {
-        color:  hsl(348, 100%, 61%);
-    }
-
-    .download:hover {
-        color: #209cee;
-        cursor: pointer;
-    }
-
-    .download-bar {
-        width: 50%!important;
-        display: inline!important;
-    }
-
-    .progress.is-info::-moz-progress-bar {
-        background-color: #003189;
-    }
-    .progress::-moz-progress-bar {
-        background-color: #4a4a4a;
-    }
-
-    .progress {
-        -moz-appearance: none;
-        -webkit-appearance: none;
-        border: none;
-        border-radius: 290486px;
-        display: block;
-        height: 1rem;
-        overflow: hidden;
-        padding: 0;
-        width: 100%;
-    }
-
-    .progress.is-small {
-        height: .75rem;
-    }
-
-</style>

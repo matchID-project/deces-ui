@@ -23,7 +23,7 @@
   {#if $waitSearch}
     <div class="wait" in:fade out:fade>
         <div class="wait-center">
-            <FontAwesomeIcon icon={faSpinner} class="icon is-48" spin={true}/>
+            <Icon icon="ri:loader-line" class="rf-fi--xxl rf-margin-top-1N" spin center/>
         </div>
     </div>
   {/if}
@@ -61,9 +61,7 @@
   import ResultCard from "./ResultCard.svelte";
   import ResultsHeader from './ResultsHeader.svelte';
   import SearchBox from "./SearchBox.svelte";
-  import FontAwesomeIcon from "./FontAwesomeIcon.svelte";
-
-  import { faSpinner } from "@fortawesome/free-solid-svg-icons";
+  import Icon from "./Icon.svelte";
 
   let mapContainer;
   let leafletMap;

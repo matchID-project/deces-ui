@@ -30,45 +30,4 @@
   .no-pointer-events {
 		pointer-events: none; /* so that a child hover child is not a "dragleave" event */
   }
-
-  .list-box {
-    z-index: 1;
-    display: flex;
-    flex-direction: column;
-    width: auto;
-    line-height: 0.75em;
-    background: white;
-    position: absolute;
-    box-shadow: rgba(59, 69, 79, 0.3) 0px 2px 4px;
-    border-top: 1px solid #ccc;
-    border-left: 1px solid #ccc;
-    border-right: 1px solid #ccc;
-    border-bottom: 1px solid #ccc;
-    border-top-left-radius: 4px;
-    border-top-right-radius: 4px;
-    border-bottom-left-radius: 4px;
-    border-bottom-right-radius: 4px;
-  }
-
-  @media screen and (min-width:769px) {
-    .is-centered {
-      transform: translate(35%, 0%);
-    }
-  }
-  @media screen and (max-width:768px) {
-    .is-centered {
-      transform: translate(-20%, 0%);
-    }
-  }
-
-  ul {
-    margin: 0!important;
-    padding: 0!important;
-  }
-
-  li {
-    margin: 0!important;
-    padding: 0!important;
-  }
-
 </style>

@@ -3,7 +3,7 @@
         <div class="rf-wait-content">
             <strong>{waitMessage || ''}</strong>
             <br/>
-            <FontAwesomeIcon icon={faSpinner} class="is-48 spin"/>
+            <Icon icon="ri:loader-line" class="rf-fi--xxl rf-margin-top-1N" spin center/>
         </div>
     </div>
 {/if}
@@ -93,10 +93,7 @@
         linkCompleteResults, linkResults, linkCsvType, linkCompleted, linkValidations
     } from '../tools/stores.js';
     import { clear } from 'idb-keyval'
-    import FontAwesomeIcon from './FontAwesomeIcon.svelte';
-   import {
-      faSpinner,
-    } from '@fortawesome/free-solid-svg-icons';
+    import Icon from './Icon.svelte';
     import LinkStep from './LinkStep.svelte';
     import LinkFile from './LinkFile.svelte';
     import LinkConfigure from './LinkConfigure.svelte';
