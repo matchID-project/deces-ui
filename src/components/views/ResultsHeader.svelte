@@ -1,4 +1,4 @@
-{#if ($wasSearched || ($displayMode === 'geo')) && !(($searchResults.length === 1) && ($searchResults[0].error))}
+{#if searchTrigger($searchInput) && ($wasSearched || ($displayMode === 'geo')) && !(($searchResults.length === 1) && ($searchResults[0].error))}
     <table class="rf-table rf-table--narrow rf-text--xs rf-color--black rf-margin-bottom-0" style="width: 100%!important;">
         <tr>
             <td class="rf-hide--mobile rf-td--vcenter rf-text--left" style="width: 20px;">
@@ -61,18 +61,20 @@
                     </div>
                 </td>
             {/if}
-            <td class="rf-td--vcenter rf-text--right" style="width:150px;">
-                <span>
+            <td class="rf-td--vcenter rf-text--right" style="width: 125px">
+                <div style="display: flex;">
                     {#each displayChoices as choice}
                         <span
-                            class={choice.mode === "table" ? "rf-display--xl" : ""}
+                            on:click={() => enableDisplayMode(choice.mode)}
                             title={`${choice.mode === $displayMode ? "mode d'affichage actuel:" : "basculez au mode d'affichage:"} ${choice.label}`}
-                            on:click|preventDefault={() => enableDisplayMode(choice.mode)}
                         >
-                            <FontAwesomeIcon icon={choice.icon} class={`rf-margin-2px is-24 is-high ${choice.mode === $displayMode ? "rf-color--bf" : "rf-color--g400"}`}/>
+                            <Icon
+                                icon={choice.icon}
+                                class="rf-fi--lg {choice.mode === $displayMode ? "rf-color--bf" : "rf-color--g400"}"
+                            />
                         </span>
                     {/each}
-                </span>
+                </div>
             </td>
         </tr>
     </table>
@@ -88,11 +90,10 @@
 {/if}
 
 <script>
-    import { faTable, faGlobeEurope, faGripLines, faAddressCard } from '@fortawesome/free-solid-svg-icons';
-    import FontAwesomeIcon from './FontAwesomeIcon.svelte';
+    import Icon from './Icon.svelte';
     import { current, searchResults, sortInput, sortInputDisplay, updateURL, totalResults, totalPages,
         resultsPerPage, searchInput, wasSearched, displayMode } from '../tools/stores.js'
-    import { enableDisplayMode } from '../tools/search.js'
+    import { enableDisplayMode, searchTrigger } from '../tools/search.js'
     import SortInput from './SortInput.svelte';
     import Download from './Download.svelte';
     import Pagination from './Pagination.svelte';
@@ -102,10 +103,10 @@
     let resultsPerPageList;
 
     const displayChoices = [
-        {mode: 'card', icon: faGripLines, label: "fiche compacte"},
-        {mode: 'card-expand', icon: faAddressCard, label: "fiche complète"},
-        {mode: 'table', icon: faTable, label: "tableur"},
-        {mode: 'geo', icon: faGlobeEurope, label: "géographique"},
+        {mode: 'card', icon: 'ri:list-check-2', label: "fiche compacte"},
+        {mode: 'card-expand', icon: 'ri:profile-line', label: "fiche complète"},
+        {mode: 'table', icon: 'ri:table-line', label: "tableur"},
+        {mode: 'geo', icon: 'ri:earth-line', label: "géographique"},
     ];
 
     $: resultsPerPageList = [20,40,60].includes($resultsPerPage) ? [20,40,60] : [$resultsPerPage,20,40,60].sort()
