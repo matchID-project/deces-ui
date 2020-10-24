@@ -2,7 +2,9 @@
     <table class="rf-table rf-table--narrow rf-text--xs rf-color--black rf-margin-bottom-0" style="width: 100%!important;">
         <tr>
             <td class="rf-hide--mobile rf-td--vcenter rf-text--left" style="width: 20px;">
-                <Download/>
+                {#if $totalResults > 1}
+                    <Download disabled={$totalResults >= 500000}/>
+                {/if}
             </td>
             <td class="rf-td--vcenter">
                     <span>

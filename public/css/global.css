@@ -334,7 +334,7 @@ tr .th-inactive {
   transform: translate(-50%, -50%);
 }
 
-.rf-table td.rf-td--vcenter {
+td.rf-td--vcenter {
   vertical-align: middle!important;
 }
 
