@@ -4,6 +4,7 @@ import resolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import livereload from 'rollup-plugin-livereload';
 import { terser } from 'rollup-plugin-terser';
+import iconifySvg from 'rollup-plugin-iconify-svg';
 
 const production = !process.env.ROLLUP_WATCH;
 
@@ -16,6 +17,9 @@ export default {
 		file: 'public/build/bundle.js'
 	},
 	plugins: [
+        iconifySvg({
+			targets: [{ src: 'src/components/views', dest: 'public/build/icons.js' }]
+		}),
 		svelte({
 			// enable run-time checks when not in production
 			dev: !production,
@@ -65,7 +69,8 @@ export default {
 		production && terser()
 	],
 	watch: {
-		clearScreen: false
+		clearScreen: false,
+		exclude:["public/build/icons.js"]
 	}
 };
 
