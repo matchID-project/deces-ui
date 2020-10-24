@@ -25,10 +25,3 @@
     };
 
 </script>
-
-<style>
-    .fields-container {
-        display: flex;
-        justify-content: center;
-    }
-</style>

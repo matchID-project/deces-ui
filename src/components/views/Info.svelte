@@ -49,6 +49,10 @@
     `<a href="mailto:datalab@interieur.gouv.fr">datalab@interieur.gouv.fr</a>`
     : `<a href="mailto:matchid.project@gmail.com">matchid.project@gmail.com</a>`;
 
+$: mailTo = $themeDnum ?
+    `<a href="mailto:datalab@interieur.gouv.fr">datalab@interieur.gouv.fr</a>`
+    : `<a href="mailto:matchid.project@gmail.com">matchid.project@gmail.com</a>`;
+
 
   $: pages = [
     { title: 'à qui s\'adresse le service ?',
@@ -300,15 +304,3 @@
   }
 
 </script>
-
-<style>
-  .ul-local {
-    padding: auto!important;
-  }
-
-  ul li {
-    margin: 0px!important;
-  }
-
-
-</style>

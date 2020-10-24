@@ -216,20 +216,12 @@
 </script>
 
 <style>
-  .table-body {
-      overflow-x: scroll;
-      overflow-y: hidden;
-  }
 
   td {
     max-width: 120px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-  }
-
-  .is-striped {
-    background-color: #fafafa;
   }
 
 </style>

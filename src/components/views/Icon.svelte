@@ -12,7 +12,6 @@
 
 <script>
   import { icons } from "../../../public/build/icons.js";
-  export let text = undefined;
   export let icon = undefined;
   export let spin = undefined;
   export let center = undefined;
