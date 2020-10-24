@@ -67,6 +67,7 @@
                 <div style="display: flex;">
                     {#each displayChoices as choice}
                         <span
+                            class="rf-href"
                             on:click={() => enableDisplayMode(choice.mode)}
                             title={`${choice.mode === $displayMode ? "mode d'affichage actuel:" : "basculez au mode d'affichage:"} ${choice.label}`}
                         >
