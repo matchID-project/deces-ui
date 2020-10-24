@@ -18,7 +18,7 @@ export default {
 	},
 	plugins: [
         iconifySvg({
-			targets: [{ src: 'src/components/views', dest: 'public/build/icons.js' }]
+			targets: [{ src: 'src/components/views', dest: 'src/components/tools/icons.js' }]
 		}),
 		svelte({
 			// enable run-time checks when not in production

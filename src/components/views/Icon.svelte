@@ -11,7 +11,7 @@
 {/if}
 
 <script>
-  import { icons } from "../../../public/build/icons.js";
+  import { icons } from "../tools/icons.js";
   export let icon = undefined;
   export let spin = undefined;
   export let center = undefined;
