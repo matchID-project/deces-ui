@@ -11,11 +11,11 @@
             title={disabled ? "téléchargement limité à 500000 lignes"
                 : "téléchargez l'ensemble des résultats en tableur CSV"}
         >
-            <Icon icon="{disabled ? "ri:file-forbid-line" : "ri:file-download-line"}" class="rf-fi--lg {disabled ? "rf-color--g400 rf-href" : "rf-color--bf"}"/>
+            <Icon icon="{disabled ? "ri:file-forbid-line" : "ri:file-download-line"}" class="rf-fi--lg {disabled ? "rf-color--g400" : "rf-color--bf rf-href"}"/>
         </span>
     {:else if (status === 'success')}
         <span title="téléchargement terminé">
-            <Icon icon="ri:checkbox-circle-fill" class="rf-fi--lg {disabled ? "rf-color--g400 rf-href" : "rf-color--bf"}"/>
+            <Icon icon="ri:checkbox-circle-fill" class="rf-fi--lg rf-color--bf"/>
         </span>
     {:else if (status === 'fail')}
         <span
