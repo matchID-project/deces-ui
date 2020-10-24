@@ -4,7 +4,7 @@
             <div class="rf-wait-content">
                 <strong>recherche en cours</strong>
                 <br/>
-                <FontAwesomeIcon icon={faSpinner} class="is-48 spin"/>
+                <Icon icon="ri:loader-line" class="rf-fi--xxl rf-margin-top-1N" spin center/>
             </div>
         </div>
     {/if}
