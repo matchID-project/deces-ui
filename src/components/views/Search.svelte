@@ -11,28 +11,34 @@
 </div>
 <div class="rf-container-fluid">
     <div class="rf-grid-row">
-        {#if !displayResults}
+        {#if !displayResults && firstTime}
             <div class="rf-col-3"></div>
         {/if}
         <div
-            class="rf-padding-left-2N--desktop rf-padding-left-1N--mobile rf-padding-right-1N--mobile rf-padding-top-2N rf-col-xs-12 rf-col-sm-12 rf-col-md-{size.md} rf-col-lg-{size.lg} rf-col-xl-{size.xl} {margin}"
+            class="rf-padding-left-2N--desktop rf-padding-left-1N--mobile rf-padding-right-1N--mobile rf-padding-top-2N {$advancedSearch ? "" : "rf-padding-bottom-2N"} rf-col-xs-12 rf-col-sm-12 rf-col-md-{size.md} rf-col-lg-{size.lg} rf-col-xl-{size.xl} {margin}"
             style="transition: all 300ms ease;"
         >
             <SearchBox/>
         </div>
-        {#if displayResults}
+        {#if reduceSearchBox}
             <div
                 class="rf-col-xs-12 rf-col-sm-12 rf-col-md-{12 - size.md} rf-col-lg-{12 - size.lg} rf-col-xl-{12 - size.xl}"
                 style="transition: all 300ms ease;"
             >
                 <div class="rf-container--fluid">
                     <div class="rf-grid-row">
-                        <div class="rf-col-xs-12 rf-col-sm-12 rf-col-md-12 rf-col-lg-12 rf-col-xl-10">
-                            <ResultsHeader/>
-                        </div>
-                        <div class="rf-col-xs-12 rf-col-sm-12 rf-col-md-12 rf-col-lg-12 rf-col-xl-{$displayMode === 'table' ? "12" : "10"}">
-                            <Results/>
-                        </div>
+                        {#if displayResults}
+                            <div class="rf-col-xs-12 rf-col-sm-12 rf-col-md-12 rf-col-lg-12 rf-col-xl-10">
+                                <ResultsHeader/>
+                            </div>
+                            <div class="rf-col-xs-12 rf-col-sm-12 rf-col-md-12 rf-col-lg-12 rf-col-xl-{$displayMode === 'table' ? "12" : "10"}">
+                                <Results/>
+                            </div>
+                        {:else}
+                            <div class="rf-col-xs-12 rf-col-sm-12 rf-col-md-12 rf-col-lg-12 rf-col-xl-10">
+                                <PunchMessage/>
+                            </div>
+                        {/if}
                     </div>
                 </div>
             </div>
@@ -55,10 +61,10 @@
     import ResultsHeader from './ResultsHeader.svelte';
     import Results from './Results.svelte';
     import PunchMessage from './PunchMessage.svelte';
-    import { faSpinner } from '@fortawesome/free-solid-svg-icons'
-    import FontAwesomeIcon from './FontAwesomeIcon.svelte'
+    import Icon from './Icon.svelte'
 
     let displayResults;
+    let reduceSearchBox;
     let size;
     let margin;
     let firstTime=true;
@@ -66,13 +72,15 @@
     $: if (Object.keys($searchInput).some(k => $searchInput[k].value)) {
         firstTime = false;
     };
-    $: displayResults = (Object.keys($searchInput).some(k => $searchInput[k].value) || !firstTime);
+    $: displayResults = (Object.keys($searchInput).some(k => $searchInput[k].value));
+    $: reduceSearchBox = displayResults || (!firstTime);
+
     $: size = {
-        md: displayResults ? 4 : 6,
-        lg: displayResults ? (['table', 'geo'].includes($displayMode) ? 3 : 4) : 6,
-        xl: displayResults ? (['table', 'geo'].includes($displayMode) ? 2 : 3) : 6
+        md: reduceSearchBox ? 4 : 6,
+        lg: reduceSearchBox ? (['table', 'geo'].includes($displayMode) ? 3 : 4) : 6,
+        xl: reduceSearchBox ? (['table', 'geo'].includes($displayMode) ? 2 : 3) : 6
     };
-    $: margin = displayResults ? "" : ($advancedSearch ? "" : "rf-margin-top-8N")
+    $: margin = reduceSearchBox ? "" : ($advancedSearch ? "" : "rf-margin-top-8N")
 
 </script>
 
