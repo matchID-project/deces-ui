@@ -60,7 +60,7 @@
         const headers = {
           'Accept': 'text/csv'
         }
-        const formData = {}
+        const formData = { headerLang: 'french' }
         Object.keys($searchInput).forEach(k => {
           if ($searchInput[k].value) {
             if ($searchInput[k].backendQuery) {
