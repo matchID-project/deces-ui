@@ -90,6 +90,19 @@ viewBox="0 0 24 24">
 <path d="M15 4H5v16h14V8h-4V4zM3 2.992C3 2.444 3.447 2 3.999 2H16l5 5v13.993A1 1 0 0 1 20.007 22H3.993A1 1 0 0 1 3 21.008V2.992zM11 15h2v2h-2v-2zm0-8h2v6h-2V7z" fill="currentColor"/>
 <rect x="0" y="0" width="24" height="24" fill="rgba(0, 0, 0, 0)" />
 </svg>`,
+    "ri:link": `<svg
+width="100%" 
+xmlns="http://www.w3.org/2000/svg"
+xmlns:xlink="http://www.w3.org/1999/xlink"
+aria-hidden="true"
+focusable="false"
+style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg);
+transform: rotate(360deg);"
+preserveAspectRatio="xMidYMid meet"
+viewBox="0 0 24 24">
+<path d="M18.364 15.536L16.95 14.12l1.414-1.414a5 5 0 1 0-7.071-7.071L9.879 7.05L8.464 5.636L9.88 4.222a7 7 0 0 1 9.9 9.9l-1.415 1.414zm-2.828 2.828l-1.415 1.414a7 7 0 0 1-9.9-9.9l1.415-1.414L7.05 9.88l-1.414 1.414a5 5 0 1 0 7.071 7.071l1.414-1.414l1.415 1.414zm-.708-10.607l1.415 1.415l-7.071 7.07l-1.415-1.414l7.071-7.07z" fill="currentColor"/>
+<rect x="0" y="0" width="24" height="24" fill="rgba(0, 0, 0, 0)" />
+</svg>`,
     "ri:list-check-2": `<svg
 width="100%" 
 xmlns="http://www.w3.org/2000/svg"
