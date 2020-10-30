@@ -116,46 +116,48 @@ export const searchSubmit = async (newCurrent) => {
     }
 };
 
-export const buildURLParams = () => {
-    const params = new URLSearchParams(location.search);
-    if (myAdvancedSearch) {
+export const buildURLParams = (localSearchInput, localAdvancedSearch, localFuzzySearch, localDisplayMode, localResultsPerPage, localCurrent) => {
+    const params = new URLSearchParams();
+    console.log(`${params}`);
+    if (localAdvancedSearch) {
         params.set('advanced',true)
     } else {
         params.delete('advanced');
     }
-    if (!myFuzzySearch) {
+    if (!localFuzzySearch) {
         params.set('fuzzy',false)
     } else {
         params.delete('fuzzy');
     }
-    if (['geo','table','card-expand'].includes(myDisplayMode)) {
-        params.set('view', myDisplayMode);
+    if (['geo','table','card-expand'].includes(localDisplayMode)) {
+        params.set('view', localDisplayMode);
     } else {
         params.delete('view');
     }
-    Object.keys(mySearchInput).map(key => {
-        if (mySearchInput[key].value !== "") {
-            params.set(mySearchInput[key].url, mySearchInput[key].value);
+    Object.keys(localSearchInput).map(key => {
+        if (localSearchInput[key].value !== "") {
+            params.set(localSearchInput[key].url, localSearchInput[key].value);
         } else {
-            params.delete(mySearchInput[key].url);
+            params.delete(localSearchInput[key].url);
         }
     })
-    if (myResultsPerPage !== resultsPerPageDefault) {
-        params.set('size', `n_${myResultsPerPage}_n`);
+    if ((localResultsPerPage) && (localResultsPerPage !== resultsPerPageDefault)) {
+        params.set('size', `n_${localResultsPerPage}_n`);
     } else {
         params.delete('size');
     }
-    if (myCurrent > 1) {
-        params.set('current', `n_${myCurrent}_n`);
+    if (localCurrent > 1) {
+        params.set('current', `n_${localCurrent}_n`);
     } else {
         params.delete('current');
     }
+    console.log(`${params}`);
     return params
 }
 
 export const searchURLUpdate = async () => {
     updateURL.update(v => true);
-    const params = buildURLParams();
+    const params = buildURLParams(mySearchInput, myAdvancedSearch, myFuzzySearch, myDisplayMode, myResultsPerPage, myCurrent);
     if (`${params}`) {
         window.history.replaceState({}, '', `${location.pathname}?${params}`);
     } else {

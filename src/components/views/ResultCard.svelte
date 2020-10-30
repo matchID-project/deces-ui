@@ -6,7 +6,7 @@
                     <div
                         class="rf-card rf-card--horizontal rf-card--{expand ? "md": "sm"}"
                         class:rf-card--left-arrow={expand}
-                        on:click={() => { expand=!expand }}
+                        on:click|preventDefault={() => { expand=!expand }}
                     >
                         <div class="rf-card__img">
                             <img
@@ -22,7 +22,17 @@
                             >
                                 {result.name.last.toUpperCase()} { result.name.first ? result.name.first.join(' ') : '' }
                             </h4>
-
+                            {#if expand}
+                                <span
+                                    class="rf-card_btn rf-text--sm rf-link rf-href rf-text--right"
+                                    style="position: absolute;right: 6px;top: 6px;display: flex;"
+                                    title="copier le lien permanent"
+                                    on:click|stopPropagation={() => copyLink(result)}
+                                >
+                                    <Icon icon='ri:link' class="rf-fi--md"/>
+                                    lien {linkCopied ? "copié !" : "permanent"}
+                                </span>
+                            {/if}
                             <p class="rf-card__desc rf-margin-0">
                                 <span class="{expand ? "" : "rf-text--xs"}">
                                     <span class="rf-hide--mobile">
@@ -143,15 +153,34 @@
 
 <script>
     import { slide } from 'svelte/transition';
-    import { dataGouvCatalog, displayMode } from '../tools/stores.js';
+    import { dataGouvCatalog, displayMode, searchInput } from '../tools/stores.js';
+    import { buildURLParams } from '../tools/search.js';
     import PlaceInCard from './PlaceInCard.svelte';
+    import Icon from './Icon.svelte';
 
     export let result  = undefined;
     export let forceExpand = undefined;
+    let linkCopied = false;
 
     let expand = forceExpand || ($displayMode === 'card-expand');
 
     $: expand = forceExpand || ($displayMode === 'card-expand');
+
+    const copyLink = (result) => {
+        navigator.clipboard.writeText(`${location.host}/search?${resultURL(result)}`);
+        linkCopied = true;
+        setTimeout(() => linkCopied = false, 5000)
+    }
+
+    const resultURL = (r) => {
+        return buildURLParams({
+            lastName: { url: 'ln', value: r.name.last },
+            firstName: { url: 'fn', value: r.name.first },
+            birthDate: { url: 'bd', value: dateFormat(r.birth.date) },
+            birthCity: { url: 'bc', value: r.birth.location.city },
+            deathDate: { url: 'dd', value: dateFormat(r.death.date) },
+        }, true, false, 'card-expand', undefined, 1);
+    }
 
     const dateFormat = (dateString) => {
         return dateString.replace(/(\d{4})(\d{2})(\d{2})/,"$3/$2/$1");

@@ -10,6 +10,14 @@
   text-align: left!important;
 }
 
+.rf-link.rf-text--sm {
+  font-size: 0.875rem;
+}
+
+.rf-link.rf-text--xs {
+  font-size: 0.75rem;
+}
+
 .rf-href:hover {
   cursor: pointer;
 }
@@ -40,6 +48,10 @@
 
 .rf-margin-4px {
   margin: 4px;
+}
+
+.rf-margin-left-4px {
+  margin-left: 4px;
 }
 
 .rf-margin-2px {
@@ -195,6 +207,13 @@ border-radius: 0 .25rem 0 0;
 .rf-card.rf-card--md {
   min-height: 64px;
   flex-direction: row;
+}
+
+.rf-card__btn {
+  position: absolute;
+  right: 6px;
+  top: 6px;
+  display: flex;
 }
 
 .rf-card--sm .rf-card__img {
