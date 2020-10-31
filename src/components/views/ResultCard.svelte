@@ -22,17 +22,6 @@
                             >
                                 {result.name.last.toUpperCase()} { result.name.first ? result.name.first.join(' ') : '' }
                             </h4>
-                            {#if expand}
-                                <span
-                                    class="rf-card_btn rf-text--sm rf-link rf-href rf-text--right"
-                                    style="position: absolute;right: 6px;top: 6px;display: flex;"
-                                    title="copier le lien permanent"
-                                    on:click|stopPropagation={() => copyLink(result)}
-                                >
-                                    <Icon icon='ri:link' class="rf-fi--md"/>
-                                    lien {linkCopied ? "copié !" : "permanent"}
-                                </span>
-                            {/if}
                             <p class="rf-card__desc rf-margin-0">
                                 <span class="{expand ? "" : "rf-text--xs"}">
                                     <span class="rf-hide--mobile">
@@ -52,6 +41,14 @@
                 {#if expand}
                     <div class="rf-col-12" transition:slide|local>
                         <div class="rf-callout rf-background--white">
+                            <span
+                                    class="rf-top-right-6px rf-text--sm rf-link rf-fi-- rf-href rf-text--right"
+                                    title="copier le lien permanent"
+                                    on:click|stopPropagation={() => copyLink(result)}
+                                >
+                                    <Icon icon='ri:link' class="rf-fi--md"/>
+                                    lien {linkCopied ? "copié !" : "permanent"}
+                            </span>
                             <div class="rf-container-fluid">
                                 <div class="rf-grid-row">
                                     <div class="rf-col-xs-12 rf-col-sm-12 rf-col-md-6 rf-cold-rf-col-xl-6">
