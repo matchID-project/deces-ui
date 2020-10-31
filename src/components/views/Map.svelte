@@ -369,9 +369,4 @@
 
   }
 
-@media print,screen and (max-width:768px) {
-    .hide-mobile {
-        display: None;
-    }
-  }
 </style>

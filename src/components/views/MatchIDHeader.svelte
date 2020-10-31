@@ -124,7 +124,7 @@
             <div class="rf-hide--desktop" style="position: absolute; top: 8px; right: 8px">
                     <button
                         class="rf-btn rf-fi-menu-fill rf-btn--icon rf-background--white rf-color--black"
-                        aria-control="header-nav-popin"
+                        aria-controls="header-nav-popin"
                         on:click|preventDefault={toggleBurger}
                         title="ouvrir le menu"
                     >
