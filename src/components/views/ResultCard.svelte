@@ -164,7 +164,7 @@
     $: expand = forceExpand || ($displayMode === 'card-expand');
 
     const copyLink = (result) => {
-        navigator.clipboard.writeText(`${location.host}/search?${resultURL(result)}`);
+        navigator.clipboard.writeText(`${location.origin}/search?${resultURL(result)}`);
         linkCopied = true;
         setTimeout(() => linkCopied = false, 5000)
     }
