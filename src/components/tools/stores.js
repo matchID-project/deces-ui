@@ -460,3 +460,14 @@ export const linkValidations = writable(null);
 export const linkAutoCheckThreshold = writable(0.85);
 
 export const linkCompleted = writable(false);
+
+export const version = writable({
+    ui: '__APP__ version __APP_VERSION__',
+    data: {
+        version: '328f8782',
+        updateDate: '12/10/2020',
+        lastRecordDate: '30/09/2020',
+        lastDataset: 'deces-2020-m09',
+        recordsCount: 25405985
+    }
+})

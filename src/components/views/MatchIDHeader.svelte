@@ -8,6 +8,15 @@
                     </span>
                 </span>
             </div>
+            {#if $themeDnum}
+                    <img
+                        src={"/dnum-logo-round.svg"}
+                        class="rf-hide--desktop"
+                        alt="DNUM Logo"
+                        height="80px"
+                        width="80px"
+                    />
+            {/if}
             <div class="rf-header__navbar">
                 <div class="rf-service">
                     <span class="rf-service__title" title="matchID - moteur de recherche des personnes décédées">
@@ -115,7 +124,8 @@
             {#if $themeDnum}
                     <img
                         src={"/dnum-logo-round.svg"}
-                        style="position:relative;z-index:1200;top:0px;right:0px;"
+                        class="rf-hide--mobile"
+                        style="position:relative;z-index:1200;top:0px;right:-30px;"
                         alt="DNUM Logo"
                         height="80px"
                         width="80px"

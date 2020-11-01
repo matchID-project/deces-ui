@@ -80,7 +80,7 @@
         lg: reduceSearchBox ? (['table', 'geo'].includes($displayMode) ? 3 : 4) : 6,
         xl: reduceSearchBox ? (['table', 'geo'].includes($displayMode) ? 2 : 3) : 6
     };
-    $: margin = reduceSearchBox ? "" : ($advancedSearch ? "" : "rf-margin-top-8N")
+    $: margin = reduceSearchBox ? "" : ($advancedSearch ? "" : "rf-margin-top-8N--desktop")
 
 </script>
 

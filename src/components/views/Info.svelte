@@ -36,12 +36,11 @@
 <script>
   import { onMount } from 'svelte';
   import { slide } from 'svelte/transition';
-  import { themeDnum } from '../tools/stores.js';
+  import { version, themeDnum } from '../tools/stores.js';
 
   let currentPage = undefined;
   let pages;
   let pageDOM;
-  let backendVersion;
   let mail;
   export let filter = false;
 
@@ -107,13 +106,13 @@ $: mailTo = $themeDnum ?
             Quelques informations sur le fichier :
             <ul class="rf-margin-0 rf-padding-0 rf-padding-left-4N">
               <li class="rf-margin-0">
-                le fichier comporte 25400542 décès
+                le fichier comporte ${$version && $version.data.recordsCount} décès
               </li>
               <li class="rf-margin-0">
-                il comporte les décès de 1970 à aujourd'hui (jusqu'au 30/09/2019)
+                il comporte les décès de 1970 à aujourd'hui (jusqu'au ${$version && $version.data.lastRecordDate})
               </li>
               <li class="rf-margin-0">
-                il a été mis à jour le 12 octobre 2020
+                il a été mis à jour le ${$version && $version.data.updateDate}
               </li>
             </ul>
           </p>
@@ -243,7 +242,7 @@ $: mailTo = $themeDnum ?
             En cas de doute sollicitez nous à ${mailTo}, en mentionnant la référence de version ci-dessous:
           </p>
           <p>
-            <strong>__APP__ version __APP_VERSION__-api/${backendVersion}</strong>
+            <strong>${$version && `${version.ui}-api/${version.api}`}</strong>
           </p>
       `},
     { title: 'suggérer des améliorations du service',
@@ -284,11 +283,6 @@ $: mailTo = $themeDnum ?
         </p>
       `},
   ]
-
-  onMount(async () => {
-        const r = await fetch('__BACKEND_PROXY_PATH__/version');
-        backendVersion = await r.json();
-  })
 
   const togglePage = (index) => {
     if (currentPage === index) {
