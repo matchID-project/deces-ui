@@ -7,7 +7,7 @@
 <script>
 	import { onMount } from 'svelte';
 	import MatchIDHeader from './components/views/MatchIDHeader.svelte';
-	import { route, searchInput, searchCanvas, current, resultsPerPage,
+	import { version, route, searchInput, searchCanvas, current, resultsPerPage,
 		updateURL, advancedSearch, fuzzySearch, displayMode, themeDnum
 	} from './components/tools/stores.js';
 	import { URLSearchSubmit } from './components/tools/search.js';
@@ -15,6 +15,10 @@
 
 	onMount(async () => {
 		redirect();
+		if ($version && !$version.api) {
+			const r = await fetch('__BACKEND_PROXY_PATH__/version');
+			$version.api = await r.json();
+		}
 	})
 
 	$: if ($route.path === '/search') (URLSearchSubmit(new URLSearchParams(location.search)));

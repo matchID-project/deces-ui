@@ -69,6 +69,9 @@
   .rf-padding-left-2N--desktop {
     padding-left: 16px;
   }
+  .rf-margin-top-8N--desktop {
+    margin-top: 64px;
+  }
 }
 
 @media (max-width:1200px) {
