@@ -9,13 +9,19 @@
                 </span>
             </div>
             {#if $themeDnum}
-                    <img
-                        src={"/dnum-logo-round.svg"}
-                        class="rf-hide--desktop"
-                        alt="DNUM Logo"
-                        height="80px"
-                        width="80px"
-                    />
+                <img
+                    src={"/dnum-logo-round.svg"}
+                    alt="DNUM Logo"
+                    height="80px"
+                    width="80px"
+                />
+            {:else}
+                <img
+                    src={"/favicon.svg"}
+                    alt="matchID Logo"
+                    height="64px"
+                    width="64px"
+                />
             {/if}
             <div class="rf-header__navbar">
                 <div class="rf-service">
@@ -121,16 +127,6 @@
                     </ul>
                 </div>
             </div>
-            {#if $themeDnum}
-                    <img
-                        src={"/dnum-logo-round.svg"}
-                        class="rf-hide--mobile"
-                        style="position:relative;z-index:1200;top:0px;right:-30px;"
-                        alt="DNUM Logo"
-                        height="80px"
-                        width="80px"
-                    />
-            {/if}
             <div class="rf-hide--desktop" style="position: absolute; top: 8px; right: 8px">
                     <button
                         class="rf-btn rf-fi-menu-fill rf-btn--icon rf-background--white rf-color--black"
