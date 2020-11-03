@@ -1,20 +1,26 @@
 <div class="rf-container-fluid">
   <div class="rf-grid-row">
-    {#each pages.filter(x => filter ? x.filter : true) as page, index}
+    {#each filteredPages as page, index}
       <div
         class="{currentPage === index ? "rf-col-12" : "rf-col-xl-6 rf-col-lg-6 rf-col-md-12 rf-col-sm-12 rf-col-xs-12"} rf-padding-1N"
       >
-        <div class="rf-container-fluid">
+        <div
+          class="rf-container-fluid"
+          id="{page.id}-parent"
+        >
           <div class="rf-grid-row">
             <div class="rf-col-12">
               <div
                 class="rf-card rf-card--md rf-card--horizontal rf-href"
                 class:rf-card--left-arrow={currentPage === index}
                 on:click={() => { togglePage(index) }}
+                id={page.id}
+                use:scrollto={{element: `#${page.id}`, offset: offset, duration: 1000}}
               >
                 <div class="rf-card__body">
                   <span class="rf-card__lead rf-margin-top-1N rf-margin-left-1N">
-                    {page.title}
+                    <Icon class="rf-fi--lg" icon={page.icon || 'ri:question-line'}/>
+                    <span class="rf-text--lg">{page.title}</span>
                   </span>
                 </div>
               </div>
@@ -35,32 +41,44 @@
 
 <script>
   import { onMount } from 'svelte';
+  import { scrollto } from "svelte-scrollto";
+  import * as animateScroll from "svelte-scrollto";
   import { slide } from 'svelte/transition';
-  import { version, themeDnum } from '../tools/stores.js';
+  import { version, themeDnum, route } from '../tools/stores.js';
+  import Icon from './Icon.svelte';
 
   let currentPage = undefined;
   let pages;
+  let filteredPages;
   let pageDOM;
   let mail;
+  let offset = 0;
   export let filter = false;
+
+  onMount (() => {
+    filteredPages.forEach((p, i) => {
+      if (`#${p.id}` === $route.hash) {
+        setTimeout(() => {
+          document.getElementById(p.id).click()
+        }, 10);
+      }
+    })
+  })
 
   $: mailTo = $themeDnum ?
     `<a href="mailto:datalab@interieur.gouv.fr">datalab@interieur.gouv.fr</a>`
     : `<a href="mailto:matchid.project@gmail.com">matchid.project@gmail.com</a>`;
 
-$: mailTo = $themeDnum ?
-    `<a href="mailto:datalab@interieur.gouv.fr">datalab@interieur.gouv.fr</a>`
-    : `<a href="mailto:matchid.project@gmail.com">matchid.project@gmail.com</a>`;
-
-
   $: pages = [
     { title: 'à qui s\'adresse le service ?',
+      icon: 'ri:group-line',
       content: $themeDnum ? `
         Professionnels du service public.
       ` : `
         Généalogistes, professionnels ou particuliers, services publics hospitaliers, ou de lutte contre la fraude.
       `},
     { title: 'qui sommes nous ?',
+      icon: 'ri:aliens-line',
       content: `
         <p>
           Le projet matchID a été initié au ministère de l'Intérieur ${$themeDnum ? "(administrateur ministériel des données)":""}
@@ -92,6 +110,7 @@ $: mailTo = $themeDnum ?
 
       `},
     { title: 'd\'où proviennent les données ?',
+      icon: 'ri:database-2-line',
       content: `
           <p>
               Le site exploite les fichiers des personnes décédées, disponibles en opendata sur
@@ -135,6 +154,7 @@ $: mailTo = $themeDnum ?
         </ul>
       `},
     { title: 'quelles sont les garanties sur les données ?',
+      icon: 'ri:shield-star-line',
       content: `
         <p>
             Le fichier de personnes décédées est un document administratif. Les données sont publiés en application des dispositions des articles L311-9 et L312-1-1 du code des relations entre le public et l’administration, et  réutilisables dans les conditions prévues par le titre II de ce livre.
@@ -153,6 +173,7 @@ $: mailTo = $themeDnum ?
         </p>
       `},
     { title: 'comment sont indexées les données ?',
+      icon: 'ri:file-search-line',
       content: `
         <p>
           Les données sont traitées avec l'outil opensource <a href="https://www.matchid.io" target="_blank">matchID</a> (Python/Pandas). Les traitements, disponibles
@@ -169,6 +190,7 @@ $: mailTo = $themeDnum ?
       </p>
       `},
     { title: "signaler un décès manquant",
+      icon: 'ri:user-search-line',
       filter: true,
       content: `
             <p>
@@ -214,6 +236,7 @@ $: mailTo = $themeDnum ?
             </p>
       `},
     { title: "signaler une erreur dans une fiche",
+      icon: 'ri:file-damage-line',
       content: `
             <p>
               <strong>
@@ -232,6 +255,7 @@ $: mailTo = $themeDnum ?
             </p>
       `},
     { title: 'signaler un bug ou poser une question',
+      icon: 'ri:bug-line',
       filter: true,
       content: `
           <p>
@@ -242,10 +266,11 @@ $: mailTo = $themeDnum ?
             En cas de doute sollicitez nous à ${mailTo}, en mentionnant la référence de version ci-dessous:
           </p>
           <p>
-            <strong>${$version && `${version.ui}-api/${version.api}`}</strong>
+            <strong>${$version && `${$version.ui}-api/${$version.api}`}</strong>
           </p>
       `},
     { title: 'suggérer des améliorations du service',
+      icon: 'ri:service-line',
       content: `
         <p>
             Nous prévoyons prochainement (fin 2020) :
@@ -266,10 +291,11 @@ $: mailTo = $themeDnum ?
         <p>
           Vos suggestions sont les bienvenues, nous les étudierons - écrivez nous à ${mailTo}.
       `},
-    { title: 'où est le code open source ?',
+    { title: 'le code est-il open source ?',
+      icon: 'ri:github-line',
       content: `
         <p>
-          Le code source de ce site est disponible sur <a href="https://github.com/matchid-project/deces-ui" target="_blank">GitHub</a>,
+          Le code source de ce site est opensource et disponible sur <a href="https://github.com/matchid-project/deces-ui" target="_blank">GitHub</a>,
           ainsi que celui de l'<a href="https://github.com/matchid-project/deces-backend" target="_blank">API</a>.
         </p>
         <p>
@@ -277,6 +303,7 @@ $: mailTo = $themeDnum ?
         </p>
       `},
     { title: 'documentation de l\'API',
+      icon: 'ri:plug-line',
       content: `
         <p>
           La documentation de l'API est <a href="/deces/api/v1/docs">ici</a>
@@ -284,17 +311,51 @@ $: mailTo = $themeDnum ?
       `},
   ]
 
+  $: filteredPages = pages.filter(p => {
+    if ((filter === true) || (filter === false)) {
+      return filter ? p.filter : true
+    } else {
+      const r = RegExp(filter,'i');
+      return (p.content && r.test(p.content)) || (p.test && r.test(p.test));
+    }
+  }).map(p => {
+    p.id = slugify(p.title);
+    return p;
+  });
+
   const togglePage = (index) => {
     if (currentPage === index) {
       currentPage = undefined;
+      if (history) {
+        history.pushState(null, null, window.location.href.split('#')[0]);
+      } else {
+        location.hash='';
+      }
+      $route.hash = undefined;
     }
     else {
+      if ((currentPage !== undefined) && (currentPage < index)) {
+        offset = 0 - document.getElementById(`${filteredPages[currentPage].id}-parent`).clientHeight;
+        setTimeout(() => {
+          offset = 0;
+        }, 100)
+      }
       currentPage = index;
-    }
+      location.hash = filteredPages[index].id;
+      $route.hash = location.hash;
+    };
   };
 
   const urlNorm = (title) => {
     return title.replace(/[^a-z]*/,'-').replace('-+','-');
+  }
+
+  const slugify = (str) => {
+    try {
+      return str.normalize('NFD').toLowerCase().replace(/[\u0300-\u036f]*/g, '').replace(/[^a-z0-9]+/gi, ' ').replace(/(^\s*|\s*)$/,'').replace(/\s+/gi,'-');
+    } catch (e) {
+      return str.toLowerCase().replace(/[\u0300-\u036f]*/g, '').replace(/[^a-z0-9]+/gi, ' ').replace(/(^\s*|\s*)$/,'').replace(/\s+/gi,'-');
+    }
   }
 
 </script>

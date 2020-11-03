@@ -16,8 +16,11 @@
 	onMount(async () => {
 		redirect();
 		if ($version && !$version.api) {
-			const r = await fetch('__BACKEND_PROXY_PATH__/version');
-			$version.api = await r.json();
+			try {
+				const r = await fetch('__BACKEND_PROXY_PATH__/version');
+				$version.api = await r.json();
+			} catch(e) {
+			}
 		}
 	})
 

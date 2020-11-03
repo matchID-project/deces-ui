@@ -212,6 +212,30 @@ border-radius: 0 .25rem 0 0;
   flex-direction: row;
 }
 
+.rf-card__lead .rf-fi--icon {
+  position: absolute;
+  top: auto;
+  bottom: auto;
+  left: 6px;
+}
+
+.rf-card__lead .rf-fi--icon svg {
+  margin-bottom: -1px;
+}
+
+.rf-card__lead .rf-fi--icon.rf-fi--lg svg {
+  margin-bottom: -3px;
+}
+
+.rf-card__lead .rf-fi--icon + span {
+  margin-left: 28px;
+  margin-top:auto;
+  margin-bottom:auto;
+}
+.rf-card__lead .rf-fi--icon.rf-fi--lg + span {
+  margin-left: 32px;
+}
+
 .rf-top-right-6px {
   position: absolute;
   right: 6px;
