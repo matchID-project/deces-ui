@@ -25,6 +25,32 @@ viewBox="0 0 24 24">
 <path d="M12.866 3l9.526 16.5a1 1 0 0 1-.866 1.5H2.474a1 1 0 0 1-.866-1.5L11.134 3a1 1 0 0 1 1.732 0zm-8.66 16h15.588L12 5.5L4.206 19zM11 16h2v2h-2v-2zm0-7h2v5h-2V9z" fill="currentColor"/>
 <rect x="0" y="0" width="24" height="24" fill="rgba(0, 0, 0, 0)" />
 </svg>`,
+    "ri:aliens-line": `<svg
+width="100%" 
+xmlns="http://www.w3.org/2000/svg"
+xmlns:xlink="http://www.w3.org/1999/xlink"
+aria-hidden="true"
+focusable="false"
+style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg);
+transform: rotate(360deg);"
+preserveAspectRatio="xMidYMid meet"
+viewBox="0 0 24 24">
+<path d="M12 2a8.5 8.5 0 0 1 8.5 8.5c0 6.5-5.5 12-8.5 12s-8.5-5.5-8.5-12A8.5 8.5 0 0 1 12 2zm0 2a6.5 6.5 0 0 0-6.5 6.5c0 4.794 4.165 10 6.5 10s6.5-5.206 6.5-10A6.5 6.5 0 0 0 12 4zm5.5 7c.16 0 .319.008.475.025a4.5 4.5 0 0 1-4.95 4.95A4.5 4.5 0 0 1 17.5 11zm-11 0a4.5 4.5 0 0 1 4.475 4.975a4.5 4.5 0 0 1-4.95-4.95C6.18 11.008 6.34 11 6.5 11z" fill="currentColor"/>
+<rect x="0" y="0" width="24" height="24" fill="rgba(0, 0, 0, 0)" />
+</svg>`,
+    "ri:bug-line": `<svg
+width="100%" 
+xmlns="http://www.w3.org/2000/svg"
+xmlns:xlink="http://www.w3.org/1999/xlink"
+aria-hidden="true"
+focusable="false"
+style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg);
+transform: rotate(360deg);"
+preserveAspectRatio="xMidYMid meet"
+viewBox="0 0 24 24">
+<path d="M13 19.9a5.002 5.002 0 0 0 4-4.9v-3a4.98 4.98 0 0 0-.415-2h-9.17A4.98 4.98 0 0 0 7 12v3a5.002 5.002 0 0 0 4 4.9V14h2v5.9zm-7.464-2.21A6.979 6.979 0 0 1 5 15H2v-2h3v-1c0-.643.087-1.265.249-1.856L3.036 8.866l1-1.732L6.056 8.3a7.01 7.01 0 0 1 .199-.3h11.49c.069.098.135.199.199.3l2.02-1.166l1 1.732l-2.213 1.278c.162.59.249 1.213.249 1.856v1h3v2h-3a6.96 6.96 0 0 1-.536 2.69l2.5 1.444l-1 1.732l-2.526-1.458A6.986 6.986 0 0 1 12 22a6.986 6.986 0 0 1-5.438-2.592l-2.526 1.458l-1-1.732l2.5-1.443zM8 6a4 4 0 1 1 8 0H8z" fill="currentColor"/>
+<rect x="0" y="0" width="24" height="24" fill="rgba(0, 0, 0, 0)" />
+</svg>`,
     "ri:checkbox-circle-fill": `<svg
 width="100%" 
 xmlns="http://www.w3.org/2000/svg"
@@ -38,6 +64,19 @@ viewBox="0 0 24 24">
 <path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10s-4.477 10-10 10zm-.997-6l7.07-7.071l-1.414-1.414l-5.656 5.657l-2.829-2.829l-1.414 1.414L11.003 16z" fill="currentColor"/>
 <rect x="0" y="0" width="24" height="24" fill="rgba(0, 0, 0, 0)" />
 </svg>`,
+    "ri:database-2-line": `<svg
+width="100%" 
+xmlns="http://www.w3.org/2000/svg"
+xmlns:xlink="http://www.w3.org/1999/xlink"
+aria-hidden="true"
+focusable="false"
+style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg);
+transform: rotate(360deg);"
+preserveAspectRatio="xMidYMid meet"
+viewBox="0 0 24 24">
+<path d="M5 12.5c0 .313.461.858 1.53 1.393C7.914 14.585 9.877 15 12 15c2.123 0 4.086-.415 5.47-1.107c1.069-.535 1.53-1.08 1.53-1.393v-2.171C17.35 11.349 14.827 12 12 12s-5.35-.652-7-1.671V12.5zm14 2.829C17.35 16.349 14.827 17 12 17s-5.35-.652-7-1.671V17.5c0 .313.461.858 1.53 1.393C7.914 19.585 9.877 20 12 20c2.123 0 4.086-.415 5.47-1.107c1.069-.535 1.53-1.08 1.53-1.393v-2.171zM3 17.5v-10C3 5.015 7.03 3 12 3s9 2.015 9 4.5v10c0 2.485-4.03 4.5-9 4.5s-9-2.015-9-4.5zm9-7.5c2.123 0 4.086-.415 5.47-1.107C18.539 8.358 19 7.813 19 7.5c0-.313-.461-.858-1.53-1.393C16.086 5.415 14.123 5 12 5c-2.123 0-4.086.415-5.47 1.107C5.461 6.642 5 7.187 5 7.5c0 .313.461.858 1.53 1.393C7.914 9.585 9.877 10 12 10z" fill="currentColor"/>
+<rect x="0" y="0" width="24" height="24" fill="rgba(0, 0, 0, 0)" />
+</svg>`,
     "ri:earth-line": `<svg
 width="100%" 
 xmlns="http://www.w3.org/2000/svg"
@@ -49,6 +88,19 @@ transform: rotate(360deg);"
 preserveAspectRatio="xMidYMid meet"
 viewBox="0 0 24 24">
 <path d="M6.235 6.453a8 8 0 0 0 8.817 12.944c.115-.75-.137-1.47-.24-1.722c-.23-.56-.988-1.517-2.253-2.844c-.338-.355-.316-.628-.195-1.437l.013-.091c.082-.554.22-.882 2.085-1.178c.948-.15 1.197.228 1.542.753l.116.172c.328.48.571.59.938.756c.165.075.37.17.645.325c.652.373.652.794.652 1.716v.105c0 .391-.038.735-.098 1.034a8.002 8.002 0 0 0-3.105-12.341c-.553.373-1.312.902-1.577 1.265c-.135.185-.327 1.132-.95 1.21c-.162.02-.381.006-.613-.009c-.622-.04-1.472-.095-1.744.644c-.173.468-.203 1.74.356 2.4c.09.105.107.3.046.519c-.08.287-.241.462-.292.498c-.096-.056-.288-.279-.419-.43c-.313-.365-.705-.82-1.211-.96c-.184-.051-.386-.093-.583-.135c-.549-.115-1.17-.246-1.315-.554c-.106-.226-.105-.537-.105-.865c0-.417 0-.888-.204-1.345a1.276 1.276 0 0 0-.306-.43zM12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10s-4.477 10-10 10z" fill="currentColor"/>
+<rect x="0" y="0" width="24" height="24" fill="rgba(0, 0, 0, 0)" />
+</svg>`,
+    "ri:file-damage-line": `<svg
+width="100%" 
+xmlns="http://www.w3.org/2000/svg"
+xmlns:xlink="http://www.w3.org/1999/xlink"
+aria-hidden="true"
+focusable="false"
+style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg);
+transform: rotate(360deg);"
+preserveAspectRatio="xMidYMid meet"
+viewBox="0 0 24 24">
+<path d="M19 9h-5V4H5v7.857l1.5 1.393L10 9.5l3 5l2-2.5l3 3l-3-.5l-2 2.5l-3-4l-3 3.5l-2-1.25V20h14V9zm2-1v12.993A1 1 0 0 1 20.007 22H3.993A.993.993 0 0 1 3 21.008V2.992C3 2.455 3.449 2 4.002 2h10.995L21 8z" fill="currentColor"/>
 <rect x="0" y="0" width="24" height="24" fill="rgba(0, 0, 0, 0)" />
 </svg>`,
     "ri:file-download-line": `<svg
@@ -77,6 +129,19 @@ viewBox="0 0 24 24">
 <path d="M11.29 20a6.96 6.96 0 0 0 .965 2H3.993A1 1 0 0 1 3 21.008V2.992C3 2.444 3.447 2 3.999 2H16l5 5v4.674a6.95 6.95 0 0 0-2-.603V8h-4V4H5v16h6.29zM18 23a5 5 0 1 1 0-10a5 5 0 0 1 0 10zm-1.293-2.292a3 3 0 0 0 4.001-4.001l-4.001 4zm-1.415-1.415l4.001-4a3 3 0 0 0-4.001 4.001z" fill="currentColor"/>
 <rect x="0" y="0" width="24" height="24" fill="rgba(0, 0, 0, 0)" />
 </svg>`,
+    "ri:file-search-line": `<svg
+width="100%" 
+xmlns="http://www.w3.org/2000/svg"
+xmlns:xlink="http://www.w3.org/1999/xlink"
+aria-hidden="true"
+focusable="false"
+style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg);
+transform: rotate(360deg);"
+preserveAspectRatio="xMidYMid meet"
+viewBox="0 0 24 24">
+<path d="M15 4H5v16h14V8h-4V4zM3 2.992C3 2.444 3.447 2 3.999 2H16l5 5v13.993A1 1 0 0 1 20.007 22H3.993A1 1 0 0 1 3 21.008V2.992zm10.529 11.454a4.002 4.002 0 0 1-4.86-6.274a4 4 0 0 1 6.274 4.86l2.21 2.21l-1.414 1.415l-2.21-2.21zm-.618-2.032a2 2 0 1 0-2.828-2.828a2 2 0 0 0 2.828 2.828z" fill="currentColor"/>
+<rect x="0" y="0" width="24" height="24" fill="rgba(0, 0, 0, 0)" />
+</svg>`,
     "ri:file-warning-line": `<svg
 width="100%" 
 xmlns="http://www.w3.org/2000/svg"
@@ -88,6 +153,32 @@ transform: rotate(360deg);"
 preserveAspectRatio="xMidYMid meet"
 viewBox="0 0 24 24">
 <path d="M15 4H5v16h14V8h-4V4zM3 2.992C3 2.444 3.447 2 3.999 2H16l5 5v13.993A1 1 0 0 1 20.007 22H3.993A1 1 0 0 1 3 21.008V2.992zM11 15h2v2h-2v-2zm0-8h2v6h-2V7z" fill="currentColor"/>
+<rect x="0" y="0" width="24" height="24" fill="rgba(0, 0, 0, 0)" />
+</svg>`,
+    "ri:github-line": `<svg
+width="100%" 
+xmlns="http://www.w3.org/2000/svg"
+xmlns:xlink="http://www.w3.org/1999/xlink"
+aria-hidden="true"
+focusable="false"
+style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg);
+transform: rotate(360deg);"
+preserveAspectRatio="xMidYMid meet"
+viewBox="0 0 24 24">
+<path d="M5.883 18.653c-.3-.2-.558-.455-.86-.816a50.32 50.32 0 0 1-.466-.579c-.463-.575-.755-.84-1.057-.949a1 1 0 0 1 .676-1.883c.752.27 1.261.735 1.947 1.588c-.094-.117.34.427.433.539c.19.227.33.365.44.438c.204.137.587.196 1.15.14c.023-.382.094-.753.202-1.095C5.38 15.31 3.7 13.396 3.7 9.64c0-1.24.37-2.356 1.058-3.292c-.218-.894-.185-1.975.302-3.192a1 1 0 0 1 .63-.582c.081-.024.127-.035.208-.047c.803-.123 1.937.17 3.415 1.096A11.731 11.731 0 0 1 12 3.315c.912 0 1.818.104 2.684.308c1.477-.933 2.613-1.226 3.422-1.096c.085.013.157.03.218.05a1 1 0 0 1 .616.58c.487 1.216.52 2.297.302 3.19c.691.936 1.058 2.045 1.058 3.293c0 3.757-1.674 5.665-4.642 6.392c.125.415.19.879.19 1.38a300.492 300.492 0 0 1-.012 2.716a1 1 0 0 1-.019 1.958c-1.139.228-1.983-.532-1.983-1.525l.002-.446l.005-.705c.005-.708.007-1.338.007-1.998c0-.697-.183-1.152-.425-1.36c-.661-.57-.326-1.655.54-1.752c2.967-.333 4.337-1.482 4.337-4.66c0-.955-.312-1.744-.913-2.404a1 1 0 0 1-.19-1.045c.166-.414.237-.957.096-1.614l-.01.003c-.491.139-1.11.44-1.858.949a1 1 0 0 1-.833.135A9.626 9.626 0 0 0 12 5.315c-.89 0-1.772.119-2.592.35a1 1 0 0 1-.83-.134c-.752-.507-1.374-.807-1.868-.947c-.144.653-.073 1.194.092 1.607a1 1 0 0 1-.189 1.045C6.016 7.89 5.7 8.694 5.7 9.64c0 3.172 1.371 4.328 4.322 4.66c.865.097 1.201 1.177.544 1.748c-.192.168-.429.732-.429 1.364v3.15c0 .986-.835 1.725-1.96 1.528a1 1 0 0 1-.04-1.962v-.99c-.91.061-1.662-.088-2.254-.485z" fill="currentColor"/>
+<rect x="0" y="0" width="24" height="24" fill="rgba(0, 0, 0, 0)" />
+</svg>`,
+    "ri:group-line": `<svg
+width="100%" 
+xmlns="http://www.w3.org/2000/svg"
+xmlns:xlink="http://www.w3.org/1999/xlink"
+aria-hidden="true"
+focusable="false"
+style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg);
+transform: rotate(360deg);"
+preserveAspectRatio="xMidYMid meet"
+viewBox="0 0 24 24">
+<path d="M2 22a8 8 0 1 1 16 0h-2a6 6 0 1 0-12 0H2zm8-9c-3.315 0-6-2.685-6-6s2.685-6 6-6s6 2.685 6 6s-2.685 6-6 6zm0-2c2.21 0 4-1.79 4-4s-1.79-4-4-4s-4 1.79-4 4s1.79 4 4 4zm8.284 3.703A8.002 8.002 0 0 1 23 22h-2a6.001 6.001 0 0 0-3.537-5.473l.82-1.824zm-.688-11.29A5.5 5.5 0 0 1 21 8.5a5.499 5.499 0 0 1-5 5.478v-2.013a3.5 3.5 0 0 0 1.041-6.609l.555-1.943z" fill="currentColor"/>
 <rect x="0" y="0" width="24" height="24" fill="rgba(0, 0, 0, 0)" />
 </svg>`,
     "ri:link": `<svg
@@ -129,6 +220,19 @@ viewBox="0 0 24 24">
 <path d="M12 2a1 1 0 0 1 1 1v3a1 1 0 0 1-2 0V3a1 1 0 0 1 1-1zm0 15a1 1 0 0 1 1 1v3a1 1 0 0 1-2 0v-3a1 1 0 0 1 1-1zm8.66-10a1 1 0 0 1-.366 1.366l-2.598 1.5a1 1 0 1 1-1-1.732l2.598-1.5A1 1 0 0 1 20.66 7zM7.67 14.5a1 1 0 0 1-.366 1.366l-2.598 1.5a1 1 0 1 1-1-1.732l2.598-1.5a1 1 0 0 1 1.366.366zM20.66 17a1 1 0 0 1-1.366.366l-2.598-1.5a1 1 0 0 1 1-1.732l2.598 1.5A1 1 0 0 1 20.66 17zM7.67 9.5a1 1 0 0 1-1.366.366l-2.598-1.5a1 1 0 1 1 1-1.732l2.598 1.5A1 1 0 0 1 7.67 9.5z" fill="currentColor"/>
 <rect x="0" y="0" width="24" height="24" fill="rgba(0, 0, 0, 0)" />
 </svg>`,
+    "ri:plug-line": `<svg
+width="100%" 
+xmlns="http://www.w3.org/2000/svg"
+xmlns:xlink="http://www.w3.org/1999/xlink"
+aria-hidden="true"
+focusable="false"
+style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg);
+transform: rotate(360deg);"
+preserveAspectRatio="xMidYMid meet"
+viewBox="0 0 24 24">
+<path d="M13 18v2h6v2h-6a2 2 0 0 1-2-2v-2H8a4 4 0 0 1-4-4V7a1 1 0 0 1 1-1h3V2h2v4h4V2h2v4h3a1 1 0 0 1 1 1v7a4 4 0 0 1-4 4h-3zm-5-2h8a2 2 0 0 0 2-2v-3H6v3a2 2 0 0 0 2 2zm10-8H6v1h12V8zm-6 6.5a1 1 0 1 1 0-2a1 1 0 0 1 0 2z" fill="currentColor"/>
+<rect x="0" y="0" width="24" height="24" fill="rgba(0, 0, 0, 0)" />
+</svg>`,
     "ri:profile-line": `<svg
 width="100%" 
 xmlns="http://www.w3.org/2000/svg"
@@ -140,6 +244,19 @@ transform: rotate(360deg);"
 preserveAspectRatio="xMidYMid meet"
 viewBox="0 0 24 24">
 <path d="M2 3.993A1 1 0 0 1 2.992 3h18.016c.548 0 .992.445.992.993v16.014a1 1 0 0 1-.992.993H2.992A.993.993 0 0 1 2 20.007V3.993zM4 5v14h16V5H4zm2 2h6v6H6V7zm2 2v2h2V9H8zm-2 6h12v2H6v-2zm8-8h4v2h-4V7zm0 4h4v2h-4v-2z" fill="currentColor"/>
+<rect x="0" y="0" width="24" height="24" fill="rgba(0, 0, 0, 0)" />
+</svg>`,
+    "ri:question-line": `<svg
+width="100%" 
+xmlns="http://www.w3.org/2000/svg"
+xmlns:xlink="http://www.w3.org/1999/xlink"
+aria-hidden="true"
+focusable="false"
+style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg);
+transform: rotate(360deg);"
+preserveAspectRatio="xMidYMid meet"
+viewBox="0 0 24 24">
+<path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10s-4.477 10-10 10zm0-2a8 8 0 1 0 0-16a8 8 0 0 0 0 16zm-1-5h2v2h-2v-2zm2-1.645V14h-2v-1.5a1 1 0 0 1 1-1a1.5 1.5 0 1 0-1.471-1.794l-1.962-.393A3.501 3.501 0 1 1 13 13.355z" fill="currentColor"/>
 <rect x="0" y="0" width="24" height="24" fill="rgba(0, 0, 0, 0)" />
 </svg>`,
     "ri:search-line": `<svg
@@ -155,6 +272,32 @@ viewBox="0 0 24 24">
 <path d="M18.031 16.617l4.283 4.282l-1.415 1.415l-4.282-4.283A8.96 8.96 0 0 1 11 20c-4.968 0-9-4.032-9-9s4.032-9 9-9s9 4.032 9 9a8.96 8.96 0 0 1-1.969 5.617zm-2.006-.742A6.977 6.977 0 0 0 18 11c0-3.868-3.133-7-7-7c-3.868 0-7 3.132-7 7c0 3.867 3.132 7 7 7a6.977 6.977 0 0 0 4.875-1.975l.15-.15z" fill="currentColor"/>
 <rect x="0" y="0" width="24" height="24" fill="rgba(0, 0, 0, 0)" />
 </svg>`,
+    "ri:service-line": `<svg
+width="100%" 
+xmlns="http://www.w3.org/2000/svg"
+xmlns:xlink="http://www.w3.org/1999/xlink"
+aria-hidden="true"
+focusable="false"
+style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg);
+transform: rotate(360deg);"
+preserveAspectRatio="xMidYMid meet"
+viewBox="0 0 24 24">
+<path d="M3.161 4.469a6.5 6.5 0 0 1 8.84-.328a6.5 6.5 0 0 1 9.178 9.154l-7.765 7.79a2 2 0 0 1-2.719.102l-.11-.101l-7.764-7.791a6.5 6.5 0 0 1 .34-8.826zm1.414 1.414a4.5 4.5 0 0 0-.146 6.21l.146.154L12 19.672l5.303-5.304l-3.535-3.535l-1.06 1.06a3 3 0 1 1-4.244-4.242l2.102-2.103a4.501 4.501 0 0 0-5.837.189l-.154.146zm8.486 2.828a1 1 0 0 1 1.414 0l4.242 4.242l.708-.706a4.5 4.5 0 0 0-6.211-6.51l-.153.146l-3.182 3.182a1 1 0 0 0-.078 1.327l.078.087a1 1 0 0 0 1.327.078l.087-.078l1.768-1.768z" fill="currentColor"/>
+<rect x="0" y="0" width="24" height="24" fill="rgba(0, 0, 0, 0)" />
+</svg>`,
+    "ri:shield-star-line": `<svg
+width="100%" 
+xmlns="http://www.w3.org/2000/svg"
+xmlns:xlink="http://www.w3.org/1999/xlink"
+aria-hidden="true"
+focusable="false"
+style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg);
+transform: rotate(360deg);"
+preserveAspectRatio="xMidYMid meet"
+viewBox="0 0 24 24">
+<path d="M5 4.604v9.185a4 4 0 0 0 1.781 3.328L12 20.597l5.219-3.48A4 4 0 0 0 19 13.79V4.604L12 3.05L5 4.604zM3.783 2.826L12 1l8.217 1.826a1 1 0 0 1 .783.976v9.987a6 6 0 0 1-2.672 4.992L12 23l-6.328-4.219A6 6 0 0 1 3 13.79V3.802a1 1 0 0 1 .783-.976zM12 13.5l-2.939 1.545l.561-3.272l-2.377-2.318l3.286-.478L12 6l1.47 2.977l3.285.478l-2.377 2.318l.56 3.272L12 13.5z" fill="currentColor"/>
+<rect x="0" y="0" width="24" height="24" fill="rgba(0, 0, 0, 0)" />
+</svg>`,
     "ri:table-line": `<svg
 width="100%" 
 xmlns="http://www.w3.org/2000/svg"
@@ -166,6 +309,19 @@ transform: rotate(360deg);"
 preserveAspectRatio="xMidYMid meet"
 viewBox="0 0 24 24">
 <path d="M4 8h16V5H4v3zm10 11v-9h-4v9h4zm2 0h4v-9h-4v9zm-8 0v-9H4v9h4zM3 3h18a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z" fill="currentColor"/>
+<rect x="0" y="0" width="24" height="24" fill="rgba(0, 0, 0, 0)" />
+</svg>`,
+    "ri:user-search-line": `<svg
+width="100%" 
+xmlns="http://www.w3.org/2000/svg"
+xmlns:xlink="http://www.w3.org/1999/xlink"
+aria-hidden="true"
+focusable="false"
+style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg);
+transform: rotate(360deg);"
+preserveAspectRatio="xMidYMid meet"
+viewBox="0 0 24 24">
+<path d="M12 14v2a6 6 0 0 0-6 6H4a8 8 0 0 1 8-8zm0-1c-3.315 0-6-2.685-6-6s2.685-6 6-6s6 2.685 6 6s-2.685 6-6 6zm0-2c2.21 0 4-1.79 4-4s-1.79-4-4-4s-4 1.79-4 4s1.79 4 4 4zm9.446 9.032l1.504 1.504l-1.414 1.414l-1.504-1.504a4 4 0 1 1 1.414-1.414zM18 20a2 2 0 1 0 0-4a2 2 0 0 0 0 4z" fill="currentColor"/>
 <rect x="0" y="0" width="24" height="24" fill="rgba(0, 0, 0, 0)" />
 </svg>`,
     "ri:zoom-in-line": `<svg

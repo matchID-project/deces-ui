@@ -1,6 +1,6 @@
 <div class="rf-container">
   <div class="rf-grid-row">
-    <div class="rf-col-12 rf-padding-top-3N rf-padding-bottom-1N">
+    <div class="rf-col-12 rf-padding-top-3N">
       <h2 class="rf-h2 rf-text--center">
         à propos
       </h2>

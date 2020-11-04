@@ -35,7 +35,7 @@ export const redirect = () => {
             window.history.replaceState({}, '', `/search`);
         }
     }
-    route.update(v => { return {path: location.pathname, query: query}; });
+    route.update(v => { return {path: location.pathname, query: query, hash: location.hash}; });
 };
 
 export const goTo =  (r) => {
