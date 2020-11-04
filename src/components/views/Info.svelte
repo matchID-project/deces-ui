@@ -1,8 +1,22 @@
 <div class="rf-container-fluid">
   <div class="rf-grid-row">
+    {#if !filter}
+      <div class="rf-col-xl-4 rf-col-lg-4 rf-col-md-3 rf-col-sm-12 rf-col-xs-12"></div>
+      <div class="rf-col-xl-4 rf-col-lg-4 rf-col-md-6 rf-col-sm-12 rf-col-xs-12 rf-content--center">
+        <div class="rf-search-bar rf-margin-bottom-1N" id="search-input">
+          <input bind:value={search} class="rf-input" placeholder="rechercher dans les questions" type="search" id="search-input-input" name="search-input-input">
+          <button class="rf-btn" title="Rechercher">
+              <span>
+                  rechercher
+              </span>
+          </button>
+        </div>
+      </div>
+      <div class="rf-col-xl-4 rf-col-lg-4 rf-col-md-3 rf-col-sm-12 rf-col-xs-12"></div>
+    {/if}
     {#each filteredPages as page, index}
       <div
-        class="{currentPage === index ? "rf-col-12" : "rf-col-xl-6 rf-col-lg-6 rf-col-md-12 rf-col-sm-12 rf-col-xs-12"} rf-padding-1N"
+        class="{currentPage === page.id ? "rf-col-12" : "rf-col-xl-6 rf-col-lg-6 rf-col-md-12 rf-col-sm-12 rf-col-xs-12"} rf-padding-1N"
       >
         <div
           class="rf-container-fluid"
@@ -12,8 +26,8 @@
             <div class="rf-col-12">
               <div
                 class="rf-card rf-card--md rf-card--horizontal rf-href"
-                class:rf-card--left-arrow={currentPage === index}
-                on:click={() => { togglePage(index) }}
+                class:rf-card--left-arrow={currentPage === page.id}
+                on:click={() => { togglePage(page.id) }}
                 id={page.id}
                 use:scrollto={{element: `#${page.id}`, offset: offset, duration: 1000}}
               >
@@ -25,7 +39,7 @@
                 </div>
               </div>
             </div>
-            {#if currentPage === index}
+            {#if currentPage === page.id}
               <div class="rf-col-12" transition:slide|local>
                 <div class="rf-callout rf-background--white">
                   {@html page.content}
@@ -52,6 +66,7 @@
   let filteredPages;
   let pageDOM;
   let mail;
+  let search;
   let offset = 0;
   export let filter = false;
 
@@ -90,7 +105,7 @@
         </p>
         <p>
           Le projet a été libéré et mis en opensource. L'équipe est maintenant composée de développeurs
-          du ministère de la Justice et du ministère de l'Intérieur, contribuant au service sur leur temps libre.
+          du ministère de la Justice et du ministère de l'Intérieur, contribuant bénévolement au service sur leur temps libre.
         </p>
         <p>
             Nous avons créé de service
@@ -108,7 +123,8 @@
             Pour en savoir plus sur le projet matchID, consultez notre site <a href="https://www.matchid.io" target="_blank">https://matchid.io</a>.
         </p>
 
-      `},
+      `,
+      tags: "bénévole geeks nerd passionnés fabien antoine cristian perez brokate"},
     { title: 'd\'où proviennent les données ?',
       icon: 'ri:database-2-line',
       content: `
@@ -234,7 +250,8 @@
                 Nous ne pourrons vous accompagner plus loin dans la démarche administrative à ce stade, il n'existe pas de processus simplifié
                 pour les demande d'ajout et de correction. Mais nous répondrons toujours à vos sollicitations.
             </p>
-      `},
+      `,
+      tags: "trouver personne proche absent"},
     { title: "signaler une erreur dans une fiche",
       icon: 'ri:file-damage-line',
       content: `
@@ -253,7 +270,8 @@
               N'hésitez cependant pas à nous écrire pour signaler votre cas à ${mailTo}.
               Nous reprendrons contact avec vous lorsqu'un processus de mise à jour sera identifié avec l'INSEE.
             </p>
-      `},
+      `,
+      tags: "problème corriger correction faute"},
     { title: 'signaler un bug ou poser une question',
       icon: 'ri:bug-line',
       filter: true,
@@ -268,7 +286,8 @@
           <p>
             <strong>${$version && `${$version.ui}-api/${$version.api}`}</strong>
           </p>
-      `},
+      `,
+      tags: "problème bogue plante"},
     { title: 'suggérer des améliorations du service',
       icon: 'ri:service-line',
       content: `
@@ -290,7 +309,8 @@
         </ul>
         <p>
           Vos suggestions sont les bienvenues, nous les étudierons - écrivez nous à ${mailTo}.
-      `},
+      `,
+      tags: "évolutions"},
     { title: 'le code est-il open source ?',
       icon: 'ri:github-line',
       content: `
@@ -308,23 +328,30 @@
         <p>
           La documentation de l'API est <a href="/deces/api/v1/docs">ici</a>
         </p>
-      `},
+      `,
+      tags: "swagger"},
   ]
 
   $: filteredPages = pages.filter(p => {
-    if ((filter === true) || (filter === false)) {
-      return filter ? p.filter : true
-    } else {
-      const r = RegExp(filter,'i');
-      return (p.content && r.test(p.content)) || (p.test && r.test(p.test));
-    }
+    const terms = search && search.split(/\s+/).map(s => RegExp(`(^|\s|[^a-z])${s}.*(\s|^[a-z]|$)`,'i')) || [];
+    return (filter ? p.filter : true) && (p.tags && ( terms.every(r => r.test(p.tags))) || (p.content && terms.every(r => r.test(p.content))) || (p.title && terms.every(r => r.test(p.title))));
   }).map(p => {
     p.id = slugify(p.title);
     return p;
   });
 
-  const togglePage = (index) => {
-    if (currentPage === index) {
+  const indexOf = (id) => {
+    let index = -1
+    filteredPages.forEach((p, i) => {
+      if (p.id === id) {
+        index = i;
+      }
+    });
+    return index;
+  }
+
+  const togglePage = (id) => {
+    if (currentPage === id) {
       currentPage = undefined;
       if (history) {
         history.pushState(null, null, window.location.href.split('#')[0]);
@@ -334,14 +361,14 @@
       $route.hash = undefined;
     }
     else {
-      if ((currentPage !== undefined) && (currentPage < index)) {
-        offset = 0 - document.getElementById(`${filteredPages[currentPage].id}-parent`).clientHeight;
+      if ((currentPage !== undefined) && (indexOf(currentPage) < indexOf(id))) {
+        offset = 0 - document.getElementById(`${currentPage}-parent`).clientHeight;
         setTimeout(() => {
           offset = 0;
         }, 100)
       }
-      currentPage = index;
-      location.hash = filteredPages[index].id;
+      currentPage = id;
+      location.hash = id;
       $route.hash = location.hash;
     };
   };
