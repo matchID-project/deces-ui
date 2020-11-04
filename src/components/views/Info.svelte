@@ -1,25 +1,43 @@
 <div class="rf-container-fluid">
   <div class="rf-grid-row">
-    {#each pages.filter(x => filter ? x.filter : true) as page, index}
+    {#if !filter}
+      <div class="rf-col-xl-4 rf-col-lg-4 rf-col-md-3 rf-col-sm-12 rf-col-xs-12"></div>
+      <div class="rf-col-xl-4 rf-col-lg-4 rf-col-md-6 rf-col-sm-12 rf-col-xs-12 rf-content--center">
+        <div class="rf-search-bar rf-margin-bottom-1N" id="search-input">
+          <input bind:value={search} class="rf-input" placeholder="rechercher dans les questions" type="search" id="search-input-input" name="search-input-input">
+          <button class="rf-btn" title="Rechercher">
+              <span>
+                  rechercher
+              </span>
+          </button>
+        </div>
+      </div>
+      <div class="rf-col-xl-4 rf-col-lg-4 rf-col-md-3 rf-col-sm-12 rf-col-xs-12"></div>
+    {/if}
+    {#each filteredPages as page, index}
       <div
-        class="{currentPage === index ? "rf-col-12" : "rf-col-xl-6 rf-col-lg-6 rf-col-md-12 rf-col-sm-12 rf-col-xs-12"} rf-padding-1N"
+        class="{currentPage === page.id ? "rf-col-12" : "rf-col-xl-6 rf-col-lg-6 rf-col-md-12 rf-col-sm-12 rf-col-xs-12"} rf-padding-1N"
       >
-        <div class="rf-container-fluid">
+        <div
+          class="rf-container-fluid"
+          id={page.id}
+        >
           <div class="rf-grid-row">
             <div class="rf-col-12">
               <div
                 class="rf-card rf-card--md rf-card--horizontal rf-href"
-                class:rf-card--left-arrow={currentPage === index}
-                on:click={() => { togglePage(index) }}
+                class:rf-card--left-arrow={currentPage === page.id}
+                on:click={() => { togglePage(page.id) }}
               >
                 <div class="rf-card__body">
                   <span class="rf-card__lead rf-margin-top-1N rf-margin-left-1N">
-                    {page.title}
+                    <Icon class="rf-fi--lg" icon={page.icon || 'ri:question-line'}/>
+                    <span class="rf-text--lg">{page.title}</span>
                   </span>
                 </div>
               </div>
             </div>
-            {#if currentPage === index}
+            {#if currentPage === page.id}
               <div class="rf-col-12" transition:slide|local>
                 <div class="rf-callout rf-background--white">
                   {@html page.content}
@@ -35,32 +53,44 @@
 
 <script>
   import { onMount } from 'svelte';
+  import * as animateScroll from 'svelte-scrollto';
   import { slide } from 'svelte/transition';
-  import { version, themeDnum } from '../tools/stores.js';
+  import { version, themeDnum, route } from '../tools/stores.js';
+  import Icon from './Icon.svelte';
 
   let currentPage = undefined;
   let pages;
+  let filteredPages;
   let pageDOM;
   let mail;
+  let search;
+  let offset = 0;
   export let filter = false;
+
+  onMount (() => {
+    filteredPages.forEach((p, i) => {
+      if (`#${p.id}` === $route.hash) {
+        setTimeout(() => {
+          document.getElementById(p.id).click()
+        }, 10);
+      }
+    })
+  })
 
   $: mailTo = $themeDnum ?
     `<a href="mailto:datalab@interieur.gouv.fr">datalab@interieur.gouv.fr</a>`
     : `<a href="mailto:matchid.project@gmail.com">matchid.project@gmail.com</a>`;
 
-$: mailTo = $themeDnum ?
-    `<a href="mailto:datalab@interieur.gouv.fr">datalab@interieur.gouv.fr</a>`
-    : `<a href="mailto:matchid.project@gmail.com">matchid.project@gmail.com</a>`;
-
-
   $: pages = [
     { title: 'à qui s\'adresse le service ?',
+      icon: 'ri:group-line',
       content: $themeDnum ? `
         Professionnels du service public.
       ` : `
         Généalogistes, professionnels ou particuliers, services publics hospitaliers, ou de lutte contre la fraude.
       `},
     { title: 'qui sommes nous ?',
+      icon: 'ri:aliens-line',
       content: `
         <p>
           Le projet matchID a été initié au ministère de l'Intérieur ${$themeDnum ? "(administrateur ministériel des données)":""}
@@ -72,7 +102,7 @@ $: mailTo = $themeDnum ?
         </p>
         <p>
           Le projet a été libéré et mis en opensource. L'équipe est maintenant composée de développeurs
-          du ministère de la Justice et du ministère de l'Intérieur, contribuant au service sur leur temps libre.
+          du ministère de la Justice et du ministère de l'Intérieur, contribuant bénévolement au service sur leur temps libre.
         </p>
         <p>
             Nous avons créé de service
@@ -90,8 +120,10 @@ $: mailTo = $themeDnum ?
             Pour en savoir plus sur le projet matchID, consultez notre site <a href="https://www.matchid.io" target="_blank">https://matchid.io</a>.
         </p>
 
-      `},
+      `,
+      tags: "bénévole geeks nerd passionnés fabien antoine cristian perez brokate"},
     { title: 'd\'où proviennent les données ?',
+      icon: 'ri:database-2-line',
       content: `
           <p>
               Le site exploite les fichiers des personnes décédées, disponibles en opendata sur
@@ -135,6 +167,7 @@ $: mailTo = $themeDnum ?
         </ul>
       `},
     { title: 'quelles sont les garanties sur les données ?',
+      icon: 'ri:shield-star-line',
       content: `
         <p>
             Le fichier de personnes décédées est un document administratif. Les données sont publiés en application des dispositions des articles L311-9 et L312-1-1 du code des relations entre le public et l’administration, et  réutilisables dans les conditions prévues par le titre II de ce livre.
@@ -153,6 +186,7 @@ $: mailTo = $themeDnum ?
         </p>
       `},
     { title: 'comment sont indexées les données ?',
+      icon: 'ri:file-search-line',
       content: `
         <p>
           Les données sont traitées avec l'outil opensource <a href="https://www.matchid.io" target="_blank">matchID</a> (Python/Pandas). Les traitements, disponibles
@@ -169,6 +203,7 @@ $: mailTo = $themeDnum ?
       </p>
       `},
     { title: "signaler un décès manquant",
+      icon: 'ri:user-search-line',
       filter: true,
       content: `
             <p>
@@ -212,8 +247,10 @@ $: mailTo = $themeDnum ?
                 Nous ne pourrons vous accompagner plus loin dans la démarche administrative à ce stade, il n'existe pas de processus simplifié
                 pour les demande d'ajout et de correction. Mais nous répondrons toujours à vos sollicitations.
             </p>
-      `},
+      `,
+      tags: "trouver personne proche absent"},
     { title: "signaler une erreur dans une fiche",
+      icon: 'ri:file-damage-line',
       content: `
             <p>
               <strong>
@@ -230,8 +267,10 @@ $: mailTo = $themeDnum ?
               N'hésitez cependant pas à nous écrire pour signaler votre cas à ${mailTo}.
               Nous reprendrons contact avec vous lorsqu'un processus de mise à jour sera identifié avec l'INSEE.
             </p>
-      `},
+      `,
+      tags: "problème corriger correction faute"},
     { title: 'signaler un bug ou poser une question',
+      icon: 'ri:bug-line',
       filter: true,
       content: `
           <p>
@@ -242,10 +281,12 @@ $: mailTo = $themeDnum ?
             En cas de doute sollicitez nous à ${mailTo}, en mentionnant la référence de version ci-dessous:
           </p>
           <p>
-            <strong>${$version && `${version.ui}-api/${version.api}`}</strong>
+            <strong>${$version && `${$version.ui}-api/${$version.api}`}</strong>
           </p>
-      `},
+      `,
+      tags: "problème bogue plante"},
     { title: 'suggérer des améliorations du service',
+      icon: 'ri:service-line',
       content: `
         <p>
             Nous prévoyons prochainement (fin 2020) :
@@ -265,11 +306,13 @@ $: mailTo = $themeDnum ?
         </ul>
         <p>
           Vos suggestions sont les bienvenues, nous les étudierons - écrivez nous à ${mailTo}.
-      `},
-    { title: 'où est le code open source ?',
+      `,
+      tags: "évolutions"},
+    { title: 'le code est-il open source ?',
+      icon: 'ri:github-line',
       content: `
         <p>
-          Le code source de ce site est disponible sur <a href="https://github.com/matchid-project/deces-ui" target="_blank">GitHub</a>,
+          Le code source de ce site est opensource et disponible sur <a href="https://github.com/matchid-project/deces-ui" target="_blank">GitHub</a>,
           ainsi que celui de l'<a href="https://github.com/matchid-project/deces-backend" target="_blank">API</a>.
         </p>
         <p>
@@ -277,24 +320,65 @@ $: mailTo = $themeDnum ?
         </p>
       `},
     { title: 'documentation de l\'API',
+      icon: 'ri:plug-line',
       content: `
         <p>
           La documentation de l'API est <a href="/deces/api/v1/docs">ici</a>
         </p>
-      `},
+      `,
+      tags: "swagger"},
   ]
 
-  const togglePage = (index) => {
-    if (currentPage === index) {
+  $: filteredPages = pages.filter(p => {
+    const terms = search && search.split(/\s+/).map(s => RegExp(`(^|\s|[^a-z])${s}.*(\s|^[a-z]|$)`,'i')) || [];
+    return (filter ? p.filter : true) && (p.tags && ( terms.every(r => r.test(p.tags))) || (p.content && terms.every(r => r.test(p.content))) || (p.title && terms.every(r => r.test(p.title))));
+  }).map(p => {
+    p.id = slugify(p.title);
+    return p;
+  });
+
+  const indexOf = (id) => {
+    let index = -1
+    filteredPages.forEach((p, i) => {
+      if (p.id === id) {
+        index = i;
+      }
+    });
+    return index;
+  }
+
+  const togglePage = (id) => {
+    if (currentPage === id) {
       currentPage = undefined;
+      if (history) {
+        history.pushState(null, null, window.location.href.split('#')[0]);
+      } else {
+        location.hash='';
+      }
+      $route.hash = undefined;
     }
     else {
-      currentPage = index;
-    }
+      currentPage = id;
+      location.hash = id;
+      $route.hash = location.hash;
+      if(navigator.userAgent.toLowerCase().indexOf('firefox') > -1){
+        setTimeout(() => {
+          animateScroll.scrollTo({element: `#${id}`, duration: 400});
+        }, 400);
+      };
+    };
   };
 
   const urlNorm = (title) => {
     return title.replace(/[^a-z]*/,'-').replace('-+','-');
+  }
+
+  const slugify = (str) => {
+    try {
+      return str.normalize('NFD').toLowerCase().replace(/[\u0300-\u036f]*/g, '').replace(/[^a-z0-9]+/gi, ' ').replace(/(^\s*|\s*)$/,'').replace(/\s+/gi,'-');
+    } catch (e) {
+      return str.toLowerCase().replace(/[\u0300-\u036f]*/g, '').replace(/[^a-z0-9]+/gi, ' ').replace(/(^\s*|\s*)$/,'').replace(/\s+/gi,'-');
+    }
   }
 
 </script>
