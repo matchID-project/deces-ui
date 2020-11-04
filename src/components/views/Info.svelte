@@ -20,7 +20,7 @@
       >
         <div
           class="rf-container-fluid"
-          id="{page.id}-parent"
+          id={page.id}
         >
           <div class="rf-grid-row">
             <div class="rf-col-12">
@@ -28,8 +28,6 @@
                 class="rf-card rf-card--md rf-card--horizontal rf-href"
                 class:rf-card--left-arrow={currentPage === page.id}
                 on:click={() => { togglePage(page.id) }}
-                id={page.id}
-                use:scrollto={{element: `#${page.id}`, offset: offset, duration: 1000}}
               >
                 <div class="rf-card__body">
                   <span class="rf-card__lead rf-margin-top-1N rf-margin-left-1N">
@@ -55,8 +53,7 @@
 
 <script>
   import { onMount } from 'svelte';
-  import { scrollto } from "svelte-scrollto";
-  import * as animateScroll from "svelte-scrollto";
+  import * as animateScroll from 'svelte-scrollto';
   import { slide } from 'svelte/transition';
   import { version, themeDnum, route } from '../tools/stores.js';
   import Icon from './Icon.svelte';
@@ -361,15 +358,14 @@
       $route.hash = undefined;
     }
     else {
-      if ((currentPage !== undefined) && (indexOf(currentPage) < indexOf(id))) {
-        offset = 0 - document.getElementById(`${currentPage}-parent`).clientHeight;
-        setTimeout(() => {
-          offset = 0;
-        }, 100)
-      }
       currentPage = id;
       location.hash = id;
       $route.hash = location.hash;
+      if(navigator.userAgent.toLowerCase().indexOf('firefox') > -1){
+        setTimeout(() => {
+          animateScroll.scrollTo({element: `#${id}`, duration: 400});
+        }, 400);
+      };
     };
   };
 
