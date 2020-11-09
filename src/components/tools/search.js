@@ -17,7 +17,8 @@ import {
     waitSearch,
     fuzzySearch,
     scrollId,
-    displayMode
+    displayMode,
+    activeElement
 } from './stores.js'
 
 import buildRequest from "./buildRequest.js";
@@ -61,6 +62,10 @@ export const enableDisplayMode = async (mode) => {
         }
       displayMode.update(v => mode);
     }
+    activeElement.update(v => {
+        v.blur();
+        return undefined;
+    });
     searchURLUpdate();
   }
 
@@ -118,7 +123,6 @@ export const searchSubmit = async (newCurrent) => {
 
 export const buildURLParams = (localSearchInput, localAdvancedSearch, localFuzzySearch, localDisplayMode, localResultsPerPage, localCurrent) => {
     const params = new URLSearchParams();
-    console.log(`${params}`);
     if (localAdvancedSearch) {
         params.set('advanced',true)
     } else {
@@ -151,8 +155,7 @@ export const buildURLParams = (localSearchInput, localAdvancedSearch, localFuzzy
     } else {
         params.delete('current');
     }
-    console.log(`${params}`);
-    return params
+    return params;
 }
 
 export const searchURLUpdate = async () => {

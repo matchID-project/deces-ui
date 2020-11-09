@@ -6,7 +6,7 @@
                     <div
                         class="rf-card rf-card--horizontal rf-card--{expand ? "md": "sm"}"
                         class:rf-card--left-arrow={expand}
-                        on:click|preventDefault={() => { expand=!expand }}
+                        on:click|preventDefault={toggleExpand}
                     >
                         <div class="rf-card__img">
                             <img
@@ -16,25 +16,31 @@
                             />
                         </div>
                         <div class="rf-card__body">
-                            <h4
-                                class="rf-card_lead rf-margin-0 {expand ? "" : "rf-text"}"
-                                style="overflow: hidden; text-overflow:ellipsis; {expand ? "" : "height: 1.5rem;"}"
+                            <a
+                                href="#{index}"
+                                aria-label="étendre la carte de {result.name.last.toUpperCase()} { result.name.first ? result.name.first.join(' ') : '' }"
                             >
-                                {result.name.last.toUpperCase()} { result.name.first ? result.name.first.join(' ') : '' }
-                            </h4>
-                            <p class="rf-card__desc rf-margin-0">
-                                <span class="{expand ? "" : "rf-text--xs"}">
-                                    <span class="rf-hide--mobile">
-                                        { cityString(result.birth.location.city) }
+                                <h4
+                                    class="rf-card_lead rf-margin-0 {expand ? "" : "rf-text"}"
+                                    style="overflow: hidden; text-overflow:ellipsis; {expand ? "" : "height: 1.5rem;"}"
+                                >
+
+                                    {result.name.last.toUpperCase()} { result.name.first ? result.name.first.join(' ') : '' }
+                                </h4>
+                                <p class="rf-card__desc rf-margin-0">
+                                    <span class="{expand ? "" : "rf-text--xs"}">
+                                        <span class="rf-hide--mobile">
+                                            { cityString(result.birth.location.city) }
+                                        </span>
+                                        { dateFormat(result.birth.date) }
+                                        -
+                                        <span class="rf-hide--mobile">
+                                            { cityString(result.death.location.city) }
+                                        </span>
+                                        { dateFormat(result.death.date) }
                                     </span>
-                                    { dateFormat(result.birth.date) }
-                                    -
-                                    <span class="rf-hide--mobile">
-                                        { cityString(result.death.location.city) }
-                                    </span>
-                                    { dateFormat(result.death.date) }
-                                </span>
-                            </p>
+                                </p>
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -42,11 +48,11 @@
                     <div class="rf-col-12" transition:slide|local>
                         <div class="rf-callout rf-background--white">
                             <span
-                                    class="rf-top-right-6px rf-text--sm rf-link rf-fi-- rf-href rf-text--right"
-                                    title="copier le lien permanent"
-                                    on:click|stopPropagation={() => copyLink(result)}
-                                >
-                                    <Icon icon='ri:link' class="rf-fi--md"/>
+                                class="rf-top-right-6px rf-text--sm rf-link rf-fi-- rf-href rf-text--right"
+                                title="copier le lien permanent"
+                                on:click|preventDefault={() => copyLink(result)}
+                            >
+                                    <Icon icon='ri:link' class="rf-fi--md" href={link(result)} label="copier le lien permanent"/>
                                     lien {linkCopied ? "copié !" : "permanent"}
                             </span>
                             <div class="rf-container-fluid">
@@ -150,12 +156,13 @@
 
 <script>
     import { slide } from 'svelte/transition';
-    import { dataGouvCatalog, displayMode, searchInput } from '../tools/stores.js';
+    import { dataGouvCatalog, displayMode, searchInput, activeElement } from '../tools/stores.js';
     import { buildURLParams } from '../tools/search.js';
     import PlaceInCard from './PlaceInCard.svelte';
     import Icon from './Icon.svelte';
 
     export let result  = undefined;
+    export let index = undefined;
     export let forceExpand = undefined;
     let linkCopied = false;
 
@@ -163,8 +170,21 @@
 
     $: expand = forceExpand || ($displayMode === 'card-expand');
 
+
+    const toggleExpand = () => {
+        expand = !expand;
+        activeElement.update(v => {
+            v && v.blur();
+            return undefined;
+        });
+    }
+
+    const link = (result) => {
+        return `${location.origin}/search?${resultURL(result)}`;
+    }
+
     const copyLink = (result) => {
-        navigator.clipboard.writeText(`${location.origin}/search?${resultURL(result)}`);
+        navigator.clipboard.writeText(link(result));
         linkCopied = true;
         setTimeout(() => linkCopied = false, 5000)
     }

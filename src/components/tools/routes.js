@@ -3,7 +3,8 @@ import Search from '../views/Search.svelte';
 import Link from '../views/Link.svelte';
 
 import {
-    route
+    route,
+    activeElement
 } from './stores.js'
 
 let myRoute;
@@ -39,6 +40,10 @@ export const redirect = () => {
 };
 
 export const goTo =  (r) => {
+    activeElement.update(v => {
+        v && v.blur();
+        return undefined;
+    });
     if (Object.keys(routes).includes(r.path)) {
         const queryString = Object.keys(r.query || {})
             .filter(k => routes[r.path] && routes[r.path].query)
