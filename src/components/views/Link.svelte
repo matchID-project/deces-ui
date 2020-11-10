@@ -23,13 +23,17 @@
                 appariement
             </strong>
             {#if ($linkStep > 1)}
-                <div style="position: absolute;top: 12px;right: 0px;">
-                    <span
+                <div
+                    style="position: absolute;top: 12px;right: 0px;"
+                    on:click|preventDefault={reset}
+                >
+                    <Icon
+                        href="#reset"
                         title="réinitialiser le traitement"
-                        on:click|preventDefault={reset}
-                        class="rf-color--rm rf-fi-delete-line rf-fi--lg"
-                    >
-                    </span>
+                        label="réinitialiser le traitement"
+                        icon="ri:delete-bin-line"
+                        class="rf-color--rm rf-fi--lg"
+                    />
                 </div>
             {/if}
             <div class="rf-container-fluid">
