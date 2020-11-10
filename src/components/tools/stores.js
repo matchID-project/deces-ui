@@ -471,3 +471,16 @@ export const version = writable({
         recordsCount: 25405985
     }
 })
+
+export const activeElement = writable(undefined);
+
+const updateActiveElement = (event) => {
+    activeElement.update(v => {
+        return document.activeElement;
+    })
+};
+
+document.addEventListener('focus', updateActiveElement, true);
+document.addEventListener('blur', updateActiveElement, true);
+
+

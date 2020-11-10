@@ -28,7 +28,7 @@
               <div class="rf-container-fluid">
                 <div class="rf-grid-row is-vcentered">
                   {#each $searchResults as result, index}
-                    <ResultCard result={result}/>
+                    <ResultCard result={result} index={index+from}/>
                   {/each}
                 </div>
               </div>
@@ -85,7 +85,7 @@
 <script>
   import { onMount } from 'svelte';
   import getDataGouvCatalog from '../tools/getDataGouvCatalog.js';
-  import { searchResults, searchInput,
+  import { searchResults, searchInput, totalResults, current, resultsPerPage,
     sortInput, displayMode, wasSearched } from '../tools/stores.js';
   import { searchTrigger } from '../tools/search.js';
   import Geo from './Geo.svelte';
@@ -97,6 +97,7 @@
 
   onMount(async () => { getDataGouvCatalog() });
 
+  let from;
   let columns = [
     { label: "nom", field: "lastName", width: "100px"},
     { label: "prénom(s)", field: "firstName", width: "160px"},
@@ -125,6 +126,8 @@
         order: item.order ? (item.order === "desc" ? "asc" : undefined ) : "desc"
       }}).concat(v.filter(item => item.input !== field)));
   };
+
+  $: from = Math.min($totalResults, 1 + ($current - 1) * $resultsPerPage);
 
   $: columns = columns.map(item => {
       return {

@@ -10,9 +10,15 @@
                     {:else}
                         <li
                             class="rf-href rf-pagination__item--prev rf-pagination__item"
-                            title="{pageLink($current-1)}"
+                            title="page {$current-1}"
                             on:click|preventDefault={goTo($current-1)}
                         >
+                            <a
+                                class="rf-pagination__link"
+                                href={pageLink($current-1)}
+                                aria-label="page {$current-1}"
+                            >
+                            </a>
                         </li>
                     {/if}
                     {#each pages as page}
@@ -21,10 +27,16 @@
                         {:else}
                             <li
                                 class="rf-href rf-pagination__item {$current === page ? "rf-pagination__item--active" : ""} rf-pagination__item--from-md"
-                                title="{pageLink(page)}"
+                                title="page {page}"
                                 on:click|preventDefault={goTo(page)}
                             >
-                                {page}
+                                <a
+                                    class="rf-pagination__link"
+                                    href={pageLink(page)}
+                                    aria-label="page {page}"
+                                >
+                                    {page}
+                                </a>
                             </li>
                         {/if}
                     {/each}
@@ -33,9 +45,15 @@
                     {:else}
                         <li
                             class="rf-href rf-pagination__item--next rf-pagination__item"
-                            title="{pageLink($current+1)}"
+                            title="page {$current+1}"
                             on:click|preventDefault={goTo($current+1)}
                         >
+                            <a
+                                class="rf-pagination__link"
+                                href={pageLink($current+1)}
+                                aria-label="page {$current+1}"
+                            >
+                            </a>
                         </li>
                     {/if}
                     </ul>
@@ -47,7 +65,7 @@
 
 <script>
     import { current, totalResults, totalPages, resultsPerPage, maxResults,
-    searchInput, sortInput, wasSearched, scrollId } from '../tools/stores.js'
+    searchInput, sortInput, wasSearched, scrollId, activeElement } from '../tools/stores.js'
     import { searchString, searchSubmit, searchURLUpdate } from '../tools/search.js'
     import { validScrollId } from '../tools/buildRequest.js';
 
@@ -87,6 +105,10 @@
 
     const goTo = async (page) => {
         if ((page>0) && (page <= $totalPages)) {
+            activeElement.update(v => {
+                v && v.blur();
+                return undefined;
+            });
             if (!validScrollId($scrollId,$searchInput,$sortInput) && (page !==1)) {
                 await searchSubmit(1);
             }
