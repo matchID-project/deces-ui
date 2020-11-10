@@ -25,7 +25,11 @@
                 {#if $totalPages > 1}
                     <td class="rf-hide--mobile rf-td--vcenter rf-text--center rf-text--right" style="width: 100px;">
                         par page
-                        <select class="rf-select rf-select--aside rf-text--xs rf-color--black" bind:value={$resultsPerPage}>
+                        <select
+                            class="rf-select rf-select--aside rf-text--xs rf-color--black"
+                            bind:value={$resultsPerPage}
+                            on:change={deactivateElement}
+                        >
                             {#each resultsPerPageList as option}
                                 <option>{option}</option>
                             {/each}
@@ -108,7 +112,7 @@
 
     let resultsPerPageList;
 
-    $: if ($resultsPerPage) {
+    const deactivateElement = () => {
         activeElement.update(v => {
             v && v.blur();
             return undefined;
