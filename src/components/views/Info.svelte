@@ -27,11 +27,16 @@
               <div
                 class="rf-card rf-card--md rf-card--horizontal rf-href"
                 class:rf-card--left-arrow={currentPage === page.id}
-                on:click={() => { togglePage(page.id) }}
+                on:click|preventDefault={() => { togglePage(page.id) }}
               >
                 <div class="rf-card__body">
                   <span class="rf-card__lead rf-margin-top-1N rf-margin-left-1N">
-                    <Icon class="rf-fi--lg" icon={page.icon || 'ri:question-line'}/>
+                    <Icon
+                      class="rf-fi--lg"
+                      icon={page.icon || 'ri:question-line'}
+                      href={page.id}
+                      label={page.title}
+                    />
                     <span class="rf-text--lg">{page.title}</span>
                   </span>
                 </div>

@@ -116,6 +116,14 @@
   height: 3rem;
 }
 
+a:-webkit-any-link {
+  text-decoration: none;
+}
+.rf-fi__link {
+  text-decoration: none;
+  box-shadow: none;
+}
+
 .rf-field .rf-btn {
 width: 2.5rem;
 max-width: 2.5rem;
@@ -212,6 +220,11 @@ border-radius: 0 .25rem 0 0;
   flex-direction: row;
 }
 
+.rf-card__body a {
+  text-decoration: none;
+  box-shadow: none;
+}
+
 .rf-card__lead .rf-fi--icon {
   position: absolute;
   top: auto;
@@ -255,6 +268,9 @@ border-radius: 0 .25rem 0 0;
   background: var(--beige)
 }
 
+.rf-card_body a {
+  text-decoration: none;
+}
 
 .rf-card--sm .rf-card__body {
   padding: 1px 8px 2px 8px;
@@ -479,7 +495,7 @@ td.rf-td--vcenter {
   margin-top: 0;
 }
 
-.rf-header__navbar..rf-header__navbar--top  {
+.rf-header__navbar.rf-header__navbar--top  {
   width: auto;
   padding-top: 0;
   margin-top: -0.5rem;

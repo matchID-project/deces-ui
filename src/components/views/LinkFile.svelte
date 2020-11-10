@@ -7,34 +7,39 @@
     class:rf-text--error={error}
     on:click|preventDefault={chooseFile}
 >
-    <div class="rf-tile__body">
-        <h4
-            class="rf-tile__title"
-            style="position: relative"
-            class:rf-text--error={error}
-        >
-            <span class="rf-margin-right-3N">étape {step}. {title}</span>
-            {#if error}
-                <span
-                    class="rf-fi-alert-line rf-fi--lg"
-                    style="position: absolute;top: 0px;right:0px;"
-                ></span>
-            {:else if $linkFile}
-                <span
-                    class="rf-fi-checkbox-line rf-fi--lg"
-                    style="position: absolute;top: 0px;right:0px;"
-                ></span>
-            {:else}
-                <span
-                    class="rf-fi-play-line rf-fi--lg"
-                    style="position: absolute;top: 0px;right:0px;"
-                ></span>
-            {/if}
-        </h4>
-        <p class="rf-tile__desc rf-text--center">
-            {@html label}
-        </p>
-    </div>
+    <a
+        href="#step{step}"
+        aria-label="étape {step} {title}"
+    >
+        <div class="rf-tile__body">
+            <h4
+                class="rf-tile__title"
+                style="position: relative"
+                class:rf-text--error={error}
+            >
+                <span class="rf-margin-right-3N">étape {step}. {title}</span>
+                {#if error}
+                    <span
+                        class="rf-fi-alert-line rf-fi--lg"
+                        style="position: absolute;top: 0px;right:0px;"
+                    ></span>
+                {:else if $linkFile}
+                    <span
+                        class="rf-fi-checkbox-line rf-fi--lg"
+                        style="position: absolute;top: 0px;right:0px;"
+                    ></span>
+                {:else}
+                    <span
+                        class="rf-fi-play-line rf-fi--lg"
+                        style="position: absolute;top: 0px;right:0px;"
+                    ></span>
+                {/if}
+            </h4>
+            <p class="rf-tile__desc rf-text--center">
+                {@html label}
+            </p>
+        </div>
+    </a>
 </div>
 <script>
     import { linkFile, linkStep } from '../tools/stores.js';

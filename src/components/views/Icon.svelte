@@ -5,7 +5,13 @@
       class:spin={spin}
       class:rf-color--rm={!icons[icon]}
     >
-      {@html icons[icon] || icons['ri:alert-line']}
+      {#if href}
+        <a class="rf-fi__link" href={href} aria-label={label}>
+          {@html icons[icon] || icons['ri:alert-line']}
+        </a>
+      {:else}
+        {@html icons[icon] || icons['ri:alert-line']}
+      {/if}
     </div>
   </div>
 {/if}
@@ -15,6 +21,8 @@
   export let icon = undefined;
   export let spin = undefined;
   export let center = undefined;
+  export let href = undefined;
+  export let label = undefined;
 
   $: classes = `rf-fi--icon center ${$$props.class ? $$props.class : ""}`;
 
@@ -24,6 +32,12 @@
 
   .center {
     margin: 0 auto;
+  }
+
+
+
+  a, .link {
+    text-decoration: none!important;
   }
 
   @-webkit-keyframes spinner-spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }

@@ -68,11 +68,14 @@
                     {#each displayChoices as choice}
                         <span
                             class="rf-href"
-                            on:click={() => enableDisplayMode(choice.mode)}
+                            on:click|preventDefault={() => enableDisplayMode(choice.mode)}
                             title={`${choice.mode === $displayMode ? "mode d'affichage actuel:" : "basculez au mode d'affichage:"} ${choice.label}`}
                         >
+
                             <Icon
                                 icon={choice.icon}
+                                href={choice.mode === 'card' ? location.href.replace(/(&view=[a-z\-]+|\?view=[a-z\-]+)/,"") : location.href.replace(/(&view=[a-z\-]+|\?view=[a-z\-]+)/,"").replace('?', `?view=${choice.mode}&`)}
+                                label="mode d'affichage {choice.label}"
                                 class="rf-fi--lg {choice.mode === $displayMode ? "rf-color--bf" : "rf-color--g400"}"
                             />
                         </span>
@@ -95,7 +98,7 @@
 <script>
     import Icon from './Icon.svelte';
     import { current, searchResults, sortInput, sortInputDisplay, updateURL, totalResults, totalPages,
-        resultsPerPage, searchInput, wasSearched, displayMode } from '../tools/stores.js'
+        resultsPerPage, searchInput, wasSearched, displayMode, activeElement } from '../tools/stores.js'
     import { enableDisplayMode, searchTrigger } from '../tools/search.js'
     import SortInput from './SortInput.svelte';
     import Download from './Download.svelte';
@@ -104,6 +107,13 @@
     let from, to, query;
 
     let resultsPerPageList;
+
+    $: if ($resultsPerPage) {
+        activeElement.update(v => {
+            v && v.blur();
+            return undefined;
+        });
+    }
 
     const displayChoices = [
         {mode: 'card', icon: 'ri:list-check-2', label: "fiche compacte"},

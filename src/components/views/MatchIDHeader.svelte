@@ -42,16 +42,21 @@
                         <li
                             class="rf-nav__item rf-nav__item--hoverable rf-nav__item--shadow"
                             class:rf-nav__item--active={($route.path === '/search')}
+                            on:mouseenter={() => {expandMenu = true}}
+                            on:mouseleave={() => {expandMenu = false}}
+                            bind:this={searchMenu}
                         >
                             <button
                                 class="rf-btn"
-                                aria-expanded={expandMenu}
                                 aria-controls="rf-recherche"
+                                aria-expanded={expandMenu}
+                                on:click={() => {expandMenu = !expandMenu}}
                             >
                                 recherche
                             </button>
                             <div
                                 class="rf-menu"
+                                class:rf-menu--expanded={expandMenu}
                                 id="rf-recherche"
                             >
                                 <ul class="rf-menu__list">
@@ -64,14 +69,20 @@
                                             class:rf-menu__item--active={($route.path === '/search') && item.isActive}
                                             on:click|preventDefault={() => goToPage('search',item.mode)}
                                         >
-                                            <tr>
-                                                <td class="rf-td--vcenter rf-padding-right-1N">
-                                                    <Icon class="rf-fi" icon={item.icon}/>
-                                                </td>
-                                                <td class="rf-td--vcenter">
-                                                    {item.title}
-                                                </td>
-                                            </tr>
+                                            <a
+                                                href={item.mode === 'simple' ? location.href.replace("&advanced=true","") : location.href.replace(/(&advanced=true|$)/, "&advanced=true")}
+                                                class="rf-link"
+                                                aria-label="recherche {item.title}"
+                                            >
+                                                <tr>
+                                                    <td class="rf-td--vcenter rf-padding-right-1N">
+                                                        <Icon class="rf-fi" icon={item.icon}/>
+                                                    </td>
+                                                    <td class="rf-td--vcenter">
+                                                        {item.title}
+                                                    </td>
+                                                </tr>
+                                            </a>
                                         </li>
                                     {/each}
                                     <li
@@ -92,14 +103,20 @@
                                                 }
                                             }}
                                         >
-                                            <tr>
-                                                <td class="rf-td--vcenter rf-padding-right-1N">
-                                                    <Icon icon={item.icon}/>
-                                                </td>
-                                                <td class="rf-td--vcenter">
-                                                    {item.title}
-                                                </td>
-                                            </tr>
+                                            <a
+                                                href={item.mode === 'card' ? location.href.replace(/(&view=[a-z\-]+|\?view=[a-z\-]+)/,"") : location.href.replace(/(&view=[a-z\-]+|\?view=[a-z\-]+)/,"").replace('?', `?view=${item.mode}&`)}
+                                                class="rf-link"
+                                                arial-label="mode d'affichage {item.title}"
+                                            >
+                                                <tr>
+                                                    <td class="rf-td--vcenter rf-padding-right-1N">
+                                                        <Icon icon={item.icon}/>
+                                                    </td>
+                                                    <td class="rf-td--vcenter">
+                                                        {item.title}
+                                                    </td>
+                                                </tr>
+                                            </a>
                                         </li>
                                     {/each}
                                 </ul>
@@ -111,18 +128,24 @@
                             on:click|preventDefault={() => goToPage('link')}
                             class:rf-nav__item--active={($route.path === '/link')}
                         >
-                            <span class="rf-link rf-href rf-fi-db-line rf-link--icon-left">
+                            <a
+                                href="/link"
+                                class="rf-link rf-href rf-fi-db-line rf-link--icon-left"
+                            >
                                 appariement
-                            </span>
+                            </a>
                         </li>
                         <li
                             class="rf-nav__item"
                             on:click|preventDefault={() => goToPage('about')}
                             class:rf-nav__item--active={($route.path === '/about')}
                         >
-                            <span class="rf-link rf-href rf-fi-question-line rf-link--icon-left">
+                            <a
+                                href="/about"
+                                class="rf-link rf-href rf-fi-question-line rf-link--icon-left"
+                            >
                                 à propos
-                            </span>
+                            </a>
                         </li>
                     </ul>
                 </div>
@@ -249,7 +272,7 @@
 </header>
 
 <script>
-    import { themeDnum, advancedSearch, displayMode, wasSearched } from '../tools/stores.js';
+    import { themeDnum, advancedSearch, displayMode, wasSearched, activeElement } from '../tools/stores.js';
     import Icon from './Icon.svelte';
     import SearchBox from './SearchBox.svelte';
     import { toggleAdvancedSearch, enableDisplayMode } from '../tools/search.js';
@@ -266,6 +289,7 @@
     let searchOptions;
     let viewOptions;
     let viewOptionsActive;
+    let searchMenu;
 
     $: searchOptions = [
         { title: 'simple',
@@ -279,6 +303,14 @@
           isActive: $advancedSearch
         }
     ];
+
+    $: if ($activeElement) {
+        if (!searchMenu.contains($activeElement)) {
+            expandMenu = false;
+        } else {
+            expandMenu = true;
+        }
+    }
 
     $: viewOptions = [
         { title: 'simple',
@@ -313,6 +345,7 @@
 
     function goToPage(page, mode) {
         burgerState = false;
+        expandMenu = false;
         if ((page === 'search')) {
             if ($route.path !== '/search') {
                 goTo({path: `/${page}`});
