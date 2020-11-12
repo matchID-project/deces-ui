@@ -1,6 +1,6 @@
 <svelte:window on:keydown={handleKeydown}/>
 <MatchIDHeader/>
-{#if $route && $route.path && routes[$route.path].component}
+{#if $route && $route.path && routes[$route.path] && routes[$route.path].component}
 	<svelte:component this={routes[$route.path].component} {...routes[$route.path].props}/>
 {/if}
 
@@ -14,7 +14,6 @@
 	import { redirect, routes } from './components/tools/routes.js';
 
 	onMount(async () => {
-		redirect();
 		if ($version && !$version.api) {
 			try {
 				const r = await fetch('__BACKEND_PROXY_PATH__/version');
