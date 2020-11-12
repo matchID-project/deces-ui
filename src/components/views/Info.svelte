@@ -78,9 +78,7 @@
   onMount (() => {
     filteredPages.forEach((p, i) => {
       if (`#${p.id}` === $route.hash) {
-        setTimeout(() => {
-          document.getElementById(p.id).click()
-        }, 10);
+        togglePage(p.id);
       }
     })
   })
