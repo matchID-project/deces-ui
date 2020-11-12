@@ -111,9 +111,9 @@
           du ministère de la Justice et du ministère de l'Intérieur, contribuant bénévolement au service sur leur temps libre.
         </p>
         <p>
-            Nous avons créé de service
-            en complément qui semblait d'utilité publique notamment pour la lutte contre la fraude, ou pour la radiation
-            des décédés aux fichiers clients (hôpitaux).
+            Nous avons créé ce service
+            en complément, car il semblait d'utilité publique notamment pour la lutte contre la fraude, ou pour la radiation
+            des décédés aux différents fichiers clients (e.g. hôpitaux).
         </p>
         ${$themeDnum ? "" : `
         <p>
