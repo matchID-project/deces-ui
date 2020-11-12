@@ -65,6 +65,7 @@
   import { slide } from 'svelte/transition';
   import { version, themeDnum, route } from '../tools/stores.js';
   import Icon from './Icon.svelte';
+  import Stats from './Stats.svelte';
   import Iframe from './Iframe.svelte';
 
   let currentPage = undefined;
@@ -315,6 +316,12 @@
           Vos suggestions sont les bienvenues, nous les étudierons - écrivez nous à ${mailTo}.
       `,
       tags: "évolutions"},
+    { title: 'statistiques de consultation',
+      icon: 'ri:bar-chart-box-line',
+      content: '',
+      component: Stats,
+      tags: 'api hits visiteurs'
+    },
     { title: 'le code est-il open source ?',
       icon: 'ri:github-line',
       content: `
