@@ -1,0 +1,129 @@
+#!/bin/sh
+
+#prerequisites
+(docker image inspect goaccess > /dev/null) || \
+        (echo "building Docker image for goaccess" && \
+        docker build --tag goaccess . || \
+        echo "Docker image built failed")
+
+# mmdb format
+# if [ ! -e */*.mmdb ];
+# then
+#         echo "getting geoip";
+#         (curl -s "https://download.maxmind.com/app/geoip_download?edition_id=GeoLite2-Country&license_key=${MMDB_TOKEN}&suffix=tar.gz" | tar xzf -)\
+#         || (echo "Failed to get GeoIP" && exit 1)
+# fi
+# geoipdb=`find $(pwd) -iname '*.mmdb'`
+
+# legacy format
+if [ ! -e *.dat ];
+then
+        echo "getting geoip";
+        (curl -s "https://dl.miyuru.lk/geoip/maxmind/country/maxmind.dat.gz" | gunzip > geoip.dat)\
+        || (echo "Failed to get GeoIP" && exit 1)
+fi
+geoipdb=`find $(pwd) -iname '*.dat'`
+
+
+
+
+
+#params
+USE_TTY=$(test -t 1 && USE_TTY="-t")
+REPORT_DIR=$(pwd)
+www=${REPORT_DIR}/$LOG_REPORT_BUCKET
+db=${REPORT_DIR}/$LOG_DB_BUCKET
+log=${REPORT_DIR}/$LOG_BUCKET
+sleep 0
+dt=`date +%Y%m%d`
+site=deces.matchid.io
+LANG=fr_FR.UTF-8
+config="--keep-last=$last --geoip-database /tmp/geoip.dat --log-format COMBINED --anonymize-ip --no-global-config"
+quiet="--no-progress"
+title="${site}_statistics_since_beginning"
+html="-o html --html-report-title $title --html-custom-css report.css --html-prefs '{\"theme\":\"bright\",\"layout\":\"horizontal\"}' -e LANG=${LANG}"
+json="-o json"
+update="--persist --restore"
+init="--persist"
+from="--restore"
+
+mkdir -p $db $www
+godb='--db-path /var/www/goaccess'
+source="cat $log/access.log"
+filter="awk /\/(personnes-decedees|deces).matchid.io/"
+
+if [ "$2" ]
+then
+        mode=$($2)
+        mode2=$($2)
+fi
+
+if [ "$1" ]
+then
+        report=$1
+else
+        report=day
+fi
+
+if [ "$report" = "full" ]
+then
+        last=1000
+        if [ "$2" = "" ]
+        then
+                mode=$init
+                mode2=$from
+                source='zcat -f '`ls -tr ${log}/access*gz`
+                rm -rf $db/
+                mkdir -p $db
+        else
+                mode=$from
+                mode2=$from
+                source='echo'
+        fi
+        source2='echo'
+elif [ "$report" = "month" ]
+then
+        last=32
+        mode=$from
+        mode2=$from
+        source2=$source
+elif [ "$report" = "week" ]
+then
+        last=8
+        mode=$from
+        mode2=$from
+        source2=$source
+elif [ "$report" = "day" ]
+then
+        last=2
+        mode=""
+        mode2=""
+        source="zcat -f "`ls -tr ${log}/access*gz | tail -1`" $log/access.log"
+        source2=$source
+else
+        echo "syntax error: ./report full update quiet"
+fi
+
+if [ "$3" = "quiet" ]
+then
+        quiet="$quiet"
+else
+        quiet=""
+        echo "report: $report \nrange: $last \nmode: $mode \nlogs for html: $source \nlogs for second format: $source2"
+fi
+
+goaccess="docker run --rm -i ${USE_TTY} -v $db:/var/www/goaccess/ -v $geoipdb:/tmp/geoip.dat goaccess"
+echo "création du rapport : $report\n$goaccess"
+
+(\
+        $source | $filter | \
+        $goaccess - $mode $godb $quiet $config $json > /tmp/$report.json\
+) &&\
+(
+        $source2 | $filter |  \
+        $goaccess - $mode2 $godb $quiet $config $html  > /tmp/$report\
+) &&\
+(\
+        mv /tmp/$report /tmp/$report.json $www/
+) || echo failed
+
