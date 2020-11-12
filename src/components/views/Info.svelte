@@ -65,6 +65,7 @@
   import { slide } from 'svelte/transition';
   import { version, themeDnum, route } from '../tools/stores.js';
   import Icon from './Icon.svelte';
+  import Iframe from './Iframe.svelte';
 
   let currentPage = undefined;
   let pages;
@@ -329,10 +330,12 @@
       icon: 'ri:plug-line',
       content: `
         <p>
-          La documentation de l'API est <a href="/deces/api/v1/docs">ici</a>
+          La documentation de l'API est consultable ci-dessous ou en suivant <a href="/deces/api/v1/docs">le lien suivant</a>.
         </p>
       `,
-      tags: "swagger"},
+      component: Iframe,
+      params: { src: '/deces/api/v1/docs' },
+      tags: "swagger"}
   ]
 
   $: filteredPages = pages.filter(p => {
