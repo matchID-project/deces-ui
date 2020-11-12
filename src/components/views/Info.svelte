@@ -46,6 +46,9 @@
               <div class="rf-col-12" transition:slide|local>
                 <div class="rf-callout rf-background--white">
                   {@html page.content}
+                  {#if page.component}
+                    <svelte:component this={page.component} {...page.params}/>
+                  {/if}
                 </div>
               </div>
             {/if}
