@@ -1,0 +1,146 @@
+#!/bin/sh
+
+[ ! -z "${STATS}" ] || [ ! -z "${LOG_DB_DIR}" ] || [ ! -z "${LOG_DIR}" ] || (echo "missing env var (LOG_*)" && exit 1)
+
+#prerequisites
+(docker image inspect goaccess > /dev/null) || \
+        (echo "building Docker image for goaccess" && \
+        docker build --tag goaccess . || \
+        echo "Docker image built failed")
+
+# mmdb format
+# if [ ! -e */*.mmdb ];
+# then
+#         echo "getting geoip";
+#         (curl -s "https://download.maxmind.com/app/geoip_download?edition_id=GeoLite2-Country&license_key=${MMDB_TOKEN}&suffix=tar.gz" | tar xzf -)\
+#         || (echo "Failed to get GeoIP" && exit 1)
+# fi
+# geoipdb=`find $(pwd) -iname '*.mmdb'`
+
+# legacy format
+# if [ ! -e *.dat ];
+# then
+#         echo "getting geoip";
+#         (curl -s "https://dl.miyuru.lk/geoip/maxmind/country/maxmind.dat.gz" | gunzip > geoip.dat)\
+#         || (echo "Failed to get GeoIP" && exit 1)
+# fi
+# geoipdb=`find $(pwd) -iname '*.dat'`
+
+geoipdb=/usr/share/GeoIP/GeoIP.dat
+
+
+#params
+USE_TTY=$(test -t 1 && USE_TTY="-t")
+REPORT_DIR=$(pwd)
+www=${STATS}
+db=${LOG_DB_DIR}
+log=${LOG_DIR}
+sleep 0
+dt=`date +%Y%m%d`
+site=deces.matchid.io
+LANG=fr_FR.UTF-8
+config="--keep-last=$last --geoip-database /tmp/geoip.dat --log-format COMBINED --anonymize-ip --no-global-config"
+title="${site}_statistics_since_beginning"
+html="-o html --html-report-title $title --html-custom-css report.css --html-prefs '{\"theme\":\"bright\",\"layout\":\"horizontal\"}' -e LANG=${LANG}"
+json="-o json"
+update="--persist --restore"
+init="--persist"
+from="--restore"
+
+mkdir -p $db $www
+godb='--db-path /var/www/goaccess'
+source="cat $log/access.log"
+filter="awk /\/(personnes-decedees|deces).matchid.io/"
+
+# parse options
+while getopts "r:m:o:q" option
+do
+        case $option in
+                r)
+                        report=$OPTARG
+                        ;;
+                m)
+                        if [ "$OPTARG" = "init" ]
+                        then
+                                mode=$init
+                                source='zcat -f '`ls -tr ${log}/access*gz`
+                                rm -rf $db/
+                                mkdir -p $db
+                        elif [ "$OPTARG" = "from" ]
+                        then
+                                mode=$from
+                                source='echo'
+                        fi
+                        ;;
+                o)
+                        if [ "$OPTARG" = "html" ]
+                        then
+                                output=$html
+                                ext=html
+                        else
+                                output=$json
+                                ext=json
+                        fi
+                        ;;
+                q)
+                        quiet="--no-progress"
+                        ;;
+                ?)
+                        echo "$OPTARG: option invalide"
+                        exit 1
+                        ;;
+        esac
+done
+
+if [ -z "$format" ]
+then
+        output=$json
+        ext=json
+fi
+
+if [ "$report" = "full" ]
+then
+        last=1000
+elif [ "$report" = "month" ]
+then
+        last=32
+        mode=$from
+elif [ "$report" = "week" ]
+then
+        last=8
+        mode=$from
+else
+        report=day
+        last=2
+        mode=""
+        source="zcat -f "`ls -tr ${log}/access*gz | tail -1`" $log/access.log"
+fi
+
+goaccess="docker run --rm -i ${USE_TTY} -v $db:/var/www/goaccess/ -v $geoipdb:/tmp/geoip.dat goaccess"
+
+if [ -z "$quiet" ]
+then
+        echo "création du rapport:\n\
+              report:$report\n\
+              source:$source\n\
+              filter:$filter\n\
+              output:$output\n\
+              ext:$ext\n\
+              last:$last\n\
+              mode:$mode\n\
+              quiet:$quiet\n\
+              db:$db\n\
+              www:$www\n\
+              log:$log\n\
+              geoipdb:$geoipdb"
+
+fi
+
+(\
+        $source | $filter | \
+        $goaccess - $mode $godb $quiet $config $output > /tmp/$report.$ext\
+) &&\
+(\
+        mv /tmp/$report.$ext $www/
+) || echo failed
+

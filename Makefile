@@ -34,6 +34,13 @@ export APP_DNS=deces.matchid.io
 export FRONTEND := ${APP_PATH}
 export FRONTEND_DEV_HOST = frontend-development
 export FRONTEND_DEV_PORT = ${PORT}
+export LOG_BUCKET = s3bucket/override/me
+export STATS_BUCKET = s3bucket/override/me
+export LOG_DB_BUCKET = s3bucket/override/me
+export LOG_DIR = ${FRONTEND}/log/mirror
+export LOG_DB_DIR = ${FRONTEND}/log/db
+export STATS_SCRIPTS = ${FRONTEND}/stats/src
+export STATS = ${FRONTEND}/stats/public
 export BACKEND_PORT=8080
 export BACKEND_HOST=backend
 export BACKEND_JOB_CONCURRENCY=2
@@ -437,3 +444,48 @@ deploy-monitor:
 	@${MAKE} -C ${APP_PATH}/${GIT_TOOLS} remote-install-monitor-nq NQ_TOKEN=${NQ_TOKEN} ${MAKEOVERRIDES}
 
 deploy-remote: config deploy-remote-instance deploy-remote-services deploy-remote-publish deploy-delete-old deploy-monitor
+
+logs-restore:
+	@mkdir -p ${LOG_DIR};\
+	echo sync ${LOG_BUCKET} to ${LOG_DIR};\
+	${MAKE} -C ${APP_PATH}/${GIT_TOOLS} storage-sync-pull\
+		STORAGE_BUCKET=${LOG_BUCKET} DATA_DIR=${LOG_DIR}\
+		STORAGE_ACCESS_KEY=${TOOLS_STORAGE_ACCESS_KEY} STORAGE_SECRET_KEY=${TOOLS_STORAGE_SECRET_KEY};
+
+logs-db-restore:
+	@mkdir -p ${LOG_DB_DIR};\
+	echo sync ${LOG_DB_BUCKET} to ${LOG_DB_DIR};\
+	${MAKE} -C ${APP_PATH}/${GIT_TOOLS} storage-sync-pull\
+		STORAGE_BUCKET=${LOG_DB_BUCKET} DATA_DIR=${LOG_DB_DIR}\
+		STORAGE_ACCESS_KEY=${TOOLS_STORAGE_ACCESS_KEY} STORAGE_SECRET_KEY=${TOOLS_STORAGE_SECRET_KEY};
+	touch log-db
+
+logs-db-backup:
+	@mkdir -p ${LOG_DB_DIR};\
+	echo sync ${LOG_DB_DIR} to ${LOG_DB_BUCKET};\
+	${MAKE} -C ${APP_PATH}/${GIT_TOOLS} storage-sync-push\
+		STORAGE_BUCKET=${LOG_DB_BUCKET} DATA_DIR=${LOG_DB_DIR}\
+		STORAGE_ACCESS_KEY=${TOOLS_STORAGE_ACCESS_KEY} STORAGE_SECRET_KEY=${TOOLS_STORAGE_SECRET_KEY};
+
+logs-parser-build:
+	@if [ ! -e goaccess-build ]; then\
+		cd ${STATS_SCRIPTS} &&\
+		docker build . --tag goaccess &&\
+		touch goaccess-build;\
+	fi
+
+logs-full-init: logs-parser-build
+	${STATS_SCRIPTS}/report -r full -m init
+
+logs-full: logs-parser-build
+	${STATS_SCRIPTS}/report -r full -m from
+
+logs-month:
+	${STATS_SCRIPTS}/report -r month -m from
+
+logs-week:
+	${STATS_SCRIPTS}/report -r week -m from
+
+logs-day:
+	${STATS_SCRIPTS}/report
+
