@@ -29,7 +29,7 @@ export const routes = {
 const rs = route.subscribe((value) => {
     myRoute=value;
     if (!myRoute.path) {
-        const mySearchParams = new URLSearchParams(location.search);
+        const mySearchParams = new URLSearchParams(location.search || location.href.replace(/.*\?/,''));
         const query = {};
         mySearchParams.forEach((key, value) => query[value] =  key);
         if (location.pathname === '/') {
@@ -39,7 +39,7 @@ const rs = route.subscribe((value) => {
                 window.history.replaceState({}, '', `/search`);
             }
         }
-        route.update(v => { return {path: location.pathname, query: query, hash: location.hash}; });
+        route.update(v => { return {path: location.pathname, query: query, hash: location.hash.replace(/\?.*/,'')}; });
     } else if (!Object.keys(routes).includes(myRoute.path)) {
         window.history.replaceState({}, '', `/notFound`);
         route.update(v => {
