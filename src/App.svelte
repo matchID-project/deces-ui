@@ -11,7 +11,7 @@
 		updateURL, advancedSearch, fuzzySearch, displayMode, themeDnum
 	} from './components/tools/stores.js';
 	import { URLSearchSubmit } from './components/tools/search.js';
-	import { redirect, routes } from './components/tools/routes.js';
+	import { routes } from './components/tools/routes.js';
 
 	onMount(async () => {
 		if ($version && !$version.api) {

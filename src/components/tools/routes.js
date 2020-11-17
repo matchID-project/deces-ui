@@ -49,9 +49,6 @@ const rs = route.subscribe((value) => {
     }
 });
 
-export const redirect = () => {
-};
-
 export const goTo =  (r) => {
     activeElement.update(v => {
         v && v.blur();
