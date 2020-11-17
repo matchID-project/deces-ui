@@ -434,6 +434,8 @@
             return new Date(obj.substr(0,4), parseInt(obj.substr(4,2))-1 , obj.substr(6,2));
           } else if (/^\d{4}S\d{2}-\d{4}$/.test(obj)) {
             return new Date(obj.substr(0,4), parseInt(obj.substr(8,2))-1 , obj.substr(10,2));
+          } else if (/^\d{4}S\d{2}-\d{4}-\d{4}$/.test(obj)) {
+            return new Date(obj.substr(0,4), parseInt(obj.substr(8,2))-1 , obj.substr(10,2), obj.substr(13,2), obj.substr(15,2));
           }
       }
       return obj
