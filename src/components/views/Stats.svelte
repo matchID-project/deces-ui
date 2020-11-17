@@ -137,7 +137,7 @@
   $: if (/today|full/.test(sourceScope)) {
         source = sourceScopes[sourceScope].select;
      } else {
-        if (filteredCatalog && !filteredCatalog.includes(source)) {
+        if (filteredCatalog && !(filteredCatalog.includes(source))) {
             source = filteredCatalog[0];
         }
      }
@@ -158,7 +158,7 @@
       const p = new URLSearchParams;
       p.set('source', source);
       p.set('scope', sourceScope);
-      window.history.replaceState({}, '', `${location.href}?${p}`);
+      window.history.replaceState({}, '', `${location.href.replace(/\?.*/,'')}?${p}`);
     };
 
   let day;
@@ -463,10 +463,10 @@
       if ($route && catalog) {
           console.log($route);
         if ($route.query && $route.query.scope) {
-            sourceScope = $route.query.scope
-            if ((!/today|full/.test(sourceScope)) && $route.source) {
-                source = $route.source;
+            if ((!/today|full/.test(sourceScope)) && $route.query.source) {
+                source = $route.query.source;
             }
+            sourceScope = $route.query.scope
         } else {
             sourceScope = 'full';
         }
