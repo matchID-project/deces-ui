@@ -127,9 +127,12 @@ sub flushResults {
     $var = $range;
     $var =~ s/d$/dh/;
     $var =~ s/(m|w)$/$1d/;
-    if (($range ne '') && ($reportName eq 'day')) {
-    } else {
-        $var =~ s/^$/ymdh/;
+    if ($range eq '') {
+        if ($reportName eq 'day') {
+            $var =~ s/^$/ymdh/;
+        } else {
+            $var =~ s/^$/ymd/;
+        }
     }
     &buildKeyReport;
 
