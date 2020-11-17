@@ -13,9 +13,9 @@
                 >
                     <title>
                         {country.id}
-                        {#each Object.keys(labels) as v}
-                          __{v}:{value(v, country.id)}
-                        {/each}
+                            - {labels['visitors']}:{value('visitors', country.id)}
+                            - {labels['hits']}:{value('hits', country.id)}
+                            - {labels['bytes']}:{value('bytes', country.id)}
                     </title>
                 </path>
             {/each}

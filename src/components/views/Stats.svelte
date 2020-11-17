@@ -38,9 +38,9 @@
                             </div>
                         </div>
                     </div>
-                </div>
-            {/each}
-            {#each views as view}
+                {/each}
+            {/if}
+            {#each views.filter(x => !day || !(x === 'hour_of_day_of_week')) as view}
                 <div class="rf-col-xl-6 rf-col-lg-6 rf-col-md-12 rf-col-sm-12 rf-col-xs-12">
                     <div class="rf-tile">
                         <div class="rf-tile__body">
@@ -49,8 +49,8 @@
                             </h4>
                             <svelte:component
                                 this={params[view] && params[view].type ? params[view].type : Line}
-                                data={data(view)}
-                                options={options(view)}
+                                data={rawData && data(view)}
+                                options={rawData && options(view)}
                             />
                         </div>
                     </div>
@@ -73,11 +73,96 @@
   import Bar from 'svelte-chartjs/src/Bar.svelte';
   import Icon from './Icon.svelte';
   import WorldChoropleth from './WorldChoropleth.svelte';
+  import Heatmap from './Heatmap.svelte';
+  import { route, updateURL } from '../tools/stores.js';
   import { iso2to3 } from '../tools/countries.js';
+
 
   let style = getComputedStyle(document.body);
   let rawData;
   let unavailable = false;
+  let sourceScopes = {
+      'full': {
+          label: 'complet',
+          select: 'full',
+      },
+      'today': {
+          label: 'aujourd\'hui',
+          select: 'day'
+      },
+      'day': {
+          label: 'jour',
+          select: /^(\d{4})(\d{2})(\d{2})$/,
+          replace: (a, b, c, d) => `${d}/${c}/${b}`
+      },
+      'month': {
+          label: 'mois',
+          select: /^(\d{4})(\d{2})$/,
+          replace: (a, b, c) => `${datesLabels.months[parseInt(c)]} ${b}`
+      },
+      'week': {
+          label: 'semaine',
+          select: /^(\d{4})(S\d{2})$/,
+          replace: (a, b, c) => `semaine ${c} ${b}`
+      },
+      'today-detailed': {
+          label: 'aujourd\'hui (détail)',
+          select: 'day-detailed'
+      },
+      'day-detailed': {
+          label: 'jour (détail)',
+          select: /^(\d{4})(\d{2})(\d{2})-detailed$/,
+          replace: (a, b, c, d) => `${d}/${c}/${b}`
+      },
+      'month-detailed': {
+          label: 'mois (détail)',
+          select: /^(\d{4})(\d{2})-detailed$/,
+          replace: (a, b, c) => `${datesLabels.months[parseInt(c)]} ${b}`
+      },
+      'week-detailed': {
+          label: 'semaine (détail)',
+          select: /^(\d{4})(S\d{2})-detailed$/,
+          replace: (a, b, c) => `semaine ${c} ${b}`
+      }
+  };
+  let sourceScope;
+  let source;
+  let catalog;
+  let filteredCatalog = [];
+
+  $: if (sourceScope && !/today|full/.test(sourceScope)) {
+    filteredCatalog = catalog.filter(x => sourceScopes[sourceScope].select.test(x)).reverse()
+  };
+
+  $: if (/today|full/.test(sourceScope)) {
+        source = sourceScopes[sourceScope].select;
+     } else {
+        if (filteredCatalog && !filteredCatalog.includes(source)) {
+            source = filteredCatalog[0];
+        }
+     }
+
+  $: borderWidth = /full|detailed/.test(sourceScope) ? 0.5 : 2;
+
+  const displayRange =  (range) => {
+      return range.replace(/(....)(..)(..)-/,"$3/$2/$1").replace("detailed", " (détaillé)");
+  }
+
+  $: if (source) {
+      fetch(`/stats/${source}.json`)
+        .then(response => response.json())
+        .catch(() => { unavailable = true})
+        .then(json => {
+            rawData = json;
+        });
+      const p = new URLSearchParams;
+      p.set('source', source);
+      p.set('scope', sourceScope);
+      window.history.replaceState({}, '', `${location.href}?${p}`);
+    };
+
+  let day;
+  $: day = /day/.test(sourceScope);
 
   let labels = {
       visitors: 'visiteurs',
@@ -91,6 +176,7 @@
       os: 'système d\'exploitation',
       browsers: 'navigateur',
       visit_time: 'heure de visite',
+      hour_of_day_of_week: 'heure de visite',
       referrers: 'sources',
       referring_sites: 'sites sources',
       status_code: 'statut',
@@ -121,16 +207,19 @@
   };
 
     const siteUrlRegexp = [
+        [/^page: \/favicon \(GET\)$/, 'static: images'],
         [/^\/(.*)\.(css|css.map)$/, 'static: css'],
         [/^\/(.*)\.(js|json|js.map)$/, 'static: javascript'],
         [/^\/(.*)\.(png|svg|woff2?)$/, 'static: images'],
-        [/^\/(search.*|geo\?.*|\?(current|q|advanced|ln|fn)=.*)$/,'page: search'],
-        [/^\/(link.*)$/,'page: link'],
-        [/^\/(about.*)$/,'page: about'],
-        [/^\/deces\/api\/v1\/search\/csv\/\S+$/, 'api: link csv'],
-        [/^\/deces\/api\/v1\/search\/csv$/, 'api: download csv'],
+        [/^GET \/$/, 'page: /search (GET)'],
+        [/^page: \/? (GET)$/, 'page: /search (GET)'],
+        [/^\/(search.*|geo\?.*|\?(current|q|advanced|ln|fn)=.*)$/,'page: /search'],
+        [/^\/(link.*)$/,'page: /link'],
+        [/^\/(about.*)$/,'page: /about'],
+        [/^\/deces\/api\/v1\/search\/csv(\/\S+)?$/, 'api: link csv'],
         [/^\/(.*\/api\/v0|deces\/api\/v1)\/search$/, 'api: search'],
         [/^\/deces\/api\/v1\/([A-Za-z]*)\/?$/, 'api: $1'],
+        [/^page: \/(https|dev|backup|wordpress|wp|e|personnes|OLD) \(GET\)$/, 'wrong calls'],
         [/^\/.*$/, 'wrong calls']
     ];
 
@@ -191,14 +280,18 @@
   const ticks = {
     autoSkip: true,
     fontFamily : fontFamily,
-    callback: smartNumber
+    callback: smartNumber,
+    min: 0
   }
 
   const options = (view) => {
     const o = {
+        animation: {
+            duration: 0
+        },
         elements: {
             line: {
-                tension: 0
+                tension: 0,
             }
         },
         legend: {
@@ -223,17 +316,57 @@
     return o;
   };
 
-  let stats = ['total_requests', 'failed_requests', 'unique_visitors', 'unique_files', 'unique_static_files', 'bandwidth']
-  let views = ['visitors', 'visit_time', 'browsers', 'requests', 'referring_sites', 'geolocation'];
+  const stats = ['total_requests', 'failed_requests', 'unique_visitors', 'bandwidth']
+  const views = ['visitors', 'hour_of_day_of_week', 'geolocation',  'referring_sites', 'requests', 'browsers'];
 
-  let params = {
-    'browsers': { type: Bar },
+  let datesLabels = {
+      months: {
+          1: 'janvier',
+          2: 'févier',
+          3: 'mars',
+          4: 'avril',
+          5: 'mai',
+          6: 'juin',
+          7: 'juillet',
+          8: 'août',
+          9: 'septembre',
+          10: 'octobre',
+          11: 'novembre',
+          12: 'décembre'
+      }
+  }
+
+  let dayOrder = {
+      'lun': 1,
+      'mar': 2,
+      'mer': 3,
+      'jeu': 4,
+      'ven': 5,
+      'sam': 6,
+      'dim': 7
+  };
+
+  let params;
+  $: params = {
+    'browsers': {
+        type: Bar,
+        dataCB: (data) => data.filter(d => /Chrome|Safari|Edge|Firefox|MSIE|Others|Crawlers$/.test(d.data))
+    },
     'hosts': { type: Bar },
     'visit_time': {
         dataCB: (data) => data.map(d => {
-            d.data = d.data + 'h';
+            d.data = d.data.replace(/(..)00$/,'$1') + 'h';
             return d;
         })
+    },
+    'hour_of_day_of_week': {
+        type: Heatmap,
+        dataCB: (data) => data.map(d => {
+            d.data = d.data.replace(/(..)00$/,'$1') + 'h';
+            return d;
+        }).sort((a,b) => dayOrder[a.data.replace(/-.*/,'')]*100 + parseInt(a.data.replace(/.*-(.*)h/,'$1'))
+            - dayOrder[b.data.replace(/-.*/,'')]*100 + parseInt(b.data.replace(/.*-(.*)h/,'$1'))
+        )
     },
     'geolocation': {
         type: WorldChoropleth,
@@ -261,38 +394,40 @@
     'referring_sites': {
         type: Bar,
         yLog: true,
-        dataCB: (data) => aggregate(data, (d) => urlAgg(d.data, referrerUrlRegexp))
+        dataCB: (data) => aggregate(data, (d) => urlAgg(d.data, referrerUrlRegexp)).filter(x => x.data.length > 1)
     },
     'referrers': {
         type: Bar,
         yLog: true,
-        dataCB: (data) => aggregate(data, (d) => urlAgg(d.data, referrerUrlRegexp))
+        dataCB: (data) => aggregate(data, (d) => urlAgg(d.data, referrerUrlRegexp)).filter(x => x.data.length > 1)
     },
     'hosts': { type: Bar },
     'visitors': {
         xAxes: [{
             type: 'time',
-            time: {
-                unit: 'month'
-            },
             ticks: ticks
-        }]
+        }],
+        dataCB: (data) => data.map(d => { d.data = dateParse(d.data); return d})
     },
     'requests': {
         type: Bar,
         yLog: true,
-        dataCB: (data) => aggregate(data, (d) => urlAgg(d.data, siteUrlRegexp))
+        dataCB: (data) => aggregate(data, (d) => urlAgg(d.data, siteUrlRegexp)).filter(x => x.visitors.count > 10).filter(x => !/OPTIONS|HEAD/.test(x.data))
     }
   };
 
   const dateParse = (obj) => {
-      if ((typeof obj === 'string') && /^\d{8}$/.test(obj)) {
-        return new Date(obj.substr(0,4), parseInt(obj.substr(4,2))-1 , obj.substr(6,2));
+      if ((typeof obj === 'string')) {
+          if (/^\d{8}-\d{4}$/.test(obj)) {
+            return new Date(obj.substr(0,4), parseInt(obj.substr(4,2))-1 , obj.substr(6,2), obj.substr(9,2), obj.substr(11,2));
+          } else if (/^\d{8}$/.test(obj)) {
+            return new Date(obj.substr(0,4), parseInt(obj.substr(4,2))-1 , obj.substr(6,2));
+          } else if (/^\d{4}S\d{2}-\d{4}$/.test(obj)) {
+            return new Date(obj.substr(0,4), parseInt(obj.substr(8,2))-1 , obj.substr(10,2));
+          }
       }
       return obj
   }
-
-
 
     const data = (view) => {
         const data = (params[view] && (params[view].dataCB)) ? params[view].dataCB(rawData[view].data) : rawData[view].data;
@@ -301,14 +436,15 @@
             datasets: Object.keys(datasets).map(id => {
                     const datasetData = data.map(d => {
                         return {
-                            x: dateParse(d.data),
+                            x: d.data,
                             y: d[id].count
                         };
                     });
                     return {
                         backgroundColor: `${datasets[id].color}${( params[view] && params[view].type ) ? 'ff' : '22'}`,
                         borderColor: datasets[id].color,
-                        pointRadius: 1,
+                        borderWidth: borderWidth,
+                        pointRadius: 0,
                         label:  labels[id] || id,
                         yAxisID: id,
                         data: datasetData
@@ -319,11 +455,22 @@
 
     onMount(async () => {
         try{
-            const response = await fetch('/stats/full.json');
-            rawData = await response.json();
+            const response = await fetch('/stats/catalog.json');
+            catalog = await response.json();
         } catch(e) {
             unavailable = true;
         }
+      if ($route && catalog) {
+          console.log($route);
+        if ($route.query && $route.query.scope) {
+            sourceScope = $route.query.scope
+            if ((!/today|full/.test(sourceScope)) && $route.source) {
+                source = $route.source;
+            }
+        } else {
+            sourceScope = 'full';
+        }
+      }
   })
 
 </script>
