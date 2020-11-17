@@ -1,17 +1,41 @@
 <div class="rf-container">
     <div class="rf-grid-row rf-grid-row--gutters">
         {#if (!unavailable) && rawData}
-            {#each stats as key}
-                <div class="rf-col">
-                    <div class="rf-tile">
-                        <div class="rf-tile__body rf-text--center">
-                            <strong class="rf-text--lg">
-                                {smartNumber(rawData.general[key], 1)}
-                            </strong>
-                            <br>
-                            <span class="rf-text--xs">
-                                {labels[key] || key}
-                            </span>
+            {#if rawData.general}
+                <div class="rf-col-xl-2 rf-col-lg-2 rf-col-md-2 rf-col-sm-3 rf-col-3">
+                    <label class="rf-label" for="select">Type de rapport</label>
+                    <select class="rf-select" id="select" name="select" bind:value={sourceScope}>
+                        <option value="" selected disabled hidden>- choisir -</option>
+                        {#each Object.keys(sourceScopes) as scope}
+                            <option value={scope}>{sourceScopes[scope].label}</option>
+                        {/each}
+                    </select>
+                </div>
+                <div class="rf-col-xl-2 rf-col-lg-2 rf-col-md-2 rf-col-sm-3 rf-col-3">
+                    <label class="rf-label" for="select">Période du rapport</label>
+                    <select class="rf-select" id="select" name="select" bind:value={source} disabled={/today|full/.test(sourceScope)}>
+                        <option value="" selected disabled hidden>- choisir -</option>
+                        {#if !/today|full/.test(sourceScope)}
+                            {#each filteredCatalog as range}
+                                <option value={range}>
+                                    {range.replace(sourceScopes[sourceScope].select,sourceScopes[sourceScope].replace)}
+                                </option>
+                            {/each}
+                        {/if}
+                    </select>
+                </div>
+                {#each stats.filter(x => rawData.general[x]) as key}
+                    <div class="rf-col-xl-2 rf-col-lg-2 rf-col-md-2 rf-col-sm-3 rf-col-3">
+                        <div class="rf-tile">
+                            <div class="rf-tile__body rf-text--center">
+                                <strong class="rf-text--lg">
+                                    {smartNumber(rawData.general[key], 1)}
+                                </strong>
+                                <br>
+                                <span class="rf-text--xs">
+                                    {labels[key] || key}
+                                </span>
+                            </div>
                         </div>
                     </div>
                 </div>
