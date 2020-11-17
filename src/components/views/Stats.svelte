@@ -142,7 +142,7 @@
         }
      }
 
-  $: borderWidth = /full|detailed/.test(sourceScope) ? 0.5 : 2;
+  $: borderWidth = /full|detailed/.test(sourceScope) ? 1 : 2;
 
   const displayRange =  (range) => {
       return range.replace(/(....)(..)(..)-/,"$3/$2/$1").replace("detailed", " (détaillé)");
@@ -194,15 +194,19 @@
       'unique_not_found': 'non trouvés (uniques)',
       'bandwidth': 'bande passante'
   };
+
+  const hexToRgb = (hex) => 'rgba(' + hex.match(/^\s*\#?([\da-f]{2})([\da-f]{2})([\da-f]{2})\s*$/)
+        .slice(1).map(e => parseInt(e, 16)).join(',') + ',255)';
+
   const datasets = {
       'visitors': {
-          color: style.getPropertyValue('--bf500')
+          color: hexToRgb(style.getPropertyValue('--bf500'))
       },
       'hits': {
-          color: style.getPropertyValue('--rm500')
+          color: hexToRgb(style.getPropertyValue('--rm500'))
       },
       'bytes': {
-          color: style.getPropertyValue('--gl500')
+          color: hexToRgb(style.getPropertyValue('--gl500'))
       }
   };
 
@@ -286,6 +290,12 @@
 
   const options = (view) => {
     const o = {
+        hover: {
+            intersect: false
+        },
+        tooltips: {
+            mode: 'x'
+        },
         animation: {
             duration: 0
         },
@@ -441,7 +451,7 @@
                         };
                     });
                     return {
-                        backgroundColor: `${datasets[id].color}${( params[view] && params[view].type ) ? 'ff' : '22'}`,
+                        backgroundColor: ( params[view] && params[view].type ) ? datasets[id].color : 'rgba(255,255,255,0)',
                         borderColor: datasets[id].color,
                         borderWidth: borderWidth,
                         pointRadius: 0,
