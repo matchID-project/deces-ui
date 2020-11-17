@@ -12,7 +12,7 @@ $gi6 = Geo::IP->open("/usr/share/GeoIP/GeoIPv6.dat", GEOIP_MEMORY_CACHE);
 $sttime = time;
 $json_coder = JSON::XS->new->utf8(1)->pretty(1);
 
-
+$reportName = @ARGV[0] || full;
 
 @referrerUrlRegexp = (
         [qr|^(https?://)?(www\.)?|,'""'],
@@ -88,7 +88,7 @@ sub buildKeyReport {
         $dval =~ s/^$c{'current'}{$range}:\s*//;
         if ((!($var =~ /^y(m|w)(d(hm?)?)?$/)) || ($val =~ /^$c{'current'}{$range}/ )) {
             &addReportItem;
-            if ((!($var =~ /${range}(d|h)?$/)) || ($range eq 'yw')) {
+            if (!($reportName eq 'day') && (!($var =~ /${range}(d|h)?$/)) || ($range eq 'yw')) {
                 # print "delete $var $val\n";
                 delete($c{$var}{$val});
             } else {
@@ -127,19 +127,24 @@ sub flushResults {
     $var = $range;
     $var =~ s/d$/dh/;
     $var =~ s/(m|w)$/$1d/;
-    $var =~ s/^$/ymd/;
+    if (($range ne '') && ($reportName eq 'day')) {
+    } else {
+        $var =~ s/^$/ymdh/;
+    }
     &buildKeyReport;
 
-    open(F, '>', sprintf("$stats_dir/%s.json", $c{'current'}{$range} || "full"));
+    open(F, '>', sprintf("$stats_dir/%s.json", $c{'current'}{$range} || $reportName));
     print F $json_coder->encode({%report});
     close(F);
-
-    if ($range ne '') {
-        $var =~ s/h$/hm/;
-        $var =~ s/d$/dh/;
+    if (($range ne '') || ($reportName eq 'day')) {
+        $key = 'visitors';
+        $var = $range;
+        $var =~ s/d$/dhm/;
+        $var =~ s/(m|w)$/$1dh/;
+        $var =~ s/^$/ymdhm/;
         &buildKeyReport;
 
-        open(F, '>', sprintf("$stats_dir/%s-detailed.json", $c{'current'}{$range} || "total"));
+        open(F, '>', sprintf("$stats_dir/%s-detailed.json", $c{'current'}{$range} || $reportName));
         print F $json_coder->encode({%report});
         close(F);
     }
@@ -174,7 +179,7 @@ $general = 'general';
 $db_dir=$ENV{'LOG_DB_DIR'} || './';
 $stats_dir=$ENV{'STATS'} || './';
 
-if (-e "$db_dir/full.db") {
+if ((-e "$db_dir/full.db") && ($reportName eq 'full')) {
     $h = retrieve("$db_dir/full.db");
     die "Unable to retrieve from 'full.db'\n" unless defined $h;
     %c = %{$h};
@@ -185,7 +190,7 @@ if (-e "$db_dir/full.db") {
 }
 
 
-while(<>){
+while(<STDIN>){
     $i++;
     if (/$match/) {
         $m++;
