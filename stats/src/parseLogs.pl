@@ -143,7 +143,7 @@ sub flushResults {
         $key = 'visitors';
         $var = $range;
         $var =~ s/d$/dhm/;
-        $var =~ s/(m|w)$/$1dh/;
+        $var =~ s/y(m|w)$/y$1dh/;
         $var =~ s/^$/ymdhm/;
         &buildKeyReport;
 
