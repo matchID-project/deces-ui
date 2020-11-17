@@ -467,25 +467,29 @@ logs-db-backup:
 		STORAGE_BUCKET=${LOG_DB_BUCKET} DATA_DIR=${LOG_DB_DIR}\
 		STORAGE_ACCESS_KEY=${TOOLS_STORAGE_ACCESS_KEY} STORAGE_SECRET_KEY=${TOOLS_STORAGE_SECRET_KEY};
 
-logs-parser-build:
-	@if [ ! -e goaccess-build ]; then\
-		cd ${STATS_SCRIPTS} &&\
-		docker build . --tag goaccess &&\
-		touch goaccess-build;\
-	fi
+logs-stats-backup:
+	@mkdir -p ${STATS};\
+	echo sync ${STATS} to ${STATS_BUCKET};\
+	${MAKE} -C ${APP_PATH}/${GIT_TOOLS} storage-sync-push\
+		STORAGE_BUCKET=${STATS_BUCKET} DATA_DIR=${STATS}\
+		STORAGE_ACCESS_KEY=${TOOLS_STORAGE_ACCESS_KEY} STORAGE_SECRET_KEY=${TOOLS_STORAGE_SECRET_KEY};
 
-logs-full-init: logs-parser-build
-	${STATS_SCRIPTS}/report -r full -m init
+logs-stats-restore:
+	@mkdir -p ${STATS};\
+	echo sync ${STATS_BUCKET} to ${STATS};\
+	${MAKE} -C ${APP_PATH}/${GIT_TOOLS} storage-sync-pull\
+		STORAGE_BUCKET=${STATS_BUCKET} DATA_DIR=${STAT}\
+		STORAGE_ACCESS_KEY=${TOOLS_STORAGE_ACCESS_KEY} STORAGE_SECRET_KEY=${TOOLS_STORAGE_SECRET_KEY};
 
-logs-full: logs-parser-build
-	${STATS_SCRIPTS}/report -r full -m from
 
-logs-month:
-	${STATS_SCRIPTS}/report -r month -m from
+logs-full: logs-db-restore
+	zcat -f `ls -tr ${LOG_DIR}/access*gz` ${LOG_DIR}/access.log | ${STATS_SCRIPTS}/parseLogs.pl
 
-logs-week:
-	${STATS_SCRIPTS}/report -r week -m from
+logs-update: logs-db-restore
+	zcat -f `ls -tr ${LOG_DIR}/access.log.*gz` ${LOG_DIR}/access.log | ${STATS_SCRIPTS}/parseLogs.pl
 
-logs-day:
-	${STATS_SCRIPTS}/report
+logs-day: logs-restore
+	cat ${LOG_DIR}/access.log | ${STATS_SCRIPTS}/parseLogs.pl day
 
+logs-catalog:
+	ls ${STATS} | grep -v catalog | perl -e '@list=<>;print "[\n".join(",\n",map{chomp;s/.json//;"  \"$$_\""} (grep {/.json/} @list))."\n]\n"' >  ${STATS}/catalog.json
