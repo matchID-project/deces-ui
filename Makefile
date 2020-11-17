@@ -420,7 +420,11 @@ deploy-remote-instance: config backend-config
 deploy-remote-services:
 	@${MAKE} -C ${APP_PATH}/${GIT_TOOLS} remote-deploy remote-actions\
 		APP=${APP} APP_VERSION=${APP_VERSION} DC_IMAGE_NAME=${DC_PREFIX}\
-		ACTIONS=deploy-local GIT_BRANCH=${GIT_BRANCH} ${MAKEOVERRIDES}
+		ACTIONS=deploy-local GIT_BRANCH=${GIT_BRANCH}\
+		TOOLS_STORAGE_ACCESS_KEY=${TOOLS_STORAGE_ACCESS_KEY}\
+		TOOLS_STORAGE_SECRET_KEY=${TOOLS_STORAGE_SECRET_KEY}\
+		LOG_BUCKET=${LOG_BUCKET} LOG_DB_BUCKET=${LOG_DB_BUCKET} STATS_BUCKET=${STATS_BUCKET}\
+		${MAKEOVERRIDES}
 
 deploy-remote-publish:
 	@if [ -z "${NGINX_HOST}" -o -z "${NGINX_USER}" ];then\
