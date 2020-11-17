@@ -488,6 +488,11 @@ stats-restore:
 stats-full: logs-restore stats-db-restore
 	zcat -f `ls -tr ${LOG_DIR}/access*gz` ${LOG_DIR}/access.log | ${STATS_SCRIPTS}/parseLogs.pl
 
+stats-full-init: logs-restore
+	rm -rf ${LOG_DB_DIR} && mkdir -p ${LOG_DB_DIR}
+	zcat -f `ls -tr ${LOG_DIR}/access*gz` ${LOG_DIR}/access.log | ${STATS_SCRIPTS}/parseLogs.pl
+
+
 stats-full-update: logs-restore stats-db-restore
 	zcat -f `ls -tr ${LOG_DIR}/access.log.*gz | tail -2` ${LOG_DIR}/access.log | ${STATS_SCRIPTS}/parseLogs.pl
 
