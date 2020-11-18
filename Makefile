@@ -400,7 +400,10 @@ ${DATA_VERSION_FILE}:
 		STORAGE_ACCESS_KEY=${STORAGE_ACCESS_KEY} STORAGE_SECRET_KEY=${STORAGE_SECRET_KEY}\
 		FILES_PATTERN='${FILES_TO_PROCESS}'
 
-deploy-local: config stats-background elasticsearch-storage-pull elasticsearch-restore elasticsearch docker-check up backup-dir-clean local-test-api
+show-env:
+	env | egrep 'STORAGE|BUCKET'
+
+deploy-local: config show-env stats-background elasticsearch-storage-pull elasticsearch-restore elasticsearch docker-check up backup-dir-clean local-test-api
 
 backend-test:
 	@${MAKE} -C ${APP_PATH}/${GIT_BACKEND} backend-test
@@ -449,14 +452,20 @@ deploy-monitor:
 
 deploy-remote: config deploy-remote-instance deploy-remote-services deploy-remote-publish deploy-delete-old deploy-monitor
 
-logs-restore:
-	@mkdir -p ${LOG_DIR};\
+
+${LOG_DIR}:
+	@mkdir -p ${LOG_DIR};
+
+logs-restore: ${LOG_DIR}
 	echo sync ${LOG_BUCKET} to ${LOG_DIR};\
 	${MAKE} -C ${APP_PATH}/${GIT_TOOLS} storage-sync-pull\
 		STORAGE_BUCKET=${LOG_BUCKET} DATA_DIR=${LOG_DIR}\
 		STORAGE_ACCESS_KEY=${TOOLS_STORAGE_ACCESS_KEY} STORAGE_SECRET_KEY=${TOOLS_STORAGE_SECRET_KEY};
 
-stats-db-restore:
+${LOG_DB_DIR}:
+	@mkdir -p ${LOG_DB_DIR};
+
+stats-db-restore: ${LOG_DB_DIR}
 	@mkdir -p ${LOG_DB_DIR};\
 	echo sync ${LOG_DB_BUCKET} to ${LOG_DB_DIR};\
 	${MAKE} -C ${APP_PATH}/${GIT_TOOLS} storage-sync-pull\
@@ -464,46 +473,46 @@ stats-db-restore:
 		STORAGE_ACCESS_KEY=${TOOLS_STORAGE_ACCESS_KEY} STORAGE_SECRET_KEY=${TOOLS_STORAGE_SECRET_KEY};
 	touch log-db
 
-stats-db-backup:
-	@mkdir -p ${LOG_DB_DIR};\
+stats-db-backup: ${LOG_DB_DIR}
 	echo sync ${LOG_DB_DIR} to ${LOG_DB_BUCKET};\
 	${MAKE} -C ${APP_PATH}/${GIT_TOOLS} storage-sync-push\
 		STORAGE_BUCKET=${LOG_DB_BUCKET} DATA_DIR=${LOG_DB_DIR}\
 		STORAGE_ACCESS_KEY=${TOOLS_STORAGE_ACCESS_KEY} STORAGE_SECRET_KEY=${TOOLS_STORAGE_SECRET_KEY};
 
-stats-backup:
-	@mkdir -p ${STATS};\
+${STATS}:
+	@mkdir -p ${STATS};
+
+stats-backup: ${STATS}
 	echo sync ${STATS} to ${STATS_BUCKET};\
 	${MAKE} -C ${APP_PATH}/${GIT_TOOLS} storage-sync-push\
 		STORAGE_BUCKET=${STATS_BUCKET} DATA_DIR=${STATS}\
 		STORAGE_ACCESS_KEY=${TOOLS_STORAGE_ACCESS_KEY} STORAGE_SECRET_KEY=${TOOLS_STORAGE_SECRET_KEY};
 
-stats-restore:
-	@mkdir -p ${STATS};\
+stats-restore: ${STATS}
 	echo sync ${STATS_BUCKET} to ${STATS};\
 	${MAKE} -C ${APP_PATH}/${GIT_TOOLS} storage-sync-pull\
 		STORAGE_BUCKET=${STATS_BUCKET} DATA_DIR=${STATS}\
 		STORAGE_ACCESS_KEY=${TOOLS_STORAGE_ACCESS_KEY} STORAGE_SECRET_KEY=${TOOLS_STORAGE_SECRET_KEY};
 
-stats-full: logs-restore stats-db-restore
+stats-full: ${STATS} logs-restore stats-db-restore
 	zcat -f `ls -tr ${LOG_DIR}/access*gz` ${LOG_DIR}/access.log | ${STATS_SCRIPTS}/parseLogs.pl
 
-stats-full-init: logs-restore
+stats-full-init: ${STATS} logs-restore
 	rm -rf ${LOG_DB_DIR} && mkdir -p ${LOG_DB_DIR}
 	zcat -f `ls -tr ${LOG_DIR}/access*gz` ${LOG_DIR}/access.log | ${STATS_SCRIPTS}/parseLogs.pl
 
-
-stats-full-update: logs-restore stats-db-restore
+stats-full-update: ${STATS} logs-restore stats-db-restore
 	zcat -f `ls -tr ${LOG_DIR}/access.log.*gz | tail -2` ${LOG_DIR}/access.log | ${STATS_SCRIPTS}/parseLogs.pl
 
-stats-live: logs-restore
+stats-live: ${STATS} logs-restore
 	cat ${LOG_DIR}/access.log | ${STATS_SCRIPTS}/parseLogs.pl day
 
-stats-catalog:
+stats-catalog: ${STATS}
 	ls ${STATS} | grep -v catalog | perl -e '@list=<>;print "[\n".join(",\n",map{chomp;s/.json//;"  \"$$_\""} (grep {/.json/} @list))."\n]\n"' >  ${STATS}/catalog.json
 
 stats-update: stats-full-update stats-catalog stats-db-backup
 
 stats-background:
+	make stats-restore || true;
 	(while (true); do make stats-update;sleep 3600;done) > .stats-update 2>&1 &
 	(while (true); do make stats-live;sleep 120;done) > .stats-live 2>&1 &
