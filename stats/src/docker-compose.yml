@@ -1,0 +1,7 @@
+version: "3"
+services:
+  goaccess:
+    image: goaccess
+    build:
+      context: .
+    entrypoint: ["find", "/"]

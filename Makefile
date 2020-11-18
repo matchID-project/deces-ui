@@ -34,6 +34,13 @@ export APP_DNS=deces.matchid.io
 export FRONTEND := ${APP_PATH}
 export FRONTEND_DEV_HOST = frontend-development
 export FRONTEND_DEV_PORT = ${PORT}
+export LOG_BUCKET = s3bucket/override/me
+export STATS_BUCKET = s3bucket/override/me
+export LOG_DB_BUCKET = s3bucket/override/me
+export LOG_DIR = ${FRONTEND}/log/mirror
+export LOG_DB_DIR = ${FRONTEND}/log/db
+export STATS_SCRIPTS = ${FRONTEND}/stats/src
+export STATS = ${FRONTEND}/stats/public
 export BACKEND_PORT=8080
 export BACKEND_HOST=backend
 export BACKEND_JOB_CONCURRENCY=2
@@ -393,7 +400,7 @@ ${DATA_VERSION_FILE}:
 		STORAGE_ACCESS_KEY=${STORAGE_ACCESS_KEY} STORAGE_SECRET_KEY=${STORAGE_SECRET_KEY}\
 		FILES_PATTERN='${FILES_TO_PROCESS}'
 
-deploy-local: config elasticsearch-storage-pull elasticsearch-restore elasticsearch docker-check up backup-dir-clean local-test-api
+deploy-local: config stats-background elasticsearch-storage-pull elasticsearch-restore elasticsearch docker-check up backup-dir-clean local-test-api
 
 backend-test:
 	@${MAKE} -C ${APP_PATH}/${GIT_BACKEND} backend-test
@@ -413,7 +420,11 @@ deploy-remote-instance: config backend-config
 deploy-remote-services:
 	@${MAKE} -C ${APP_PATH}/${GIT_TOOLS} remote-deploy remote-actions\
 		APP=${APP} APP_VERSION=${APP_VERSION} DC_IMAGE_NAME=${DC_PREFIX}\
-		ACTIONS=deploy-local GIT_BRANCH=${GIT_BRANCH} ${MAKEOVERRIDES}
+		ACTIONS=deploy-local GIT_BRANCH=${GIT_BRANCH}\
+		TOOLS_STORAGE_ACCESS_KEY=${TOOLS_STORAGE_ACCESS_KEY}\
+		TOOLS_STORAGE_SECRET_KEY=${TOOLS_STORAGE_SECRET_KEY}\
+		LOG_BUCKET=${LOG_BUCKET} LOG_DB_BUCKET=${LOG_DB_BUCKET} STATS_BUCKET=${STATS_BUCKET}\
+		${MAKEOVERRIDES}
 
 deploy-remote-publish:
 	@if [ -z "${NGINX_HOST}" -o -z "${NGINX_USER}" ];then\
@@ -437,3 +448,62 @@ deploy-monitor:
 	@${MAKE} -C ${APP_PATH}/${GIT_TOOLS} remote-install-monitor-nq NQ_TOKEN=${NQ_TOKEN} ${MAKEOVERRIDES}
 
 deploy-remote: config deploy-remote-instance deploy-remote-services deploy-remote-publish deploy-delete-old deploy-monitor
+
+logs-restore:
+	@mkdir -p ${LOG_DIR};\
+	echo sync ${LOG_BUCKET} to ${LOG_DIR};\
+	${MAKE} -C ${APP_PATH}/${GIT_TOOLS} storage-sync-pull\
+		STORAGE_BUCKET=${LOG_BUCKET} DATA_DIR=${LOG_DIR}\
+		STORAGE_ACCESS_KEY=${TOOLS_STORAGE_ACCESS_KEY} STORAGE_SECRET_KEY=${TOOLS_STORAGE_SECRET_KEY};
+
+stats-db-restore:
+	@mkdir -p ${LOG_DB_DIR};\
+	echo sync ${LOG_DB_BUCKET} to ${LOG_DB_DIR};\
+	${MAKE} -C ${APP_PATH}/${GIT_TOOLS} storage-sync-pull\
+		STORAGE_BUCKET=${LOG_DB_BUCKET} DATA_DIR=${LOG_DB_DIR}\
+		STORAGE_ACCESS_KEY=${TOOLS_STORAGE_ACCESS_KEY} STORAGE_SECRET_KEY=${TOOLS_STORAGE_SECRET_KEY};
+	touch log-db
+
+stats-db-backup:
+	@mkdir -p ${LOG_DB_DIR};\
+	echo sync ${LOG_DB_DIR} to ${LOG_DB_BUCKET};\
+	${MAKE} -C ${APP_PATH}/${GIT_TOOLS} storage-sync-push\
+		STORAGE_BUCKET=${LOG_DB_BUCKET} DATA_DIR=${LOG_DB_DIR}\
+		STORAGE_ACCESS_KEY=${TOOLS_STORAGE_ACCESS_KEY} STORAGE_SECRET_KEY=${TOOLS_STORAGE_SECRET_KEY};
+
+stats-backup:
+	@mkdir -p ${STATS};\
+	echo sync ${STATS} to ${STATS_BUCKET};\
+	${MAKE} -C ${APP_PATH}/${GIT_TOOLS} storage-sync-push\
+		STORAGE_BUCKET=${STATS_BUCKET} DATA_DIR=${STATS}\
+		STORAGE_ACCESS_KEY=${TOOLS_STORAGE_ACCESS_KEY} STORAGE_SECRET_KEY=${TOOLS_STORAGE_SECRET_KEY};
+
+stats-restore:
+	@mkdir -p ${STATS};\
+	echo sync ${STATS_BUCKET} to ${STATS};\
+	${MAKE} -C ${APP_PATH}/${GIT_TOOLS} storage-sync-pull\
+		STORAGE_BUCKET=${STATS_BUCKET} DATA_DIR=${STAT}\
+		STORAGE_ACCESS_KEY=${TOOLS_STORAGE_ACCESS_KEY} STORAGE_SECRET_KEY=${TOOLS_STORAGE_SECRET_KEY};
+
+stats-full: logs-restore stats-db-restore
+	zcat -f `ls -tr ${LOG_DIR}/access*gz` ${LOG_DIR}/access.log | ${STATS_SCRIPTS}/parseLogs.pl
+
+stats-full-init: logs-restore
+	rm -rf ${LOG_DB_DIR} && mkdir -p ${LOG_DB_DIR}
+	zcat -f `ls -tr ${LOG_DIR}/access*gz` ${LOG_DIR}/access.log | ${STATS_SCRIPTS}/parseLogs.pl
+
+
+stats-full-update: logs-restore stats-db-restore
+	zcat -f `ls -tr ${LOG_DIR}/access.log.*gz | tail -2` ${LOG_DIR}/access.log | ${STATS_SCRIPTS}/parseLogs.pl
+
+stats-live: logs-restore
+	cat ${LOG_DIR}/access.log | ${STATS_SCRIPTS}/parseLogs.pl day
+
+stats-catalog:
+	ls ${STATS} | grep -v catalog | perl -e '@list=<>;print "[\n".join(",\n",map{chomp;s/.json//;"  \"$$_\""} (grep {/.json/} @list))."\n]\n"' >  ${STATS}/catalog.json
+
+stats-update: stats-full-update stats-catalog stats-db-backup
+
+stats-background:
+	(while (true); do make stats-update;sleep 3600;done) > .stats-update 2>&1 &
+	(while (true); do make stats-live;sleep 120;done) > .stats-live 2>&1 &
