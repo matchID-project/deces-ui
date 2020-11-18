@@ -286,8 +286,13 @@
     autoSkip: true,
     fontFamily : fontFamily,
     callback: smartNumber,
-    min: 0
-  }
+  };
+  const ticksY = {
+    autoSkip: true,
+    fontFamily : fontFamily,
+    callback: smartNumber,
+    maxTicksLimit: 5
+  };
 
   const options = (view) => {
     const o = {
@@ -317,7 +322,7 @@
                     id: id,
                     type: params[view] && params[view].yLog ? 'logarithmic' : 'linear',
                     position: i%2 ? 'left' : 'right',
-                    ticks: {...ticks, maxTicksLimit: 5}
+                    ticks: ticksY
                 }
             }),
             xAxes: params[view] && params[view].xAxes || [{
