@@ -25,7 +25,7 @@
                     </select>
                 </div>
                 {#each stats.filter(x => rawData.general[x]) as key}
-                    <div class="rf-col-3">
+                    <div class="rf-col-xl-3 rf-col-lg-3 rf-col-md-3 rf-col-sm-3 rf-col-xs-6">
                         <div class="rf-tile">
                             <div class="rf-tile__body rf-text--center">
                                 <strong class="rf-text--lg">
