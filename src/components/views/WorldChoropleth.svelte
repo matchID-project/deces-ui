@@ -4,6 +4,7 @@
             <g>
             {#each countries as country}
                 <path
+                    class="hoverable"
                     d={country.path}
                     id={country.id}
                     stroke="var(--bf500)"
@@ -101,4 +102,10 @@
   })
 </script>
 
+<style>
 
+.hoverable:hover {
+  stroke-width: 0.5px;
+}
+
+</style>

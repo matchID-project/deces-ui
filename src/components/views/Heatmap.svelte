@@ -6,6 +6,7 @@
                 {#each Object.keys(heatmap[view][day]).sort((a,b) => parseInt(a.replace('h','')) - parseInt(b.replace('h',''))) as hour,j}
                     <rect
                         id="{day}{hour}"
+                        class="hoverable"
                         x={(i+1)*15}
                         y={5+(j+1)*2+1}
                         width=13
@@ -117,4 +118,10 @@
 
 </script>
 
+<style>
 
+.hoverable:hover {
+  stroke-width: 0px;
+}
+
+</style>
