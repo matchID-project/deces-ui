@@ -480,7 +480,6 @@
             unavailable = true;
         }
       if ($route && catalog) {
-          console.log($route);
         if ($route.query && $route.query.scope) {
             if ((!/today|full/.test(sourceScope)) && $route.query.source) {
                 source = $route.query.source;

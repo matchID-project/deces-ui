@@ -6,18 +6,37 @@
                 class="hoverable"
                 d={country.path}
                 id={country.id}
+                z-index=0
                 stroke="var(--bf500)"
                 stroke-width="0.1px"
                 fill="var(--bf500)"
+                on:mouseenter={()=> toggle(country.id)}
+                on:mouseleave={() => toggle(country.id)}
                 fill-opacity={scale(value(view, country.id), view)}
+            />
+        {/each}
+        {#each countries as country}
+            <g
+                class="tooltip"
+                opacity={selected === country.id ? 0.9 : 0}
             >
-                <title>
-                    {country.id}
-                        - {labels['visitors']}:{value('visitors', country.id)}
-                        - {labels['hits']}:{value('hits', country.id)}
-                        - {labels['bytes']}:{value('bytes', country.id)}
-                </title>
-            </path>
+                <rect
+                    x={(country.centroid[0] < 120) ? country.centroid[0] : country.centroid[0] - 100}
+                    y={(country.centroid[1] < 80) ? country.centroid[1] : country.centroid[1] - 50}
+                    width="100"
+                    height="50"
+                />
+                <text
+                    class="text"
+                    text-anchor={(country.centroid[0] < 120) ? 'start' : 'end'}
+                    y={(country.centroid[1] < 80) ? 10 + country.centroid[1] : country.centroid[1] - 40}
+                >
+                        <tspan x={(country.centroid[0] < 120) ? 5 + country.centroid[0] : country.centroid[0] - 5}>{country.id}</tspan>
+                        <tspan x={(country.centroid[0] < 120) ? 5 + country.centroid[0] : country.centroid[0] - 5} dy=10>{labels['visitors']}:{value('visitors', country.id)}</tspan>
+                        <tspan x={(country.centroid[0] < 120) ? 5 + country.centroid[0] : country.centroid[0] - 5} dy=10>{labels['hits']}:{value('hits', country.id)}</tspan>
+                        <tspan x={(country.centroid[0] < 120) ? 5 + country.centroid[0] : country.centroid[0] - 5} dy=10>{labels['bytes']}:{value('bytes', country.id)}</tspan>
+                </text>
+            </g>
         {/each}
         </g>
     {/if}
@@ -31,6 +50,7 @@
   export let height = undefined;
   export let data = undefined;
   export let options = undefined;
+  let selected;
   let geojson;
   let max = {};
   let labels = {};
@@ -40,9 +60,16 @@
   let scale =  (x, view) => x;
   let view = 'visitors';
 
+  const toggle = (id) => {
+      if (id !== selected) {
+          selected = id;
+      } else {
+          selected = undefined;
+      }
+  };
+
   $: if (data && data.labels) {
       data.labels.forEach((countryId, i)=> {
-        //   console.log(countryId, i);
         index[countryId] = i;
       });
   };
@@ -76,10 +103,22 @@
   $: if (geojson) {
       countries = geojson.features.filter(feature => feature.geometry && feature.geometry.coordinates)
         .map(feature => {
-            return {
+            const country = {
                 id: feature.id,
                 path: converter.convert(feature)
             };
+            `${country.path[0]}`.replace(/^M/,'').split(/\s+/).forEach(c => {
+                c = c.split(/,/).map(x => parseInt(x));
+                country.xmin = Math.min(c[0],country.xmin||99999);
+                country.ymin = Math.min(c[1],country.ymin||99999);
+                country.xmax = Math.max(c[0],country.xmax||-99999);
+                country.ymax = Math.max(c[1],country.ymax||-99999);
+            });
+            country.centroid = [
+                (country.xmin + country.xmax) / 2,
+                (country.ymin + country.ymax) / 2,
+            ];
+            return country;
         });
     //   console.log(countries);
   }
@@ -104,6 +143,22 @@
 
 .hoverable:hover {
   stroke-width: 0.5px;
+  cursor:pointer;
 }
+
+.tooltip {
+    pointer-events:none;
+    transition: opacity 0.3s;
+}
+
+.tooltip text {
+    font-size: 7px;
+}
+
+g.tooltip rect {
+    fill: var(--w);
+    stroke: var(--bf500);
+}
+
 
 </style>
