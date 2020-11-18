@@ -1,67 +1,97 @@
-<div>
-    <svg {width} {height} viewBox="0 0 130 70">
-        {#if heatmap && heatmap[view] && Object.keys(heatmap[view]).length}
-            <g>
-            {#each Object.keys(heatmap[view]) as day,i}
-                {#each Object.keys(heatmap[view][day]).sort((a,b) => parseInt(a.replace('h','')) - parseInt(b.replace('h',''))) as hour,j}
+<svg {width} {height} viewBox="0 0 260 130">
+    {#if heatmap && heatmap[view] && Object.keys(heatmap[view]).length}
+        <g>
+        {#each Object.keys(heatmap[view]) as day,i}
+            {#each Object.keys(heatmap[view][day]).sort((a,b) => parseInt(a.replace('h','')) - parseInt(b.replace('h',''))) as hour,j}
+                <rect
+                    id="{day}{hour}"
+                    class="hoverable"
+                    x={(i+1)*30}
+                    y={10+(j+1)*4+2}
+                    width=26
+                    height=4
+                    stroke="var(--beige)"
+                    stroke-width="1px"
+                    on:mouseenter={()=> toggle(day,hour)}
+                    on:mouseleave={() => toggle(day,hour)}
+                    fill={colorScale(heatmap[view][day][hour], view)}
+                />
+            {/each}
+            <text
+                id="{day}"
+                text-anchor="middle"
+                x={(i+1)*30+15}
+                y={124}
+                font-size=6
+                fill="var(--g600)"
+            >
+                {day}
+            </text>
+        {/each}
+        {#each [2, 6, 10, 14, 18, 22] as hour}
+            <text
+                id="{hour}"
+                text-anchor="middle"
+                x={15}
+                y={16+hour*4}
+                font-size=6
+                fill="var(--g600)"
+            >
+                {hour}h
+            </text>
+        {/each}
+        {#each Object.keys(heatmap[view]) as day,i}
+            {#each Object.keys(heatmap[view][day]).sort((a,b) => parseInt(a.replace('h','')) - parseInt(b.replace('h',''))) as hour,j}
+                <g
+                    class="tooltip"
+                    opacity={selected === `${day}${hour}` ? 0.95 : 0}
+                >
                     <rect
-                        id="{day}{hour}"
-                        class="hoverable"
-                        x={(i+1)*15}
-                        y={5+(j+1)*2+1}
-                        width=13
-                        height=2
-                        stroke="var(--beige)"
-                        stroke-width="0.5px"
-                        fill={colorScale(heatmap[view][day][hour], view)}
+                        x={(i<4) ? (i+2)*30 : (i+1)*30 - 105}
+                        y={(j<12) ? 10+(j+2)*4+2 : 10+(j-1)*4+2 - 50}
+                        width="105"
+                        height="50"
+                        opacity=1
+                    />
+                    <text
+                        class="text"
+                        text-anchor={(i<4) ? 'start' : 'end'}
+                        y={(j < 12) ? 15 + 10+(j+1)*4+2 : 10+(j+1)*4+2 - 45}
                     >
-                        <title>
-                            {day} {hour}h
-                            - {labels['visitors']}:{heatmap['visitors'][day][hour]}
-                            - {labels['hits']}:{heatmap['hits'][day][hour]}
-                            - {labels['bytes']}:{heatmap['bytes'][day][hour]}
-                        </title>
-                     </rect>
-                {/each}
-                <text
-                    id="{day}"
-                    text-anchor="middle"
-                    x={(i+1)*15+7.5}
-                    y={62}
-                    font-size=3
-                    fill="var(--g600)"
-                >
-                    {day}
-                </text>
+                            <tspan x={(i<4) ? 5 + (i+2)*30 : (i+1)*30 - 5}>{day+" "} {hour}h</tspan>
+                            <tspan x={(i<4) ? 5 + (i+2)*30 : (i+1)*30 - 5} dy=10>{labels['visitors']}:{heatmap['visitors'][day][hour]}</tspan>
+                            <tspan x={(i<4) ? 5 + (i+2)*30 : (i+1)*30 - 5} dy=10>{labels['hits']}:{heatmap['hits'][day][hour]}</tspan>
+                            <tspan x={(i<4) ? 5 + (i+2)*30 : (i+1)*30 - 5} dy=10>{labels['bytes']}:{heatmap['bytes'][day][hour]}</tspan>
+                    </text>
+                </g>
             {/each}
-            {#each [2, 6, 10, 14, 18, 22] as hour}
-                <text
-                    id="{hour}"
-                    text-anchor="middle"
-                    x={7.5}
-                    y={8+hour*2}
-                    font-size=3
-                    fill="var(--g600)"
-                >
-                    {hour}h
-                </text>
-            {/each}
-            </g>
-        {/if}
-    </svg>
-</div>
+        {/each}
+
+        </g>
+    {/if}
+</svg>
 
 <script>
   export let width = "100%";
   export let height = undefined;
   export let data = undefined;
   export let options = undefined;
+  let selected;
   let max = {};
   let labels = {};
   let scale =  (x, view) => x;
   let view = 'visitors';
   let heatmap = {};
   const style = getComputedStyle(document.body);
+
+  const toggle = (d,h) => {
+      console.log(d,h);
+      if (`${d}${h}` !== selected) {
+          selected = `${d}${h}`;
+      } else {
+          selected = undefined;
+      }
+  };
 
   const rgbToHex = ([r, g, b]) => '#' + [r, g, b]
     .map(x => x.toString(16).padStart(2, '0')).join('');
@@ -122,6 +152,23 @@
 
 .hoverable:hover {
   stroke-width: 0px;
+  cursor:pointer;
 }
+
+
+.tooltip {
+    pointer-events:none;
+    transition: opacity 0.3s;
+}
+
+.tooltip text {
+    font-size: 7px;
+}
+
+g.tooltip rect {
+    fill: var(--w);
+    stroke: var(--bf500);
+}
+
 
 </style>

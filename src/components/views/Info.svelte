@@ -6,9 +6,9 @@
         <div class="rf-search-bar rf-margin-bottom-1N" id="search-input">
           <input bind:value={search} class="rf-input" placeholder="rechercher dans les questions" type="search" id="search-input-input" name="search-input-input">
           <button class="rf-btn" title="Rechercher">
-              <span>
-                  rechercher
-              </span>
+            <span>
+                rechercher
+            </span>
           </button>
         </div>
       </div>
@@ -44,7 +44,10 @@
             </div>
             {#if currentPage === page.id}
               <div class="rf-col-12" transition:slide|local>
-                <div class="rf-callout rf-background--white">
+                <div
+                  class="rf-callout rf-background--white"
+                  class:rf-callout--no-mobile={page.fullWidthMobile}
+                >
                   {@html page.content}
                   {#if page.component}
                     <svelte:component this={page.component} {...page.params}/>
@@ -320,6 +323,7 @@
       icon: 'ri:bar-chart-box-line',
       content: '',
       component: Stats,
+      fullWidthMobile: true,
       tags: 'api hits visiteurs'
     },
     { title: 'le code est-il open source ?',
@@ -341,6 +345,7 @@
         </p>
       `,
       component: Iframe,
+      fullWidthMobile: true,
       params: { src: '/deces/api/v1/docs' },
       tags: "swagger"}
   ]

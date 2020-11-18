@@ -25,7 +25,7 @@
                     </select>
                 </div>
                 {#each stats.filter(x => rawData.general[x]) as key}
-                    <div class="rf-col-3">
+                    <div class="rf-col-xl-3 rf-col-lg-3 rf-col-md-3 rf-col-sm-3 rf-col-xs-6">
                         <div class="rf-tile">
                             <div class="rf-tile__body rf-text--center">
                                 <strong class="rf-text--lg">
@@ -48,6 +48,7 @@
                                 {labels[view]||view}
                             </h4>
                             <svelte:component
+                                style="max-height: 250px;"
                                 this={params[view] && params[view].type ? params[view].type : Line}
                                 data={rawData && data(view)}
                                 options={rawData && options(view)}
@@ -285,11 +286,17 @@
     autoSkip: true,
     fontFamily : fontFamily,
     callback: smartNumber,
-    min: 0
-  }
+  };
+  const ticksY = {
+    autoSkip: true,
+    fontFamily : fontFamily,
+    callback: smartNumber,
+    maxTicksLimit: 5
+  };
 
   const options = (view) => {
     const o = {
+        maintainAspectRatio: false,
         hover: {
             intersect: false
         },
@@ -315,7 +322,7 @@
                     id: id,
                     type: params[view] && params[view].yLog ? 'logarithmic' : 'linear',
                     position: i%2 ? 'left' : 'right',
-                    ticks: {...ticks, maxTicksLimit: 5}
+                    ticks: ticksY
                 }
             }),
             xAxes: params[view] && params[view].xAxes || [{
@@ -473,7 +480,6 @@
             unavailable = true;
         }
       if ($route && catalog) {
-          console.log($route);
         if ($route.query && $route.query.scope) {
             if ((!/today|full/.test(sourceScope)) && $route.query.source) {
                 source = $route.query.source;
