@@ -16,6 +16,12 @@ server {
     try_files $uri $uri/ @rewrites;
   }
 
+  location ~ (^/(css|js|stats|fonts|build)/?$) {
+    limit_req zone=app burst=30 nodelay;
+    limit_req_status 429;
+    rewrite ^(.+)$ /;
+  }
+
   location @rewrites {
     rewrite ^(.+)$ /index.html last;
   }

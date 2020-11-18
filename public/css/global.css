@@ -36,6 +36,13 @@
   .rf-padding-right-1N--mobile {
     padding-right: 8px;
   }
+
+  .rf-callout--no-mobile {
+    padding: 0!important;
+    box-shadow: unset!important;
+    margin-left: -16px;
+    margin-right: -16px;
+  }
 }
 
 .rf-padding-4px {
@@ -220,7 +227,7 @@ border-radius: 0 .25rem 0 0;
   flex-direction: row;
 }
 
-.rf-card__body a {
+.rf-card__body a, .rf-tile__body a {
   text-decoration: none;
   box-shadow: none;
 }

@@ -6,9 +6,9 @@
         <div class="rf-search-bar rf-margin-bottom-1N" id="search-input">
           <input bind:value={search} class="rf-input" placeholder="rechercher dans les questions" type="search" id="search-input-input" name="search-input-input">
           <button class="rf-btn" title="Rechercher">
-              <span>
-                  rechercher
-              </span>
+            <span>
+                rechercher
+            </span>
           </button>
         </div>
       </div>
@@ -44,8 +44,14 @@
             </div>
             {#if currentPage === page.id}
               <div class="rf-col-12" transition:slide|local>
-                <div class="rf-callout rf-background--white">
+                <div
+                  class="rf-callout rf-background--white"
+                  class:rf-callout--no-mobile={page.fullWidthMobile}
+                >
                   {@html page.content}
+                  {#if page.component}
+                    <svelte:component this={page.component} {...page.params}/>
+                  {/if}
                 </div>
               </div>
             {/if}
@@ -62,6 +68,8 @@
   import { slide } from 'svelte/transition';
   import { version, themeDnum, route } from '../tools/stores.js';
   import Icon from './Icon.svelte';
+  import Stats from './Stats.svelte';
+  import Iframe from './Iframe.svelte';
 
   let currentPage = undefined;
   let pages;
@@ -75,9 +83,7 @@
   onMount (() => {
     filteredPages.forEach((p, i) => {
       if (`#${p.id}` === $route.hash) {
-        setTimeout(() => {
-          document.getElementById(p.id).click()
-        }, 10);
+        togglePage(p.id);
       }
     })
   })
@@ -110,9 +116,9 @@
           du ministère de la Justice et du ministère de l'Intérieur, contribuant bénévolement au service sur leur temps libre.
         </p>
         <p>
-            Nous avons créé de service
-            en complément qui semblait d'utilité publique notamment pour la lutte contre la fraude, ou pour la radiation
-            des décédés aux fichiers clients (hôpitaux).
+            Nous avons créé ce service
+            en complément, car il semblait d'utilité publique notamment pour la lutte contre la fraude, ou pour la radiation
+            des décédés aux différents fichiers clients (e.g. hôpitaux).
         </p>
         ${$themeDnum ? "" : `
         <p>
@@ -313,6 +319,13 @@
           Vos suggestions sont les bienvenues, nous les étudierons - écrivez nous à ${mailTo}.
       `,
       tags: "évolutions"},
+    { title: 'statistiques de consultation',
+      icon: 'ri:bar-chart-box-line',
+      content: '',
+      component: Stats,
+      fullWidthMobile: true,
+      tags: 'api hits visiteurs'
+    },
     { title: 'le code est-il open source ?',
       icon: 'ri:github-line',
       content: `
@@ -328,10 +341,13 @@
       icon: 'ri:plug-line',
       content: `
         <p>
-          La documentation de l'API est <a href="/deces/api/v1/docs">ici</a>
+          La documentation de l'API est consultable ci-dessous ou en suivant <a href="/deces/api/v1/docs">le lien suivant</a>.
         </p>
       `,
-      tags: "swagger"},
+      component: Iframe,
+      fullWidthMobile: true,
+      params: { src: '/deces/api/v1/docs' },
+      tags: "swagger"}
   ]
 
   $: filteredPages = pages.filter(p => {

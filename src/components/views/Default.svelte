@@ -2,7 +2,7 @@
   <div class="rf-grid-row">
     <div class="rf-col-12 rf-padding-top-3N">
       <h2 class="rf-h2 rf-text--center">
-        à propos
+        {title}
       </h2>
     </div>
     <Info/>
@@ -11,6 +11,7 @@
 
 <script>
   import Info from './Info.svelte';
+  export let title = undefined;
 </script>
 
 <style>

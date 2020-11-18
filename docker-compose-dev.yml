@@ -86,6 +86,7 @@ services:
       THEME_DNUM: ${THEME_DNUM}
     volumes:
       - ${FRONTEND}/public:/${APP}/public
+      - ${STATS}:/${APP}/public/stats
       - ${FRONTEND}/.eslintrc.js:/${APP}/.eslintrc.js
       - ${FRONTEND}/rollup.config.js:/${APP}/rollup.config.js
       - ${FRONTEND}/src:/${APP}/src/
