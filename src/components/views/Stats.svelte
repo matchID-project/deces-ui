@@ -217,7 +217,7 @@
         [/^\/(.*)\.(js|json|js.map)$/, 'static: javascript'],
         [/^\/(.*)\.(png|svg|woff2?)$/, 'static: images'],
         [/^GET \/$/, 'page: /search (GET)'],
-        [/^page: \/? (GET)$/, 'page: /search (GET)'],
+        [/^page:\s*\/?\s*\(GET\)$/, 'page: /search (GET)'],
         [/^\/(search.*|geo\?.*|\?(current|q|advanced|ln|fn)=.*)$/,'page: /search'],
         [/^\/(link.*)$/,'page: /link'],
         [/^\/(about.*)$/,'page: /about'],
@@ -411,7 +411,11 @@
     'referring_sites': {
         type: Bar,
         yLog: true,
-        dataCB: (data) => aggregate(data, (d) => urlAgg(d.data, referrerUrlRegexp)).filter(x => x.data.length > 1)
+        dataCB: (data) =>
+            aggregate(data, (d) => urlAgg(d.data, referrerUrlRegexp))
+                .filter(x => (x.data.length > 1) && (x.visitors.count > 1) && (x.data !== 'matchid.io'))
+                .sort((a,b) => b.visitors.count - a.visitors.count)
+                .slice(0,15)
     },
     'referrers': {
         type: Bar,
@@ -429,7 +433,12 @@
     'requests': {
         type: Bar,
         yLog: true,
-        dataCB: (data) => aggregate(data, (d) => urlAgg(d.data, siteUrlRegexp)).filter(x => x.visitors.count > 10).filter(x => !/OPTIONS|HEAD/.test(x.data))
+        dataCB: (data) =>
+            aggregate(data, (d) => urlAgg(d.data, siteUrlRegexp))
+                .filter(x => x.visitors.count > 10)
+                .filter(x => !/OPTIONS|HEAD/.test(x.data))
+                .sort((a,b) => b.visitors.count - a.visitors.count)
+                .slice(0,15)
     }
   };
 
