@@ -1,29 +1,27 @@
-<div>
-    <svg {width} {height} viewBox="0 0 260 150">
-        {#if countries.length && data && Object.keys(index).length}
-            <g>
-            {#each countries as country}
-                <path
-                    class="hoverable"
-                    d={country.path}
-                    id={country.id}
-                    stroke="var(--bf500)"
-                    stroke-width="0.1px"
-                    fill="var(--bf500)"
-                    fill-opacity={scale(value(view, country.id), view)}
-                >
-                    <title>
-                        {country.id}
-                            - {labels['visitors']}:{value('visitors', country.id)}
-                            - {labels['hits']}:{value('hits', country.id)}
-                            - {labels['bytes']}:{value('bytes', country.id)}
-                    </title>
-                </path>
-            {/each}
-            </g>
-        {/if}
-    </svg>
-</div>
+<svg {width} {height} viewBox="0 0 260 130">
+    {#if countries.length && data && Object.keys(index).length}
+        <g>
+        {#each countries as country}
+            <path
+                class="hoverable"
+                d={country.path}
+                id={country.id}
+                stroke="var(--bf500)"
+                stroke-width="0.1px"
+                fill="var(--bf500)"
+                fill-opacity={scale(value(view, country.id), view)}
+            >
+                <title>
+                    {country.id}
+                        - {labels['visitors']}:{value('visitors', country.id)}
+                        - {labels['hits']}:{value('hits', country.id)}
+                        - {labels['bytes']}:{value('bytes', country.id)}
+                </title>
+            </path>
+        {/each}
+        </g>
+    {/if}
+</svg>
 
 <script>
   import { onMount } from 'svelte';

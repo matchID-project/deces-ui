@@ -1,55 +1,53 @@
-<div>
-    <svg {width} {height} viewBox="0 0 130 70">
-        {#if heatmap && heatmap[view] && Object.keys(heatmap[view]).length}
-            <g>
-            {#each Object.keys(heatmap[view]) as day,i}
-                {#each Object.keys(heatmap[view][day]).sort((a,b) => parseInt(a.replace('h','')) - parseInt(b.replace('h',''))) as hour,j}
-                    <rect
-                        id="{day}{hour}"
-                        class="hoverable"
-                        x={(i+1)*15}
-                        y={5+(j+1)*2+1}
-                        width=13
-                        height=2
-                        stroke="var(--beige)"
-                        stroke-width="0.5px"
-                        fill={colorScale(heatmap[view][day][hour], view)}
-                    >
-                        <title>
-                            {day} {hour}h
-                            - {labels['visitors']}:{heatmap['visitors'][day][hour]}
-                            - {labels['hits']}:{heatmap['hits'][day][hour]}
-                            - {labels['bytes']}:{heatmap['bytes'][day][hour]}
-                        </title>
-                     </rect>
-                {/each}
-                <text
-                    id="{day}"
-                    text-anchor="middle"
-                    x={(i+1)*15+7.5}
-                    y={62}
-                    font-size=3
-                    fill="var(--g600)"
+<svg {width} {height} viewBox="0 0 130 70">
+    {#if heatmap && heatmap[view] && Object.keys(heatmap[view]).length}
+        <g>
+        {#each Object.keys(heatmap[view]) as day,i}
+            {#each Object.keys(heatmap[view][day]).sort((a,b) => parseInt(a.replace('h','')) - parseInt(b.replace('h',''))) as hour,j}
+                <rect
+                    id="{day}{hour}"
+                    class="hoverable"
+                    x={(i+1)*15}
+                    y={5+(j+1)*2+1}
+                    width=13
+                    height=2
+                    stroke="var(--beige)"
+                    stroke-width="0.5px"
+                    fill={colorScale(heatmap[view][day][hour], view)}
                 >
-                    {day}
-                </text>
+                    <title>
+                        {day} {hour}h
+                        - {labels['visitors']}:{heatmap['visitors'][day][hour]}
+                        - {labels['hits']}:{heatmap['hits'][day][hour]}
+                        - {labels['bytes']}:{heatmap['bytes'][day][hour]}
+                    </title>
+                    </rect>
             {/each}
-            {#each [2, 6, 10, 14, 18, 22] as hour}
-                <text
-                    id="{hour}"
-                    text-anchor="middle"
-                    x={7.5}
-                    y={8+hour*2}
-                    font-size=3
-                    fill="var(--g600)"
-                >
-                    {hour}h
-                </text>
-            {/each}
-            </g>
-        {/if}
-    </svg>
-</div>
+            <text
+                id="{day}"
+                text-anchor="middle"
+                x={(i+1)*15+7.5}
+                y={62}
+                font-size=3
+                fill="var(--g600)"
+            >
+                {day}
+            </text>
+        {/each}
+        {#each [2, 6, 10, 14, 18, 22] as hour}
+            <text
+                id="{hour}"
+                text-anchor="middle"
+                x={7.5}
+                y={8+hour*2}
+                font-size=3
+                fill="var(--g600)"
+            >
+                {hour}h
+            </text>
+        {/each}
+        </g>
+    {/if}
+</svg>
 
 <script>
   export let width = "100%";

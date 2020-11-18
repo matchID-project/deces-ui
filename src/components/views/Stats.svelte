@@ -48,6 +48,7 @@
                                 {labels[view]||view}
                             </h4>
                             <svelte:component
+                                style="max-height: 250px;"
                                 this={params[view] && params[view].type ? params[view].type : Line}
                                 data={rawData && data(view)}
                                 options={rawData && options(view)}
@@ -290,6 +291,7 @@
 
   const options = (view) => {
     const o = {
+        maintainAspectRatio: false,
         hover: {
             intersect: false
         },
