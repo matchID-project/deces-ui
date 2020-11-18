@@ -482,7 +482,7 @@ stats-restore:
 	@mkdir -p ${STATS};\
 	echo sync ${STATS_BUCKET} to ${STATS};\
 	${MAKE} -C ${APP_PATH}/${GIT_TOOLS} storage-sync-pull\
-		STORAGE_BUCKET=${STATS_BUCKET} DATA_DIR=${STAT}\
+		STORAGE_BUCKET=${STATS_BUCKET} DATA_DIR=${STATS}\
 		STORAGE_ACCESS_KEY=${TOOLS_STORAGE_ACCESS_KEY} STORAGE_SECRET_KEY=${TOOLS_STORAGE_SECRET_KEY};
 
 stats-full: logs-restore stats-db-restore
