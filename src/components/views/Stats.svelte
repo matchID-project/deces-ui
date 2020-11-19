@@ -149,13 +149,32 @@
       return range.replace(/(....)(..)(..)-/,"$3/$2/$1").replace("detailed", " (détaillé)");
   }
 
+    const sleep = (ms) => {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+  const getData = async (s) => {
+    try {
+        const response = await fetch(`/stats/${s}.json`);
+        rawData = await response.json();
+    } catch(e) {
+        unavailable = true
+    }
+  };
+
+  const getDataStrategy = async (s) => {
+    if (/^day/.test(s)) {
+        while (s === source) {
+            await getData(s);
+            await sleep(60000);
+        }
+    } else {
+        getData(s);
+    }
+  }
+
   $: if (source) {
-      fetch(`/stats/${source}.json`)
-        .then(response => response.json())
-        .catch(() => { unavailable = true})
-        .then(json => {
-            rawData = json;
-        });
+      getDataStrategy(source);
       const p = new URLSearchParams;
       p.set('source', source);
       p.set('scope', sourceScope);
@@ -212,20 +231,20 @@
   };
 
     const siteUrlRegexp = [
-        [/^page: \/favicon \(GET\)$/, 'static: images'],
-        [/^\/(.*)\.(css|css.map)$/, 'static: css'],
-        [/^\/(.*)\.(js|json|js.map)$/, 'static: javascript'],
-        [/^\/(.*)\.(png|svg|woff2?)$/, 'static: images'],
-        [/^GET \/$/, 'page: /search (GET)'],
-        [/^page:\s*\/?\s*\(GET\)$/, 'page: /search (GET)'],
-        [/^\/(search.*|geo\?.*|\?(current|q|advanced|ln|fn)=.*)$/,'page: /search'],
-        [/^\/(link.*)$/,'page: /link'],
-        [/^\/(about.*)$/,'page: /about'],
-        [/^\/deces\/api\/v1\/search\/csv(\/\S+)?$/, 'api: link csv'],
-        [/^\/(.*\/api\/v0|deces\/api\/v1)\/search$/, 'api: search'],
-        [/^\/deces\/api\/v1\/([A-Za-z]*)\/?$/, 'api: $1'],
-        [/^page: \/(https|dev|backup|wordpress|wp|e|personnes|OLD) \(GET\)$/, 'wrong calls'],
-        [/^\/.*$/, 'wrong calls']
+        // [/^page: \/favicon \(GET\)$/, 'static: images'],
+        // [/^\/(.*)\.(css|css.map)$/, 'static: css'],
+        // [/^\/(.*)\.(js|json|js.map)$/, 'static: javascript'],
+        // [/^\/(.*)\.(png|svg|woff2?)$/, 'static: images'],
+        // [/^GET \/$/, 'page: /search (GET)'],
+        // [/^page:\s*\/?\s*\(GET\)$/, 'page: /search (GET)'],
+        // [/^\/(search.*|geo\?.*|\?(current|q|advanced|ln|fn)=.*)$/,'page: /search'],
+        // [/^\/(link.*)$/,'page: /link'],
+        // [/^\/(about.*)$/,'page: /about'],
+        // [/^\/deces\/api\/v1\/search\/csv(\/\S+)?$/, 'api: link csv'],
+        // [/^\/(.*\/api\/v0|deces\/api\/v1)\/search$/, 'api: search'],
+        // [/^\/deces\/api\/v1\/([A-Za-z]*)\/?$/, 'api: $1'],
+        // [/^page: \/(https|dev|backup|wordpress|wp|e|personnes|OLD) \(GET\)$/, 'wrong calls'],
+        // [/^\/.*$/, 'wrong calls']
     ];
 
     const referrerUrlRegexp = [
@@ -444,14 +463,18 @@
 
   const dateParse = (obj) => {
       if ((typeof obj === 'string')) {
+          let d;
           if (/^\d{8}-\d{4}$/.test(obj)) {
-            return new Date(obj.substr(0,4), parseInt(obj.substr(4,2))-1 , obj.substr(6,2), obj.substr(9,2), obj.substr(11,2));
+            d = new Date(obj.substr(0,4), parseInt(obj.substr(4,2))-1 , obj.substr(6,2), obj.substr(9,2), obj.substr(11,2));
           } else if (/^\d{8}$/.test(obj)) {
-            return new Date(obj.substr(0,4), parseInt(obj.substr(4,2))-1 , obj.substr(6,2));
+            d = new Date(obj.substr(0,4), parseInt(obj.substr(4,2))-1 , obj.substr(6,2));
           } else if (/^\d{4}S\d{2}-\d{4}$/.test(obj)) {
-            return new Date(obj.substr(0,4), parseInt(obj.substr(8,2))-1 , obj.substr(10,2));
+            d = new Date(obj.substr(0,4), parseInt(obj.substr(8,2))-1 , obj.substr(10,2));
           } else if (/^\d{4}S\d{2}-\d{4}-\d{4}$/.test(obj)) {
-            return new Date(obj.substr(0,4), parseInt(obj.substr(8,2))-1 , obj.substr(10,2), obj.substr(13,2), obj.substr(15,2));
+            d = new Date(obj.substr(0,4), parseInt(obj.substr(8,2))-1 , obj.substr(10,2), obj.substr(13,2), obj.substr(15,2));
+          }
+          if (d) {
+            return new Date(d.getTime() + (60*60*1000));
           }
       }
       return obj
