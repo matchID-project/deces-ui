@@ -212,20 +212,20 @@
   };
 
     const siteUrlRegexp = [
-        [/^page: \/favicon \(GET\)$/, 'static: images'],
-        [/^\/(.*)\.(css|css.map)$/, 'static: css'],
-        [/^\/(.*)\.(js|json|js.map)$/, 'static: javascript'],
-        [/^\/(.*)\.(png|svg|woff2?)$/, 'static: images'],
-        [/^GET \/$/, 'page: /search (GET)'],
-        [/^page:\s*\/?\s*\(GET\)$/, 'page: /search (GET)'],
-        [/^\/(search.*|geo\?.*|\?(current|q|advanced|ln|fn)=.*)$/,'page: /search'],
-        [/^\/(link.*)$/,'page: /link'],
-        [/^\/(about.*)$/,'page: /about'],
-        [/^\/deces\/api\/v1\/search\/csv(\/\S+)?$/, 'api: link csv'],
-        [/^\/(.*\/api\/v0|deces\/api\/v1)\/search$/, 'api: search'],
-        [/^\/deces\/api\/v1\/([A-Za-z]*)\/?$/, 'api: $1'],
-        [/^page: \/(https|dev|backup|wordpress|wp|e|personnes|OLD) \(GET\)$/, 'wrong calls'],
-        [/^\/.*$/, 'wrong calls']
+        // [/^page: \/favicon \(GET\)$/, 'static: images'],
+        // [/^\/(.*)\.(css|css.map)$/, 'static: css'],
+        // [/^\/(.*)\.(js|json|js.map)$/, 'static: javascript'],
+        // [/^\/(.*)\.(png|svg|woff2?)$/, 'static: images'],
+        // [/^GET \/$/, 'page: /search (GET)'],
+        // [/^page:\s*\/?\s*\(GET\)$/, 'page: /search (GET)'],
+        // [/^\/(search.*|geo\?.*|\?(current|q|advanced|ln|fn)=.*)$/,'page: /search'],
+        // [/^\/(link.*)$/,'page: /link'],
+        // [/^\/(about.*)$/,'page: /about'],
+        // [/^\/deces\/api\/v1\/search\/csv(\/\S+)?$/, 'api: link csv'],
+        // [/^\/(.*\/api\/v0|deces\/api\/v1)\/search$/, 'api: search'],
+        // [/^\/deces\/api\/v1\/([A-Za-z]*)\/?$/, 'api: $1'],
+        // [/^page: \/(https|dev|backup|wordpress|wp|e|personnes|OLD) \(GET\)$/, 'wrong calls'],
+        // [/^\/.*$/, 'wrong calls']
     ];
 
     const referrerUrlRegexp = [
