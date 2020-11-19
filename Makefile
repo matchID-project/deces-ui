@@ -510,7 +510,7 @@ stats-live: ${STATS} logs-restore
 stats-catalog: ${STATS}
 	@ls ${STATS} | grep -v catalog | perl -e '@list=<>;print "[\n".join(",\n",map{chomp;s/.json//;"  \"$$_\""} (grep {/.json/} @list))."\n]\n"' >  ${STATS}/catalog.json
 
-stats-update: stats-full-update stats-catalog stats-db-backup
+stats-update: stats-full-update stats-catalog
 
 stats-background:
 	make stats-restore || true;
