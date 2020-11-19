@@ -463,14 +463,18 @@
 
   const dateParse = (obj) => {
       if ((typeof obj === 'string')) {
+          let d;
           if (/^\d{8}-\d{4}$/.test(obj)) {
-            return new Date(obj.substr(0,4), parseInt(obj.substr(4,2))-1 , obj.substr(6,2), obj.substr(9,2), obj.substr(11,2));
+            d = new Date(obj.substr(0,4), parseInt(obj.substr(4,2))-1 , obj.substr(6,2), obj.substr(9,2), obj.substr(11,2));
           } else if (/^\d{8}$/.test(obj)) {
-            return new Date(obj.substr(0,4), parseInt(obj.substr(4,2))-1 , obj.substr(6,2));
+            d = new Date(obj.substr(0,4), parseInt(obj.substr(4,2))-1 , obj.substr(6,2));
           } else if (/^\d{4}S\d{2}-\d{4}$/.test(obj)) {
-            return new Date(obj.substr(0,4), parseInt(obj.substr(8,2))-1 , obj.substr(10,2));
+            d = new Date(obj.substr(0,4), parseInt(obj.substr(8,2))-1 , obj.substr(10,2));
           } else if (/^\d{4}S\d{2}-\d{4}-\d{4}$/.test(obj)) {
-            return new Date(obj.substr(0,4), parseInt(obj.substr(8,2))-1 , obj.substr(10,2), obj.substr(13,2), obj.substr(15,2));
+            d = new Date(obj.substr(0,4), parseInt(obj.substr(8,2))-1 , obj.substr(10,2), obj.substr(13,2), obj.substr(15,2));
+          }
+          if (d) {
+            return new Date(d.getTime() + (60*60*1000));
           }
       }
       return obj
