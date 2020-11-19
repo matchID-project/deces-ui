@@ -17,6 +17,7 @@ $reportName = @ARGV[0] || full;
 @referrerUrlRegexp = (
         [qr|^(https?://)?(www\.)?|,'""'],
         [qr|/.*$|,'""'],
+        [qr|\d+.\d+.\d+.\d+(:\d+)?$|,'"internal"'],
         [qr|^(https?://)?[a-z].*matchid.io?$|,'"matchid.io"'],
         [qr/^(.*\.)?google(usercontent)?\.(com|fr)(\/.*)?$/, '"google.com"'],
         [qr/^(.*\.)?facebook\.com(\/.*)?$/, '"facebook.com"']
@@ -27,8 +28,9 @@ $reportName = @ARGV[0] || full;
         [qr/^GET \/.*\.(css|css.map)$/, '"static: css"'],
         [qr/^GET \/.*\.(js|json|js.map)$/, '"static: javascript"'],
         [qr/^GET \/.*(\.(png|svg|woff2)|favicon)$/, '"static: images"'],
-        [qr/^(GET|HEAD) (\/\w+)?(\W\S+)?$/, '"page: $2 ($1)"'],
         [qr|^(\S+) /[^/]*/api/v(\d)/((\w+)+(/\w+)?)(/\S+)?$|, '"api: $3 $1 $2"'],
+        [qr/^GET \/$/, '"page: /search (GET)"'],
+        [qr/^(GET|HEAD) (\/\w+)?(\W\S+)?$/, '"page: $2 ($1)"'],
         [qr|^/.*$'|, 'wrong calls']
 );
 
@@ -172,7 +174,7 @@ sub flushResults {
     'Nov' => 11,
     'Dec' => 12
 );
-$match = qr/\/(personnes-decedees|deces).matchid.io/;
+$match = qr/\[..\/...\/202[0-9]:/;
 $parse = qr/^(\S+) - (\S+) \[([^\]]*)\] "([^"]*)" (\d+) (\d+) "([^"]*)" "([^"]*)" "([^"]*)"( ([0-9\.-]+) ([0-9\.-]+|[0-9\.-]+, [0-9\.-]+) \.)?$/;
 $parseDate = qr|^(\d{2})/(\S{3})/(\d{4}):(\d{2}):(\d{2})|;
 # 07/Feb/2018:22:28:10 +0000

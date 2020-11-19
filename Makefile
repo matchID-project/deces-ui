@@ -457,7 +457,7 @@ ${LOG_DIR}:
 	@mkdir -p ${LOG_DIR};
 
 logs-restore: ${LOG_DIR}
-	echo sync ${LOG_BUCKET} to ${LOG_DIR};\
+	@echo sync ${LOG_BUCKET} to ${LOG_DIR};\
 	${MAKE} -C ${APP_PATH}/${GIT_TOOLS} storage-sync-pull\
 		STORAGE_BUCKET=${LOG_BUCKET} DATA_DIR=${LOG_DIR}\
 		STORAGE_ACCESS_KEY=${TOOLS_STORAGE_ACCESS_KEY} STORAGE_SECRET_KEY=${TOOLS_STORAGE_SECRET_KEY};
@@ -474,7 +474,7 @@ stats-db-restore: ${LOG_DB_DIR}
 	touch log-db
 
 stats-db-backup: ${LOG_DB_DIR}
-	echo sync ${LOG_DB_DIR} to ${LOG_DB_BUCKET};\
+	@echo sync ${LOG_DB_DIR} to ${LOG_DB_BUCKET};\
 	${MAKE} -C ${APP_PATH}/${GIT_TOOLS} storage-sync-push\
 		STORAGE_BUCKET=${LOG_DB_BUCKET} DATA_DIR=${LOG_DB_DIR}\
 		STORAGE_ACCESS_KEY=${TOOLS_STORAGE_ACCESS_KEY} STORAGE_SECRET_KEY=${TOOLS_STORAGE_SECRET_KEY};
@@ -483,32 +483,32 @@ ${STATS}:
 	@mkdir -p ${STATS};
 
 stats-backup: ${STATS}
-	echo sync ${STATS} to ${STATS_BUCKET};\
+	@echo sync ${STATS} to ${STATS_BUCKET};\
 	${MAKE} -C ${APP_PATH}/${GIT_TOOLS} storage-sync-push\
 		STORAGE_BUCKET=${STATS_BUCKET} DATA_DIR=${STATS}\
 		STORAGE_ACCESS_KEY=${TOOLS_STORAGE_ACCESS_KEY} STORAGE_SECRET_KEY=${TOOLS_STORAGE_SECRET_KEY};
 
 stats-restore: ${STATS}
-	echo sync ${STATS_BUCKET} to ${STATS};\
+	@echo sync ${STATS_BUCKET} to ${STATS};\
 	${MAKE} -C ${APP_PATH}/${GIT_TOOLS} storage-sync-pull\
 		STORAGE_BUCKET=${STATS_BUCKET} DATA_DIR=${STATS}\
 		STORAGE_ACCESS_KEY=${TOOLS_STORAGE_ACCESS_KEY} STORAGE_SECRET_KEY=${TOOLS_STORAGE_SECRET_KEY};
 
 stats-full: ${STATS} logs-restore stats-db-restore
-	zcat -f `ls -tr ${LOG_DIR}/access*gz` ${LOG_DIR}/access.log | ${STATS_SCRIPTS}/parseLogs.pl
+	@zcat -f `ls -tr ${LOG_DIR}/access*gz` ${LOG_DIR}/access.log | ${STATS_SCRIPTS}/parseLogs.pl
 
 stats-full-init: ${STATS} logs-restore
-	rm -rf ${LOG_DB_DIR} && mkdir -p ${LOG_DB_DIR}
-	zcat -f `ls -tr ${LOG_DIR}/access*gz` ${LOG_DIR}/access.log | ${STATS_SCRIPTS}/parseLogs.pl
+	@rm -rf ${LOG_DB_DIR} && mkdir -p ${LOG_DB_DIR}
+	@zcat -f `ls -tr ${LOG_DIR}/access*gz` ${LOG_DIR}/access.log | ${STATS_SCRIPTS}/parseLogs.pl
 
 stats-full-update: ${STATS} logs-restore stats-db-restore
-	zcat -f `ls -tr ${LOG_DIR}/access.log.*gz | tail -2` ${LOG_DIR}/access.log | ${STATS_SCRIPTS}/parseLogs.pl
+	@zcat -f `ls -tr ${LOG_DIR}/access.log.*gz | tail -2` ${LOG_DIR}/access.log | ${STATS_SCRIPTS}/parseLogs.pl
 
 stats-live: ${STATS} logs-restore
-	cat ${LOG_DIR}/access.log | ${STATS_SCRIPTS}/parseLogs.pl day
+	@cat ${LOG_DIR}/access.log | ${STATS_SCRIPTS}/parseLogs.pl day
 
 stats-catalog: ${STATS}
-	ls ${STATS} | grep -v catalog | perl -e '@list=<>;print "[\n".join(",\n",map{chomp;s/.json//;"  \"$$_\""} (grep {/.json/} @list))."\n]\n"' >  ${STATS}/catalog.json
+	@ls ${STATS} | grep -v catalog | perl -e '@list=<>;print "[\n".join(",\n",map{chomp;s/.json//;"  \"$$_\""} (grep {/.json/} @list))."\n]\n"' >  ${STATS}/catalog.json
 
 stats-update: stats-full-update stats-catalog stats-db-backup
 
