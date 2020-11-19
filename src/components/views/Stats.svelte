@@ -149,13 +149,32 @@
       return range.replace(/(....)(..)(..)-/,"$3/$2/$1").replace("detailed", " (détaillé)");
   }
 
+    const sleep = (ms) => {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+  const getData = async (s) => {
+    try {
+        const response = await fetch(`/stats/${s}.json`);
+        rawData = await response.json();
+    } catch(e) {
+        unavailable = true
+    }
+  };
+
+  const getDataStrategy = async (s) => {
+    if (/^day/.test(s)) {
+        while (s === source) {
+            await getData(s);
+            await sleep(60000);
+        }
+    } else {
+        getData(s);
+    }
+  }
+
   $: if (source) {
-      fetch(`/stats/${source}.json`)
-        .then(response => response.json())
-        .catch(() => { unavailable = true})
-        .then(json => {
-            rawData = json;
-        });
+      getDataStrategy(source);
       const p = new URLSearchParams;
       p.set('source', source);
       p.set('scope', sourceScope);
