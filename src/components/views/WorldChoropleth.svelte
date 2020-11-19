@@ -69,6 +69,7 @@
   };
 
   $: if (data && data.labels) {
+      index = {};
       data.labels.forEach((countryId, i)=> {
         index[countryId] = i;
       });
@@ -124,8 +125,7 @@
   }
 
   const value = (view, id) => {
-      const v = data.datasets[index[view]].data[index[id]];
-    //   console.log(view, id, v && v.y, scale(v && v.y || 0, view));
+      const v = index[id] && data.datasets[index[view]].data[index[id]];
       return v && v.y || 0;
   }
 
