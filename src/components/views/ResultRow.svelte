@@ -1,5 +1,9 @@
 {#if (result) && !(result.error) }
-    <tr class="{(index%2) ? "rf-background--beige" : ""}">
+    <tr
+        class="{(index%2) ? "rf-background--beige" : ""}"
+        class:rf-color--rm={result.correction}
+        title={result.correction ? "la fiche a fait l'objet d'un signalement" : ""}
+    >
         <td><div class="expand-on-hover">{result.name && result.name.last || ''} </div></td>
         <td><div class="expand-on-hover">{(result.name && result.name.first && result.name.first.join(' ')) || '(aucun)'} </div></td>
         <td><div class="expand-on-hover">{result.sex || ''}</div></td>
