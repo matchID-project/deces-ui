@@ -21,7 +21,7 @@
 			} catch(e) {
 			}
 		}
-	})
+	});
 
 	$: if ($route.path === '/search') (URLSearchSubmit(new URLSearchParams(location.search)));
 	$: element = document.getElementById('infoNotWorking');
