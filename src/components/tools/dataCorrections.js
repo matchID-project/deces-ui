@@ -4,6 +4,7 @@ export const dataCorrections = {
       "change": "cancel",
       "request": "user",
       "proof": "certificate",
-      "certificateId" : 1271
+      "certificateId" : 1271,
+      "anonymize": false
     }
 };
