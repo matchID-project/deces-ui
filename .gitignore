@@ -3,18 +3,22 @@ artifacts
 .lastcommit
 dist
 dist-build
-personnes-decedees-search-ui-*
-personnes-decedees_search
+deces-ui-*
 deces-backend
+deces-dataprep
 docker-compose-elasticsearch-huge.yml
 backup
 esdata
 config
-tools
+/tools
 .data.sha1
 .dataprep.sha1
 .data.sha1.list
-
+.matchid*
+.stats-*
+/data
+/log
+log-db
 # dependencies
 /node_modules
 
