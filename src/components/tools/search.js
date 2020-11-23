@@ -108,12 +108,16 @@ const correct = (person) => {
     if (dataCorrections[person.id]) {
         person.correction = dataCorrections[person.id];
         if (person.correction.change === "cancel") {
-            person.name.first = person.name.first.map((n,i) => (i) ? n.replace(/(?<!^).(?!$)/g,'*') : n);
             person.death = undefined;
-            person.birth.location = {
-                departmentCode: person.birth.location.departmentCode,
-                country: person.birth.location.country,
-                countryCode: person.birth.location.countryCode
+            if (person.correction.anonymize !== false) {
+                // each user may chose to display or not its full data
+                // as a proof for them
+                person.name.first = person.name.first.map((n,i) => (i) ? n.replace(/(?<!^).(?!$)/g,'*') : n);
+                person.birth.location = {
+                    departmentCode: person.birth.location.departmentCode,
+                    country: person.birth.location.country,
+                    countryCode: person.birth.location.countryCode
+                }
             }
         }
     }
