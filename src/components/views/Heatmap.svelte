@@ -85,7 +85,6 @@
   const style = getComputedStyle(document.body);
 
   const toggle = (d,h) => {
-      console.log(d,h);
       if (`${d}${h}` !== selected) {
           selected = `${d}${h}`;
       } else {
