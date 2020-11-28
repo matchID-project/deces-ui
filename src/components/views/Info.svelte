@@ -4,10 +4,10 @@
       <div class="rf-col-xl-4 rf-col-lg-4 rf-col-md-3 rf-col-sm-12 rf-col-xs-12"></div>
       <div class="rf-col-xl-4 rf-col-lg-4 rf-col-md-6 rf-col-sm-12 rf-col-xs-12 rf-content--center">
         <div class="rf-search-bar rf-margin-bottom-1N" id="search-input">
-          <input bind:value={search} class="rf-input" placeholder="rechercher dans les questions" type="search" id="search-input-input" name="search-input-input">
+          <input bind:value={search} class="rf-input" placeholder="Rechercher dans les questions" type="search" id="search-input-input" name="search-input-input">
           <button class="rf-btn" title="Rechercher">
             <span>
-                rechercher
+                Rechercher
             </span>
           </button>
         </div>

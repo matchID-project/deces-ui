@@ -2,7 +2,7 @@
     {#if ($waitSearch && !($displayMode === 'geo'))}
         <div class="rf-wait-container" in:fade out:fade>
             <div class="rf-wait-content">
-                <strong>recherche en cours</strong>
+                <strong>Recherche en cours</strong>
                 <br/>
                 <Icon icon="ri:loader-line" class="rf-fi--xxl rf-margin-top-1N" spin center/>
             </div>
