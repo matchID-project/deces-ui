@@ -1,7 +1,10 @@
 <header class="rf-header">
     <div class="rf-container rf-container__header">
         <div class="rf-header__body">
-            <div class="rf-header__brand">
+            <div
+                class="rf-header__brand"
+                on:click|preventDefault={() => goToPage('search', 'reset')}
+            >
                 <a
                     href="/search{$advancedSearch ? '?advanced=true' : ''}"
                     class="rf-logo"
@@ -200,7 +203,7 @@
                             >
                                 <ul class="rf-menu__list">
                                     <li class="rf-menu__item">
-                                        <strong>mode de recherche</strong>
+                                        <strong>Mode de recherche</strong>
                                     </li>
                                     {#each searchOptions as item}
                                         <li
@@ -222,7 +225,7 @@
                                         class="rf-menu__item"
                                         class:rf-inactive={!viewOptionsActive}
                                     >
-                                        <strong>mode d'affichage</strong>
+                                        <strong>Mode d'affichage</strong>
                                     </li>
                                     {#each viewOptions as item}
                                         <li
@@ -256,7 +259,7 @@
                             class:rf-nav__item--active={($route.path === '/link')}
                         >
                             <span class="rf-link rf-href rf-fi-db-line rf-link--icon-left">
-                                appariement
+                                Appariement
                             </span>
                         </li>
                         <li
@@ -265,7 +268,7 @@
                             class:rf-nav__item--active={($route.path === '/about')}
                         >
                             <span class="rf-link rf-href rf-fi-question-line rf-link--icon-left">
-                                à propos
+                                À propos
                             </span>
                         </li>
                     </ul>
@@ -276,7 +279,7 @@
 </header>
 
 <script>
-    import { themeDnum, advancedSearch, displayMode, wasSearched, activeElement } from '../tools/stores.js';
+    import { firstSearch, themeDnum, advancedSearch, displayMode, wasSearched, activeElement } from '../tools/stores.js';
     import Icon from './Icon.svelte';
     import SearchBox from './SearchBox.svelte';
     import { toggleAdvancedSearch, enableDisplayMode } from '../tools/search.js';
@@ -353,12 +356,15 @@
         if ((page === 'search')) {
             if ($route.path !== '/search') {
                 goTo({path: `/${page}`});
+            } else if (mode === 'reset') {
+                $firstSearch = true;
+                goTo({path: `/${page}`, query: $advancedSearch ? { advanced: true} : {}});
             }
             if (mode === 'simple') {
                 toggleAdvancedSearch(false);
             } else if (mode === 'advanced') {
                 toggleAdvancedSearch(true);
-            } else {
+            } else if (mode !== 'reset') {
                 enableDisplayMode(mode)
             }
         } else {
