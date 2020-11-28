@@ -247,8 +247,8 @@ export const URLSearchSubmit = async (urlParams) => {
         const myCurrent = urlParams.get('current') ? parseInt(urlParams.get('current').replace(/n_(.*)_n/,"$1")) : undefined;
         const myResultsPerPage = urlParams.get('size') ? parseInt(urlParams.get('size').replace(/n_(.*)_n/,"$1")) : undefined;
         const myQuery = Object.keys(mySearchInput).map(key => {
-            const q = urlParams.get(mySearchInput[key].url)
-            if (q) { return [key, q] }
+            const q = urlParams.get(mySearchInput[key].url) || '';
+            return [key, q];
         }).filter(x => x);
         if ( urlParams.get('fuzzy') === 'false' ) {
             fuzzySearch.update(v => false);

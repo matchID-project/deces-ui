@@ -483,4 +483,4 @@ const updateActiveElement = (event) => {
 document.addEventListener('focus', updateActiveElement, true);
 document.addEventListener('blur', updateActiveElement, true);
 
-
+export const firstSearch = writable(true);

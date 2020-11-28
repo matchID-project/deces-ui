@@ -1,7 +1,10 @@
 <header class="rf-header">
     <div class="rf-container rf-container__header">
         <div class="rf-header__body">
-            <div class="rf-header__brand">
+            <div
+                class="rf-header__brand"
+                on:click|preventDefault={() => goToPage('search', 'reset')}
+            >
                 <a
                     href="/search{$advancedSearch ? '?advanced=true' : ''}"
                     class="rf-logo"
@@ -276,7 +279,7 @@
 </header>
 
 <script>
-    import { themeDnum, advancedSearch, displayMode, wasSearched, activeElement } from '../tools/stores.js';
+    import { firstSearch, themeDnum, advancedSearch, displayMode, wasSearched, activeElement } from '../tools/stores.js';
     import Icon from './Icon.svelte';
     import SearchBox from './SearchBox.svelte';
     import { toggleAdvancedSearch, enableDisplayMode } from '../tools/search.js';
@@ -353,12 +356,15 @@
         if ((page === 'search')) {
             if ($route.path !== '/search') {
                 goTo({path: `/${page}`});
+            } else if (mode === 'reset') {
+                $firstSearch = true;
+                goTo({path: `/${page}`, query: $advancedSearch ? { advanced: true} : {}});
             }
             if (mode === 'simple') {
                 toggleAdvancedSearch(false);
             } else if (mode === 'advanced') {
                 toggleAdvancedSearch(true);
-            } else {
+            } else if (mode !== 'reset') {
                 enableDisplayMode(mode)
             }
         } else {
