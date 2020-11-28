@@ -4,7 +4,7 @@
     <div class="rf-grid-row" style="position:relative;">
       <div class="rf-col-12">
         <span
-          title={$advancedSearch ? "recherche simplifiée" : "recherche avancée"}
+          title={$advancedSearch ? "Recherche simplifiée" : "Recherche avancée"}
           on:click|preventDefault={toggleAdvancedSearch}
           class="rf-color--bf"
           style="position: absolute;top: 12px; right: 10px;"
@@ -46,7 +46,7 @@
                           disabled={$searchInput[key].disabled}
                         />
                         {#if !$advancedSearch}
-                          <button class="rf-btn" title="recherche">
+                          <button class="rf-btn" title="Recherche">
                             <span class="rf-fi-search-line rf-fi--lg"></span>
                           </button>
                         {/if}
@@ -64,8 +64,8 @@
           >
             <input style="width: 0px" id="switchRoundedInfo" type="checkbox" name="switchRoundedInfo" class="switch is-rounded is-white is-unchecked-grey" bind:checked={$fuzzySearch}>
             <label for="switchRoundedInfo">
-              {#if $fuzzySearch} recherche floue
-              {:else} <strike> recherche floue</strike>{/if}
+              {#if $fuzzySearch} Recherche floue
+              {:else} <strike> Recherche floue</strike>{/if}
               </label>
           </div>
         </div>

@@ -4,13 +4,13 @@
             {#if (unCheckedLinks === 0) && (checkedLinks === 0)}
                 <p>
                     <strong>
-                        Aucune correspondance de personne décédée n'a été trouvée dans votre fichier
+                        Aucune correspondance de personne décédée n'a été trouvée dans votre fichier.
                     </strong>
                 </p>
             {:else}
                 {#if checkedLinks && (unCheckedLinks === 0)}
                     <p>
-                        toutes les identé(s) ({checkedLinks}) ont été validées* !
+                        Toutes les identé(s) ({checkedLinks}) ont été validées* !
                         <br/>
                         <span class="rf-text--sm">* validation automatique pour les scores > {Math.round($linkAutoCheckThreshold*100)}</span>
                     </p>
@@ -21,7 +21,7 @@
                             <span class="rf-color--rm rf-fi-arrow-right-line rf-fi">
                             </span>
                         {/if}
-                        <span>téléchargez:</span>
+                        <span>Téléchargez:</span>
                         {#if (unCheckedLinks === 0)}
                             <span class="rf-color--rm rf-fi-arrow-left-line rf-fi">
                             </span>

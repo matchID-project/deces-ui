@@ -2,7 +2,7 @@
     {#if ($waitSearch && !($displayMode === 'geo'))}
         <div class="rf-wait-container" in:fade out:fade>
             <div class="rf-wait-content">
-                <strong>recherche en cours</strong>
+                <strong>Recherche en cours</strong>
                 <br/>
                 <Icon icon="ri:loader-line" class="rf-fi--xxl rf-margin-top-1N" spin center/>
             </div>
@@ -11,7 +11,7 @@
 </div>
 <div class="rf-container-fluid">
     <div class="rf-grid-row">
-        {#if !displayResults && firstTime}
+        {#if !displayResults && $firstSearch}
             <div class="rf-col-3"></div>
         {/if}
         <div
@@ -55,7 +55,7 @@
 
 <script>
     import { fade } from 'svelte/transition';
-    import { advancedSearch, displayMode, searchInput, waitSearch} from '../tools/stores.js';
+    import { firstSearch, advancedSearch, displayMode, searchInput, waitSearch} from '../tools/stores.js';
     import { searchTrigger } from '../tools/search.js';
 	import SearchBox from './SearchBox.svelte';
     import ResultsHeader from './ResultsHeader.svelte';
@@ -67,13 +67,12 @@
     let reduceSearchBox;
     let size;
     let margin;
-    let firstTime=true;
 
     $: if (Object.keys($searchInput).some(k => $searchInput[k].value)) {
-        firstTime = false;
+        $firstSearch = false;
     };
     $: displayResults = (Object.keys($searchInput).some(k => $searchInput[k].value));
-    $: reduceSearchBox = displayResults || (!firstTime);
+    $: reduceSearchBox = displayResults || (!$firstSearch);
 
     $: size = {
         md: reduceSearchBox ? 4 : 6,

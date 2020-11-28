@@ -4,10 +4,10 @@
       <div class="rf-col-xl-4 rf-col-lg-4 rf-col-md-3 rf-col-sm-12 rf-col-xs-12"></div>
       <div class="rf-col-xl-4 rf-col-lg-4 rf-col-md-6 rf-col-sm-12 rf-col-xs-12 rf-content--center">
         <div class="rf-search-bar rf-margin-bottom-1N" id="search-input">
-          <input bind:value={search} class="rf-input" placeholder="rechercher dans les questions" type="search" id="search-input-input" name="search-input-input">
+          <input bind:value={search} class="rf-input" placeholder="Rechercher dans les questions" type="search" id="search-input-input" name="search-input-input">
           <button class="rf-btn" title="Rechercher">
             <span>
-                rechercher
+                Rechercher
             </span>
           </button>
         </div>
@@ -93,14 +93,14 @@
     : `<a href="mailto:matchid.project@gmail.com">matchid.project@gmail.com</a>`;
 
   $: pages = [
-    { title: 'à qui s\'adresse le service ?',
+    { title: 'À qui s\'adresse le service ?',
       icon: 'ri:group-line',
       content: $themeDnum ? `
         Professionnels du service public.
       ` : `
         Généalogistes, professionnels ou particuliers, services publics hospitaliers, ou de lutte contre la fraude.
       `},
-    { title: 'qui sommes nous ?',
+    { title: 'Qui sommes nous ?',
       icon: 'ri:aliens-line',
       content: `
         <p>
@@ -133,7 +133,7 @@
 
       `,
       tags: "bénévole geeks nerd passionnés fabien antoine cristian perez brokate"},
-    { title: 'd\'où proviennent les données ?',
+    { title: 'D\'où proviennent les données ?',
       icon: 'ri:database-2-line',
       content: `
           <p>
@@ -177,11 +177,11 @@
           </p>
         </ul>
       `},
-    { title: 'quelles sont les garanties sur les données ?',
+    { title: 'Quelles sont les garanties sur les données ?',
       icon: 'ri:shield-star-line',
       content: `
         <p>
-            Le fichier de personnes décédées est un document administratif. Les données sont publiés en application des dispositions des articles L311-9 et L312-1-1 du code des relations entre le public et l’administration, et  réutilisables dans les conditions prévues par le titre II de ce livre.
+            Le fichier de personnes décédées est un document administratif. Les données sont publiées en application des dispositions des articles L311-9 et L312-1-1 du code des relations entre le public et l’administration, et  réutilisables dans les conditions prévues par le titre II de ce livre.
         </p>
         <p>
             Les données INSEE sont sous <a href="https://www.etalab.gouv.fr/licence-ouverte-open-licence" target="_blank">Licence Ouverte / Open Licence version 2.0</a>.
@@ -196,7 +196,7 @@
             </strong>
         </p>
       `},
-    { title: 'comment sont indexées les données ?',
+    { title: 'Comment sont indexées les données ?',
       icon: 'ri:file-search-line',
       content: `
         <p>
@@ -213,7 +213,7 @@
           large échelle. Le code source du présent site est accessible sur <a href="https://github.com/matchid-project/deces-ui" target="_blank">Github</a>.
       </p>
       `},
-    { title: "signaler un décès manquant",
+    { title: "Signaler un décès manquant",
       icon: 'ri:user-search-line',
       filter: true,
       content: `
@@ -259,7 +259,7 @@
                 pour les demande d'ajout et de correction. Mais nous répondrons toujours à vos sollicitations.
             </p>
       `,
-      tags: "trouver personne proche absent"},
+      tags: "Trouver personne proche absent"},
     { title: "signaler une erreur dans une fiche",
       icon: 'ri:file-damage-line',
       content: `
@@ -269,8 +269,8 @@
               </strong>
             </p>
             <p>
-                En cas d'erreur (e.g enregistrement du nom d'époux au lieu du nom de naissance), seuls
-                la mairie et le consultat de décès sont habilités à transmettre
+                En cas d'erreur (e.g enregistrement du nom d'époux au lieu du nom de naissance), seule
+                la mairie (ou le consultat) de décès est habilitées à transmettre
                 un correctif à l'INSEE. Nous vous invitons donc à prendre contact avec le service
                 d'État civil de la mairie ou du consulat du décès.
             </p>
@@ -279,7 +279,7 @@
               Nous reprendrons contact avec vous lorsqu'un processus de mise à jour sera identifié avec l'INSEE.
             </p>
       `,
-      tags: "problème corriger correction faute"},
+      tags: "Problème corriger correction faute"},
     { title: 'signaler un bug ou poser une question',
       icon: 'ri:bug-line',
       filter: true,
@@ -296,7 +296,7 @@
           </p>
       `,
       tags: "problème bogue plante"},
-    { title: 'suggérer des améliorations du service',
+    { title: 'Suggérer des améliorations du service',
       icon: 'ri:service-line',
       content: `
         <p>
@@ -319,14 +319,14 @@
           Vos suggestions sont les bienvenues, nous les étudierons - écrivez nous à ${mailTo}.
       `,
       tags: "évolutions"},
-    { title: 'statistiques de consultation',
+    { title: 'Statistiques de consultation',
       icon: 'ri:bar-chart-box-line',
       content: '',
       component: Stats,
       fullWidthMobile: true,
       tags: 'api hits visiteurs'
     },
-    { title: 'le code est-il open source ?',
+    { title: 'Le code est-il open source ?',
       icon: 'ri:github-line',
       content: `
         <p>
@@ -337,7 +337,7 @@
           Il est diffusé sous la licence libre <a href="https://spdx.org/licenses/LGPL-3.0.html#licenseText" target="_blank">LGPL 3.0</a>.
         </p>
       `},
-    { title: 'documentation de l\'API',
+    { title: 'Documentation de l\'API',
       icon: 'ri:plug-line',
       content: `
         <p>

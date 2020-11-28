@@ -3,18 +3,18 @@
         {#if (!unavailable) && rawData}
             {#if rawData.general}
                 <div class="rf-col-6">
-                    <label class="rf-label" for="select">cycle</label>
+                    <label class="rf-label" for="select">Cycle</label>
                     <select class="rf-select" id="select" name="select" bind:value={sourceScope}>
-                        <option value="" selected disabled hidden>- choisir -</option>
+                        <option value="" selected disabled hidden>- Choisir -</option>
                         {#each Object.keys(sourceScopes) as scope}
                             <option value={scope}>{sourceScopes[scope].label}</option>
                         {/each}
                     </select>
                 </div>
                 <div class="rf-col-6">
-                    <label class="rf-label" for="select">période</label>
+                    <label class="rf-label" for="select">Période</label>
                     <select class="rf-select" id="select" name="select" bind:value={source} disabled={/today|full/.test(sourceScope)}>
-                        <option value="" selected disabled hidden>- choisir -</option>
+                        <option value="" selected disabled hidden>- Choisir -</option>
                         {#if !/today|full/.test(sourceScope)}
                             {#each filteredCatalog as range}
                                 <option value={range}>
@@ -84,44 +84,44 @@
   let unavailable = false;
   let sourceScopes = {
       'full': {
-          label: 'complet',
+          label: 'Complet',
           select: 'full',
       },
       'today': {
-          label: 'aujourd\'hui',
+          label: 'Aujourd\'hui',
           select: 'day'
       },
       'day': {
-          label: 'jour',
+          label: 'Jour',
           select: /^(\d{4})(\d{2})(\d{2})$/,
           replace: (a, b, c, d) => `${d}/${c}/${b}`
       },
       'month': {
-          label: 'mois',
+          label: 'Mois',
           select: /^(\d{4})(\d{2})$/,
           replace: (a, b, c) => `${datesLabels.months[parseInt(c)]} ${b}`
       },
       'week': {
-          label: 'semaine',
+          label: 'Semaine',
           select: /^(\d{4})(S\d{2})$/,
-          replace: (a, b, c) => `semaine ${c} ${b}`
+          replace: (a, b, c) => `Semaine ${c} ${b}`
       },
       'today-detailed': {
-          label: 'aujourd\'hui (détail)',
+          label: 'Aujourd\'hui (détail)',
           select: 'day-detailed'
       },
       'day-detailed': {
-          label: 'jour (détail)',
+          label: 'Jour (détail)',
           select: /^(\d{4})(\d{2})(\d{2})-detailed$/,
           replace: (a, b, c, d) => `${d}/${c}/${b}`
       },
       'month-detailed': {
-          label: 'mois (détail)',
+          label: 'Mois (détail)',
           select: /^(\d{4})(\d{2})-detailed$/,
           replace: (a, b, c) => `${datesLabels.months[parseInt(c)]} ${b}`
       },
       'week-detailed': {
-          label: 'semaine (détail)',
+          label: 'Semaine (détail)',
           select: /^(\d{4})(S\d{2})-detailed$/,
           replace: (a, b, c) => `semaine ${c} ${b}`
       }
@@ -185,34 +185,34 @@
   $: day = /day/.test(sourceScope);
 
   let labels = {
-      visitors: 'visiteurs',
-      hits: 'nombre de requêtes',
-      'date_time': 'mise à jour',
-      'static_requests': 'contenu statique',
-      requests: 'requêtes',
-      geolocation: 'statistiques géographiques',
-      not_found: 'non trouvé',
-      hosts: 'clients',
-      os: 'système d\'exploitation',
-      browsers: 'navigateur',
-      visit_time: 'heure de visite',
-      hour_of_day_of_week: 'heure de visite',
-      referrers: 'sources',
-      referring_sites: 'sites sources',
-      status_code: 'statut',
-      bytes: 'bande passante',
-      'start_date': 'début',
-      'end_date': 'fin',
-      'total_requests': 'requêtes au total',
-      'valid_requests': 'requêtes valides',
-      'failed_requests': 'requêtes en erreur',
-      'unique_visitors': 'visiteurs',
-      'unique_files': 'requêtes uniques',
-      'excluded_hits': 'requêtes exclues',
-      'unique_referrers': 'sources',
-      'unique_static_files': 'fichiers statiques',
-      'unique_not_found': 'non trouvés (uniques)',
-      'bandwidth': 'bande passante'
+      visitors: 'Visiteurs',
+      hits: 'Nombre de requêtes',
+      'date_time': 'Mise à jour',
+      'static_requests': 'Contenu statique',
+      requests: 'Requêtes',
+      geolocation: 'Statistiques géographiques',
+      not_found: 'Non trouvé',
+      hosts: 'Clients',
+      os: 'Système d\'exploitation',
+      browsers: 'Navigateur',
+      visit_time: 'Heure de visite',
+      hour_of_day_of_week: 'Heure de visite',
+      referrers: 'Sources',
+      referring_sites: 'Sites sources',
+      status_code: 'Statut',
+      bytes: 'Bande passante',
+      'start_date': 'Début',
+      'end_date': 'Fin',
+      'total_requests': 'Requêtes au total',
+      'valid_requests': 'Requêtes valides',
+      'failed_requests': 'Requêtes en erreur',
+      'unique_visitors': 'Visiteurs',
+      'unique_files': 'Requêtes uniques',
+      'excluded_hits': 'Requêtes exclues',
+      'unique_referrers': 'Sources',
+      'unique_static_files': 'Fichiers statiques',
+      'unique_not_found': 'Non trouvés (uniques)',
+      'bandwidth': 'Bande passante'
   };
 
   const hexToRgb = (hex) => 'rgba(' + hex.match(/^\s*\#?([\da-f]{2})([\da-f]{2})([\da-f]{2})\s*$/)
@@ -357,18 +357,18 @@
 
   let datesLabels = {
       months: {
-          1: 'janvier',
-          2: 'févier',
-          3: 'mars',
-          4: 'avril',
-          5: 'mai',
-          6: 'juin',
-          7: 'juillet',
-          8: 'août',
-          9: 'septembre',
-          10: 'octobre',
-          11: 'novembre',
-          12: 'décembre'
+          1: 'Janvier',
+          2: 'Févier',
+          3: 'Mars',
+          4: 'Avril',
+          5: 'Mai',
+          6: 'Juin',
+          7: 'Juillet',
+          8: 'Août',
+          9: 'Septembre',
+          10: 'Octobre',
+          11: 'Novembre',
+          12: 'Décembre'
       }
   }
 

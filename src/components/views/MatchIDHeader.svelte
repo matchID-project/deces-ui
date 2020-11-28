@@ -1,12 +1,19 @@
 <header class="rf-header">
     <div class="rf-container rf-container__header">
         <div class="rf-header__body">
-            <div class="rf-header__brand">
-                <span class="rf-logo" title="{organization.replace(/<br>/,' ')}">
+            <div
+                class="rf-header__brand"
+                on:click|preventDefault={() => goToPage('search', 'reset')}
+            >
+                <a
+                    href="/search{$advancedSearch ? '?advanced=true' : ''}"
+                    class="rf-logo"
+                    title="{organization.replace(/<br>/,' ')}"
+                >
                     <span class="rf-logo__title">
                         {@html organization}
                     </span>
-                </span>
+                </a>
             </div>
             {#if $themeDnum}
                 <img
@@ -26,10 +33,10 @@
             <div class="rf-header__navbar">
                 <div class="rf-service">
                     <span class="rf-service__title" title="matchID - moteur de recherche des personnes décédées">
-                        fichier des décès
+                        Fichier des décès
                     </span>
                     <p class="rf-service__tagline">
-                        recherche <span class="rf-hide--mobile">libre</span> parmi <strong>25 millions de décès</strong>
+                        Recherche <span class="rf-hide--mobile">libre</span> parmi <strong>25 millions de décès</strong>
                         {#if !$themeDnum}
                             <span class="rf-hide--mobile">depuis 1970</span>
                         {/if}
@@ -52,7 +59,7 @@
                                 aria-expanded={expandMenu}
                                 on:click={() => {expandMenu = !expandMenu}}
                             >
-                                recherche
+                                Recherche
                             </button>
                             <div
                                 class="rf-menu"
@@ -61,7 +68,7 @@
                             >
                                 <ul class="rf-menu__list">
                                     <li class="rf-menu__item">
-                                        <strong>mode de recherche</strong>
+                                        <strong>Mode de recherche</strong>
                                     </li>
                                     {#each searchOptions as item}
                                         <li
@@ -89,7 +96,7 @@
                                         class="rf-menu__item"
                                         class:rf-inactive={!viewOptionsActive}
                                     >
-                                        <strong>mode d'affichage</strong>
+                                        <strong>Mode d'affichage</strong>
                                     </li>
                                     {#each viewOptions as item}
                                         <li
@@ -132,7 +139,7 @@
                                 href="/link"
                                 class="rf-link rf-href rf-fi-db-line rf-link--icon-left"
                             >
-                                appariement
+                                Appariement
                             </a>
                         </li>
                         <li
@@ -144,7 +151,7 @@
                                 href="/about"
                                 class="rf-link rf-href rf-fi-question-line rf-link--icon-left"
                             >
-                                à propos
+                                À propos
                             </a>
                         </li>
                     </ul>
@@ -167,11 +174,11 @@
                 <button
                     class="rf-btn rf-fi-close-line rf-btn--icon-right rf-btn--sm"
                     on:click={toggleBurger}
-                    title="fermer"
+                    title="Fermer"
                     aria-controls="header-nav-popin"
                 >
                     <span>
-                        fermer
+                        Fermer
                     </span>
                 </button>
                 <nav role="navigation" aria-label="Menu mobile">
@@ -187,7 +194,7 @@
                                 aria-expanded={expandMenu}
                                 on:click|preventDefault={() => {expandMenu = !expandMenu}}
                             >
-                                recherche
+                                Recherche
                             </button>
                             <div
                                 class="rf-menu"
@@ -196,7 +203,7 @@
                             >
                                 <ul class="rf-menu__list">
                                     <li class="rf-menu__item">
-                                        <strong>mode de recherche</strong>
+                                        <strong>Mode de recherche</strong>
                                     </li>
                                     {#each searchOptions as item}
                                         <li
@@ -218,7 +225,7 @@
                                         class="rf-menu__item"
                                         class:rf-inactive={!viewOptionsActive}
                                     >
-                                        <strong>mode d'affichage</strong>
+                                        <strong>Mode d'affichage</strong>
                                     </li>
                                     {#each viewOptions as item}
                                         <li
@@ -252,7 +259,7 @@
                             class:rf-nav__item--active={($route.path === '/link')}
                         >
                             <span class="rf-link rf-href rf-fi-db-line rf-link--icon-left">
-                                appariement
+                                Appariement
                             </span>
                         </li>
                         <li
@@ -261,7 +268,7 @@
                             class:rf-nav__item--active={($route.path === '/about')}
                         >
                             <span class="rf-link rf-href rf-fi-question-line rf-link--icon-left">
-                                à propos
+                                À propos
                             </span>
                         </li>
                     </ul>
@@ -272,7 +279,7 @@
 </header>
 
 <script>
-    import { themeDnum, advancedSearch, displayMode, wasSearched, activeElement } from '../tools/stores.js';
+    import { firstSearch, themeDnum, advancedSearch, displayMode, wasSearched, activeElement } from '../tools/stores.js';
     import Icon from './Icon.svelte';
     import SearchBox from './SearchBox.svelte';
     import { toggleAdvancedSearch, enableDisplayMode } from '../tools/search.js';
@@ -292,12 +299,12 @@
     let searchMenu;
 
     $: searchOptions = [
-        { title: 'simple',
+        { title: 'Simple',
           mode: 'simple',
           icon: 'ri:search-line',
           isActive: !$advancedSearch
         },
-        { title: 'avancé',
+        { title: 'Avancé',
           mode: 'advanced',
           icon: 'ri:zoom-in-line',
           isActive: $advancedSearch
@@ -313,22 +320,22 @@
     }
 
     $: viewOptions = [
-        { title: 'simple',
+        { title: 'Simple',
           mode: 'card',
           icon: 'ri:list-check-2',
           isActive: $displayMode === 'card'
         },
-        { title: 'complet',
+        { title: 'Complet',
           mode: 'card-expand',
           icon: 'ri:profile-line',
           isActive: $displayMode === 'card-expand'
         },
-        { title: 'tableur',
+        { title: 'Tableur',
           mode: 'table',
           icon: 'ri:table-line',
           isActive: $displayMode === 'table'
         },
-        { title: 'géographique',
+        { title: 'Géographique',
           mode: 'geo',
           icon: 'ri:earth-line',
           isActive: $displayMode === 'geo'
@@ -349,12 +356,15 @@
         if ((page === 'search')) {
             if ($route.path !== '/search') {
                 goTo({path: `/${page}`});
+            } else if (mode === 'reset') {
+                $firstSearch = true;
+                goTo({path: `/${page}`, query: $advancedSearch ? { advanced: true} : {}});
             }
             if (mode === 'simple') {
                 toggleAdvancedSearch(false);
             } else if (mode === 'advanced') {
                 toggleAdvancedSearch(true);
-            } else {
+            } else if (mode !== 'reset') {
                 enableDisplayMode(mode)
             }
         } else {

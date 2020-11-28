@@ -12,7 +12,7 @@
             style="position: relative"
             class:rf-text--error={error}
         >
-            <span class="rf-margin-right-3N">étape {step}. {title}</span>
+            <span class="rf-margin-right-3N">Étape {step}. {title}</span>
             {#if error}
                 <span
                     class="rf-fi-alert-line rf-fi--lg"

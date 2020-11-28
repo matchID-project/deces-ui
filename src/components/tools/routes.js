@@ -50,14 +50,15 @@ const rs = route.subscribe((value) => {
 });
 
 export const goTo =  (r) => {
+    console.log(r, 'je suis là');
     activeElement.update(v => {
         v && v.blur();
         return undefined;
     });
     if (Object.keys(routes).includes(r.path)) {
         const queryString = Object.keys(r.query || {})
-            .filter(k => routes[r.path] && routes[r.path].query)
-            .map(k => `${k=params[k]}`).join('&');
+            .filter(k => routes[r.path] && routes[r.path].query && routes[r.path].query.includes(k))
+            .map(k => `${k}=${r.query[k]}`).join('&');
         if (queryString) {
             window.history.replaceState({}, '', `${r.path}?${queryString}`);
         } else {

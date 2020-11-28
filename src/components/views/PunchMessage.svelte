@@ -13,12 +13,12 @@
         {#if $themeDnum}
           <strong>DNUM</strong> - Sous direction de l'innovation et de la transformation numérique
         {:else}
-          recherchez parmi <strong>25 millions de décès</strong> depuis 1970 dans les enregistrements officiels de l'INSEE
+          Recherchez parmi <strong>25 millions de décès</strong> depuis 1970 dans les enregistrements officiels de l'INSEE
         {/if}
       </p>
       {#if $version}
         <p class="rf-text--xs rf-padding-top-2N">
-          dernier enregistrement de décès le {$version.data.lastRecordDate}
+          Dernier enregistrement de décès le {$version.data.lastRecordDate}
           <br>
           {$version.ui}-api/{$version.api}
         </p>

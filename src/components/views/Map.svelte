@@ -73,8 +73,8 @@
   let isFull = false;
   const maxBase = 10000;
   const possibleLayers = {
-      birth: 'naissance',
-      death: 'décès'
+      birth: 'Naissance',
+      death: 'Décès'
   };
   let layerParams;
   let displayLayers = [possibleLayers.birth, possibleLayers.death];
