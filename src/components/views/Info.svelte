@@ -181,7 +181,7 @@
       icon: 'ri:shield-star-line',
       content: `
         <p>
-            Le fichier de personnes décédées est un document administratif. Les données sont publiés en application des dispositions des articles L311-9 et L312-1-1 du code des relations entre le public et l’administration, et  réutilisables dans les conditions prévues par le titre II de ce livre.
+            Le fichier de personnes décédées est un document administratif. Les données sont publiées en application des dispositions des articles L311-9 et L312-1-1 du code des relations entre le public et l’administration, et  réutilisables dans les conditions prévues par le titre II de ce livre.
         </p>
         <p>
             Les données INSEE sont sous <a href="https://www.etalab.gouv.fr/licence-ouverte-open-licence" target="_blank">Licence Ouverte / Open Licence version 2.0</a>.
@@ -269,8 +269,8 @@
               </strong>
             </p>
             <p>
-                En cas d'erreur (e.g enregistrement du nom d'époux au lieu du nom de naissance), seuls
-                la mairie et le consultat de décès sont habilités à transmettre
+                En cas d'erreur (e.g enregistrement du nom d'époux au lieu du nom de naissance), seule
+                la mairie (ou le consultat) de décès est habilitées à transmettre
                 un correctif à l'INSEE. Nous vous invitons donc à prendre contact avec le service
                 d'État civil de la mairie ou du consulat du décès.
             </p>
