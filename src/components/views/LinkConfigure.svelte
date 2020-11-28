@@ -23,7 +23,7 @@
                 {#if notEnoughFields}
                     <div class="rf-col-12">
                         <span class="rf-text--sm rf-color--rm">
-                            vous devez choisir au minimum {$linkMinFields} champs à apparier
+                            Vous devez choisir au minimum {$linkMinFields} champs à apparier
                             {#if selectedFieldsNumber}
                                 ({selectedFieldsNumber} champ(s) sélectionné(s))
                             {:else}
@@ -48,7 +48,7 @@
                 disabled={disabled}
                 on:click|preventDefault={validate}
             >
-                valider
+                Valider
             </button>
             <p>
                 <strong>Depuis les colonnes ci-dessous:</strong><br/>
