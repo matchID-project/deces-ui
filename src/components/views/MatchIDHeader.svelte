@@ -200,7 +200,7 @@
                             >
                                 <ul class="rf-menu__list">
                                     <li class="rf-menu__item">
-                                        <strong>mode de recherche</strong>
+                                        <strong>Mode de recherche</strong>
                                     </li>
                                     {#each searchOptions as item}
                                         <li
@@ -222,7 +222,7 @@
                                         class="rf-menu__item"
                                         class:rf-inactive={!viewOptionsActive}
                                     >
-                                        <strong>mode d'affichage</strong>
+                                        <strong>Mode d'affichage</strong>
                                     </li>
                                     {#each viewOptions as item}
                                         <li
@@ -256,7 +256,7 @@
                             class:rf-nav__item--active={($route.path === '/link')}
                         >
                             <span class="rf-link rf-href rf-fi-db-line rf-link--icon-left">
-                                appariement
+                                Appariement
                             </span>
                         </li>
                         <li
@@ -265,7 +265,7 @@
                             class:rf-nav__item--active={($route.path === '/about')}
                         >
                             <span class="rf-link rf-href rf-fi-question-line rf-link--icon-left">
-                                à propos
+                                À propos
                             </span>
                         </li>
                     </ul>
