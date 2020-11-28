@@ -9,7 +9,7 @@
 {/if}
 <div class="rf-container-fluid rf-padding-right-1N" style="position: relative">
     <div class="rf-badge">
-        beta
+        Bêta
     </div>
     <div class="rf-grid-row">
         {#if ($linkStep <= 1)}
@@ -20,7 +20,7 @@
             style="position: relative;"
         >
             <strong>
-                appariement
+                Appariement
             </strong>
             {#if ($linkStep > 1)}
                 <div
@@ -72,7 +72,7 @@
                     {#if ($linkStep > 1)}
                         <div class="rf-col-12 rf-padding-3N rf-hide--mobile">
                             <strong>
-                                étape {$linkStep}
+                                Étape {$linkStep}
                             </strong>
                             <br>
                             {@html steps[$linkStep-1].text}
@@ -173,13 +173,13 @@
         steps[3].label = `${cLinks}/${sLinks} identifications validées`;
     }
 
-    const step0Label = `glissez un fichier au format CSV ici <br/> (${Math.round($linkFileSizeLimit / 1000**2)}Mo maximum)`;
-    const step1Label = 'choisissez les colonnes à apparier';
-    const step2Label= 'attendez le traitement de l\'appariement';
-    const step3Label= 'vérifiez les identités appariées';
+    const step0Label = `Glissez un fichier au format CSV ici <br/> (${Math.round($linkFileSizeLimit / 1000**2)}Mo maximum)`;
+    const step1Label = 'Choisissez les colonnes à apparier';
+    const step2Label= 'Attendez le traitement de l\'appariement';
+    const step3Label= 'Vérifiez les identités appariées';
 
     const steps = [
-        { title: 'fichier',
+        { title: 'Fichier',
           label: step0Label,
           card: LinkFile,
           text: `
@@ -198,7 +198,7 @@
             </p>
           `
         },
-        { title: 'configuration',
+        { title: 'Configuration',
           label: step1Label,
           body: LinkConfigure,
           text: `
@@ -212,7 +212,7 @@
             </p>
           `
         },
-        { title: 'traitement',
+        { title: 'Traitement',
           label: step2Label,
           body: LinkJob,
           text: `
@@ -231,7 +231,7 @@
             </p>
           `
         },
-        { title: 'validez',
+        { title: 'Validez',
           label: step3Label,
           body: LinkCheck,
           text: `

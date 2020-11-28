@@ -8,7 +8,7 @@
                 <div style="overflow:hidden;text-overflow:ellipsis">
                     <input id="displayColumns" type="checkbox" bind:checked={displayUnmappedColumns}/>
                     <label class="rf-label" for="displayColumns">
-                        afficher toutes les colonnes
+                        Afficher toutes les colonnes
                     </label>
                 </div>
             </div>
@@ -26,9 +26,9 @@
                     <label
                         class="rf-label"
                         for="autocheck"
-                        title="cette option validera automatiquement toute les paires ayant le même profil de rapprochement"
+                        title="Cette option validera automatiquement toute les paires ayant le même profil de rapprochement"
                     >
-                        valider les paires similaires
+                        Valider les paires similaires
                     </label>
                 </div>
             </div>

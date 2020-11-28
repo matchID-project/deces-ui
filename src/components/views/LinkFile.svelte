@@ -9,7 +9,7 @@
 >
     <a
         href="#step{step}"
-        aria-label="étape {step} {title}"
+        aria-label="Étape {step} {title}"
     >
         <div class="rf-tile__body">
             <h4
@@ -17,7 +17,7 @@
                 style="position: relative"
                 class:rf-text--error={error}
             >
-                <span class="rf-margin-right-3N">étape {step}. {title}</span>
+                <span class="rf-margin-right-3N">Étape {step}. {title}</span>
                 {#if error}
                     <span
                         class="rf-fi-alert-line rf-fi--lg"
