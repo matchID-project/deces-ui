@@ -20,10 +20,10 @@ export const routes = {
         'dd','dc','ddep','dco','dage'],
         cb: (query) => URLSearchSubmit(new URLSearchParams(query))
     },
-    '/about': { component: Default, props: {title: 'à propos'} },
+    '/about': { component: Default, props: {title: 'À propos'} },
     '/link': { component: Link },
     '/stats': { component: Stats },
-    '/notFound': { component: Default, props: {title: 'pas de page à l\'adresse indiquée'} },
+    '/notFound': { component: Default, props: {title: 'Pas de page à l\'adresse indiquée'} },
 };
 
 const rs = route.subscribe((value) => {
@@ -50,7 +50,6 @@ const rs = route.subscribe((value) => {
 });
 
 export const goTo =  (r) => {
-    console.log(r, 'je suis là');
     activeElement.update(v => {
         v && v.blur();
         return undefined;
