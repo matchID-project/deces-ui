@@ -32,6 +32,7 @@
                             class="rf-select rf-select--aside rf-text--xs rf-color--black"
                             bind:value={$resultsPerPage}
                             on:change={deactivateElement}
+                            id="per-page"
                         >
                             {#each resultsPerPageList as option}
                                 <option>{option}</option>
