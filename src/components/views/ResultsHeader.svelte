@@ -24,7 +24,10 @@
             {#if (!($displayMode === 'geo'))}
                 {#if $totalPages > 1}
                     <td class="rf-hide--mobile rf-td--vcenter rf-text--center rf-text--right" style="width: 100px;">
-                        par page
+                        <label for="per-page">par page</label>
+                        <!-- on:change used instead of on:blur to blur on change evend if not blurred,
+                        to deactivate elements when using the router -->
+                        <!-- svelte-ignore a11y-no-onchange -->
                         <select
                             class="rf-select rf-select--aside rf-text--xs rf-color--black"
                             bind:value={$resultsPerPage}
