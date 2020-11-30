@@ -259,7 +259,7 @@ dev-stop: frontend-dev-stop backend-dev-stop elasticsearch-stop
 build: clean-frontend frontend-build nginx-build
 
 rollup-clean:
-	@sudo rm -rf public/build
+	@sudo rm -rf public/build public/sw.js* public/workbox*
 
 build-dir:
 	@if [ ! -d "$(BUILD_DIR)" ] ; then mkdir -p $(BUILD_DIR) ; fi
