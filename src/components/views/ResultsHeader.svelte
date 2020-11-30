@@ -10,7 +10,7 @@
                     <span>
                         {#if query}
                             résultats <strong>{from}</strong> à <strong>{to}</strong> parmi <strong>{$totalResults}</strong>
-                            pour: <i>{query}</i>
+                            pour: <strong>{query}</strong>
                         {:else}
                             recherche en cours &hellip;
                         {/if}
