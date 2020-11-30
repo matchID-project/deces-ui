@@ -1,11 +1,22 @@
 {
   "short_name": "matchID",
-  "name": "matchID moteur de recherche pour les personnes décédées",
+  "name": "matchID moteur de recherche des décès",
   "icons": [
     {
       "src": "favicon.svg",
-      "sizes": "92x96 64x64 32x32 24x24 16x16",
+      "purpose": "maskable any",
+      "sizes": "any",
       "type": "image/svg+xml"
+    },
+    {
+      "src": "favicon.png",
+      "sizes": "1024x1024",
+      "type": "image/png"
+    },
+    {
+      "src": "favicon-apple.png",
+      "sizes": "192x192",
+      "type": "image/png"
     }
   ],
   "start_url": ".",

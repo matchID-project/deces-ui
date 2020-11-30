@@ -52,10 +52,10 @@ export NGINX_TIMEOUT = 30
 export NGINX_CSP=default-src https: 'self' 'unsafe-inline' 'unsafe-eval';font-src 'self' data:;img-src 'self' data: https://*.cartocdn.com https://www.google-analytics.com https://www.googletagmanager.com https://*.doubleclick.net;
 export API_USER_LIMIT_RATE=1r/s
 export API_DOWNLOAD_LIMIT_RATE=30r/m
-export API_USER_BURST=20 nodelay
+export API_USER_BURST=30 nodelay
 export API_USER_SCOPE=http_x_forwarded_for
 export API_GLOBAL_LIMIT_RATE=20r/s
-export API_GLOBAL_BURST=200 nodelay
+export API_GLOBAL_BURST=400 nodelay
 export API_READ_TIMEOUT=3600
 export API_SEND_TIMEOUT=1200
 export API_MAX_BODY=100m
@@ -157,7 +157,7 @@ clean-data: elasticsearch-clean backup-dir-clean
 	@sudo rm -rf ${APP_PATH}/${GIT_DATAPREP} ${DATA_VERSION_FILE} ${DATAPREP_VERSION_FILE}\
 		${DATA_VERSION_FILE}.list > /dev/null 2>&1 || true
 
-clean-frontend: build-dir-clean frontend-clean-dist frontend-clean-dist-archive
+clean-frontend: rollup-clean build-dir-clean frontend-clean-dist frontend-clean-dist-archive
 
 clean-backend: backend-clean-dir
 
@@ -239,7 +239,7 @@ frontend-update:
 
 update: frontend-update
 
-frontend-dev:
+frontend-dev: clean-frontend
 ifneq "$(commit)" "$(lastcommit)"
 	@echo docker-compose up ${APP} frontend for dev after new commit ${APP_VERSION}
 	${DC} -f ${DC_FILE}-dev.yml up -d
@@ -256,7 +256,10 @@ dev: network frontend-stop elasticsearch backend-dev frontend-dev
 
 dev-stop: frontend-dev-stop backend-dev-stop elasticsearch-stop
 
-build: frontend-build nginx-build
+build: clean-frontend frontend-build nginx-build
+
+rollup-clean:
+	@sudo rm -rf public/build public/sw.js* public/workbox*
 
 build-dir:
 	@if [ ! -d "$(BUILD_DIR)" ] ; then mkdir -p $(BUILD_DIR) ; fi

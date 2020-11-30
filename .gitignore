@@ -3,6 +3,8 @@ artifacts
 .lastcommit
 dist
 dist-build
+public/sw*
+public/workbox*
 deces-ui-*
 deces-backend
 deces-dataprep

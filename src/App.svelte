@@ -1,8 +1,10 @@
 <svelte:window on:keydown={handleKeydown}/>
 <MatchIDHeader/>
-{#if $route && $route.path && routes[$route.path] && routes[$route.path].component}
-	<svelte:component this={routes[$route.path].component} {...routes[$route.path].props}/>
-{/if}
+<main>
+	{#if $route && $route.path && routes[$route.path] && routes[$route.path].component}
+		<svelte:component this={routes[$route.path].component} {...routes[$route.path].props}/>
+	{/if}
+</main>
 
 <script>
 	import { onMount } from 'svelte';
@@ -12,6 +14,7 @@
 	} from './components/tools/stores.js';
 	import { URLSearchSubmit } from './components/tools/search.js';
 	import { routes } from './components/tools/routes.js';
+	import { register } from 'register-service-worker';
 
 	onMount(async () => {
 		if ($version && !$version.api) {
@@ -20,6 +23,34 @@
 				$version.api = await r.json();
 			} catch(e) {
 			}
+		}
+		if ('serviceWorker' in navigator) {
+			register('/sw.js', {
+				registrationOptions: { scope: './' },
+				ready (registration) {
+					console.log('Service worker is active.');
+				},
+				registered (registration) {
+					console.log('Service worker has been registered.')
+				},
+				cached (registration) {
+					console.log('Content has been cached for offline use.')
+				},
+				updatefound (registration) {
+					console.log('New content is downloading.')
+				},
+				updated (registration) {
+					console.log('New content is available; please refresh.');
+					registration.unregister();
+					window.location.reload(true);
+				},
+				offline () {
+					console.log('No internet connection found. App is running in offline mode.')
+				},
+				error (error) {
+					console.error('Error during service worker registration:', error)
+				}
+			});
 		}
 	});
 

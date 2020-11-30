@@ -2,7 +2,8 @@
 <html lang="fr" class="has-navbar-fixed-top">
 	<head>
 		<meta charset="utf-8" />
-		<link rel="icon" href="/favicon.svg" />
+		<link rel="icon" href="/favicon.svg"/>
+		<link rel="apple-touch-icon" href="/favicon-apple.png">
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<meta name="theme-color" content="#000000" />
 		<link rel="manifest" href="/manifest.json" />
@@ -12,9 +13,18 @@
 		<link rel="canonical" href="https://deces.matchid.io" />
 		<link rel='stylesheet' href='/css/global.css'>
 		<link rel='stylesheet' href='/css/dsfr.min.css'>
-		<link rel='stylesheet' href='/build/bundle.css'>
+		<link rel='stylesheet' href='/build/module/bundle.css'>
+		<link rel="preload" href="/fonts/Marianne-Bold.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+		<link rel="preload" href="/fonts/Marianne-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
 		<script defer src='/js/dsfr.min.js'></script>
-		<script defer src='/build/bundle.js'></script>
+		<!-- for modern browsers -->
+		<script type='module' src='build/module/main.js'></script>
+
+		<!-- for older browsers (firefox 52.9esr ...) -->
+		<script nomodule defer src='/build/nomodule/main.js'>
+		</script>
+
+		<!--if not working-->
 		<script>
 			setTimeout(function(){
 			  var tmp = document.getElementById("infoNotWorking")

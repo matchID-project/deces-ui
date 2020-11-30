@@ -102,7 +102,12 @@
     import LinkFile from './LinkFile.svelte';
     import LinkConfigure from './LinkConfigure.svelte';
     import LinkJob from './LinkJob.svelte';
-    import LinkCheck from './LinkCheck.svelte';
+
+    let LinkCheck;
+    import('./LinkCheck.svelte').then(module => {
+        LinkCheck = module.default;
+    });
+
     import { clearAll, useLocalSync } from '../tools/useLocalStorage.js';
     let wait = false;
     let waitMessage = '';
@@ -178,7 +183,8 @@
     const step2Label= 'Attendez le traitement de l\'appariement';
     const step3Label= 'Vérifiez les identités appariées';
 
-    const steps = [
+    let steps;
+    $: steps = [
         { title: 'Fichier',
           label: step0Label,
           card: LinkFile,

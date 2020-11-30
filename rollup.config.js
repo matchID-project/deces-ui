@@ -5,17 +5,11 @@ import commonjs from '@rollup/plugin-commonjs';
 import livereload from 'rollup-plugin-livereload';
 import { terser } from 'rollup-plugin-terser';
 import iconifySvg from 'rollup-plugin-iconify-svg';
+import { generateSW } from 'rollup-plugin-workbox';
 
 const production = !process.env.ROLLUP_WATCH;
 
-export default {
-	input: 'src/main.js',
-	output: {
-		sourcemap: true,
-		format: 'iife',
-		name: 'app',
-		file: 'public/build/bundle.js'
-	},
+const options = {
 	plugins: [
         iconifySvg({
 			targets: [{ src: 'src/components/views', dest: 'src/components/tools/icons.js' }]
@@ -44,7 +38,7 @@ export default {
 			__APP__: process.env.APP,
 			__APP_VERSION__: process.env.APP_VERSION,
 			__THEME_DNUM__: process.env.THEME_DNUM
-		  }),
+		}),
 		// If you have external dependencies installed from
 		// npm, you'll most likely need these plugins. In
 		// some cases you'll need additional configuration —
@@ -65,6 +59,23 @@ export default {
 		!production && livereload({ watch: "public", delay: 1000 }),
 		// If we're building for production (npm run build
 		// instead of npm run dev), minify
+		generateSW({
+			swDest: 'public/sw.js',
+			cleanupOutdatedCaches: true,
+			globDirectory: 'public/',
+			navigateFallback: '/index.html',
+			dontCacheBustURLsMatching: /(Geo|LinkCheck|Line|Bar)-.*js/,
+			globPatterns: [
+				'index.html',
+				'build/module/main.js',
+				'manifest.json',
+				'build/module/{main,Link,Default}-*.js',
+				'{favicon,male,female}.svg',
+				'fonts/Marianne-{Bold,Regular}.woff2',
+				'css/{global,dsfr.min}.css',
+				'build/module/bundle.css'
+			]
+		}),
 		production && terser()
 	],
 	watch: {
@@ -72,6 +83,32 @@ export default {
 		exclude:['src/components/tools/icons.js']
 	}
 };
+
+export default[
+	// ES module version, for modern browsers
+	{
+		input: 'src/main.js',
+		output: {
+			sourcemap: true,
+			format: 'es',
+			name: 'app',
+			dir: 'public/build/module'
+		},
+		...options
+	},
+	// No module version for legacy browsers like Firefox 52.9 esr
+	{
+		input: 'src/main.js',
+		output: {
+			sourcemap: true,
+			format: 'iife',
+			inlineDynamicImports: true,
+			name: 'app',
+			dir: 'public/build/nomodule'
+		},
+		...options
+	}
+];
 
 function serve() {
 	let started = false;
