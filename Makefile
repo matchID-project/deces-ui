@@ -157,7 +157,7 @@ clean-data: elasticsearch-clean backup-dir-clean
 	@sudo rm -rf ${APP_PATH}/${GIT_DATAPREP} ${DATA_VERSION_FILE} ${DATAPREP_VERSION_FILE}\
 		${DATA_VERSION_FILE}.list > /dev/null 2>&1 || true
 
-clean-frontend: build-dir-clean frontend-clean-dist frontend-clean-dist-archive
+clean-frontend: rollup-clean build-dir-clean frontend-clean-dist frontend-clean-dist-archive
 
 clean-backend: backend-clean-dir
 
@@ -239,7 +239,7 @@ frontend-update:
 
 update: frontend-update
 
-frontend-dev:
+frontend-dev: clean-frontend
 ifneq "$(commit)" "$(lastcommit)"
 	@echo docker-compose up ${APP} frontend for dev after new commit ${APP_VERSION}
 	${DC} -f ${DC_FILE}-dev.yml up -d
@@ -256,7 +256,10 @@ dev: network frontend-stop elasticsearch backend-dev frontend-dev
 
 dev-stop: frontend-dev-stop backend-dev-stop elasticsearch-stop
 
-build: frontend-build nginx-build
+build: clean-frontend frontend-build nginx-build
+
+rollup-clean:
+	@sudo rm -rf public/build
 
 build-dir:
 	@if [ ! -d "$(BUILD_DIR)" ] ; then mkdir -p $(BUILD_DIR) ; fi
