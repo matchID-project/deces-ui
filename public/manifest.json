@@ -8,18 +8,14 @@
       "type": "image/svg+xml"
     },
     {
-      "src": "favicon-maskable.svg",
-      "purpose": "any maskable",
-      "sizes": "1024x1024",
-      "type": "image/svg+xml"
-    },
-    {
       "src": "favicon.png",
+      "purpose": "any maskable",
       "sizes": "1024x1024",
       "type": "image/png"
     },
     {
       "src": "favicon-apple.png",
+      "purpose": "any maskable",
       "sizes": "192x192",
       "type": "image/png"
     }
