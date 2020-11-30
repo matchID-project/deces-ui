@@ -62,7 +62,7 @@
             <div class="rf-col-12 rf-text--center">
                 <Icon icon="ri:alarm-line" class="rf-fi--xxl" center/>
                 <br>
-                <strong> les statistiques seront bientôt disponibles ... </strong>
+                <strong> Les statistiques seront bientôt disponibles ... </strong>
             </div>
         {/if}
     </div>
@@ -70,8 +70,14 @@
 
 <script>
   import { onMount } from 'svelte';
-  import Line from 'svelte-chartjs/src/Line.svelte';
-  import Bar from 'svelte-chartjs/src/Bar.svelte';
+  let Line;
+  import('svelte-chartjs/src/Line.svelte').then(module => {
+    Line = module.default;
+  });
+  let Bar;
+  import('svelte-chartjs/src/Bar.svelte').then(module => {
+    Bar = module.default;
+  });
   import Icon from './Icon.svelte';
   import WorldChoropleth from './WorldChoropleth.svelte';
   import Heatmap from './Heatmap.svelte';

@@ -69,7 +69,9 @@
               </div>
 
             {:else if ($displayMode === 'geo')}
-                <Geo/>
+              {#if Geo}
+                <svelte:component this={Geo}/>
+              {/if}
             {/if}
           </div>
           {#if !($displayMode === 'geo')}
@@ -88,7 +90,10 @@
   import { searchResults, searchInput, totalResults, current, resultsPerPage,
     sortInput, displayMode, wasSearched } from '../tools/stores.js';
   import { searchTrigger } from '../tools/search.js';
-  import Geo from './Geo.svelte';
+  let Geo;
+  import('./Geo.svelte').then(module => {
+    Geo = module.default;
+  });
   import Pagination from './Pagination.svelte';
   import ResultCard from "./ResultCard.svelte";
   import ResultRow from "./ResultRow.svelte";
