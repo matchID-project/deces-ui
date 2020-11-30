@@ -1,8 +1,10 @@
 <svelte:window on:keydown={handleKeydown}/>
 <MatchIDHeader/>
-{#if $route && $route.path && routes[$route.path] && routes[$route.path].component}
-	<svelte:component this={routes[$route.path].component} {...routes[$route.path].props}/>
-{/if}
+<main>
+	{#if $route && $route.path && routes[$route.path] && routes[$route.path].component}
+		<svelte:component this={routes[$route.path].component} {...routes[$route.path].props}/>
+	{/if}
+</main>
 
 <script>
 	import { onMount } from 'svelte';
