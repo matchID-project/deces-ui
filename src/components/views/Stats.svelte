@@ -62,7 +62,7 @@
             <div class="rf-col-12 rf-text--center">
                 <Icon icon="ri:alarm-line" class="rf-fi--xxl" center/>
                 <br>
-                <strong> les statistiques seront bientôt disponibles ... </strong>
+                <strong> Les statistiques seront bientôt disponibles ... </strong>
             </div>
         {/if}
     </div>
