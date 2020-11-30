@@ -70,7 +70,8 @@ const options = {
 				'build/module/main.js',
 				'manifest.json',
 				'build/module/{main,Link,Default}-*.js',
-				'{favicon,male,female}.svg',
+				'favicon*{png,svg}',
+				'{male,female}.svg',
 				'fonts/Marianne-{Bold,Regular}.woff2',
 				'css/{global,dsfr.min}.css',
 				'build/module/bundle.css'
