@@ -20,7 +20,13 @@
         <p class="rf-text--xs rf-padding-top-2N">
           Dernier enregistrement de décès le {$version.data.lastRecordDate}
           <br>
-          {$version.ui}-api/{$version.api}
+          {$version.ui}
+          {#if $version.api}
+            -api/{$version.api}
+          {:else}
+            <br>
+            <strong class="rf-color--rm">API indisponible (êtes vous hors ligne ?) </strong>
+          {/if}
         </p>
       {/if}
     </div>
