@@ -358,6 +358,7 @@
                 goTo({path: `/${page}`});
             } else if (mode === 'reset') {
                 $firstSearch = true;
+                $wasSearched = undefined;
                 goTo({path: `/${page}`, query: $advancedSearch ? { advanced: true} : {}});
             }
             if (mode === 'simple') {
