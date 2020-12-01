@@ -13,17 +13,22 @@ let myRoute;
 import { URLSearchSubmit } from './search.js';
 
 export const routes = {
-    '/': { component: Search },
-    '/search': { component: Search,
+    '/': {
+        component: Search,
+        title: 'Moteur de recherche des personnes décédées'
+    },
+    '/search': {
+        component: Search,
+        title: 'Moteur de recherche des personnes décédées',
         query: ['view', 'advanced', 'fuzzy',
         'ln', 'fn', 'sex','bd','bc','bdep','bco',
         'dd','dc','ddep','dco','dage'],
         cb: (query) => URLSearchSubmit(new URLSearchParams(query))
     },
-    '/about': { component: Default, props: {title: 'À propos'} },
-    '/link': { component: Link },
-    '/stats': { component: Stats },
-    '/notFound': { component: Default, props: {title: 'Pas de page à l\'adresse indiquée'} },
+    '/about': { component: Default, props: {title: 'À propos'}, title: 'À propos'},
+    '/link': { component: Link, title: 'Appariement' },
+    '/stats': { component: Stats, title: 'statistiques de fréquentation' },
+    '/notFound': { component: Default, props: {title: 'Pas de page à l\'adresse indiquée'}, title: 'Pas de page à l\'adresse indiquée' },
 };
 
 const rs = route.subscribe((value) => {

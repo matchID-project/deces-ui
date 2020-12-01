@@ -183,8 +183,7 @@
     const step2Label= 'Attendez le traitement de l\'appariement';
     const step3Label= 'Vérifiez les identités appariées';
 
-    let steps;
-    $: steps = [
+    const steps = [
         { title: 'Fichier',
           label: step0Label,
           card: LinkFile,
@@ -259,6 +258,8 @@
           `
         }
     ];
+
+    $: steps[3].body = LinkCheck;
 
     const reset = async () => {
         await clearAll();
