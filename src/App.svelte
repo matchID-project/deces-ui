@@ -10,7 +10,7 @@
 	import { onMount } from 'svelte';
 	import MatchIDHeader from './components/views/MatchIDHeader.svelte';
 	import { version, route, searchInput, searchCanvas, current, resultsPerPage,
-		updateURL, advancedSearch, fuzzySearch, displayMode, themeDnum
+		updateURL, advancedSearch, fuzzySearch, displayMode, themeDnum, wasSearched
 	} from './components/tools/stores.js';
 	import { URLSearchSubmit } from './components/tools/search.js';
 	import { routes } from './components/tools/routes.js';
@@ -55,6 +55,13 @@
 	});
 
 	$: if ($route.path === '/search') (URLSearchSubmit(new URLSearchParams(location.search)));
+
+	$: if ($wasSearched && ($route.path === '/search')) {
+			document.title = `matchID - ${$wasSearched}`
+		} else {
+	        document.title = `matchID - ${routes[$route.path].title}`;
+		};
+
 	$: element = document.getElementById('infoNotWorking');
 	$: element.parentNode  && element.parentNode.removeChild(element);
 

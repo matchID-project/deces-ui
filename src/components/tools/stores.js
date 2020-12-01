@@ -52,7 +52,7 @@ export const searchInput = writable({
         path: "name",
         url: "fn",
         value: "",
-        field: ["PRENOM","PRENOMS"],
+        field: "PRENOM",
         sortField: "PRENOM.raw",
         query: firstNameQuery,
         fuzzy: "auto",
