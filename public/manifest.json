@@ -3,8 +3,8 @@
   "name": "matchID moteur de recherche des personnes décédées",
   "icons": [
     {
-      "src": "favicon.svg",
-      "sizes": "54x54",
+      "src": "favicon-maskable.svg",
+      "sizes": "1024x1024",
       "type": "image/svg+xml"
     },
     {
