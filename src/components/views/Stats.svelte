@@ -227,18 +227,25 @@
       'bandwidth': 'Bande passante'
   };
 
-  const hexToRgb = (hex) => 'rgba(' + hex.match(/^\s*\#?([\da-f]{2})([\da-f]{2})([\da-f]{2})\s*$/)
-        .slice(1).map(e => parseInt(e, 16)).join(',') + ',255)';
+  const hexToRgb = (hex) => hexToRgba(hex,255);
+
+  const hexToRgba = (hex, alpha) => 'rgba(' + hex.match(/^\s*\#?([\da-f]{2})([\da-f]{2})([\da-f]{2})\s*$/)
+        .slice(1).map(e => parseInt(e, 16)).join(',') + `,${alpha})`;
+
 
   const datasets = {
       'visitors': {
-          color: hexToRgb(style.getPropertyValue('--bf500'))
+          color: hexToRgba(style.getPropertyValue('--bf500'), 0.7)
       },
       'hits': {
-          color: hexToRgb(style.getPropertyValue('--rm500'))
+          color: hexToRgba(style.getPropertyValue('--bf500'), 0.55)
       },
       'bytes': {
-          color: hexToRgb(style.getPropertyValue('--gl500'))
+          color: hexToRgba(style.getPropertyValue('--bf500'), 0.4)
+      },
+      'duration': {
+          color: hexToRgba(style.getPropertyValue('--bf500'), 0.25),
+          key: 'mean'
       }
   };
 
