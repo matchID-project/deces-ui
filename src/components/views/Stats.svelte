@@ -198,6 +198,7 @@
 
   let labels = {
       visitors: 'Visiteurs',
+      duration: 'temps de réponse',
       hits: 'Nombre de requêtes',
       'date_time': 'Mise à jour',
       'static_requests': 'Contenu statique',
@@ -283,11 +284,21 @@
 
     const aggregate = (data, keyCB) => {
         let agg = {};
+        let count = {};
         data.forEach(d => {
             const keyAgg = keyCB(d);
             Object.keys(datasets).forEach(id => {
-                agg[keyAgg] = agg[keyAgg] ? agg[keyAgg] : {};
-                agg[keyAgg][id] = agg[keyAgg][id] ? agg[keyAgg][id] + d[id].count :  d[id].count;
+                if (id !== 'duration') {
+                    agg[keyAgg] = agg[keyAgg] ? agg[keyAgg] : {};
+                    agg[keyAgg][id] = agg[keyAgg][id] ? agg[keyAgg][id] + d[id].count : d[id].count;
+                } else {
+                    if (d[id]) {
+                        agg[keyAgg] = agg[keyAgg] ? agg[keyAgg] : {};
+                        agg[keyAgg][id] = agg[keyAgg][id] ? agg[keyAgg][id] + d[id].delay : d[id].delay;
+                        count[keyAgg] = count[keyAgg] ? count[keyAgg] : {};
+                        count[keyAgg][id] = count[keyAgg][id] ? count[keyAgg][id] + 1 : 1;
+                    }
+                }
             })
         });
         const dataAgg = Object.keys(agg).sort().map(key => {
@@ -295,7 +306,11 @@
                 data: key
             };
             Object.keys(datasets).forEach(id => {
-                d[id] = { count: agg[key][id] }
+                if (id !== 'duration') {
+                    d[id] = { count: agg[key][id] };
+                } else {
+                    d[id] = { mean: agg[key][id]/(count[key] ? (count[key][id]||1) : 1) };
+                }
             });
             return d;
         });
@@ -329,7 +344,8 @@
     autoSkip: true,
     fontFamily : fontFamily,
     callback: smartNumber,
-    maxTicksLimit: 5
+    maxTicksLimit: 5,
+    beginAtZero: true
   };
 
   const options = (view) => {
@@ -506,16 +522,17 @@
         const data = (params[view] && (params[view].dataCB)) ? params[view].dataCB(rawData[view].data) : rawData[view].data;
         return {
             labels: data.map(d => d.data),
-            datasets: Object.keys(datasets).map(id => {
-                    const datasetData = data.map(d => {
+            datasets: Object.keys(datasets)
+                .map(id => {
+                    const datasetData = data.filter(d => d[id]).map(d => {
                         return {
                             x: d.data,
-                            y: d[id].count
+                            y: d[id].count || d[id].mean
                         };
-                    });
+                    })
                     return {
-                        backgroundColor: ( params[view] && params[view].type ) ? datasets[id].color : 'rgba(255,255,255,0)',
-                        borderColor: datasets[id].color,
+                        backgroundColor: datasets[id].color,
+                        borderColor: 'rgba(255,255,255,0)',
                         borderWidth: borderWidth,
                         pointRadius: 0,
                         label:  labels[id] || id,
