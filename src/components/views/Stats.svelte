@@ -41,14 +41,20 @@
                 {/each}
             {/if}
             {#each views.filter(x => !day || !(x === 'hour_of_day_of_week')) as view}
-                <div class="rf-col-xl-6 rf-col-lg-6 rf-col-md-12 rf-col-sm-12 rf-col-xs-12">
+                <div class="rf-col-xl-{expanded[view] ? '12' : '6'} rf-col-lg-{expanded[view] ? '12' : '6'} rf-col-md-12 rf-col-sm-12 rf-col-xs-12">
                     <div class="rf-tile">
+                        <div
+                            class="rf-tile__icon rf-href rf-color--bf"
+                            on:click|preventDefault={() => expanded[view]=!expanded[view]}
+                        >
+                            <Icon icon="{expanded[view] ? 'ic:outline-minus' : 'ri:add-line'}"/>
+                        </div>
                         <div class="rf-tile__body">
                             <h4 class="rf-tile__title rf-padding-bottom-1N">
                                 {labels[view]||view}
                             </h4>
                             <svelte:component
-                                style="max-height: 250px;"
+                                style="max-height: {expanded[view] ? '500' : '250'}px;"
                                 this={params[view] && params[view].type ? params[view].type : Line}
                                 data={rawData && data(view)}
                                 options={rawData && options(view)}
@@ -360,6 +366,9 @@
 
   const stats = ['total_requests', 'failed_requests', 'unique_visitors', 'bandwidth']
   const views = ['visitors', 'hour_of_day_of_week', 'geolocation',  'referring_sites', 'requests', 'browsers'];
+
+  const expanded = {}
+  views.forEach(view => expanded[view] = false);
 
   let datesLabels = {
       months: {
