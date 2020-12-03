@@ -64,7 +64,7 @@ const options = {
 			cleanupOutdatedCaches: true,
 			globDirectory: 'public/',
 			navigateFallback: '/index.html',
-			dontCacheBustURLsMatching: /(Geo|LinkCheck|Line|Bar)-.*js/,
+			globIgnores: [ '{Geo,LinkCheck,Line,Bar}-*.js'],
 			globPatterns: [
 				'index.html',
 				'build/module/main.js',
@@ -75,7 +75,8 @@ const options = {
 				'fonts/Marianne-{Bold,Regular}.woff2',
 				'css/{global,dsfr.min}.css',
 				'build/module/bundle.css'
-			]
+			],
+			ignoreURLParametersMatching: [ new RegExp(`${process.env.BACKEND_PROXY_PATH}.*`) ]
 		}),
 		production && terser()
 	],

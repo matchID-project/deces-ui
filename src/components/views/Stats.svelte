@@ -41,14 +41,20 @@
                 {/each}
             {/if}
             {#each views.filter(x => !day || !(x === 'hour_of_day_of_week')) as view}
-                <div class="rf-col-xl-6 rf-col-lg-6 rf-col-md-12 rf-col-sm-12 rf-col-xs-12">
+                <div class="rf-col-xl-{expanded[view] ? '12' : '6'} rf-col-lg-{expanded[view] ? '12' : '6'} rf-col-md-12 rf-col-sm-12 rf-col-xs-12">
                     <div class="rf-tile">
+                        <div
+                            class="rf-tile__icon rf-href rf-color--bf"
+                            on:click|preventDefault={() => expanded[view]=!expanded[view]}
+                        >
+                            <Icon icon="{expanded[view] ? 'ic:outline-minus' : 'ri:add-line'}"/>
+                        </div>
                         <div class="rf-tile__body">
                             <h4 class="rf-tile__title rf-padding-bottom-1N">
                                 {labels[view]||view}
                             </h4>
                             <svelte:component
-                                style="max-height: 250px;"
+                                style="max-height: {expanded[view] ? '500' : '250'}px;"
                                 this={params[view] && params[view].type ? params[view].type : Line}
                                 data={rawData && data(view)}
                                 options={rawData && options(view)}
@@ -192,6 +198,7 @@
 
   let labels = {
       visitors: 'Visiteurs',
+      duration: 'temps de réponse',
       hits: 'Nombre de requêtes',
       'date_time': 'Mise à jour',
       'static_requests': 'Contenu statique',
@@ -221,18 +228,25 @@
       'bandwidth': 'Bande passante'
   };
 
-  const hexToRgb = (hex) => 'rgba(' + hex.match(/^\s*\#?([\da-f]{2})([\da-f]{2})([\da-f]{2})\s*$/)
-        .slice(1).map(e => parseInt(e, 16)).join(',') + ',255)';
+  const hexToRgb = (hex) => hexToRgba(hex,255);
+
+  const hexToRgba = (hex, alpha) => 'rgba(' + hex.match(/^\s*\#?([\da-f]{2})([\da-f]{2})([\da-f]{2})\s*$/)
+        .slice(1).map(e => parseInt(e, 16)).join(',') + `,${alpha})`;
+
 
   const datasets = {
       'visitors': {
-          color: hexToRgb(style.getPropertyValue('--bf500'))
+          color: hexToRgba(style.getPropertyValue('--bf500'), 0.7)
       },
       'hits': {
-          color: hexToRgb(style.getPropertyValue('--rm500'))
+          color: hexToRgba(style.getPropertyValue('--bf500'), 0.55)
       },
       'bytes': {
-          color: hexToRgb(style.getPropertyValue('--gl500'))
+          color: hexToRgba(style.getPropertyValue('--bf500'), 0.4)
+      },
+      'duration': {
+          color: hexToRgba(style.getPropertyValue('--bf500'), 0.25),
+          key: 'mean'
       }
   };
 
@@ -270,11 +284,21 @@
 
     const aggregate = (data, keyCB) => {
         let agg = {};
+        let count = {};
         data.forEach(d => {
             const keyAgg = keyCB(d);
             Object.keys(datasets).forEach(id => {
-                agg[keyAgg] = agg[keyAgg] ? agg[keyAgg] : {};
-                agg[keyAgg][id] = agg[keyAgg][id] ? agg[keyAgg][id] + d[id].count :  d[id].count;
+                if (id !== 'duration') {
+                    agg[keyAgg] = agg[keyAgg] ? agg[keyAgg] : {};
+                    agg[keyAgg][id] = agg[keyAgg][id] ? agg[keyAgg][id] + d[id].count : d[id].count;
+                } else {
+                    if (d[id]) {
+                        agg[keyAgg] = agg[keyAgg] ? agg[keyAgg] : {};
+                        agg[keyAgg][id] = agg[keyAgg][id] ? agg[keyAgg][id] + d[id].delay : d[id].delay;
+                        count[keyAgg] = count[keyAgg] ? count[keyAgg] : {};
+                        count[keyAgg][id] = count[keyAgg][id] ? count[keyAgg][id] + 1 : 1;
+                    }
+                }
             })
         });
         const dataAgg = Object.keys(agg).sort().map(key => {
@@ -282,7 +306,11 @@
                 data: key
             };
             Object.keys(datasets).forEach(id => {
-                d[id] = { count: agg[key][id] }
+                if (id !== 'duration') {
+                    d[id] = { count: agg[key][id] };
+                } else {
+                    d[id] = { mean: agg[key][id]/(count[key] ? (count[key][id]||1) : 1) };
+                }
             });
             return d;
         });
@@ -316,7 +344,8 @@
     autoSkip: true,
     fontFamily : fontFamily,
     callback: smartNumber,
-    maxTicksLimit: 5
+    maxTicksLimit: 5,
+    beginAtZero: true
   };
 
   const options = (view) => {
@@ -360,6 +389,9 @@
 
   const stats = ['total_requests', 'failed_requests', 'unique_visitors', 'bandwidth']
   const views = ['visitors', 'hour_of_day_of_week', 'geolocation',  'referring_sites', 'requests', 'browsers'];
+
+  const expanded = {}
+  views.forEach(view => expanded[view] = false);
 
   let datesLabels = {
       months: {
@@ -490,16 +522,17 @@
         const data = (params[view] && (params[view].dataCB)) ? params[view].dataCB(rawData[view].data) : rawData[view].data;
         return {
             labels: data.map(d => d.data),
-            datasets: Object.keys(datasets).map(id => {
-                    const datasetData = data.map(d => {
+            datasets: Object.keys(datasets)
+                .map(id => {
+                    const datasetData = data.filter(d => d[id]).map(d => {
                         return {
                             x: d.data,
-                            y: d[id].count
+                            y: d[id].count || d[id].mean
                         };
-                    });
+                    })
                     return {
-                        backgroundColor: ( params[view] && params[view].type ) ? datasets[id].color : 'rgba(255,255,255,0)',
-                        borderColor: datasets[id].color,
+                        backgroundColor: datasets[id].color,
+                        borderColor: 'rgba(255,255,255,0)',
                         borderWidth: borderWidth,
                         pointRadius: 0,
                         label:  labels[id] || id,
