@@ -64,7 +64,11 @@ const options = {
 			cleanupOutdatedCaches: true,
 			globDirectory: 'public/',
 			navigateFallback: '/index.html',
-			dontCacheBustURLsMatching: /(Geo|LinkCheck|Line|Bar)-.*js/,
+			globIgnores: [
+				'*/api/*',
+				'stats/*json',
+				'{Geo,LinkCheck,Line,Bar}-*.js'
+			],
 			globPatterns: [
 				'index.html',
 				'build/module/main.js',
