@@ -2,3 +2,6 @@ backup
 esdata
 data
 deces-backend
+stats
+log
+node_modules
