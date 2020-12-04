@@ -76,7 +76,7 @@ const options = {
 				'css/{global,dsfr.min}.css',
 				'build/module/bundle.css'
 			],
-			ignoreURLParametersMatching: [ new RegExp(`${process.env.BACKEND_PROXY_PATH}.*`) ]
+			navigateFallbackDenylist: [ new RegExp(`${process.env.BACKEND_PROXY_PATH}.*`) ]
 		}),
 		production && terser()
 	],
