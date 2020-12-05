@@ -44,7 +44,7 @@
                 <div class="rf-col-xl-{expanded[view] ? '12' : '6'} rf-col-lg-{expanded[view] ? '12' : '6'} rf-col-md-12 rf-col-sm-12 rf-col-xs-12">
                     <div class="rf-tile">
                         <div
-                            class="rf-tile__icon rf-href rf-color--bf"
+                            class="rf-tile__icon rf-href rf-color--bf rf-hide--mobile"
                             on:click|preventDefault={() => expanded[view]=!expanded[view]}
                         >
                             <Icon icon="{expanded[view] ? 'ic:outline-minus' : 'ri:add-line'}"/>
@@ -198,7 +198,7 @@
 
   let labels = {
       visitors: 'Visiteurs',
-      duration: 'temps de réponse',
+      duration: 'Temps de réponse',
       hits: 'Nombre de requêtes',
       'date_time': 'Mise à jour',
       'static_requests': 'Contenu statique',
@@ -367,8 +367,12 @@
         },
         legend: {
             labels: {
-                fontFamily: fontFamily
-            }
+                fontFamily: fontFamily,
+                boxWidth: 20,
+                fontSize: 8,
+                padding: 6
+            },
+            position: 'bottom'
         },
         scales: {
             yAxes: Object.keys(datasets).map((id, i) => {
