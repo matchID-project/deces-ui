@@ -15,20 +15,22 @@ import { URLSearchSubmit } from './search.js';
 export const routes = {
     '/': {
         component: Search,
-        title: 'Moteur de recherche des personnes décédées'
+        title: 'Moteur de recherche des personnes décédées',
+        desc: 'Moteur de recherche gratuit des personnes décédées, basé sur la source des fichiers de décès INSEE (1970 à aujourd\'hui)',
     },
     '/search': {
         component: Search,
         title: 'Moteur de recherche des personnes décédées',
+        desc: 'Moteur de recherche gratuit des personnes décédées, basé sur la source des fichiers de décès INSEE (1970 à aujourd\'hui)',
         query: ['view', 'advanced', 'fuzzy',
         'ln', 'fn', 'sex','bd','bc','bdep','bco',
         'dd','dc','ddep','dco','dage'],
         cb: (query) => URLSearchSubmit(new URLSearchParams(query))
     },
-    '/about': { component: Default, props: {title: 'À propos'}, title: 'À propos'},
-    '/link': { component: Link, title: 'Appariement' },
-    '/stats': { component: Stats, title: 'statistiques de fréquentation' },
-    '/notFound': { component: Default, props: {title: 'Pas de page à l\'adresse indiquée'}, title: 'Pas de page à l\'adresse indiquée' },
+    '/about': { component: Default, props: {title: 'À propos'}, title: 'À propos', desc: 'À propos de matchID: conditions légales données et code opensource, foire aux questions, documentation de l\'API, statistiques de consultation, ...'},
+    '/link': { component: Link, title: 'Appariement', desc: 'matchID permet l\'appariement de votre fichier client, jusque 1 million d\'enregistrements, au fichier des décès de l`INSEE' },
+    '/stats': { component: Stats, title: 'statistiques de fréquentation', desc: 'statistiques de consultation de deces.matchid.io: visiteurs uniques, appels API, ... historique depuis début 2020' },
+    '/notFound': { component: Default, props: { title: 'Pas de page à l\'adresse indiquée'}, title: '404 - Pas de page à l\'adresse indiquée', desc: '404' },
 };
 
 const rs = route.subscribe((value) => {

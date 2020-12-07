@@ -56,10 +56,21 @@
 
 	$: if ($route.path === '/search') (URLSearchSubmit(new URLSearchParams(location.search)));
 
+	const setCanonical = (url) => {
+		var link = !!document.querySelector("link[rel='canonical']") ? document.querySelector("link[rel='canonical']") : document.createElement('link');
+		link.setAttribute('rel', 'canonical');
+		link.setAttribute('href', url);
+		document.head.appendChild(link);
+	}
+
 	$: if ($wasSearched && ($route.path === '/search')) {
-			document.title = `matchID - ${$wasSearched}`
+			document.title = `matchID - résultats pour ${$wasSearched}`;
+			document.querySelector('meta[name="description"]').setAttribute("content", `résultats de la recherche pour ${$wasSearched}`);
+			setCanonical(window.location.href);
 		} else {
 	        document.title = `matchID - ${routes[$route.path].title}`;
+			document.querySelector('meta[name="description"]').setAttribute("content", routes[$route.path].desc);
+	        setCanonical(window.location.href.replace(/#.*/,'').replace(/\?.*/,''));
 		};
 
 	$: element = document.getElementById('infoNotWorking');
