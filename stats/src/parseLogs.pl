@@ -86,8 +86,7 @@ sub addReportItem {
         $item{'duration'}{'mean'} = $c{$var}{$val}{'duration'}/$c{$var}{$val}{'hits_duration'};
     }
     if (($var eq 'ymd') && (($range eq 'ym') || ($range eq '')) && ($val ne $c{'current'}{'ymd'})) {
-        # memory spare hack for past ymd
-        $item{'visitors'}{'count'} = $c{$var}{$val}{'visitors'};
+        $item{'visitors'}{'count'} = 0 + $c{$var}{$val}{'visitors'};
     } else {
         if ($c{$var}{$val}{'visitors'}{'prune_count'}) {
             # memory spare for low counts
@@ -184,13 +183,31 @@ sub flushResults {
     undef(%cache);
     if ($range eq 'ymd') {
         # uniq visitors for past days do not need to be fully kept
-        $c{'ymd'}{$c{'current'}{'ymd'}}{'visitors'} = scalar keys(%{$c{'ymd'}{$c{'current'}{'ymd'}}{'visitors'}});
+        foreach $key (keys(%{$c{'ymd'}})) {
+            if ($key le $c{'current'}{'ymd'}) {
+                if (keys(%{$c{'ymd'}{$key}{'visitors'}})) {
+                    $c{'ymd'}{$key}{'visitors'} = scalar keys(%{$c{'ymd'}{$key}{'visitors'}});
+                }
+            }
+        }
     }
     if ($range eq 'yw') {
-        $c{'yw'}{$c{'current'}{'yw'}}{'visitors'} = scalar keys(%{$c{'yw'}{$c{'current'}{'yw'}}{'visitors'}});
+        foreach $key (keys(%{$c{'yw'}})) {
+            if ($key le $c{'current'}{'yw'}) {
+                if (keys(%{$c{'yw'}{$key}{'visitors'}})) {
+                    $c{'yw'}{$key}{'visitors'} = scalar keys(%{$c{'yw'}{$key}{'visitors'}});
+                }
+            }
+        }
     }
     if ($range eq 'ym') {
-        $c{'ym'}{$c{'current'}{'ym'}}{'visitors'} = scalar keys(%{$c{'ym'}{$c{'current'}{'ym'}}{'visitors'}});
+        foreach $key (keys(%{$c{'ym'}})) {
+            if ($key le $c{'current'}{'ym'}) {
+                if (keys(%{$c{'ym'}{$key}{'visitors'}})) {
+                    $c{'ym'}{$key}{'visitors'} = scalar keys(%{$c{'ym'}{$key}{'visitors'}});
+                }
+            }
+        }
         # monthly aggregate lowcounts of previous month in general counts, not keeping all uniq ipfw
         foreach $var (qw/general browser requestCategory dowh geolocation from/) {
             foreach $val (keys(%{$c{$var}})) {
