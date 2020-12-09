@@ -465,10 +465,10 @@ export const version = writable({
     ui: '__APP__ version __APP_VERSION__',
     data: {
         version: '328f8782',
-        updateDate: '12/11/2020',
-        lastRecordDate: '31/10/2020',
-        lastDataset: 'deces-2020-m10',
-        recordsCount: 25464172
+        updateDate: '09/12/2020',
+        lastRecordDate: '30/11/2020',
+        lastDataset: 'deces-2020-m11',
+        recordsCount: 25528867
     }
 })
 
