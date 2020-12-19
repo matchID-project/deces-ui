@@ -76,7 +76,10 @@ const options = {
 				'css/{global,dsfr.min}.css',
 				'build/module/bundle.css'
 			],
-			navigateFallbackDenylist: [ new RegExp(`${process.env.BACKEND_PROXY_PATH}.*`) ]
+			navigateFallbackDenylist: [
+				new RegExp(`${process.env.BACKEND_PROXY_PATH}.*`),
+				new RegExp(`${process.env.DATAGOUV_PROXY_PATH}.*`)
+			]
 		}),
 		production && terser()
 	],
