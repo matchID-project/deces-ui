@@ -37,13 +37,13 @@
                                 <p class="rf-card__desc rf-margin-0">
                                     <span class="{expand ? "" : "rf-text--xs"}">
                                         <span class="rf-hide--mobile">
-                                            { cityString(result.birth.location.city) }
+                                            { cityString(result.birth.location.city, false) }
                                         </span>
                                         { dateFormat(result.birth.date) }
                                         {#if result.death}
                                             -
                                             <span class="rf-hide--mobile">
-                                                { cityString(result.death.location.city) }
+                                                { cityString(result.death.location.city, false) }
                                             </span>
                                             { dateFormat(result.death.date) }
                                         {/if}
@@ -75,94 +75,23 @@
                             </span>
                             <div class="rf-container-fluid">
                                 <div class="rf-grid-row">
-                                    <div class="rf-col-xs-12 rf-col-sm-12 rf-col-md-6 rf-cold-rf-col-xl-6">
-                                        <span><strong>Naissance</strong></span>
-                                        <table class="rf-table rf-table--narrow rf-table--striped">
-                                            <tbody>
-                                                <tr>
-                                                    <td>Nom</td>
-                                                    <td>{result.name.last}</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Prénom(s)</td>
-                                                    <td>
-                                                        {
-                                                            result.name.first
-                                                                ? result.name.first.join(' ')
-                                                                : '(sans prénom)'
-                                                        }
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Sexe</td>
-                                                    <td>
-                                                        { result.sex === 'M' ? 'masculin' : 'féminin' }
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Date</td>
-                                                    <td>{dateFormat(result.birth.date)}</td>
-                                                </tr>
-                                                <PlaceInCard
-                                                    city={result.birth.location.city}
-                                                    cityCode={result.birth.location.cityCode}
-                                                    department={result.birth.location.departmentCode}
-                                                    country={result.birth.location.country}
-                                                    countryCode={result.birth.location.countryCode}
-                                                />
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                    {#if result.death}
+                                    {#each Object.keys(conf) as column}
                                         <div class="rf-col-xs-12 rf-col-sm-12 rf-col-md-6 rf-cold-rf-col-xl-6">
-                                            <span><strong>Décès</strong></span>
+                                            <span><strong>{ column }</strong></span>
                                             <table class="rf-table rf-table--narrow rf-table--striped">
                                                 <tbody>
-                                                    <tr>
-                                                        <td>Date</td>
-                                                        <td>
-                                                            {dateFormat(result.death.date)}
-                                                        </td>
-                                                    </tr>
-                                                    {#if result.death.age && result.death.age>1}
-                                                        <tr>
-                                                            <td>Age</td>
-                                                            <td>{result.death.age} ans</td>
-                                                        </tr>
-                                                    {/if}
-                                                    <PlaceInCard
-                                                        city={result.death.location.city}
-                                                        cityCode={result.death.location.cityCode}
-                                                        department={result.death.location.departmentCode}
-                                                        country={result.death.location.country}
-                                                        countryCode={result.death.location.countryCode}
-                                                    />
-                                                    <tr>
-                                                        <td>Acte n°</td>
-                                                        <td>
-                                                            {
-                                                                result.death.certificateId
-                                                                ? result.death.certificateId
-                                                                : "ND"
-                                                            }
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Source INSEE</td>
-                                                        <td>
-                                                            {#if (result.source && $dataGouvCatalog)}
-                                                                <a href={$dataGouvCatalog[result.source]} target="_blank">
-                                                                    fichier {result.source}
-                                                                </a>
-                                                            {:else}
-                                                                ND
-                                                            {/if}
-                                                        </td>
-                                                    </tr>
+                                                    {#each conf[column] as field}
+                                                        {#if field.value}
+                                                            <tr>
+                                                                <td>{ field.label }</td>
+                                                                <td>{@html field.cb ? field.cb(field.value) : field.value }</td>
+                                                            </tr>
+                                                        {/if}
+                                                    {/each}
                                                 </tbody>
                                             </table>
                                         </div>
-                                    {/if}
+                                    {/each}
                                 </div>
                             </div>
                         </div>
@@ -178,7 +107,6 @@
     import { slide } from 'svelte/transition';
     import { dataGouvCatalog, displayMode, searchInput, activeElement } from '../tools/stores.js';
     import { buildURLParams } from '../tools/search.js';
-    import PlaceInCard from './PlaceInCard.svelte';
     import Icon from './Icon.svelte';
 
     export let result  = undefined;
@@ -190,6 +118,29 @@
 
     $: expand = forceExpand || ($displayMode === 'card-expand');
 
+    let conf = {};
+    $: conf.Naissance = [
+            { label: 'Nom', value: result.name.last },
+            { label: 'Prénom(s)', value: result.name.first, cb: (p) => p ? p.join(' ') : '(sans prénom)' },
+            { label: 'Sexe', value: result.sex, cb: (s) => s === 'M' ? 'masculin' : 'féminin' },
+            { label: 'Date',  value: result.birth.date, cb: dateFormat },
+            { label: 'Commune',  value: [result.birth.location.city, result.birth.location.cityCode], cb: (c) => `${cityString(c[0],true)} (${c[1]})` },
+            { label: 'Département',  value: result.birth.location.departmentCode },
+            { label: 'Pays',  value: [ result.birth.location.country, result.birth.location.countryCode], cb: (c) => `${c[0]}${c[1] ? ` (${c[1]})` : ''}` }
+        ];
+    $: if (result.death) {
+        conf['Décès'] = [
+            { label: 'Date',  value: result.death.date, cb: dateFormat },
+            { label: 'Age',  value: result.death.age, cb: (a) => `${a} ans`},
+            { label: 'Commune',  value: [result.death.location.city, result.death.location.cityCode], cb: (c) => `${cityString(c[0],true)} (${c[1]})` },
+            { label: 'Département',  value: result.death.location.departmentCode },
+            { label: 'Pays',  value: [result.death.location.country, result.death.location.countryCode], cb: (c) => `${c[0]}${c[1] ? ` (${c[1]})` : ''}` },
+            { label: 'Acte n°',  value: result.death.certificateId },
+            { label: 'Source INSEE',  value: $dataGouvCatalog && result.source, cb: (s) => `<a href=${$dataGouvCatalog[s]} title="source INSEE ${s}" target="_blank">fichier ${s}</a>` }
+        ]
+    } else {
+        conf['Décès'] && delete conf['Décès'];
+    };
 
     const toggleExpand = () => {
         expand = !expand;
@@ -234,11 +185,11 @@
         );
     };
 
-    const cityString = (city) => {
+    const cityString = (city, full) => {
         return city
             ? ( Array.isArray(city)
-                ? (city.some(x => !x.match(/arrondissement/i))
-                    ? city.filter(x => !x.match(/arrondissement/i))[0]
+                ? (city.some(x => full ? x.match(/arrondissement/i) : !x.match(/arrondissement/i))
+                    ? city.filter(x => full ? x.match(/arrondissement/i) : !x.match(/arrondissement/i))[0]
                     : city[0])
                 : city)
             : ''
