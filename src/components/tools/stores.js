@@ -150,7 +150,7 @@ export const searchInput = writable({
         path: "death.date",
         url: "dd",
         before: "le",
-        section:"décès",
+        section:"Décès",
         value: "",
         field: "DATE_DECES",
         sortField: "DATE_DECES.raw",
