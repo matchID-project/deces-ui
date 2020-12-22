@@ -136,7 +136,7 @@
             { label: 'Département',  value: result.death.location.departmentCode },
             { label: 'Pays',  value: [result.death.location.country, result.death.location.countryCode], cb: (c) => `${c[0]}${c[1] ? ` (${c[1]})` : ''}` },
             { label: 'Acte n°',  value: result.death.certificateId },
-            { label: 'Source INSEE',  value: $dataGouvCatalog && result.source, cb: (s) => `<a href=${$dataGouvCatalog[s]} title="source INSEE ${s}" target="_blank">fichier ${s}</a>` }
+            { label: 'Source INSEE',  value: $dataGouvCatalog && [result.source, result.sourceLine], cb: (s) => `<a href=${$dataGouvCatalog[s[0]]} title="source INSEE ${s[0]}" target="_blank">fichier ${s[0]}</a>, ligne n°${s[1]}` }
         ]
     } else {
         conf['Décès'] && delete conf['Décès'];
