@@ -165,7 +165,7 @@
             lastName: { url: 'ln', value: r.name.last },
             firstName: { url: 'fn', value: r.name.first },
             birthDate: { url: 'bd', value: dateFormat(r.birth.date) },
-            birthCity: { url: 'bc', value: r.birth.location.city },
+            birthCity: { url: 'bc', value: Array.isArray(r.birth.location.city) ? r.birth.location.city[0] :r.birth.location.city },
         }
         if (r.death) {
             params.deathDate = { url: 'dd', value: dateFormat(r.death && r.death.date) };
