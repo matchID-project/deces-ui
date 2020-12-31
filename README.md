@@ -11,11 +11,15 @@ Ce service vise à permettre la recherche directe de personnes décédées. Il e
 délivrée par l'<a href="https://www.insee.fr/fr/information/4190491">INSEE</a> et
 diffusée par <a href="https://www.data.gouv.fr/fr/datasets/fichier-des-personnes-decedees/">data.gouv.fr</a>.
 
-Ce service utilise l'intégralité des données INSEE, soit environ 25 millions d'enregistrements.
+Ce service utilise l'intégralité des données INSEE, soit plus de 25 millions d'enregistrements.
 Il concerne les déclarations de décès retransmises vers l'INSEE depuis 1970 jusqu'au mois précédent.
 Seules les personnes ayant eu un numéro INSEE et ayant fait l'objet d'une déclaration de décès, en mairie ou
 en consulat sont enregistrées. Le délai de déclaration et de transmission peut être variable (personnes disparues, ou
 recherches historiques e.g. identifications tardives après guerre).
+
+Le service de recherche est disponilbe depuis le 1er janvier 2002 sur <a href="https://deces.matchid.io" title="deces.matchid.io" target="_blank">deces.matchid.io</a>. Un service d'appariement en masse est également <a href="https://deces.matchid.io/link" title="deces.matchid.io" target="_blank">disponible ici</a>.
+
+La présentation de l'ensemble des services matchID est disponible sur le site <a href="https://matchid.io" title="matchid.io" target="_blank">matchid.io</a>.
 
 # Traitement des données avec matchID
 Les données sont traitées avec l'outil opensource <a href="https://matchid.io">matchID</a> (Python/Pandas). Les traitements, disponibles
