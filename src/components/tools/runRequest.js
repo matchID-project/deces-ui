@@ -5,20 +5,30 @@ let myCachedResponses;
 
 let r = cachedResponses.subscribe((value) => { myCachedResponses = value });
 
-const apiPath = '__BACKEND_PROXY_PATH__/search';
+const apiSearchPath = '__BACKEND_PROXY_PATH__/search';
+const apiIdPath = '__BACKEND_PROXY_PATH__/id';
 
-export default async function runRequest(body, cache=true) {
-  let hash = sum(body);
+export const runSearchRequest = async (body, cache=true) => {
+  return await runRequest(apiSearchPath, 'POST', body, cache);
+};
+
+export const runIdRequest = async (id, cache=true) => {
+  return await runRequest(apiIdPath, 'GET', id, cache);
+};
+
+const runRequest = async (apiPath, method, request, cache=true) => {
+  let hash = sum(request);
   if (cache && myCachedResponses[hash]) {
     if ((Date.now() - myCachedResponses[hash].date) < scrollIdTimeout) {
       return myCachedResponses[hash].response;
     }
   }
-  const response = await fetch(apiPath, {
+  const response = await fetch(`${apiPath}${method === 'GET' ? '/' + request : ''}`,
+    method === "POST" ? {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body)
-    });
+      body: JSON.stringify(request)
+    } : { method: 'GET'});
   if (response.status >= 400) {
     let json;
     try {

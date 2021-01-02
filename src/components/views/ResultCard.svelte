@@ -106,7 +106,6 @@
 <script>
     import { slide } from 'svelte/transition';
     import { dataGouvCatalog, displayMode, searchInput, activeElement } from '../tools/stores.js';
-    import { buildURLParams } from '../tools/search.js';
     import Icon from './Icon.svelte';
 
     export let result  = undefined;
@@ -151,26 +150,13 @@
     }
 
     const link = (result) => {
-        return `${location.origin}/search?${resultURL(result)}`;
+        return `${location.origin}/id/${result.id}`;
     }
 
     const copyLink = (result) => {
         navigator.clipboard.writeText(link(result));
         linkCopied = true;
         setTimeout(() => linkCopied = false, 5000)
-    }
-
-    const resultURL = (r) => {
-        const params = {
-            lastName: { url: 'ln', value: r.name.last },
-            firstName: { url: 'fn', value: r.name.first },
-            birthDate: { url: 'bd', value: dateFormat(r.birth.date) },
-            birthCity: { url: 'bc', value: Array.isArray(r.birth.location.city) ? r.birth.location.city[0] :r.birth.location.city },
-        }
-        if (r.death) {
-            params.deathDate = { url: 'dd', value: dateFormat(r.death && r.death.date) };
-        }
-        return buildURLParams(params, true, false, 'card-expand', undefined, 1);
     }
 
     const dateFormat = (dateString) => {
