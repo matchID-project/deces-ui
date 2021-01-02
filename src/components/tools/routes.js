@@ -1,5 +1,6 @@
 import Default from '../views/Default.svelte';
 import Search from '../views/Search.svelte';
+import ShowId from '../views/ShowId.svelte';
 import Link from '../views/Link.svelte';
 import Stats from '../views/Stats.svelte';
 
@@ -10,13 +11,20 @@ import {
 
 let myRoute;
 
-import { URLSearchSubmit } from './search.js';
+import { URLSearchSubmit, getById } from './search.js';
 
 export const routes = {
     '/': {
         component: Search,
         title: 'Moteur de recherche des personnes décédées',
         desc: 'Moteur de recherche gratuit des personnes décédées, basé sur la source des fichiers de décès INSEE (1970 à aujourd\'hui)',
+    },
+    '/id': {
+        component: ShowId,
+        title: 'Moteur de recherche des personnes décédées',
+        desc: 'Moteur de recherche gratuit des personnes décédées, basé sur la source des fichiers de décès INSEE (1970 à aujourd\'hui)',
+        pathArgs: ['id'],
+        cb: (query) => getById(query)
     },
     '/search': {
         component: Search,
@@ -43,12 +51,23 @@ const rs = route.subscribe((value) => {
             if (`${location.search}`) {
                 window.history.replaceState({}, '', `/search${location.search}`);
             } else {
-                window.history.replaceState({}, '', `/search`);
+                window.history.replaceState({}, '', '/search');
             }
         }
-        route.update(v => { return {path: location.pathname, query: query, hash: location.hash.replace(/\?.*/,'')}; });
+        const paths = location.pathname.split('/');
+        paths.shift();
+        route.update(v => {
+            const vv = {
+                path: `/${paths.shift()}`,
+                params: paths.length && paths,
+                query: query,
+                hash: location.hash.replace(/\?.*/,'')
+            };
+            console.log(vv);
+            return vv;
+        });
     } else if (!Object.keys(routes).includes(myRoute.path)) {
-        window.history.replaceState({}, '', `/notFound`);
+        window.history.replaceState({}, '', '/notFound');
         route.update(v => {
             v.path = '/notFound';
             return v;
@@ -62,17 +81,29 @@ export const goTo =  (r) => {
         return undefined;
     });
     if (Object.keys(routes).includes(r.path)) {
-        const queryString = Object.keys(r.query || {})
-            .filter(k => routes[r.path] && routes[r.path].query && routes[r.path].query.includes(k))
-            .map(k => `${k}=${r.query[k]}`).join('&');
-        if (queryString) {
-            window.history.replaceState({}, '', `${r.path}?${queryString}`);
+        let query;
+        let queryPath;
+        if (r.query && Object.keys(r.query).length) {
+            query = Object.keys(r.query)
+                .filter(k => routes[r.path] && routes[r.path].query && routes[r.path].query.includes(k))
+                .map(k => `${k}=${r.query[k]}`).join('&');
+            queryPath = query && `?${query}`;
+        }
+        if (r.params && r.params.length) {
+            query = {};
+            (routes[r.path] && routes[r.path].params || []).map((k,i) => {
+                query[k] = r.params[i];
+            });
+            queryPath = `/${r.params.join('/')}`;
+        }
+        route.update(v => r);
+        if (queryPath) {
+            window.history.replaceState({}, '', `${r.path}${queryPath}`);
         } else {
             window.history.replaceState({}, '', `${r.path}`);
         }
-        route.update(v => r);
         if (routes[r.path] && routes[r.path].cb) {
-            routes[r.path].cb(queryString);
+            routes[r.path].cb(query);
         }
     } else {
         goTo({path: 'notFound'})
