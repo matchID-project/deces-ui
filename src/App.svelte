@@ -54,7 +54,7 @@
 		}
 	});
 
-	$: if ($route.path === '/search') (URLSearchSubmit(new URLSearchParams(location.search)));
+	$: if ($route.path === '/search') { URLSearchSubmit(new URLSearchParams(location.search)) };
 
 	const setCanonical = (url) => {
 		var link = !!document.querySelector("link[rel='canonical']") ? document.querySelector("link[rel='canonical']") : document.createElement('link');
