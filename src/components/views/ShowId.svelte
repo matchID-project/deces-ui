@@ -49,8 +49,29 @@
             result = await getById({id: paths[2]});
         }
         $waitSearch = false;
-        $wasSearched = true;
+        $wasSearched = toString(result);
     })
+
+    const toString = (r) => {
+        return `${r.name.last.toUpperCase()}
+        ${r.name.first ? r.name.first.join(' ') : ''}${r.death.age ? ` ${r.death.age} ans`:''},
+        ${cityString(result.birth.location.city, false)} ${dateFormat(r.birth.date)} -
+        ${cityString(result.death.location.city, false)} ${dateFormat(r.death.date)}`
+    }
+
+    const dateFormat = (dateString) => {
+        return dateString.replace(/(\d{4})(\d{2})(\d{2})/,"$3/$2/$1");
+    };
+
+    const cityString = (city, full) => {
+        return city
+            ? ( Array.isArray(city)
+                ? (city.some(x => full ? x.match(/arrondissement/i) : !x.match(/arrondissement/i))
+                    ? city.filter(x => full ? x.match(/arrondissement/i) : !x.match(/arrondissement/i))[0]
+                    : city[0])
+                : city)
+            : ''
+    };
 
 </script>
 

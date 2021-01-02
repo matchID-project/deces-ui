@@ -6,7 +6,8 @@ import Stats from '../views/Stats.svelte';
 
 import {
     route,
-    activeElement
+    activeElement,
+    wasSearched
 } from './stores.js'
 
 let myRoute;
@@ -57,14 +58,12 @@ const rs = route.subscribe((value) => {
         const paths = location.pathname.split('/');
         paths.shift();
         route.update(v => {
-            const vv = {
+            return {
                 path: `/${paths.shift()}`,
-                params: paths.length && paths,
+                params: (paths.length > 0) && paths,
                 query: query,
                 hash: location.hash.replace(/\?.*/,'')
             };
-            console.log(vv);
-            return vv;
         });
     } else if (!Object.keys(routes).includes(myRoute.path)) {
         window.history.replaceState({}, '', '/notFound');
@@ -80,6 +79,7 @@ export const goTo =  (r) => {
         v && v.blur();
         return undefined;
     });
+    wasSearched.update(v => false);
     if (Object.keys(routes).includes(r.path)) {
         let query;
         let queryPath;
