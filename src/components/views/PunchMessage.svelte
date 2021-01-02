@@ -10,11 +10,18 @@
     <div class="rf-col-xs-0 rf-col-md-3"></div>
     <div class="rf-col-xs-12 rf-col-md-6">
       <p class="rf-text--lead">
-        {#if $themeDnum}
-          <strong>DNUM</strong> - Sous direction de l'innovation et de la transformation numérique
-        {:else}
-          Recherchez parmi <strong>25 millions de décès</strong> depuis 1970 dans les enregistrements officiels de l'INSEE
-        {/if}
+        <a
+          href="/search"
+          class="rf-href"
+          title="Recherche"
+          on:click|preventDefault={() => goTo({path: '/search'})}
+        >
+          {#if $themeDnum}
+            <strong>DNUM</strong> - Sous direction de l'innovation et de la transformation numérique
+          {:else}
+            Recherchez parmi <strong>25 millions de décès</strong> depuis 1970 dans les enregistrements officiels de l'INSEE
+          {/if}
+        </a>
       </p>
       {#if $version}
         <p class="rf-text--xs rf-padding-top-2N">
@@ -35,7 +42,12 @@
 
 <script>
   import { version, themeDnum } from '../tools/stores.js'
+  import { goTo } from '../tools/routes.js'
 </script>
 
 <style>
+  a {
+    text-decoration: none!important;
+    box-shadow: none!important;
+  }
 </style>
