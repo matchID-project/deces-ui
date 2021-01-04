@@ -54,7 +54,7 @@
 		}
 	});
 
-	$: if ($route.path === '/search') (URLSearchSubmit(new URLSearchParams(location.search)));
+	$: if ($route.path === '/search') { URLSearchSubmit(new URLSearchParams(location.search)) };
 
 	const setCanonical = (url) => {
 		var link = !!document.querySelector("link[rel='canonical']") ? document.querySelector("link[rel='canonical']") : document.createElement('link');
@@ -63,8 +63,8 @@
 		document.head.appendChild(link);
 	}
 
-	$: if ($wasSearched && ($route.path === '/search')) {
-			document.title = `matchID - résultats pour ${$wasSearched}`;
+	$: if ($wasSearched && ['/search','/id'].includes($route.path)) {
+			document.title = `matchID - ${$route.path === '/search' ? 'résultats pour ' : ''}${$wasSearched}`;
 			document.querySelector('meta[name="description"]').setAttribute("content", `résultats de la recherche pour ${$wasSearched}`);
 			setCanonical(window.location.href);
 		} else {

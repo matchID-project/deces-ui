@@ -24,7 +24,7 @@ import {
 } from './stores.js'
 
 import buildRequest from "./buildRequest.js";
-import runRequest from "./runRequest.js";
+import { runSearchRequest, runIdRequest } from "./runRequest.js";
 import buildResults from "./buildResults.js";
 import buildState from "./buildState.js";
 
@@ -96,11 +96,16 @@ export const searchString = (searchInput) => {
       }).filter(x => x).join(' ');
 };
 
+export const getById = async ({id: id}) => {
+    const json = await runIdRequest(id);
+    return json && json.response && json.response.persons && json.response.persons.map(correct)[0];
+}
+
 export const search = async (searchInput, newCurrent) => {
     if (newCurrent) { current.update(v => newCurrent) }
     else { current.update(v => 1) }
     const request = buildRequest(searchInput);
-    const json = await runRequest(request);
+    const json = await runSearchRequest(request);
     return json && json.response;
 };
 
