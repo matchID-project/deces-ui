@@ -72,6 +72,8 @@
               {#if Geo}
                 <svelte:component this={Geo}/>
               {/if}
+            {:else if ($displayMode === 'agg')}
+              AGG
             {/if}
           </div>
           {#if !($displayMode === 'geo')}
