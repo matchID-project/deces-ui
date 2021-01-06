@@ -12,7 +12,7 @@
     "@rollup/plugin-replace": "^2.3.3",
     "register-service-worker": "^1.7.1",
     "rollup-plugin-workbox": "^5.2.1",
-    "axios": "^0.20.0",
+    "axios": "^0.21.1",
     "diff": "^4.0.2",
     "geojson2svg": "^1.2.3",
     "hash-sum": "^2.0.0",
