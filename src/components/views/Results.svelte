@@ -73,10 +73,10 @@
                 <svelte:component this={Geo}/>
               {/if}
             {:else if ($displayMode === 'agg')}
-              AGG
+              <Aggregations />
             {/if}
           </div>
-          {#if !($displayMode === 'geo')}
+          {#if !(['geo', 'agg'].includes($displayMode))}
             <div class="rf-col-12 rf-content--center rf-margin-top-1N rf-margin-bottom-2N">
               <Pagination/>
             </div>
@@ -96,6 +96,7 @@
   import('./Geo.svelte').then(module => {
     Geo = module.default;
   });
+  import Aggregations from './Aggregations.svelte';
   import Pagination from './Pagination.svelte';
   import ResultCard from "./ResultCard.svelte";
   import ResultRow from "./ResultRow.svelte";
