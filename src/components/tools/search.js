@@ -159,7 +159,7 @@ export const buildURLParams = (localSearchInput, localAdvancedSearch, localFuzzy
     } else {
         params.delete('fuzzy');
     }
-    if (['geo','table','card-expand'].includes(localDisplayMode)) {
+    if (['geo', 'agg', 'table','card-expand'].includes(localDisplayMode)) {
         params.set('view', localDisplayMode);
     } else {
         params.delete('view');
