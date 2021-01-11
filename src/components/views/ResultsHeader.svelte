@@ -16,12 +16,12 @@
                         {/if}
                     </span>
             </td>
-            {#if (!($displayMode === 'geo') && ($totalPages > 1))}
+            {#if (!(['geo', 'agg'].includes($displayMode)) && ($totalPages > 1))}
                 <td class="rf-display--xl rf-td--vcenter rf-text--center">
                     <Pagination/>
                 </td>
             {/if}
-            {#if (!($displayMode === 'geo'))}
+            {#if (!(['geo', 'agg'].includes($displayMode)))}
                 {#if $totalPages > 1}
                     <td class="rf-hide--mobile rf-td--vcenter rf-text--center rf-text--right" style="width: 100px;">
                         <label for="per-page">par page</label>
