@@ -110,7 +110,7 @@ export ES_VERSION = 7.10.1
 export ES_BACKUP_BASENAME := esdata
 export DATAPREP_VERSION_FILE = ${APP_PATH}/.dataprep.sha1
 export DATA_VERSION_FILE = ${APP_PATH}/.data.sha1
-export FILES_TO_PROCESS=deces-([0-9]{4}|2020-m[0-9]{2}).txt.gz
+export FILES_TO_PROCESS=deces-([0-9]{4}|2021-m[0-9]{2}).txt.gz
 
 vm_max_count            := $(shell cat /etc/sysctl.conf | egrep vm.max_map_count\s*=\s*262144 && echo true)
 
