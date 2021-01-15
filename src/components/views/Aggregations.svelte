@@ -9,6 +9,23 @@
         </div>
         <div class="rf-tile__body">
           <h4 class="rf-tile__title rf-padding-bottom-1N">
+            Departement de décès
+          </h4>
+          <FranceChroropleth data={fictifData["departements"]} />
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="rf-grid-row rf-grid-row--gutters">
+    <div class="rf-col-xl-{true ? '12' : '6'} rf-col-lg-{true ? '12' : '6'} rf-col-md-12 rf-col-sm-12 rf-col-xs-12">
+      <div class="rf-tile">
+        <div
+          class="rf-tile__icon rf-href rf-color--bf rf-hide--mobile"
+          >
+          <Icon icon="{true ? 'ic:outline-minus' : 'ri:add-line'}"/>
+        </div>
+        <div class="rf-tile__body">
+          <h4 class="rf-tile__title rf-padding-bottom-1N">
             Date de décès
           </h4>
           <Line style="max-height: {true ? '500' : '250'}px;" data={fictifData["birthDate"] && fictifData["birthDate"]} options={fictifData["birthDate"] && myOptions} />
@@ -40,6 +57,7 @@
 <script>
   import { onMount } from 'svelte';
   import Icon from './Icon.svelte';
+  import FranceChroropleth from './FranceChoropleth.svelte';
   import Line from "svelte-chartjs/src/Line.svelte"
   import Pie from "svelte-chartjs/src/Pie.svelte"
   import {
@@ -87,7 +105,16 @@
       }]
     }
 
-    console.log("fictif", fictifData["sex"]);
+    fictifData["departements"] = {
+      labels: ["06"],
+      datasets: [{
+        label: "décès",
+        yAxisID: "death number",
+        data: [{y: 100}]
+      }]
+    }
+
+
   })
 
   const months = {'01': 'janvier', '02': 'février', '03': 'mars', '04': 'avril', '05': 'mai', '06': 'juin', '07': 'juillet', '08': 'août', '09': 'septembre', '10': 'octobre', '11': 'novembre', '12': 'décembre'}
