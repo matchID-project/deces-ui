@@ -1,4 +1,5 @@
 <div class="rf-container">
+  {#if fictifData["departementsBar"]}
   <div class="rf-grid-row rf-grid-row--gutters">
     <div class="rf-col-xl-{expanded["departements"] ? '12' : '6'} rf-col-lg-{expanded["departements"] ? '12' : '6'} rf-col-md-12 rf-col-sm-12 rf-col-xs-12">
       <div class="rf-tile">
@@ -16,7 +17,24 @@
         </div>
       </div>
     </div>
+    <div class="rf-col-xl-{expanded["departementsBar"] ? '12' : '6'} rf-col-lg-{expanded["departementsBar"] ? '12' : '6'} rf-col-md-12 rf-col-sm-12 rf-col-xs-12">
+      <div class="rf-tile">
+        <div
+          class="rf-tile__icon rf-href rf-color--bf rf-hide--mobile"
+          on:click|preventDefault={() => expanded["departementsBar"]=!expanded["departementsBar"]}
+          >
+          <Icon icon="{expanded["departementsBar"] ? 'ic:outline-minus' : 'ri:add-line'}"/>
+        </div>
+        <div class="rf-tile__body">
+          <h4 class="rf-tile__title rf-padding-bottom-1N">
+            Departement de décès
+          </h4>
+          <Bar data={fictifData["departementsBar"] && fictifData["departementsBar"]} />
+        </div>
+      </div>
+    </div>
   </div>
+  {/if}
   <div class="rf-grid-row rf-grid-row--gutters">
     <div class="rf-col-xl-{expanded["birthDate"] ? '12' : '6'} rf-col-lg-{expanded["birthDate"] ? '12' : '6'} rf-col-md-12 rf-col-sm-12 rf-col-xs-12">
       <div class="rf-tile">
@@ -63,6 +81,7 @@
   import FranceChroropleth from './FranceChoropleth.svelte';
   import Line from "svelte-chartjs/src/Line.svelte"
   import Pie from "svelte-chartjs/src/Pie.svelte"
+  import Bar from "svelte-chartjs/src/Bar.svelte"
   import {
     searchInput,
   } from "../tools/stores.js";
@@ -128,6 +147,19 @@
         }]
       }
     }
+
+    fictifData["departementsBar"] = {
+      labels: rawData["deathDepartment"].response.aggregations
+        .sort((a, b) => b.doc_count - a.doc_count)
+        .map(x => x.key["deathDepartment"]),
+      datasets: [{
+        label: "departements",
+        data: rawData["deathDepartment"].response.aggregations
+        .sort((a, b) => b.doc_count - a.doc_count)
+        .map(x => x.doc_count )
+      }]
+    }
+    console.log(fictifData["departementsBar"]);
 
 
   })
