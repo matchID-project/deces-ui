@@ -22,6 +22,7 @@
       <div class="rf-tile">
         <div
           class="rf-tile__icon rf-href rf-color--bf rf-hide--mobile"
+          on:click|preventDefault={() => expanded["birthDate"]=!expanded["birthDate"]}
           >
           <Icon icon="{expanded["birthDate"] ? 'ic:outline-minus' : 'ri:add-line'}"/>
         </div>
@@ -29,7 +30,7 @@
           <h4 class="rf-tile__title rf-padding-bottom-1N">
             Date de décès
           </h4>
-          <Line style="max-height: {expanded["birthDate"] ? '500' : '250'}px;" data={fictifData["birthDate"] && fictifData["birthDate"]} options={fictifData["birthDate"] && myOptions} />
+          <Line style="max-height: {expanded["birthDate"] ? '500' : '250'}px;" data={fictifData["birthDate"] && fictifData["birthDate"]} options={fictifData["birthDate"] && myOptions["birthDate"]} />
         </div>
       </div>
     </div>
@@ -37,6 +38,7 @@
       <div class="rf-tile">
         <div
           class="rf-tile__icon rf-href rf-color--bf rf-hide--mobile"
+          on:click|preventDefault={() => expanded["sex"]=!expanded["sex"]}
           >
           <Icon icon="{expanded["sex"] ? 'ic:outline-minus' : 'ri:add-line'}"/>
         </div>
@@ -45,7 +47,7 @@
             Sexe
           </h4>
           {#if fictifData["sex"]}
-          <Pie style="max-height: {expanded["sex"] ? '500' : '250'}px;" data={fictifData["sex"] && fictifData["sex"]}  />
+            <Pie style="max-height: {expanded["sex"] ? '500' : '250'}px;" data={fictifData["sex"] && fictifData["sex"]} options={fictifData["sex"] && myOptions["sex"]} />
           {/if}
 
         </div>
@@ -198,7 +200,16 @@
 
   let myOptions = {}
   myOptions['birthDate'] = options('birthDate')
-  myOptions['sex'] = options('sex')
+  myOptions['sex'] = {
+    maintainAspectRatio: false,
+    hover: {
+      intersect: false
+    },
+    tooltips: {
+      mode: 'nearest',
+      intersect: false,
+    }
+  }
 
   const getData = async (s) => {
     try {
