@@ -12,7 +12,7 @@
           <h4 class="rf-tile__title rf-padding-bottom-1N">
             Departement de décès
           </h4>
-          <FranceChroropleth data={fictifData["departements"]} />
+          <FranceChroropleth data={fictifData["departements"]} options={myOptions["departements"]} />
         </div>
       </div>
     </div>
@@ -117,6 +117,14 @@
           return {y: x.doc_count}
         })
       }]
+    }
+    myOptions["departements"] = {
+      scales: {
+        yAxes: [{
+          id: "décès",
+          type: "logarithmic",
+        }]
+      }
     }
 
 
