@@ -31,7 +31,7 @@
                     text-anchor={(country.centroid[0] < 120) ? 'start' : 'end'}
                     y={(country.centroid[1] < 80) ? 10 + country.centroid[1] : country.centroid[1] - 40}
                 >
-                        <tspan x={(country.centroid[0] < 120) ? 5 + country.centroid[0] : country.centroid[0] - 5}>{country.id}</tspan>
+                        <tspan x={(country.centroid[0] < 120) ? 5 + country.centroid[0] : country.centroid[0] - 5}>{country.name}</tspan>
                         <tspan x={(country.centroid[0] < 120) ? 5 + country.centroid[0] : country.centroid[0] - 5} dy=10>{labels['décès']}: {value('décès', country.id)}</tspan>
                 </text>
             </g>
@@ -109,6 +109,7 @@
         .map(feature => {
             const country = {
                 id: feature.properties.code,
+                name: feature.properties.nom,
                 path: converter.convert(feature)
             };
             `${country.path[0]}`.replace(/^M/,'').split(/\s+/).forEach(c => {
