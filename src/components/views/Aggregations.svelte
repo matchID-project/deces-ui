@@ -29,7 +29,7 @@
           <h4 class="rf-tile__title rf-padding-bottom-1N">
             Departement de décès
           </h4>
-          <Bar data={fictifData["departementsBar"] && fictifData["departementsBar"]} />
+          <Bar style="max-height: {expanded["departementsBar"] ? '500' : '250'}px;" data={fictifData["departementsBar"] && fictifData["departementsBar"]} options={myOptions["departementsBar"]} />
         </div>
       </div>
     </div>
@@ -103,7 +103,16 @@
 
   let rawData = {};
   let fictifData = {};
+  let departements = {}
+  let geojson;
   const expanded = {}
+
+  $: if (geojson) {
+    geojson.features.filter(feature => feature.geometry && feature.geometry.coordinates)
+      .forEach(feature => {
+        departements[feature.properties.code] = feature.properties.nom;
+      });
+  }
 
   onMount(async () => {
     await getData("birthDate")
@@ -126,6 +135,13 @@
         backgroundColor: rawData["sex"].response.aggregations.map((_, ind) => colors[ind]),
         data: rawData["sex"].response.aggregations.map(x => x.doc_count)
       }]
+    }
+
+    try{
+      const response = await fetch('/simple-french-departments-wdom.json');
+      geojson = await response.json();
+    } catch(e) {
+      console.log(reponse);
     }
 
     await getData("deathDepartment")
@@ -151,7 +167,7 @@
     fictifData["departementsBar"] = {
       labels: rawData["deathDepartment"].response.aggregations
         .sort((a, b) => b.doc_count - a.doc_count)
-        .map(x => x.key["deathDepartment"]),
+        .map(x => departements[x.key["deathDepartment"]]),
       datasets: [{
         label: "departements",
         data: rawData["deathDepartment"].response.aggregations
@@ -159,7 +175,50 @@
         .map(x => x.doc_count )
       }]
     }
-    console.log(fictifData["departementsBar"]);
+
+    myOptions["departementsBar"] = {
+      maintainAspectRatio: false,
+      hover: {
+        intersect: false
+      },
+      tooltips: {
+        mode: 'nearest',
+        intersect: false,
+      },
+      animation: {
+        duration: 0
+      },
+      elements: {
+        line: {
+          tension: 0,
+        }
+      },
+      legend: {
+        display: false,
+        labels: {
+          fontFamily: fontFamily,
+          boxWidth: 20,
+          fontSize: 8,
+          padding: 6
+        },
+        position: 'bottom'
+      },
+      scales: {
+        xAxes: [{
+          id: 'axisDeathDate',
+          type: 'category',
+        }],
+        yAxes: [{
+          id: 'temp-y-axis',
+          type: 'linear',
+          position: 'left',
+          scaleLabel: {
+            display: true,
+            labelString: 'Nombre de personnes décédées'
+          }
+        }]
+      }
+    }
 
 
   })
