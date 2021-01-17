@@ -1,11 +1,12 @@
 <div class="rf-container">
   <div class="rf-grid-row rf-grid-row--gutters">
-    <div class="rf-col-xl-{true ? '12' : '6'} rf-col-lg-{true ? '12' : '6'} rf-col-md-12 rf-col-sm-12 rf-col-xs-12">
+    <div class="rf-col-xl-{expanded["departements"] ? '12' : '6'} rf-col-lg-{expanded["departements"] ? '12' : '6'} rf-col-md-12 rf-col-sm-12 rf-col-xs-12">
       <div class="rf-tile">
         <div
           class="rf-tile__icon rf-href rf-color--bf rf-hide--mobile"
+          on:click|preventDefault={() => expanded["departements"]=!expanded["departements"]}
           >
-          <Icon icon="{true ? 'ic:outline-minus' : 'ri:add-line'}"/>
+          <Icon icon="{expanded["departements"] ? 'ic:outline-minus' : 'ri:add-line'}"/>
         </div>
         <div class="rf-tile__body">
           <h4 class="rf-tile__title rf-padding-bottom-1N">
@@ -17,34 +18,34 @@
     </div>
   </div>
   <div class="rf-grid-row rf-grid-row--gutters">
-    <div class="rf-col-xl-{true ? '12' : '6'} rf-col-lg-{true ? '12' : '6'} rf-col-md-12 rf-col-sm-12 rf-col-xs-12">
+    <div class="rf-col-xl-{expanded["birthDate"] ? '12' : '6'} rf-col-lg-{expanded["birthDate"] ? '12' : '6'} rf-col-md-12 rf-col-sm-12 rf-col-xs-12">
       <div class="rf-tile">
         <div
           class="rf-tile__icon rf-href rf-color--bf rf-hide--mobile"
           >
-          <Icon icon="{true ? 'ic:outline-minus' : 'ri:add-line'}"/>
+          <Icon icon="{expanded["birthDate"] ? 'ic:outline-minus' : 'ri:add-line'}"/>
         </div>
         <div class="rf-tile__body">
           <h4 class="rf-tile__title rf-padding-bottom-1N">
             Date de décès
           </h4>
-          <Line style="max-height: {true ? '500' : '250'}px;" data={fictifData["birthDate"] && fictifData["birthDate"]} options={fictifData["birthDate"] && myOptions} />
+          <Line style="max-height: {expanded["birthDate"] ? '500' : '250'}px;" data={fictifData["birthDate"] && fictifData["birthDate"]} options={fictifData["birthDate"] && myOptions} />
         </div>
       </div>
     </div>
-    <div class="rf-col-xl-{true ? '12' : '6'} rf-col-lg-{true ? '12' : '6'} rf-col-md-12 rf-col-sm-12 rf-col-xs-12">
+    <div class="rf-col-xl-{expanded["sex"] ? '12' : '6'} rf-col-lg-{expanded["sex"] ? '12' : '6'} rf-col-md-12 rf-col-sm-12 rf-col-xs-12">
       <div class="rf-tile">
         <div
           class="rf-tile__icon rf-href rf-color--bf rf-hide--mobile"
           >
-          <Icon icon="{true ? 'ic:outline-minus' : 'ri:add-line'}"/>
+          <Icon icon="{expanded["sex"] ? 'ic:outline-minus' : 'ri:add-line'}"/>
         </div>
         <div class="rf-tile__body">
           <h4 class="rf-tile__title rf-padding-bottom-1N">
             Sexe
           </h4>
           {#if fictifData["sex"]}
-          <Pie style="max-height: {true ? '500' : '250'}px;" data={fictifData["sex"] && fictifData["sex"]}  />
+          <Pie style="max-height: {expanded["sex"] ? '500' : '250'}px;" data={fictifData["sex"] && fictifData["sex"]}  />
           {/if}
 
         </div>
@@ -81,6 +82,7 @@
 
   let rawData = {};
   let fictifData = {};
+  const expanded = {}
 
   onMount(async () => {
     await getData("birthDate")
