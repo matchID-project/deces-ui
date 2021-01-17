@@ -105,12 +105,15 @@
       }]
     }
 
+    await getData("deathDepartment")
     fictifData["departements"] = {
-      labels: ["06"],
+      labels: rawData["deathDepartment"].response.aggregations.map(x => x.key["deathDepartment"]),
       datasets: [{
         label: "décès",
-        yAxisID: "death number",
-        data: [{y: 100}]
+        yAxisID: "décès",
+        data: rawData["deathDepartment"].response.aggregations.map(x => {
+          return {y: x.doc_count}
+        })
       }]
     }
 

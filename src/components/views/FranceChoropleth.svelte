@@ -1,5 +1,5 @@
 <svg {width} {height} viewBox="0 0 260 130">
-    {#if true}
+    {#if countries.length && Object.keys(index).length}
         <g>
         {#each countries as country}
             <path
@@ -24,7 +24,7 @@
                     x={(country.centroid[0] < 120) ? country.centroid[0] : country.centroid[0] - 100}
                     y={(country.centroid[1] < 80) ? country.centroid[1] : country.centroid[1] - 50}
                     width="100"
-                    height="50"
+                    height="30"
                 />
                 <text
                     class="text"
@@ -32,9 +32,7 @@
                     y={(country.centroid[1] < 80) ? 10 + country.centroid[1] : country.centroid[1] - 40}
                 >
                         <tspan x={(country.centroid[0] < 120) ? 5 + country.centroid[0] : country.centroid[0] - 5}>{country.id}</tspan>
-                        <tspan x={(country.centroid[0] < 120) ? 5 + country.centroid[0] : country.centroid[0] - 5} dy=10>{labels['décès']}:{value('décès', country.id)}</tspan>
-                        <tspan x={(country.centroid[0] < 120) ? 5 + country.centroid[0] : country.centroid[0] - 5} dy=10>{labels['hits']}:{value('hits', country.id)}</tspan>
-                        <tspan x={(country.centroid[0] < 120) ? 5 + country.centroid[0] : country.centroid[0] - 5} dy=10>{labels['bytes']}:{value('bytes', country.id)}</tspan>
+                        <tspan x={(country.centroid[0] < 120) ? 5 + country.centroid[0] : country.centroid[0] - 5} dy=10>{labels['décès']}: {value('décès', country.id)}</tspan>
                 </text>
             </g>
         {/each}
@@ -58,7 +56,7 @@
   let countries = [];
   let index = {};
   let scale =  (x, view) => x;
-  let view = 'visitors';
+  let view = 'décès';
 
   const toggle = (id) => {
       if (id !== selected) {
@@ -85,7 +83,6 @@
               max[id] = Math.max(max[id], d.y)
           });
       });
-    console.log("id", max);
   }
 
   $: if (Object.keys(max).length) {
@@ -98,7 +95,12 @@
 
   const converter = geojson2svg({
     viewportExtent: {width: width, height: height},
-    mapExtent: {left: -10, bottom: 39, right: 11, top: 52},
+    mapExtent: {
+      left: -933595.44, 
+      right: 1507265.91,
+      bottom: 2793547.46,
+      top: 6809171.15
+    },
     output: 'path'
   });
 
@@ -125,13 +127,13 @@
   }
 
   const value = (view, id) => {
-      const v = index[id] && data.datasets[index[view]].data[index[id]];
-      return v && v.y || 0;
+    const v = index[id] && data.datasets[index[view]].data[index[id]];
+    return v && v.y || 0;
   }
 
     onMount(async () => {
         try{
-            const response = await fetch('/departements.geojson');
+            const response = await fetch('/simple-french-departments-wdom.json');
             geojson = await response.json();
         } catch(e) {
             console.log(reponse);
