@@ -13,7 +13,7 @@
           <h4 class="rf-tile__title rf-padding-bottom-1N">
             Departement de décès
           </h4>
-          <FranceChroropleth data={fictifData["departements"]} options={myOptions["departements"]} />
+          <FranceChroropleth data={fictifData["departements"]} options={options("departements")} />
         </div>
       </div>
     </div>
@@ -29,7 +29,7 @@
           <h4 class="rf-tile__title rf-padding-bottom-1N">
             Departement de décès
           </h4>
-          <Bar style="max-height: {expanded["departementsBar"] ? '500' : '250'}px;" data={fictifData["departementsBar"] && fictifData["departementsBar"]} options={myOptions["departementsBar"]} />
+          <Bar style="max-height: {expanded["departementsBar"] ? '500' : '250'}px;" data={fictifData["departementsBar"] && fictifData["departementsBar"]} options={options("departementsBar")} />
         </div>
       </div>
     </div>
@@ -48,7 +48,7 @@
           <h4 class="rf-tile__title rf-padding-bottom-1N">
             Date de décès
           </h4>
-          <Line style="max-height: {expanded["birthDate"] ? '500' : '250'}px;" data={fictifData["birthDate"] && fictifData["birthDate"]} options={fictifData["birthDate"] && myOptions["birthDate"]} />
+          <Line style="max-height: {expanded["birthDate"] ? '500' : '250'}px;" data={fictifData["birthDate"] && fictifData["birthDate"]} options={fictifData["birthDate"] && options("birthDate")} />
         </div>
       </div>
     </div>
@@ -65,7 +65,7 @@
             Sexe
           </h4>
           {#if fictifData["sex"]}
-            <Pie style="max-height: {expanded["sex"] ? '500' : '250'}px;" data={fictifData["sex"] && fictifData["sex"]} options={fictifData["sex"] && myOptions["sex"]} />
+            <Pie style="max-height: {expanded["sex"] ? '500' : '250'}px;" data={fictifData["sex"] && fictifData["sex"]} options={fictifData["sex"] && options("sex")} />
           {/if}
 
         </div>
@@ -90,6 +90,8 @@
 
   let colors = ['#000091', '#cecece'] 
   const validKeys = ['q', 'firstName', 'lastName', 'legalName', 'sex', 'birthDate', 'birthCity', 'birthDepartment', 'birthCountry', 'deathDate', 'deathCity', 'deathDepartment', 'deathCountry', 'deathAge']
+  const months = {'01': 'janvier', '02': 'février', '03': 'mars', '04': 'avril', '05': 'mai', '06': 'juin', '07': 'juillet', '08': 'août', '09': 'septembre', '10': 'octobre', '11': 'novembre', '12': 'décembre'}
+
   const templateData = (values) => {
     return {
       labels: values.map(item => item.x),
@@ -107,6 +109,46 @@
   let geojson;
   const expanded = {}
 
+  let params;
+  $: params = {
+    'birthDate': { 
+      type: Line,
+      xAxes: [{
+        id: 'axisDeathDate',
+        type: 'time',
+        ticks: {
+          min: 0,
+          max: 1586000000000,
+        }
+      }],
+      tooltipCallback: {
+        title: (tooltipItems, data) => {
+          let { index } = tooltipItems[0]
+          let { datasetIndex } = tooltipItems[0]
+          let date = data.datasets[datasetIndex].data[index].x;
+          let month = date.replace(/\d{4}(\d{2})\d{2}/, '$1')
+          return date.replace(/(\d{4})(\d{2})(\d{2})/,`$3 ${months[month]} $1`)
+        }
+      }
+    },
+    'sex': { 
+      type: Pie,
+      scales: {}
+    },
+    'departementsBar': { 
+      type: Bar,
+      xAxes: [{
+        id: 'axisDeathDate',
+        type: 'category',
+      }]
+    },
+    'departements': { 
+      type: FranceChroropleth,
+      yLog: true,
+    },
+  };
+
+
   $: if (geojson) {
     geojson.features.filter(feature => feature.geometry && feature.geometry.coordinates)
       .forEach(feature => {
@@ -119,13 +161,13 @@
     fictifData["birthDate"] = templateData(rawData["birthDate"].response.aggregations.map(x => {
       return {x: x.key["birthDate"], y: x.doc_count}
     }))
-    if (rawData["birthDate"].response.aggregations.length === 1) {
-      myOptions["birthDate"].scales.xAxes[0].ticks.min = rawData["birthDate"].response.aggregations[0].key["birthDate"] - 300000000
-      myOptions["birthDate"].scales.xAxes[0].ticks.max = rawData["birthDate"].response.aggregations[0].key["birthDate"] + 300000000
-    } else {
-      myOptions["birthDate"].scales.xAxes[0].ticks.min = rawData["birthDate"].response.aggregations[0].key["birthDate"]
-      myOptions["birthDate"].scales.xAxes[0].ticks.max = rawData["birthDate"].response.aggregations[rawData["birthDate"].response.aggregations.length - 1].key["birthDate"]
-    }
+    //if (rawData["birthDate"].response.aggregations.length === 1) {
+    //  myOptions["birthDate"].scales.xAxes[0].ticks.min = rawData["birthDate"].response.aggregations[0].key["birthDate"] - 300000000
+    //  myOptions["birthDate"].scales.xAxes[0].ticks.max = rawData["birthDate"].response.aggregations[0].key["birthDate"] + 300000000
+    //} else {
+    //  myOptions["birthDate"].scales.xAxes[0].ticks.min = rawData["birthDate"].response.aggregations[0].key["birthDate"]
+    //  myOptions["birthDate"].scales.xAxes[0].ticks.max = rawData["birthDate"].response.aggregations[rawData["birthDate"].response.aggregations.length - 1].key["birthDate"]
+    //}
     await getData("sex")
     fictifData["sex"] = {
       labels: rawData["sex"].response.aggregations.map(x => x.key["sex"]),
@@ -155,15 +197,6 @@
         })
       }]
     }
-    myOptions["departements"] = {
-      scales: {
-        yAxes: [{
-          id: "décès",
-          type: "logarithmic",
-        }]
-      }
-    }
-
     fictifData["departementsBar"] = {
       labels: rawData["deathDepartment"].response.aggregations
         .sort((a, b) => b.doc_count - a.doc_count)
@@ -175,56 +208,52 @@
         .map(x => x.doc_count )
       }]
     }
-
-    myOptions["departementsBar"] = {
-      maintainAspectRatio: false,
-      hover: {
-        intersect: false
-      },
-      tooltips: {
-        mode: 'nearest',
-        intersect: false,
-      },
-      animation: {
-        duration: 0
-      },
-      elements: {
-        line: {
-          tension: 0,
-        }
-      },
-      legend: {
-        display: false,
-        labels: {
-          fontFamily: fontFamily,
-          boxWidth: 20,
-          fontSize: 8,
-          padding: 6
-        },
-        position: 'bottom'
-      },
-      scales: {
-        xAxes: [{
-          id: 'axisDeathDate',
-          type: 'category',
-        }],
-        yAxes: [{
-          id: 'temp-y-axis',
-          type: 'linear',
-          position: 'left',
-          scaleLabel: {
-            display: true,
-            labelString: 'Nombre de personnes décédées'
-          }
-        }]
-      }
-    }
-
-
   })
 
-  const months = {'01': 'janvier', '02': 'février', '03': 'mars', '04': 'avril', '05': 'mai', '06': 'juin', '07': 'juillet', '08': 'août', '09': 'septembre', '10': 'octobre', '11': 'novembre', '12': 'décembre'}
   const fontFamily = '"Marianne",arial,sans-serif';
+
+  const smartNumber = (n) => {
+    if (typeof n !== 'number') {
+      return n;
+    };
+    if (n < 1000) {
+      return n;
+    }
+    if (n < 1000000) {
+      return `${(n/1000).toFixed(1).replace(/.0$/,'')}k`;
+    }
+    if (n < 1000000000) {
+      return `${(n/1000000).toFixed(1).replace(/.0$/,'')}M`;
+    }
+    return `${(n/1000000000).toFixed(1).replace(/.0$/,'')}G`;
+  }
+
+
+  const ticks = {
+    autoSkip: true,
+    fontFamily : fontFamily,
+    callback: smartNumber,
+  };
+  const ticksY = {
+    autoSkip: true,
+    fontFamily : fontFamily,
+    callback: smartNumber,
+    maxTicksLimit: 5,
+    beginAtZero: true
+  };
+
+  let style = getComputedStyle(document.body);
+
+  const hexToRgba = (hex, alpha) => 'rgba(' + hex.match(/^\s*\#?([\da-f]{2})([\da-f]{2})([\da-f]{2})\s*$/)
+        .slice(1).map(e => parseInt(e, 16)).join(',') + `,${alpha})`;
+
+  const datasets = {
+    'deaths': {
+      color: hexToRgba(style.getPropertyValue('--bf500'), 0.7)
+    }
+  };
+
+
   const options = (view) => {
     const o = {
         maintainAspectRatio: false,
@@ -234,6 +263,7 @@
         tooltips: {
           mode: 'nearest',
           intersect: false,
+          callbacks: params[view] && params[view].tooltipCallback || {}
         },
         animation: {
             duration: 0
@@ -244,6 +274,7 @@
             }
         },
         legend: {
+          // disable
           display: false,
           labels: {
             fontFamily: fontFamily,
@@ -253,54 +284,22 @@
           },
           position: 'bottom'
         },
-        scales: {
-          xAxes: [{
-            id: 'axisDeathDate',
-            type: 'time',
-            ticks: {
-              min: 0,
-              max: 1586000000000,
-            }
-          }],
-          yAxes: [{
-            id: 'temp-y-axis',
-            type: 'linear',
-            position: 'left',
-            scaleLabel: {
-              display: true,
-              labelString: 'Nombre de personnes décédées'
-            }
-          }]
-        },
-        tooltips: {
-          mode: 'nearest',
-          intersect: false,
-          callbacks: {
-            title: function(tooltipItems, data) {
-              let { index } = tooltipItems[0]
-              let { datasetIndex } = tooltipItems[0]
-              let date = data.datasets[datasetIndex].data[index].x;
-              let month = date.replace(/\d{4}(\d{2})\d{2}/, '$1')
-              return date.replace(/(\d{4})(\d{2})(\d{2})/,`$3 ${months[month]} $1`)
-            }
-          }
+        scales: params[view].scales || {
+            yAxes: Object.keys(datasets).map((id, i) => {
+                return {
+                    id: id,
+                    type: params[view] && params[view].yLog ? 'logarithmic' : 'linear',
+                    position: i%2 ? 'right' : 'left',
+                    ticks: ticksY
+                }
+            }),
+            xAxes: params[view] && params[view].xAxes || [{
+                ticks: ticks
+            }]
         }
     };
     return o;
   };
-
-  let myOptions = {}
-  myOptions['birthDate'] = options('birthDate')
-  myOptions['sex'] = {
-    maintainAspectRatio: false,
-    hover: {
-      intersect: false
-    },
-    tooltips: {
-      mode: 'nearest',
-      intersect: false,
-    }
-  }
 
   const getData = async (s) => {
     try {
