@@ -1,5 +1,5 @@
 <div class="rf-container">
-  {#if fictifData["departementsBar"]}
+  {#if (!unavailable) && rawData["deathDepartment"]}
   <div class="rf-grid-row rf-grid-row--gutters">
     <div class="rf-col-xl-{expanded["departements"] ? '12' : '6'} rf-col-lg-{expanded["departements"] ? '12' : '6'} rf-col-md-12 rf-col-sm-12 rf-col-xs-12">
       <div class="rf-tile">
@@ -13,7 +13,7 @@
           <h4 class="rf-tile__title rf-padding-bottom-1N">
             Departement de décès
           </h4>
-          <FranceChroropleth data={fictifData["departements"]} options={options("departements")} />
+          <svelte:component this={FranceChroropleth} data={rawData["deathDepartment"] && templateData("departements")} options={options("departements")} /> 
         </div>
       </div>
     </div>
@@ -29,12 +29,11 @@
           <h4 class="rf-tile__title rf-padding-bottom-1N">
             Departement de décès
           </h4>
-          <Bar style="max-height: {expanded["departementsBar"] ? '500' : '250'}px;" data={fictifData["departementsBar"] && fictifData["departementsBar"]} options={options("departementsBar")} />
+           <svelte:component this={Bar} style="max-height: {expanded["departementsBar"] ? '500' : '250'}px;" data={rawData["deathDepartment"] && templateData("departementsBar")} options={options("departementsBar")}/>
         </div>
       </div>
     </div>
   </div>
-  {/if}
   <div class="rf-grid-row rf-grid-row--gutters">
     <div class="rf-col-xl-{expanded["birthDate"] ? '12' : '6'} rf-col-lg-{expanded["birthDate"] ? '12' : '6'} rf-col-md-12 rf-col-sm-12 rf-col-xs-12">
       <div class="rf-tile">
@@ -48,7 +47,7 @@
           <h4 class="rf-tile__title rf-padding-bottom-1N">
             Date de décès
           </h4>
-          <Line style="max-height: {expanded["birthDate"] ? '500' : '250'}px;" data={fictifData["birthDate"] && fictifData["birthDate"]} options={fictifData["birthDate"] && options("birthDate")} />
+          <svelte:component this={Line} style="max-height: {expanded["birthDate"] ? '500' : '250'}px;" data={rawData["birthDate"] && templateData("birthDate")} options={options("birthDate")} />
         </div>
       </div>
     </div>
@@ -64,14 +63,12 @@
           <h4 class="rf-tile__title rf-padding-bottom-1N">
             Sexe
           </h4>
-          {#if fictifData["sex"]}
-            <Pie style="max-height: {expanded["sex"] ? '500' : '250'}px;" data={fictifData["sex"] && fictifData["sex"]} options={fictifData["sex"] && options("sex")} />
-          {/if}
-
+            <svelte:component this={Pie} style="max-height: {expanded["sex"] ? '500' : '250'}px;" data={rawData["sex"] && templateDataPie("sex")} options={options("sex")}/>
         </div>
       </div>
     </div>
   </div>
+  {/if}
 </div>
 
 
@@ -88,23 +85,77 @@
   import buildRequest from '../tools/buildRequest';
 
 
-  let colors = ['#000091', '#cecece'] 
+  let style = getComputedStyle(document.body);
+  const hexToRgba = (hex, alpha) => 'rgba(' + hex.match(/^\s*\#?([\da-f]{2})([\da-f]{2})([\da-f]{2})\s*$/)
+        .slice(1).map(e => parseInt(e, 16)).join(',') + `,${alpha})`;
+  const datasets = {
+    'deaths': {
+      color: hexToRgba(style.getPropertyValue('--bf500'), 0.7)
+    }
+  };
+  const colors = [
+    hexToRgba(style.getPropertyValue('--bf500'), 0.7),
+    hexToRgba(style.getPropertyValue('--bf500'), 0.55),
+    hexToRgba(style.getPropertyValue('--bf500'), 0.4),
+    hexToRgba(style.getPropertyValue('--bf500'), 0.25)
+  ]
+
   const validKeys = ['q', 'firstName', 'lastName', 'legalName', 'sex', 'birthDate', 'birthCity', 'birthDepartment', 'birthCountry', 'deathDate', 'deathCity', 'deathDepartment', 'deathCountry', 'deathAge']
   const months = {'01': 'janvier', '02': 'février', '03': 'mars', '04': 'avril', '05': 'mai', '06': 'juin', '07': 'juillet', '08': 'août', '09': 'septembre', '10': 'octobre', '11': 'novembre', '12': 'décembre'}
+  let unavailable = false;
+  const fontFamily = '"Marianne",arial,sans-serif';
 
-  const templateData = (values) => {
+  let labels = {
+      'deaths': 'Personnes décédées'
+  };
+
+  const templateData = (view) => {
+    const data = (params[view] && (params[view].dataCB)) ? params[view].dataCB() : rawData[view];
     return {
-      labels: values.map(item => item.x),
-      datasets: [{
-        label: 'personnes décédées',
-        fill: false,
-        data: values,
-      }]
-    }
-  }
+      labels: data.map(d => d.data),
+      datasets: Object.keys(datasets)
+      .map(id => {
+        const datasetData = data.filter(d => d.data).map(d => {
+          return {
+            x: d.data,
+            y: d.count || d.mean
+          };
+        })
+        return {
+          backgroundColor: datasets[id].color,
+          borderColor: 'rgba(255,255,255,0)',
+          borderWidth: 2,
+          pointRadius: 0,
+          label:  labels[id] || id,
+          yAxisID: id,
+          data: datasetData
+        };
+      })
+    };
+  };
+
+  const templateDataPie = (view) => {
+    const data = (params[view] && (params[view].dataCB)) ? params[view].dataCB() : rawData[view];
+    return {
+      labels: data.map(d => d.data),
+      datasets: Object.keys(datasets)
+      .map(id => {
+        const datasetData = data.filter(d => d.data).map(d => d.count || d.mean)
+        return {
+          backgroundColor: data.map((_, ind) => colors[ind]),
+          borderColor: 'rgba(255,255,255,0)',
+          borderWidth: 2,
+          pointRadius: 0,
+          label:  labels[id] || id,
+          yAxisID: id,
+          data: datasetData
+        };
+      })
+    };
+  };
+
 
   let rawData = {};
-  let fictifData = {};
   let departements = {}
   let geojson;
   const expanded = {}
@@ -113,13 +164,18 @@
   $: params = {
     'birthDate': { 
       type: Line,
+      dataCB: () => rawData['birthDate'].response.aggregations.map(x => {
+        return {data: x.key["birthDate"], count: x.doc_count}
+      }),
       xAxes: [{
+        autoSkip: true,
+        fontFamily : fontFamily,
         id: 'axisDeathDate',
         type: 'time',
-        ticks: {
-          min: 0,
-          max: 1586000000000,
-        }
+        //ticks: {
+        //  min: 0,
+        //  max: 1586000000000,
+        //}
       }],
       tooltipCallback: {
         title: (tooltipItems, data) => {
@@ -133,17 +189,33 @@
     },
     'sex': { 
       type: Pie,
+      dataCB: () => rawData['sex'].response.aggregations
+      .map(x => {
+        return {data: x.key['sex'], count: x.doc_count}
+      }),
       scales: {}
     },
     'departementsBar': { 
       type: Bar,
+      dataCB: () => rawData['deathDepartment'].response.aggregations
+        .sort((a, b) => b.doc_count - a.doc_count)
+        .map(x => {
+          return {data: departements[x.key["deathDepartment"]], count: x.doc_count}
+      }),
       xAxes: [{
-        id: 'axisDeathDate',
+        id: 'axisDeathDepartement',
         type: 'category',
       }]
     },
     'departements': { 
       type: FranceChroropleth,
+      dataCB: () => {
+        const _data = rawData['deathDepartment'].response.aggregations.map(x => {
+          return {data: x.key["deathDepartment"], count: x.doc_count}
+        })
+        _data.unshift({data: "", count: 0})
+        return _data
+      },
       yLog: true,
     },
   };
@@ -158,59 +230,16 @@
 
   onMount(async () => {
     await getData("birthDate")
-    fictifData["birthDate"] = templateData(rawData["birthDate"].response.aggregations.map(x => {
-      return {x: x.key["birthDate"], y: x.doc_count}
-    }))
-    //if (rawData["birthDate"].response.aggregations.length === 1) {
-    //  myOptions["birthDate"].scales.xAxes[0].ticks.min = rawData["birthDate"].response.aggregations[0].key["birthDate"] - 300000000
-    //  myOptions["birthDate"].scales.xAxes[0].ticks.max = rawData["birthDate"].response.aggregations[0].key["birthDate"] + 300000000
-    //} else {
-    //  myOptions["birthDate"].scales.xAxes[0].ticks.min = rawData["birthDate"].response.aggregations[0].key["birthDate"]
-    //  myOptions["birthDate"].scales.xAxes[0].ticks.max = rawData["birthDate"].response.aggregations[rawData["birthDate"].response.aggregations.length - 1].key["birthDate"]
-    //}
     await getData("sex")
-    fictifData["sex"] = {
-      labels: rawData["sex"].response.aggregations.map(x => x.key["sex"]),
-      datasets: [{
-        label: 'sexe',
-        fill: false,
-        backgroundColor: rawData["sex"].response.aggregations.map((_, ind) => colors[ind]),
-        data: rawData["sex"].response.aggregations.map(x => x.doc_count)
-      }]
-    }
-
     try{
       const response = await fetch('/simple-french-departments-wdom.json');
       geojson = await response.json();
     } catch(e) {
       console.log(reponse);
     }
-
     await getData("deathDepartment")
-    fictifData["departements"] = {
-      labels: rawData["deathDepartment"].response.aggregations.map(x => x.key["deathDepartment"]),
-      datasets: [{
-        label: "décès",
-        yAxisID: "décès",
-        data: rawData["deathDepartment"].response.aggregations.map(x => {
-          return {y: x.doc_count}
-        })
-      }]
-    }
-    fictifData["departementsBar"] = {
-      labels: rawData["deathDepartment"].response.aggregations
-        .sort((a, b) => b.doc_count - a.doc_count)
-        .map(x => departements[x.key["deathDepartment"]]),
-      datasets: [{
-        label: "departements",
-        data: rawData["deathDepartment"].response.aggregations
-        .sort((a, b) => b.doc_count - a.doc_count)
-        .map(x => x.doc_count )
-      }]
-    }
   })
 
-  const fontFamily = '"Marianne",arial,sans-serif';
 
   const smartNumber = (n) => {
     if (typeof n !== 'number') {
@@ -241,18 +270,6 @@
     maxTicksLimit: 5,
     beginAtZero: true
   };
-
-  let style = getComputedStyle(document.body);
-
-  const hexToRgba = (hex, alpha) => 'rgba(' + hex.match(/^\s*\#?([\da-f]{2})([\da-f]{2})([\da-f]{2})\s*$/)
-        .slice(1).map(e => parseInt(e, 16)).join(',') + `,${alpha})`;
-
-  const datasets = {
-    'deaths': {
-      color: hexToRgba(style.getPropertyValue('--bf500'), 0.7)
-    }
-  };
-
 
   const options = (view) => {
     const o = {

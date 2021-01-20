@@ -32,7 +32,7 @@
                     y={(country.centroid[1] < 80) ? 10 + country.centroid[1] : country.centroid[1] - 40}
                 >
                         <tspan x={(country.centroid[0] < 120) ? 5 + country.centroid[0] : country.centroid[0] - 5}>{country.name}</tspan>
-                        <tspan x={(country.centroid[0] < 120) ? 5 + country.centroid[0] : country.centroid[0] - 5} dy=10>{labels['décès']}: {value('décès', country.id)}</tspan>
+                        <tspan x={(country.centroid[0] < 120) ? 5 + country.centroid[0] : country.centroid[0] - 5} dy=10>{labels['deaths']}: {value('deaths', country.id)}</tspan>
                 </text>
             </g>
         {/each}
@@ -56,7 +56,7 @@
   let countries = [];
   let index = {};
   let scale =  (x, view) => x;
-  let view = 'décès';
+  let view = 'deaths';
 
   const toggle = (id) => {
       if (id !== selected) {
@@ -74,15 +74,15 @@
   };
 
   $: if (data && data.datasets) {
-      data.datasets.forEach((ds, i) => {
-          const id = ds.yAxisID;
-          labels[id] = ds.label;
-          index[id] = i;
-          max[id] = 0;
-          ds.data.forEach(d => {
-              max[id] = Math.max(max[id], d.y)
-          });
+    data.datasets.forEach((ds, i) => {
+      const id = ds.yAxisID;
+      labels[id] = ds.label;
+      index[id] = i;
+      max[id] = 0;
+      ds.data.forEach(d => {
+        max[id] = Math.max(max[id], d.y)
       });
+    });
   }
 
   $: if (Object.keys(max).length) {
