@@ -89,7 +89,7 @@ const options = {
 	}
 };
 
-export default[
+const targets = [
 	// ES module version, for modern browsers
 	{
 		input: 'src/main.js',
@@ -102,7 +102,7 @@ export default[
 		...options
 	},
 	// No module version for legacy browsers like Firefox 52.9 esr
-	production && {
+	{
 		input: 'src/main.js',
 		output: {
 			sourcemap: true,
@@ -114,6 +114,8 @@ export default[
 		...options
 	}
 ];
+
+export default production ? [targets[0], targets[1]] : [targets[0]];
 
 function serve() {
 	let started = false;
