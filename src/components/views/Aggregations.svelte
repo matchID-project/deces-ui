@@ -171,7 +171,17 @@
       });
   }
 
-  onMount(async () => {
+  onMount(() => {
+    refreshAggregations()
+  })
+
+  searchInput.subscribe(() => {
+    if (rawData['deathDepartment']) {
+      refreshAggregations()
+    }
+  })
+
+  const refreshAggregations = async () => {
     await getData("birthDate")
     await getData("sex")
     try{
@@ -181,7 +191,7 @@
       console.log(reponse);
     }
     await getData("deathDepartment")
-  })
+  }
 
 
   const smartNumber = (n) => {
