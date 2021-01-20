@@ -1,72 +1,28 @@
 <div class="rf-container">
   {#if (!unavailable) && rawData["deathDepartment"]}
   <div class="rf-grid-row rf-grid-row--gutters">
-    <div class="rf-col-xl-{expanded["departements"] ? '12' : '6'} rf-col-lg-{expanded["departements"] ? '12' : '6'} rf-col-md-12 rf-col-sm-12 rf-col-xs-12">
-      <div class="rf-tile">
-        <div
-          class="rf-tile__icon rf-href rf-color--bf rf-hide--mobile"
-          on:click|preventDefault={() => expanded["departements"]=!expanded["departements"]}
-          >
-          <Icon icon="{expanded["departements"] ? 'ic:outline-minus' : 'ri:add-line'}"/>
-        </div>
-        <div class="rf-tile__body">
-          <h4 class="rf-tile__title rf-padding-bottom-1N">
-            Departement de décès
-          </h4>
-          <svelte:component this={FranceChroropleth} data={rawData["deathDepartment"] && templateData("departements")} options={options("departements")} /> 
-        </div>
-      </div>
-    </div>
-    <div class="rf-col-xl-{expanded["departementsBar"] ? '12' : '6'} rf-col-lg-{expanded["departementsBar"] ? '12' : '6'} rf-col-md-12 rf-col-sm-12 rf-col-xs-12">
-      <div class="rf-tile">
-        <div
-          class="rf-tile__icon rf-href rf-color--bf rf-hide--mobile"
-          on:click|preventDefault={() => expanded["departementsBar"]=!expanded["departementsBar"]}
-          >
-          <Icon icon="{expanded["departementsBar"] ? 'ic:outline-minus' : 'ri:add-line'}"/>
-        </div>
-        <div class="rf-tile__body">
-          <h4 class="rf-tile__title rf-padding-bottom-1N">
-            Departement de décès
-          </h4>
-           <svelte:component this={Bar} style="max-height: {expanded["departementsBar"] ? '500' : '250'}px;" data={rawData["deathDepartment"] && templateData("departementsBar")} options={options("departementsBar")}/>
+    {#each Object.keys(params) as view}
+      <div class="rf-col-xl-{expanded[view] ? '12' : '6'} rf-col-lg-{expanded[view] ? '12' : '6'} rf-col-md-12 rf-col-sm-12 rf-col-xs-12">
+        <div class="rf-tile">
+          <div
+            class="rf-tile__icon rf-href rf-color--bf rf-hide--mobile"
+            on:click|preventDefault={() => expanded[view]=!expanded[view]}
+            >
+            <Icon icon="{expanded[view] ? 'ic:outline-minus' : 'ri:add-line'}"/>
+          </div>
+          <div class="rf-tile__body">
+            <h4 class="rf-tile__title rf-padding-bottom-1N">
+              {params[view].title||view}
+            </h4>
+            <svelte:component 
+              style="max-height: {expanded[view] ? '500' : '250'}px;"
+              this={params[view] && params[view].type ? params[view].type : Line}
+              data={rawData[params[view].dataRef] && templateData(view)} 
+              options={rawData[params[view].dataRef] && options(view)} /> 
+          </div>
         </div>
       </div>
-    </div>
-  </div>
-  <div class="rf-grid-row rf-grid-row--gutters">
-    <div class="rf-col-xl-{expanded["birthDate"] ? '12' : '6'} rf-col-lg-{expanded["birthDate"] ? '12' : '6'} rf-col-md-12 rf-col-sm-12 rf-col-xs-12">
-      <div class="rf-tile">
-        <div
-          class="rf-tile__icon rf-href rf-color--bf rf-hide--mobile"
-          on:click|preventDefault={() => expanded["birthDate"]=!expanded["birthDate"]}
-          >
-          <Icon icon="{expanded["birthDate"] ? 'ic:outline-minus' : 'ri:add-line'}"/>
-        </div>
-        <div class="rf-tile__body">
-          <h4 class="rf-tile__title rf-padding-bottom-1N">
-            Date de décès
-          </h4>
-          <svelte:component this={Line} style="max-height: {expanded["birthDate"] ? '500' : '250'}px;" data={rawData["birthDate"] && templateData("birthDate")} options={options("birthDate")} />
-        </div>
-      </div>
-    </div>
-    <div class="rf-col-xl-{expanded["sex"] ? '12' : '6'} rf-col-lg-{expanded["sex"] ? '12' : '6'} rf-col-md-12 rf-col-sm-12 rf-col-xs-12">
-      <div class="rf-tile">
-        <div
-          class="rf-tile__icon rf-href rf-color--bf rf-hide--mobile"
-          on:click|preventDefault={() => expanded["sex"]=!expanded["sex"]}
-          >
-          <Icon icon="{expanded["sex"] ? 'ic:outline-minus' : 'ri:add-line'}"/>
-        </div>
-        <div class="rf-tile__body">
-          <h4 class="rf-tile__title rf-padding-bottom-1N">
-            Sexe
-          </h4>
-            <svelte:component this={Pie} style="max-height: {expanded["sex"] ? '500' : '250'}px;" data={rawData["sex"] && templateDataPie("sex")} options={options("sex")}/>
-        </div>
-      </div>
-    </div>
+    {/each}
   </div>
   {/if}
 </div>
@@ -115,14 +71,14 @@
       labels: data.map(d => d.data),
       datasets: Object.keys(datasets)
       .map(id => {
-        const datasetData = data.filter(d => d.data).map(d => {
+        const datasetData = params[view].type === Pie ? data.filter(d => d.data).map(d => d.count || d.mean) : data.filter(d => d.data).map(d => {
           return {
             x: d.data,
             y: d.count || d.mean
           };
         })
         return {
-          backgroundColor: datasets[id].color,
+          backgroundColor: params[view].type === Pie ? data.map((_, ind) => colors[ind]) : datasets[id].color,
           borderColor: 'rgba(255,255,255,0)',
           borderWidth: 2,
           pointRadius: 0,
@@ -133,27 +89,6 @@
       })
     };
   };
-
-  const templateDataPie = (view) => {
-    const data = (params[view] && (params[view].dataCB)) ? params[view].dataCB() : rawData[view];
-    return {
-      labels: data.map(d => d.data),
-      datasets: Object.keys(datasets)
-      .map(id => {
-        const datasetData = data.filter(d => d.data).map(d => d.count || d.mean)
-        return {
-          backgroundColor: data.map((_, ind) => colors[ind]),
-          borderColor: 'rgba(255,255,255,0)',
-          borderWidth: 2,
-          pointRadius: 0,
-          label:  labels[id] || id,
-          yAxisID: id,
-          data: datasetData
-        };
-      })
-    };
-  };
-
 
   let rawData = {};
   let departements = {}
@@ -163,6 +98,8 @@
   let params;
   $: params = {
     'birthDate': { 
+      title: 'Date de naissance',
+      dataRef: 'birthDate',
       type: Line,
       dataCB: () => rawData['birthDate'].response.aggregations.map(x => {
         return {data: x.key["birthDate"], count: x.doc_count}
@@ -188,7 +125,9 @@
       }
     },
     'sex': { 
+      title: 'Sexe',
       type: Pie,
+      dataRef: 'sex',
       dataCB: () => rawData['sex'].response.aggregations
       .map(x => {
         return {data: x.key['sex'], count: x.doc_count}
@@ -196,7 +135,9 @@
       scales: {}
     },
     'departementsBar': { 
+      title: 'Département de décès',
       type: Bar,
+      dataRef: 'deathDepartment',
       dataCB: () => rawData['deathDepartment'].response.aggregations
         .sort((a, b) => b.doc_count - a.doc_count)
         .map(x => {
@@ -208,7 +149,9 @@
       }]
     },
     'departements': { 
+      title: 'Département de décès',
       type: FranceChroropleth,
+      dataRef: 'deathDepartment',
       dataCB: () => {
         const _data = rawData['deathDepartment'].response.aggregations.map(x => {
           return {data: x.key["deathDepartment"], count: x.doc_count}
