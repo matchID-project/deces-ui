@@ -102,7 +102,7 @@ export default[
 		...options
 	},
 	// No module version for legacy browsers like Firefox 52.9 esr
-	{
+	production && {
 		input: 'src/main.js',
 		output: {
 			sourcemap: true,
