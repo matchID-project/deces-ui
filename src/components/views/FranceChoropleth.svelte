@@ -32,7 +32,7 @@
                     y={(country.centroid[1] < 80) ? 10 + country.centroid[1] : country.centroid[1] - 40}
                 >
                         <tspan x={(country.centroid[0] < 120) ? 5 + country.centroid[0] : country.centroid[0] - 5}>{country.name}</tspan>
-                        <tspan x={(country.centroid[0] < 120) ? 5 + country.centroid[0] : country.centroid[0] - 5} dy=10>{labels['deaths']}: {value('deaths', country.id)}</tspan>
+                        <tspan x={(country.centroid[0] < 120) ? 5 + country.centroid[0] : country.centroid[0] - 5} dy=10>{labels[view]}: {value(view, country.id)}</tspan>
                 </text>
             </g>
         {/each}
@@ -59,18 +59,18 @@
   let view = 'deaths';
 
   const toggle = (id) => {
-      if (id !== selected) {
-          selected = id;
-      } else {
-          selected = undefined;
-      }
+    if (id !== selected) {
+      selected = id;
+    } else {
+      selected = undefined;
+    }
   };
 
   $: if (data && data.labels) {
-      index = {};
-      data.labels.forEach((countryId, i)=> {
-        index[countryId] = i;
-      });
+    index = {};
+    data.labels.forEach((countryId, i)=> {
+      index[countryId] = i;
+    });
   };
 
   $: if (data && data.datasets) {
@@ -128,7 +128,7 @@
   }
 
   const value = (view, id) => {
-    const v = index[id] && data.datasets[index[view]].data[index[id]];
+    const v = index[id] !== undefined ? data.datasets[index[view]].data[index[id]] : 0;
     return v && v.y || 0;
   }
 

@@ -141,7 +141,7 @@
       dataCB: () => rawData['deathDepartment'].response.aggregations
         .sort((a, b) => b.doc_count - a.doc_count)
         .map(x => {
-          return {data: departements[x.key["deathDepartment"]], count: x.doc_count}
+          return {data: departements[x.key["deathDepartment"]] || x.key["deathDepartment"], count: x.doc_count}
       }),
       xAxes: [{
         id: 'axisDeathDepartement',
@@ -152,13 +152,9 @@
       title: 'Département de décès',
       type: FranceChroropleth,
       dataRef: 'deathDepartment',
-      dataCB: () => {
-        const _data = rawData['deathDepartment'].response.aggregations.map(x => {
-          return {data: x.key["deathDepartment"], count: x.doc_count}
-        })
-        _data.unshift({data: "", count: 0})
-        return _data
-      },
+      dataCB: () => rawData['deathDepartment'].response.aggregations.map(x => {
+        return {data: x.key["deathDepartment"], count: x.doc_count}
+      }),
       yLog: true,
     },
   };
@@ -188,9 +184,9 @@
   })
 
   const refreshAggregations = async () => {
-    await getData("birthDate")
     await getData("sex")
     await getData("deathDepartment")
+    await getData("birthDate")
   }
 
 
