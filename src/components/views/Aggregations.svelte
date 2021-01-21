@@ -171,7 +171,13 @@
       });
   }
 
-  onMount(() => {
+  onMount(async () => {
+    try{
+      const response = await fetch('/simple-french-departments-wdom.json');
+      geojson = await response.json();
+    } catch(e) {
+      console.log(reponse);
+    }
     refreshAggregations()
   })
 
@@ -184,12 +190,6 @@
   const refreshAggregations = async () => {
     await getData("birthDate")
     await getData("sex")
-    try{
-      const response = await fetch('/simple-french-departments-wdom.json');
-      geojson = await response.json();
-    } catch(e) {
-      console.log(reponse);
-    }
     await getData("deathDepartment")
   }
 
