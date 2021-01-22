@@ -1,30 +1,30 @@
 <div class="rf-container">
-  {#if (!unavailable) && rawData["deathDepartment"]}
   <div class="rf-grid-row rf-grid-row--gutters">
     {#each Object.keys(params) as view}
-      <div class="rf-col-xl-{expanded[view] ? '12' : '6'} rf-col-lg-{expanded[view] ? '12' : '6'} rf-col-md-12 rf-col-sm-12 rf-col-xs-12">
-        <div class="rf-tile">
-          <div
-            class="rf-tile__icon rf-href rf-color--bf rf-hide--mobile"
-            on:click|preventDefault={() => expanded[view]=!expanded[view]}
-            >
-            <Icon icon="{expanded[view] ? 'ic:outline-minus' : 'ri:add-line'}"/>
-          </div>
-          <div class="rf-tile__body">
-            <h4 class="rf-tile__title rf-padding-bottom-1N">
-              {params[view].title||view}
-            </h4>
-            <svelte:component 
-              style="max-height: {expanded[view] ? '500' : '250'}px;"
-              this={params[view] && params[view].type ? params[view].type : Line}
-              data={rawData[params[view].dataRef] && templateData(view)} 
-              options={rawData[params[view].dataRef] && options(view)} /> 
+      {#if (!unavailable) && rawData[params[view].dataRef]}
+        <div class="rf-col-xl-{expanded[view] ? '12' : '6'} rf-col-lg-{expanded[view] ? '12' : '6'} rf-col-md-12 rf-col-sm-12 rf-col-xs-12">
+          <div class="rf-tile">
+            <div
+              class="rf-tile__icon rf-href rf-color--bf rf-hide--mobile"
+              on:click|preventDefault={() => expanded[view]=!expanded[view]}
+              >
+              <Icon icon="{expanded[view] ? 'ic:outline-minus' : 'ri:add-line'}"/>
+            </div>
+            <div class="rf-tile__body">
+              <h4 class="rf-tile__title rf-padding-bottom-1N">
+                {params[view].title||view}
+              </h4>
+              <svelte:component 
+                style="max-height: {expanded[view] ? '500' : '250'}px;"
+                this={params[view] && params[view].type ? params[view].type : Line}
+                data={rawData[params[view].dataRef] && templateData(view)} 
+                options={rawData[params[view].dataRef] && options(view)} /> 
+            </div>
           </div>
         </div>
-      </div>
+      {/if}
     {/each}
   </div>
-  {/if}
 </div>
 
 
@@ -224,8 +224,10 @@
     const o = {
         maintainAspectRatio: false,
         hover: {
-            intersect: false
+          intersect: false,
+          animationDuration: 0, // duration of animations when hovering an item
         },
+        responsiveAnimationDuration: 0, // animation duration after a resize
         tooltips: {
           mode: 'nearest',
           intersect: false,
