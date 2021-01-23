@@ -66,7 +66,7 @@
   };
 
   const templateData = (view) => {
-    const data = (params[view] && (params[view].dataCB)) ? params[view].dataCB() : rawData[view];
+    const data = (params[view] && (params[view].dataCB)) ? params[view].dataCB(rawData[params[view].dataRef]) : rawData[params[view].dataRef];
     return {
       labels: data.map(d => d.data),
       datasets: Object.keys(datasets)
@@ -101,8 +101,8 @@
       title: 'Date de naissance',
       dataRef: 'birthDate',
       type: Line,
-      dataCB: () => rawData['birthDate'].response.aggregations.map(x => {
-        return {data: x.key["birthDate"], count: x.doc_count}
+      dataCB: (data) => data.map(x => {
+        return {data: x["birthDate"], count: x.value}
       }),
       xAxes: [{
         autoSkip: true,
@@ -128,9 +128,9 @@
       title: 'Sexe',
       type: Pie,
       dataRef: 'sex',
-      dataCB: () => rawData['sex'].response.aggregations
+      dataCB: (data) => data
       .map(x => {
-        return {data: x.key['sex'], count: x.doc_count}
+        return {data: x['sex'], count: x.value}
       }),
       scales: {}
     },
@@ -138,10 +138,10 @@
       title: 'Département de décès',
       type: Bar,
       dataRef: 'deathDepartment',
-      dataCB: () => rawData['deathDepartment'].response.aggregations
-        .sort((a, b) => b.doc_count - a.doc_count)
+      dataCB: (data) => data
+        .sort((a, b) => b.value - a.value)
         .map(x => {
-          return {data: departements[x.key["deathDepartment"]] || x.key["deathDepartment"], count: x.doc_count}
+          return {data: departements[x["deathDepartment"]] || x["deathDepartment"], count: x.value}
       }),
       xAxes: [{
         id: 'axisDeathDepartement',
@@ -152,8 +152,8 @@
       title: 'Département de décès',
       type: FranceChroropleth,
       dataRef: 'deathDepartment',
-      dataCB: () => rawData['deathDepartment'].response.aggregations.map(x => {
-        return {data: x.key["deathDepartment"], count: x.doc_count}
+      dataCB: (data) => data.map(x => {
+        return {data: x["deathDepartment"], count: x.value}
       }),
       yLog: true,
     },
@@ -271,6 +271,7 @@
 
   const getData = async (s) => {
     try {
+      let headerLine = true;
       const body = buildRequest($searchInput)
       Object.keys(body).forEach(key => {
         if (!validKeys.includes(key)) {
@@ -281,7 +282,7 @@
       const response = await fetch('__BACKEND_PROXY_PATH__/agg', {
         method: 'post',
         headers: {
-          'Accept': 'application/json',
+          'Accept': 'text/csv',
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
@@ -290,7 +291,30 @@
         })
       })
 
-      rawData[s] = await response.json();
+      const reader = response.body.getReader();
+
+      let header;
+      rawData[s] = []; // array of received binary chunks (comprises the body)
+      while(true) {
+        const {done, value} = await reader.read();
+
+        if (done) {
+          break;
+        }
+
+        const parsedChunk = new TextDecoder("utf-8").decode(value).split("\n");
+        if (headerLine) {
+          header = parsedChunk.splice(0,1);
+          headerLine = false;
+        }
+        rawData[s] = rawData[s].concat(parsedChunk.map(x => {
+          const _row = {};
+          header[0].split(",").forEach((key, ind) => {
+            _row[key] = x.split(",")[ind]
+          })
+          return _row
+        }))
+      }
     } catch(e) {
       unavailable = true
     }
