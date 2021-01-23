@@ -1,4 +1,4 @@
-<svg {width} {height} viewBox="0 0 260 130">
+<svg {width} {height} viewBox="-30 0 205 130">
     {#if countries.length && Object.keys(index).length}
         <g>
         {#each countries as country}
@@ -96,7 +96,7 @@
   const converter = geojson2svg({
     viewportExtent: {width: width, height: height},
     mapExtent: {
-      left: -933595.44, 
+      left: -933595.44,
       right: 1507265.91,
       bottom: 2793547.46,
       top: 6809171.15
