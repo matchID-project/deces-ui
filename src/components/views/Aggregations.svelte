@@ -40,7 +40,8 @@
     triggerAggregations
   } from "../tools/stores.js";
   import { searchTrigger } from '../tools/search.js';
-  import buildRequest from '../tools/buildRequest';
+  import buildRequest from '../tools/buildRequest.js';
+  import { runAggregationRequest } from '../tools/runRequest.js';
 
 
   let style = getComputedStyle(document.body);
@@ -282,30 +283,28 @@
         }
       })
 
-      const response = await fetch('__BACKEND_PROXY_PATH__/agg', {
-        method: 'post',
-        headers: {
-          'Accept': 'text/csv',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          ...body,
-          aggs: [s]
-        })
-      })
+      const response = await runAggregationRequest({
+        ...body,
+        aggs: [s]
+      });
 
-      const reader = response.body.getReader();
+      const reader = response.getReader && response.getReader();
 
       let header;
       rawData[s] = []; // array of received binary chunks (comprises the body)
+      const decoder = new TextDecoder("utf-8");
       while(true) {
-        const {done, value} = await reader.read();
-
-        if (done) {
-          break;
+        let parsedChunk;
+        if (reader) {
+          const {done, value} = await reader.read();
+          if (done) {
+            break;
+          }
+          parsedChunk = decoder.decode(value).split("\n");
+        } else {
+          parsedChunk = response.split("\n");
         }
 
-        const parsedChunk = new TextDecoder("utf-8").decode(value).split("\n");
         if (headerLine) {
           header = parsedChunk.splice(0,1);
           headerLine = false;
@@ -316,9 +315,13 @@
             _row[key] = x.split(",")[ind]
           })
           return _row
-        }))
+        }));
+        if (!reader) {
+          break;
+        }
       }
     } catch(e) {
+      console.log(e);
       unavailable = true
     }
   };
