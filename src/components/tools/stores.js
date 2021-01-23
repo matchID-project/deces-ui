@@ -361,6 +361,8 @@ export const displayMode = writable('card');
 
 export const searchTyping = writable(0);
 
+export const triggerAggregations = writable(false);
+
 export const sortInput = writable([
     {
         label: "score",

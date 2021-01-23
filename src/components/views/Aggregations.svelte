@@ -14,11 +14,11 @@
               <h4 class="rf-tile__title rf-padding-bottom-1N">
                 {params[view].title||view}
               </h4>
-              <svelte:component 
+              <svelte:component
                 style="max-height: {expanded[view] ? '500' : '250'}px;"
                 this={params[view] && params[view].type ? params[view].type : Line}
-                data={rawData[params[view].dataRef] && templateData(view)} 
-                options={rawData[params[view].dataRef] && options(view)} /> 
+                data={rawData[params[view].dataRef] && templateData(view)}
+                options={rawData[params[view].dataRef] && options(view)} />
             </div>
           </div>
         </div>
@@ -37,7 +37,9 @@
   import Bar from "svelte-chartjs/src/Bar.svelte"
   import {
     searchInput,
+    triggerAggregations
   } from "../tools/stores.js";
+  import { searchTrigger } from '../tools/search.js';
   import buildRequest from '../tools/buildRequest';
 
 
@@ -97,7 +99,7 @@
 
   let params;
   $: params = {
-    'birthDate': { 
+    'birthDate': {
       title: 'Date de naissance',
       dataRef: 'birthDate',
       type: Line,
@@ -124,7 +126,7 @@
         }
       }
     },
-    'sex': { 
+    'sex': {
       title: 'Sexe',
       type: Pie,
       dataRef: 'sex',
@@ -134,7 +136,7 @@
       }),
       scales: {}
     },
-    'departementsBar': { 
+    'departementsBar': {
       title: 'Département de décès',
       type: Bar,
       dataRef: 'deathDepartment',
@@ -148,7 +150,7 @@
         type: 'category',
       }]
     },
-    'departements': { 
+    'departements': {
       title: 'Département de décès',
       type: FranceChroropleth,
       dataRef: 'deathDepartment',
@@ -174,19 +176,20 @@
     } catch(e) {
       console.log(reponse);
     }
-    refreshAggregations()
-  })
-
-  searchInput.subscribe(() => {
-    if (rawData['deathDepartment']) {
-      refreshAggregations()
+    if (searchTrigger($searchInput)) {
+      $triggerAggregations = true;
     }
   })
 
-  const refreshAggregations = async () => {
-    await getData("sex")
-    await getData("deathDepartment")
-    await getData("birthDate")
+  $: if ($triggerAggregations) {
+    refreshAggregations($searchInput);
+    $triggerAggregations = false;
+  };
+
+  const refreshAggregations = async (mySearchInput) => {
+    await getData("sex", mySearchInput);
+    await getData("deathDepartment", mySearchInput);
+    await getData("birthDate", mySearchInput);
   }
 
 
@@ -269,10 +272,10 @@
     return o;
   };
 
-  const getData = async (s) => {
+  const getData = async (s, mySearchInput) => {
     try {
       let headerLine = true;
-      const body = buildRequest($searchInput)
+      const body = buildRequest(mySearchInput);
       Object.keys(body).forEach(key => {
         if (!validKeys.includes(key)) {
           delete body[key];
