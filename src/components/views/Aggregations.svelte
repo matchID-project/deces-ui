@@ -105,7 +105,7 @@
       dataRef: 'birthDate',
       type: Line,
       dataCB: (data) => data.map(x => {
-        return {data: x["birthDate"], count: x.value}
+        return {data: x["birthDate"], count: +x.value}
       }),
       xAxes: [{
         autoSkip: true,
@@ -133,7 +133,7 @@
       dataRef: 'sex',
       dataCB: (data) => data
       .map(x => {
-        return {data: x['sex'], count: x.value}
+        return {data: x['sex'], count: +x.value}
       }),
       scales: {}
     },
@@ -156,7 +156,7 @@
       type: FranceChroropleth,
       dataRef: 'deathDepartment',
       dataCB: (data) => data.map(x => {
-        return {data: x["deathDepartment"], count: x.value}
+        return {data: x["deathDepartment"], count: +x.value}
       }),
       yLog: true,
     },
@@ -309,13 +309,14 @@
           header = parsedChunk.splice(0,1);
           headerLine = false;
         }
-        rawData[s] = rawData[s].concat(parsedChunk.map(x => {
+        const parsedArray = parsedChunk.map(x => {
           const _row = {};
           header[0].split(",").forEach((key, ind) => {
             _row[key] = x.split(",")[ind]
           })
           return _row
-        }));
+        })
+        rawData[s] = [...rawData[s], ...parsedArray];
         if (!reader) {
           break;
         }
