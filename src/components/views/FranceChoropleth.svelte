@@ -21,18 +21,18 @@
                 opacity={selected === country.id ? 0.9 : 0}
             >
                 <rect
-                    x={(country.centroid[0] < 120) ? country.centroid[0] : country.centroid[0] - 100}
+                    x={(country.centroid[0] < 80) ? country.centroid[0] : country.centroid[0] - 100}
                     y={(country.centroid[1] < 80) ? country.centroid[1] : country.centroid[1] - 50}
                     width="100"
                     height="30"
                 />
                 <text
                     class="text"
-                    text-anchor={(country.centroid[0] < 120) ? 'start' : 'end'}
+                    text-anchor={(country.centroid[0] < 80) ? 'start' : 'end'}
                     y={(country.centroid[1] < 80) ? 10 + country.centroid[1] : country.centroid[1] - 40}
                 >
-                        <tspan x={(country.centroid[0] < 120) ? 5 + country.centroid[0] : country.centroid[0] - 5}>{country.name}</tspan>
-                        <tspan x={(country.centroid[0] < 120) ? 5 + country.centroid[0] : country.centroid[0] - 5} dy=10>{labels[view]}: {value(view, country.id)}</tspan>
+                        <tspan x={(country.centroid[0] < 80) ? 5 + country.centroid[0] : country.centroid[0] - 5}>{country.name}</tspan>
+                        <tspan x={(country.centroid[0] < 80) ? 5 + country.centroid[0] : country.centroid[0] - 5} dy=10>{labels[view]}: {value(view, country.id)}</tspan>
                 </text>
             </g>
         {/each}
