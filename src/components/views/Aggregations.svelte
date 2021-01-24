@@ -142,7 +142,7 @@
       type: Bar,
       dataRef: 'deathDepartment',
       dataCB: (data) => data
-        .sort((a, b) => b.value - a.value)
+        .sort((a, b) => +b.value - +a.value)
         .map(x => {
           return {data: departements[x["deathDepartment"]] || x["deathDepartment"], count: x.value}
       }),
@@ -291,7 +291,7 @@
       const reader = response.getReader && response.getReader();
 
       let header;
-      rawData[s] = []; // array of received binary chunks (comprises the body)
+      rawData[s] = [];
       const decoder = new TextDecoder("utf-8");
       while(true) {
         let parsedChunk;
