@@ -329,6 +329,10 @@ export const searchResults = writable([]);
 
 export const totalResults = writable(0);
 
+export const totalBuckets = writable(0);
+
+export const actualBuckets = writable(0);
+
 export const totalPages = writable(0);
 
 export const facets = writable(0);

@@ -38,7 +38,9 @@
   import {
     searchInput,
     triggerAggregations,
-    totalResults
+    totalResults,
+    totalBuckets,
+    actualBuckets
   } from "../tools/stores.js";
   import { searchTrigger } from '../tools/search.js';
   import buildRequest from '../tools/buildRequest.js';
@@ -116,6 +118,9 @@
         },
         id: 'axisDeathDate',
         type: 'time',
+        gridLines: {
+          display: false
+        },
         //ticks: {
         //  min: 0,
         //  max: 1586000000000,
@@ -155,7 +160,7 @@
       type: Bar,
       dataRef: 'deathDepartment',
       dataCB: (data) => data
-        //.sort((a, b) => +b.value - +a.value)
+        .sort((a, b) => +b.value - +a.value)
         .map(x => {
           return {data: x["deathDepartment"], count: x.value}
       }),
@@ -225,11 +230,13 @@
   };
 
   const refreshAggregations = async (mySearchInput) => {
+    actualBuckets.set(0);
+    totalBuckets.set(0);
     ["sex", "deathDepartment", "birthDate"].forEach(s => {
       cancelRequest[s] = true
     })
     await getData("sex", mySearchInput);
-    await getData("deathDepartment", mySearchInput, "value");
+    await getData("deathDepartment", mySearchInput);
     await getData("birthDate", mySearchInput);
   }
 
@@ -278,7 +285,7 @@
           callbacks: params[view] && params[view].tooltipCallback || {}
         },
         animation: {
-            duration: 0
+          duration: 0
         },
         elements: {
             line: {
@@ -313,7 +320,7 @@
     return o;
   };
 
-  const getData = async (s, mySearchInput, sortBy) => {
+  const getData = async (s, mySearchInput) => {
     try {
       let headerLine = true;
       const body = buildRequest(mySearchInput);
@@ -329,13 +336,12 @@
       });
 
       const reader = response.getReader && response.getReader();
+      totalBuckets.update(v => v + response.headers ? +response.headers.get(`total-results-${s}`) : 0);
 
-      let totalBuckets = response.headers ? +response.headers.get(`total-results-${s}`) : 0;
       let header;
       rawData[s] = [];
       let tempChunk = []
       cancelRequest[s] = false;
-      let receivedLength = 0;
       const decoder = new TextDecoder("utf-8");
       while(true) {
         let parsedChunk;
@@ -347,14 +353,14 @@
           parsedChunk = decoder.decode(value).split("\n").filter(x => x);
         } else {
           parsedChunk = response.split("\n").filter(x => x);
-          totalBuckets += parsedChunk.length - 1;
+          totalBuckets.update(v => v + parsedChunk.length - 1);
         }
 
         if (headerLine) {
           header = parsedChunk.splice(0,1);
           headerLine = false;
         }
-        receivedLength += parsedChunk.length;
+        actualBuckets.update(v => v + parsedChunk.length);
         const parsedArray = parsedChunk.map(x => {
           const _row = {};
           header[0].split(",").forEach((key, ind) => {
@@ -366,12 +372,14 @@
           break
         }
         tempChunk = [...tempChunk, ...parsedArray];
-        if ((receivedLength >= totalBuckets) || tempChunk.length > 1000) {
+        if (tempChunk.length > 1000) {
           rawData[s] = [...rawData[s], ...tempChunk];
-          if (sortBy) {
-            rawData[s] = [...rawData[s].sort((a,b) => b[sortBy] - a[sortBy])];
-          }
           tempChunk = []
+        }
+        if ($actualBuckets >= $totalBuckets) {
+          rawData[s] = [...rawData[s], ...tempChunk];
+          tempChunk = []
+          break
         }
         if (!reader) {
           break;
