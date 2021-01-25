@@ -94,6 +94,7 @@
   };
 
   let rawData = {};
+  let cancelRequest = {};
   let departements = {}
   let geojson;
   const expanded = {}
@@ -188,6 +189,9 @@
   };
 
   const refreshAggregations = async (mySearchInput) => {
+    ["sex", "deathDepartment", "birthDate"].forEach(s => {
+      cancelRequest[s] = true
+    })
     await getData("sex", mySearchInput);
     await getData("deathDepartment", mySearchInput);
     await getData("birthDate", mySearchInput);
@@ -292,6 +296,7 @@
 
       let header;
       rawData[s] = [];
+      cancelRequest[s] = false;
       const decoder = new TextDecoder("utf-8");
       while(true) {
         let parsedChunk;
@@ -316,6 +321,9 @@
           })
           return _row
         })
+        if (cancelRequest[s]) {
+          break
+        }
         rawData[s] = [...rawData[s], ...parsedArray];
         if (!reader) {
           break;
