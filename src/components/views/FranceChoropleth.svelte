@@ -32,7 +32,7 @@
                     y={(country.centroid[1] < 80) ? 10 + country.centroid[1] : country.centroid[1] - 40}
                 >
                         <tspan x={(country.centroid[0] < 80) ? 5 + country.centroid[0] : country.centroid[0] - 5}>{country.name}</tspan>
-                        <tspan x={(country.centroid[0] < 80) ? 5 + country.centroid[0] : country.centroid[0] - 5} dy=10>{labels[view]}: {selectedValue}</tspan>
+                        <tspan x={(country.centroid[0] < 80) ? 5 + country.centroid[0] : country.centroid[0] - 5} dy=10>{labels[view]}: {value(view, country.id)}</tspan>
                 </text>
             </g>
         {/each}
@@ -52,17 +52,14 @@
   let geojson;
   let max = {};
   let labels = {};
-  let layers = undefined;
   let countries = [];
   let index = {};
   let scale =  (x, view) => x;
   let view = 'deaths';
-  let selectedValue = 0
 
   const toggle = (id) => {
     if (id !== selected) {
       selected = id;
-      selectedValue = value(view, id)
     } else {
       selected = undefined;
     }
@@ -139,7 +136,8 @@
             const response = await fetch('/simple-french-departments-wdom.json');
             geojson = await response.json();
         } catch(e) {
-            console.log(reponse);
+            console.log(e);
+            console.log(response);
         }
   })
 </script>
