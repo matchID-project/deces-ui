@@ -94,6 +94,7 @@ const runRequest = async (api, method, request, cache=true, responseType = 'json
             push();
           }
         });
+        stream.headers = response.headers
         return stream;
         } else {
         return response.body;

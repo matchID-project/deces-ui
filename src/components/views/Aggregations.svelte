@@ -1,7 +1,7 @@
 <div class="rf-container">
   <div class="rf-grid-row rf-grid-row--gutters">
     {#each Object.keys(params) as view}
-      {#if (!unavailable) && rawData[params[view].dataRef]}
+      {#if (!unavailable) && rawData[params[view].dataRef] && rawData[params[view].dataRef].length > 0}
         <div class="rf-col-xl-{expanded[view] ? '12' : '6'} rf-col-lg-{expanded[view] ? '12' : '6'} rf-col-md-12 rf-col-sm-12 rf-col-xs-12">
           <div class="rf-tile">
             <div
@@ -110,8 +110,10 @@
         return {data: x["birthDate"], count: +x.value}
       }),
       xAxes: [{
-        autoSkip: true,
-        fontFamily : fontFamily,
+        ticks: {
+          autoSkip: true,
+          fontFamily : fontFamily,
+        },
         id: 'axisDeathDate',
         type: 'time',
         //ticks: {
@@ -153,7 +155,7 @@
       type: Bar,
       dataRef: 'deathDepartment',
       dataCB: (data) => data
-        .sort((a, b) => +b.value - +a.value)
+        //.sort((a, b) => +b.value - +a.value)
         .map(x => {
           return {data: x["deathDepartment"], count: x.value}
       }),
@@ -227,7 +229,7 @@
       cancelRequest[s] = true
     })
     await getData("sex", mySearchInput);
-    await getData("deathDepartment", mySearchInput);
+    await getData("deathDepartment", mySearchInput, "value");
     await getData("birthDate", mySearchInput);
   }
 
@@ -311,7 +313,7 @@
     return o;
   };
 
-  const getData = async (s, mySearchInput) => {
+  const getData = async (s, mySearchInput, sortBy) => {
     try {
       let headerLine = true;
       const body = buildRequest(mySearchInput);
@@ -328,9 +330,12 @@
 
       const reader = response.getReader && response.getReader();
 
+      let totalBuckets = response.headers ? +response.headers.get(`total-results-${s}`) : 0;
       let header;
       rawData[s] = [];
+      let tempChunk = []
       cancelRequest[s] = false;
+      let receivedLength = 0;
       const decoder = new TextDecoder("utf-8");
       while(true) {
         let parsedChunk;
@@ -339,15 +344,17 @@
           if (done) {
             break;
           }
-          parsedChunk = decoder.decode(value).split("\n");
+          parsedChunk = decoder.decode(value).split("\n").filter(x => x);
         } else {
-          parsedChunk = response.split("\n");
+          parsedChunk = response.split("\n").filter(x => x);
+          totalBuckets += parsedChunk.length - 1;
         }
 
         if (headerLine) {
           header = parsedChunk.splice(0,1);
           headerLine = false;
         }
+        receivedLength += parsedChunk.length;
         const parsedArray = parsedChunk.map(x => {
           const _row = {};
           header[0].split(",").forEach((key, ind) => {
@@ -358,7 +365,14 @@
         if (cancelRequest[s]) {
           break
         }
-        rawData[s] = [...rawData[s], ...parsedArray];
+        tempChunk = [...tempChunk, ...parsedArray];
+        if ((receivedLength >= totalBuckets) || tempChunk.length > 1000) {
+          rawData[s] = [...rawData[s], ...tempChunk];
+          if (sortBy) {
+            rawData[s] = [...rawData[s].sort((a,b) => b[sortBy] - a[sortBy])];
+          }
+          tempChunk = []
+        }
         if (!reader) {
           break;
         }
