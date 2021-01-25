@@ -37,7 +37,8 @@
   import Bar from "svelte-chartjs/src/Bar.svelte"
   import {
     searchInput,
-    triggerAggregations
+    triggerAggregations,
+    totalResults
   } from "../tools/stores.js";
   import { searchTrigger } from '../tools/search.js';
   import buildRequest from '../tools/buildRequest.js';
@@ -136,7 +137,16 @@
       .map(x => {
         return {data: x['sex'], count: +x.value}
       }),
-      scales: {}
+      scales: {},
+      tooltipCallback: {
+        title: (tooltipItems, data) => {
+          let { index } = tooltipItems[0]
+          let { datasetIndex } = tooltipItems[0]
+          let sex = data.datasets[datasetIndex].data[index];
+          let percent = Math.round(sex/$totalResults * 100)
+          return `${percent}%`
+        }
+      }
     },
     'departementsBar': {
       title: 'Département de décès',
@@ -145,12 +155,36 @@
       dataCB: (data) => data
         .sort((a, b) => +b.value - +a.value)
         .map(x => {
-          return {data: departements[x["deathDepartment"]] || x["deathDepartment"], count: x.value}
+          return {data: x["deathDepartment"], count: x.value}
       }),
       xAxes: [{
+        ticks: {
+          autoSkip: true,
+          fontFamily : fontFamily,
+          callback: (x) => {
+            return departements[x] || x
+          },
+        },
+        gridLines: {
+          display: false
+        },
         id: 'axisDeathDepartement',
         type: 'category',
-      }]
+      }],
+      tooltipCallback: {
+        title: (tooltipItems, data) => {
+          let { index } = tooltipItems[0]
+          let { datasetIndex } = tooltipItems[0]
+          let departement = data.datasets[datasetIndex].data[index].x;
+          return `${departement}${departements[departement] ? ' - ' + departements[departement] : ''}`
+        },
+        label: (tooltipItem, data) => {
+          let label = data.datasets[tooltipItem.datasetIndex].label || '';
+          let value = tooltipItem.yLabel;
+          let percent = Math.round(value/$totalResults * 100)
+          return `${label}: ${tooltipItem.yLabel} (${percent}%)`;
+        }
+      }
     },
     'departements': {
       title: 'Département de décès',
