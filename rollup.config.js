@@ -89,7 +89,7 @@ const options = {
 	}
 };
 
-export default[
+const targets = [
 	// ES module version, for modern browsers
 	{
 		input: 'src/main.js',
@@ -114,6 +114,8 @@ export default[
 		...options
 	}
 ];
+
+export default production ? [targets[0], targets[1]] : [targets[0]];
 
 function serve() {
 	let started = false;
