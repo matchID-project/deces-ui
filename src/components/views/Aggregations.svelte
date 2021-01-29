@@ -109,7 +109,7 @@
       dataRef: 'birthDate',
       type: Line,
       dataCB: (data) => data.map(x => {
-        return {data: x["birthDate"], count: +x.value}
+        return {data: x["key_as_string"], count: +x.doc_count}
       }),
       xAxes: [{
         ticks: {
