@@ -333,7 +333,7 @@ elasticsearch-storage-pull: backup-dir ${DATAPREP_VERSION_FILE} ${DATA_VERSION_F
 	DATAPREP_VERSION=$$(cat ${DATAPREP_VERSION_FILE});\
 	DATA_VERSION=$$(cat ${DATA_VERSION_FILE});\
 	ES_BACKUP_FILE=${ES_BACKUP_BASENAME}_$${DATAPREP_VERSION}_$${DATA_VERSION}.tar;\
-	if [ ! -f "${BACKUP_DIR}/$$ESBACKUPFILE" ];then\
+	if [ ! -f "${BACKUP_DIR}/$$ES_BACKUP_FILE" ];then\
 		echo pulling ${STORAGE_BUCKET}/$$ES_BACKUP_FILE;\
 		${MAKE} -C ${APP_PATH}/${GIT_TOOLS} storage-pull\
 			FILE=$$ES_BACKUP_FILE DATA_DIR=${BACKUP_DIR}\
