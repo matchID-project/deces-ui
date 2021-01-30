@@ -25,8 +25,6 @@ import {
 
 import buildRequest from "./buildRequest.js";
 import { runSearchRequest, runIdRequest } from "./runRequest.js";
-import buildResults from "./buildResults.js";
-import buildState from "./buildState.js";
 
 let mySearchInput;
 let mySortInput;

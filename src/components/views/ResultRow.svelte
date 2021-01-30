@@ -9,13 +9,13 @@
         <td><div class="expand-on-hover">{result.sex || ''}</div></td>
         <td><div class="expand-on-hover">{result.birth && result.birth.date && dateFormat(result.birth.date) || ''}</div></td>
         <td><div class="expand-on-hover">{result.birth && result.birth.location && result.birth.location.city && cityString(result.birth.location.city) || ''}</div></td>
-        <td><div class="expand-on-hover">{result.birth && result.birth.location && (Array.isArray(result.birth.location.cityCode) ? result.birth.location.cityCode[0]:result.birth.location.cityCode) || ''}</div></td>
+        <td><div class="expand-on-hover">{result.birth && result.birth.location && (Array.isArray(result.birth.location.code) ? result.birth.location.code[0]:result.birth.location.code) || ''}</div></td>
         <td><div class="expand-on-hover">{result.birth && result.birth.location && result.birth.location.departmentCode || ''}</div></td>
         <td><div class="expand-on-hover">{result.birth && result.birth.location && result.birth.location.country || ''}</div></td>
         <td><div class="expand-on-hover">{result.death && result.death.date && dateFormat(result.death.date) || ''}</div></td>
         <td><div class="expand-on-hover">{result.death && result.death.age || ''}</div></td>
         <td><div class="expand-on-hover">{result.death && result.death.location && result.death.location.city && cityString(result.death.location.city) || ''}</div></td>
-        <td><div class="expand-on-hover">{result.death && result.death.location && (Array.isArray(result.death.location.cityCode) ? result.death.location.cityCode[0]:result.death.location.cityCode) || ''}</div></td>
+        <td><div class="expand-on-hover">{result.death && result.death.location && (Array.isArray(result.death.location.code) ? result.death.location.code[0]:result.death.location.code) || ''}</div></td>
         <td><div class="expand-on-hover">{result.death && result.death.location && result.death.location.departmentCode || ''}</div></td>
         <td><div class="expand-on-hover">{result.death && result.death.location && result.death.location.country || ''}</div></td>
         <td><div class="expand-on-hover">{result.death && result.death.location && result.death.certificateId || ''}</div></td>
