@@ -123,7 +123,7 @@
             { label: 'Prénom(s)', value: result.name.first, cb: (p) => p ? p.join(' ') : '(sans prénom)' },
             { label: 'Sexe', value: result.sex, cb: (s) => s === 'M' ? 'masculin' : 'féminin' },
             { label: 'Date',  value: result.birth.date, cb: dateFormat },
-            { label: 'Commune',  value: [result.birth.location.city, result.birth.location.cityCode], cb: (c) => `${cityString(c[0],true)} (${c[1]})` },
+            { label: 'Commune',  value: [result.birth.location.city, result.birth.location.code], cb: (c) => `${cityString(c[0],true)} (${c[1]})` },
             { label: 'Département',  value: result.birth.location.departmentCode },
             { label: 'Pays',  value: [ result.birth.location.country, result.birth.location.countryCode], cb: (c) => `${c[0]}${c[1] ? ` (${c[1]})` : ''}` }
         ];
@@ -131,7 +131,7 @@
         conf['Décès'] = [
             { label: 'Date',  value: result.death.date, cb: dateFormat },
             { label: 'Age',  value: result.death.age, cb: (a) => `${a} ans`},
-            { label: 'Commune',  value: [result.death.location.city, result.death.location.cityCode], cb: (c) => `${cityString(c[0],true)} (${c[1]})` },
+            { label: 'Commune',  value: [result.death.location.city, result.death.location.code], cb: (c) => `${cityString(c[0],true)} (${c[1]})` },
             { label: 'Département',  value: result.death.location.departmentCode },
             { label: 'Pays',  value: [result.death.location.country, result.death.location.countryCode], cb: (c) => `${c[0]}${c[1] ? ` (${c[1]})` : ''}` },
             { label: 'Acte n°',  value: result.death.certificateId },

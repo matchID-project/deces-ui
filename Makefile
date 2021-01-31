@@ -50,12 +50,22 @@ export BACKEND_PROXY_PATH=/${API_PATH}/api/v1
 export NGINX = ${APP_PATH}/nginx
 export NGINX_TIMEOUT = 30
 export NGINX_CSP=default-src https: 'self' 'unsafe-inline' 'unsafe-eval';font-src 'self' data:;img-src 'self' data: https://*.cartocdn.com https://www.google-analytics.com https://www.googletagmanager.com https://*.doubleclick.net;
-export API_USER_LIMIT_RATE=1r/s
+export API_SEARCH_LIMIT_RATE=1r/s
+export API_SEARCH_USER_BURST=30 nodelay
+export API_SEARCH_GLOBAL_LIMIT_RATE=20r/s
+export API_SEARCH_GLOBAL_BURST=400 nodelay
+export API_BULK_SUBMIT_LIMIT_RATE=4r/m
+export API_BULK_SUBMIT_BURST=4 nodelay
+export API_BULK_RESULT_LIMIT_RATE=1r/s
+export API_BULK_RESULT_USER_BURST=3 nodelay
+export API_BULK_RESULT_GLOBAL_LIMIT_RATE=3r/s
+export API_BULK_RESULT_GLOBAL_BURST=10 nodelay
+export API_AGG_LIMIT_RATE=10r/m
+export API_AGG_USER_BURST=6 nodelay
+export API_AGG_GLOBAL_LIMIT_RATE=1r/s
+export API_AGG_GLOBAL_BURST=15 nodelay
 export API_DOWNLOAD_LIMIT_RATE=30r/m
-export API_USER_BURST=30 nodelay
 export API_USER_SCOPE=http_x_forwarded_for
-export API_GLOBAL_LIMIT_RATE=20r/s
-export API_GLOBAL_BURST=400 nodelay
 export API_READ_TIMEOUT=3600
 export API_SEND_TIMEOUT=1200
 export API_MAX_BODY=100m
@@ -333,7 +343,7 @@ elasticsearch-storage-pull: backup-dir ${DATAPREP_VERSION_FILE} ${DATA_VERSION_F
 	DATAPREP_VERSION=$$(cat ${DATAPREP_VERSION_FILE});\
 	DATA_VERSION=$$(cat ${DATA_VERSION_FILE});\
 	ES_BACKUP_FILE=${ES_BACKUP_BASENAME}_$${DATAPREP_VERSION}_$${DATA_VERSION}.tar;\
-	if [ ! -f "${BACKUP_DIR}/$$ESBACKUPFILE" ];then\
+	if [ ! -f "${BACKUP_DIR}/$$ES_BACKUP_FILE" ];then\
 		echo pulling ${STORAGE_BUCKET}/$$ES_BACKUP_FILE;\
 		${MAKE} -C ${APP_PATH}/${GIT_TOOLS} storage-pull\
 			FILE=$$ES_BACKUP_FILE DATA_DIR=${BACKUP_DIR}\
