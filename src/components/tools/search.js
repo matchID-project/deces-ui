@@ -60,8 +60,10 @@ export const enableDisplayMode = async (mode) => {
                 searchResults.update(v => v.splice(0, resultsPerPageDefault));
             }
             resultsPerPage.update(v => resultsPerPageDefault);
-        } else if ((myDisplayMode === 'agg') && (mode !== 'agg')) {
-            triggerAggregations.update(v => true);
+        } else if ((myDisplayMode !== 'agg') && (mode === 'agg')) {
+            if (searchTrigger(mySearchInput)) {
+                triggerAggregations.update(v => true);
+            }
         }
       displayMode.update(v => mode);
     }

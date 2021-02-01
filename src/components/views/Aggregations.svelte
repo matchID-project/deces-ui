@@ -219,9 +219,6 @@
     } catch(e) {
       console.log(reponse);
     }
-    if (searchTrigger($searchInput)) {
-      $triggerAggregations = true;
-    }
   })
 
   $: if ($triggerAggregations) {
