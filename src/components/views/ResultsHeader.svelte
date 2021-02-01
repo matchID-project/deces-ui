@@ -131,8 +131,8 @@
         {mode: 'card', icon: 'ri:list-check-2', label: "fiche compacte"},
         {mode: 'card-expand', icon: 'ri:profile-line', label: "fiche complète"},
         {mode: 'table', icon: 'ri:table-line', label: "tableur"},
+        {mode: 'agg', icon: 'ri:bar-chart-box-line', label: "statistiques"},
         {mode: 'geo', icon: 'ri:earth-line', label: "géographique"},
-        {mode: 'agg', icon: 'ri:bar-chart-box-line', label: "agrégations"},
     ];
 
     $: resultsPerPageList = [20,40,60].includes($resultsPerPage) ? [20,40,60] : [$resultsPerPage,20,40,60].sort()
