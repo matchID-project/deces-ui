@@ -185,21 +185,18 @@
       title: 'Département de naissance',
       type: FranceChroropleth,
       dataRef: 'birthDepartment',
-      dataCB: (data) => {
-        const d = data.map(x => {
+      dataCB: (data) => data.map(x => {
           return {data: x["key"], count: +x.doc_count}
-        });
-        console.log(d);
-        return d;
-      }
+        })
     },
     'deathAge': {
       title: 'Âge au décès',
       dataRef: 'deathAge',
       type: Line,
       dataCB: (data) => data.map(x => {
-          return {data: x["deathAge"], count: +x.value}
-        }),
+          return {data: x["key"], count: +x.doc_count}
+        })
+        .sort((a,b) => parseInt(a.data) - parseInt(b.data)),
       xAxes: [{
         ticks: {
           autoSkip: true,
@@ -263,7 +260,7 @@
       dataRef: 'sex',
       dataCB: (data) => data
       .map(x => {
-        return {data: x['sex'], count: +x.value}
+        return {data: x['key'], count: +x.doc_count}
       }),
       scales: {},
       tooltipCallback: {
@@ -411,10 +408,16 @@
         }
       })
 
-      const response = await runAggregationRequest({
+      const aggRequest = {
         ...body,
         aggs: [s]
-      });
+      };
+
+      if (['firstName', 'lastName'].includes(s)) {
+        aggRequest.aggsSize = 15;
+      }
+
+      const response = await runAggregationRequest(aggRequest);
 
       const reader = response.getReader && response.getReader();
       totalBuckets.update(v => v + response.headers ? +response.headers.get(`total-results-${s}`) : 0);
