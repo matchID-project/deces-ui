@@ -318,6 +318,10 @@
   };
 
   const getData = async (s, mySearchInput) => {
+    if (mySearchInput[s].value) {
+      rawData[s] = [];
+      return;
+    }
     try {
       let headerLine = true;
       const body = buildRequest(mySearchInput);
