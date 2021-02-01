@@ -47,10 +47,10 @@
   export let width = "100%";
   export let height = undefined;
   export let data = undefined;
-  export let options = undefined;
   let selected;
   let geojson;
   let max = {};
+  let yLog = {};
   let labels = {};
   let countries = [];
   let index = {};
@@ -77,19 +77,17 @@
       const id = ds.yAxisID;
       labels[id] = ds.label;
       index[id] = i;
-      max[id] = 0;
-      ds.data.forEach(d => {
-        max[id] = Math.max(max[id], d.y)
-      });
+      const sorted = ds.data.slice(0).sort((a, b) => +b.y - +a.y);
+      max[id] = sorted[0].y;
+      const secMax = sorted.length > 1 ? sorted[1].y : max[id];
+      yLog[id] = (secMax < (max[id]/5)) ? true : false;
     });
   }
 
-  $: if (Object.keys(max).length) {
-      if (options && options.scales.yAxes) {
-        scale = (x,id) => options.scales.yAxes[0].type === 'logarithmic' ?
-                            (max[id] ? Math.log(x+1)/Math.log(max[id]) : Math.log(x+1))
-                            : ( max[id] ? x/max[id] : x);
-      }
+  $: if (Object.keys(yLog).length) {
+      scale = (x,id) => yLog[id] ?
+                (max[id] ? Math.log(x+1)/Math.log(max[id]) : Math.log(x+1))
+                : ( max[id] ? x/max[id] : x);
   };
 
   const converter = geojson2svg({
