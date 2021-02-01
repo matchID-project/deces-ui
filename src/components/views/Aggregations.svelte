@@ -193,6 +193,28 @@
         return d;
       }
     },
+    'deathAge': {
+      title: 'Âge au décès',
+      dataRef: 'deathAge',
+      type: Line,
+      dataCB: (data) => data.map(x => {
+          return {data: x["deathAge"], count: +x.value}
+        }),
+      xAxes: [{
+        ticks: {
+          autoSkip: true,
+          fontFamily : fontFamily,
+        },
+        id: 'axisDeathAge',
+        gridLines: {
+          display: false
+        },
+        //ticks: {
+        //  min: 0,
+        //  max: 1586000000000,
+        //}
+      }]
+    },
     'firstName': {
       title: 'Prénom',
       type: Bar,
@@ -289,6 +311,7 @@
     // await getData("deathDepartment", mySearchInput);
     // await getData("birthDate", mySearchInput);
     await getData("deathDate", mySearchInput);
+    await getData("deathAge", mySearchInput);
     await getData("firstName", mySearchInput);
     await getData("lastName", mySearchInput);
   }
