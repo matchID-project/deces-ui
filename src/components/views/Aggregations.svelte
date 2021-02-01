@@ -104,13 +104,14 @@
 
   let params;
   $: params = {
-    'birthDate': {
-      title: 'Date de naissance',
-      dataRef: 'birthDate',
+    'deathDate': {
+      title: 'Date de décès',
+      dataRef: 'deathDate',
       type: Line,
       dataCB: (data) => data.map(x => {
-        return {data: x["key_as_string"], count: +x.doc_count}
-      }),
+          return {data: x["key_as_string"], count: +x.doc_count}
+        })
+        .filter(x => x.data >= "19700000"),
       xAxes: [{
         ticks: {
           autoSkip: true,
@@ -136,6 +137,104 @@
         }
       }
     },
+    // 'deathDepartments': {
+    //   title: 'Département de décès',
+    //   type: FranceChroropleth,
+    //   dataRef: 'deathDepartment',
+    //   dataCB: (data) => {
+    //     const d = data.map(x => {
+    //       return {data: x["key"], count: +x.doc_count}
+    //     });
+    //     console.log(d);
+    //     return d;
+    //   }
+    // },
+    // 'birthDate': {
+    //   title: 'Date de naissance',
+    //   dataRef: 'birthDate',
+    //   type: Line,
+    //   dataCB: (data) => data.map(x => {
+    //       return {data: x["key_as_string"], count: +x.doc_count}
+    //     }),
+    //   xAxes: [{
+    //     ticks: {
+    //       autoSkip: true,
+    //       fontFamily : fontFamily,
+    //     },
+    //     id: 'axisBirthDate',
+    //     type: 'time',
+    //     gridLines: {
+    //       display: false
+    //     },
+    //     //ticks: {
+    //     //  min: 0,
+    //     //  max: 1586000000000,
+    //     //}
+    //   }],
+    //   tooltipCallback: {
+    //     title: (tooltipItems, data) => {
+    //       let { index } = tooltipItems[0]
+    //       let { datasetIndex } = tooltipItems[0]
+    //       let date = data.datasets[datasetIndex].data[index].x;
+    //       let month = date.replace(/\d{4}(\d{2})\d{2}/, '$1')
+    //       return date.replace(/(\d{4})(\d{2})(\d{2})/,`$3 ${months[month]} $1`)
+    //     }
+    //   }
+    // },
+    'birthDepartments': {
+      title: 'Département de naissance',
+      type: FranceChroropleth,
+      dataRef: 'birthDepartment',
+      dataCB: (data) => {
+        const d = data.map(x => {
+          return {data: x["key"], count: +x.doc_count}
+        });
+        console.log(d);
+        return d;
+      }
+    },
+    'firstName': {
+      title: 'Prénom',
+      type: Bar,
+      dataRef: 'firstName',
+      dataCB: (data) => data
+        .map(x => {
+          return {data: x["key"], count: x.doc_count}
+        })
+      ,
+      xAxes: [{
+        ticks: {
+          autoSkip: true,
+          fontFamily : fontFamily,
+        },
+        gridLines: {
+          display: false
+        },
+        id: 'axisFirstName',
+        type: 'category',
+      }]
+    },
+    'lastName': {
+      title: 'Nom',
+      type: Bar,
+      dataRef: 'lastName',
+      dataCB: (data) => data
+        .map(x => {
+          return {data: x["key"], count: x.doc_count}
+        })
+      ,
+      xAxes: [{
+        ticks: {
+          autoSkip: true,
+          fontFamily : fontFamily,
+        },
+        gridLines: {
+          display: false
+        },
+        id: 'axisLastName',
+        type: 'category',
+      }]
+    },
     'sex': {
       title: 'Sexe',
       type: Pie,
@@ -154,53 +253,6 @@
           return `${percent}%`
         }
       }
-    },
-    'departementsBar': {
-      title: 'Département de décès',
-      type: Bar,
-      dataRef: 'deathDepartment',
-      dataCB: (data) => data
-        .sort((a, b) => +b.value - +a.value)
-        .map(x => {
-          return {data: x["deathDepartment"], count: x.value}
-      }),
-      xAxes: [{
-        ticks: {
-          autoSkip: true,
-          fontFamily : fontFamily,
-          callback: (x) => {
-            return departements[x] || x
-          },
-        },
-        gridLines: {
-          display: false
-        },
-        id: 'axisDeathDepartement',
-        type: 'category',
-      }],
-      tooltipCallback: {
-        title: (tooltipItems, data) => {
-          let { index } = tooltipItems[0]
-          let { datasetIndex } = tooltipItems[0]
-          let departement = data.datasets[datasetIndex].data[index].x;
-          return `${departement}${departements[departement] ? ' - ' + departements[departement] : ''}`
-        },
-        label: (tooltipItem, data) => {
-          let label = data.datasets[tooltipItem.datasetIndex].label || '';
-          let value = tooltipItem.yLabel;
-          let percent = Math.round(value/$totalResults * 100)
-          return `${label}: ${tooltipItem.yLabel} (${percent}%)`;
-        }
-      }
-    },
-    'departements': {
-      title: 'Département de décès',
-      type: FranceChroropleth,
-      dataRef: 'deathDepartment',
-      dataCB: (data) => data.map(x => {
-        return {data: x["deathDepartment"], count: +x.value}
-      }),
-      yLog: true,
     },
   };
 
@@ -229,12 +281,16 @@
   const refreshAggregations = async (mySearchInput) => {
     actualBuckets.set(0);
     totalBuckets.set(0);
-    ["sex", "deathDepartment", "birthDate"].forEach(s => {
+    ["sex", "birthDepartment", "deathDate"].forEach(s => {
       cancelRequest[s] = true
     })
     await getData("sex", mySearchInput);
-    await getData("deathDepartment", mySearchInput);
-    await getData("birthDate", mySearchInput);
+    await getData("birthDepartment", mySearchInput);
+    // await getData("deathDepartment", mySearchInput);
+    // await getData("birthDate", mySearchInput);
+    await getData("deathDate", mySearchInput);
+    await getData("firstName", mySearchInput);
+    await getData("lastName", mySearchInput);
   }
 
 
