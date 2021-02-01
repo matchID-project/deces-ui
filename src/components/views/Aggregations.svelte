@@ -374,7 +374,8 @@
   };
 
   const getData = async (s, mySearchInput) => {
-    if (mySearchInput[s].value) {
+    if (((s === 'birthDepartement') && ( (mySearchInput.birthCountry !== 'FRANCE') ||   mySearchInput.birthCity))
+       || (mySearchInput[s].value)) {
       rawData[s] = [];
       return;
     }
