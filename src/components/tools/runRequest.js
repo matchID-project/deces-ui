@@ -43,25 +43,29 @@ const runRequest = async (api, method, request, cache=true, responseType = 'json
       body: JSON.stringify(request)
     } : { method: 'GET'});
   if (response.status >= 400) {
-    let json;
-    try {
-       json = await response.json();
-    } catch(error) {
-      console.log('response json error', error);
-    }
-    return {
-      response: {
-        total: 1,
-        persons: [
-          {
-            error: true,
-            status: response.status,
-            statusText: response.statusText,
-            msg: json && json.msg
-          }
-        ]
+    if (responseType === 'json') {
+      let json;
+      try {
+        json = await response.json();
+      } catch(error) {
+        console.log('response json error', error);
       }
-    };
+      return {
+        response: {
+          total: 1,
+          persons: [
+            {
+              error: true,
+              status: response.status,
+              statusText: response.statusText,
+              msg: json && json.msg
+            }
+          ]
+        }
+      };
+    } else {
+      return response;
+    }
   } else {
     if (responseType === 'json') {
       let json = await response.json();
