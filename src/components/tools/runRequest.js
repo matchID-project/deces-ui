@@ -5,28 +5,41 @@ let myCachedResponses;
 
 let r = cachedResponses.subscribe((value) => { myCachedResponses = value });
 
-const apiSearchPath = '__BACKEND_PROXY_PATH__/search';
-const apiIdPath = '__BACKEND_PROXY_PATH__/id';
+const fullApiPath = (api) => {
+  return `__BACKEND_PROXY_PATH__/${api}`;
+}
 
 export const runSearchRequest = async (body, cache=true) => {
-  return await runRequest(apiSearchPath, 'POST', body, cache);
+  return await runRequest('search', 'POST', body, cache);
+};
+
+export const runSearchStreamRequest = async (body, cache=true) => {
+  return await runRequest('search', 'POST', body, cache, 'csvStream');
+};
+
+export const runAggregationRequest = async (body, cache=true) => {
+  return await runRequest('agg', 'POST', body, cache, 'csvStream');
 };
 
 export const runIdRequest = async (id, cache=true) => {
-  return await runRequest(apiIdPath, 'GET', id, cache);
+  return await runRequest('id', 'GET', id, cache);
 };
 
-const runRequest = async (apiPath, method, request, cache=true) => {
-  let hash = sum(request);
+const runRequest = async (api, method, request, cache=true, responseType = 'json') => {
+  let hash = sum(api + JSON.stringify(request));
   if (cache && myCachedResponses[hash]) {
     if ((Date.now() - myCachedResponses[hash].date) < scrollIdTimeout) {
       return myCachedResponses[hash].response;
     }
   }
+  const apiPath = fullApiPath(api);
   const response = await fetch(`${apiPath}${method === 'GET' ? '/' + request : ''}`,
     method === "POST" ? {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": (responseType === 'json') ? "application/json": "text/csv"
+      },
       body: JSON.stringify(request)
     } : { method: 'GET'});
   if (response.status >= 400) {
@@ -50,8 +63,42 @@ const runRequest = async (apiPath, method, request, cache=true) => {
       }
     };
   } else {
-    let json = await response.json();
-    cachedResponses.update(v => { v[hash]={date: Date.now(), response: json}; return v } );
-    return json;
+    if (responseType === 'json') {
+      let json = await response.json();
+      cachedResponses.update(v => { v[hash]={date: Date.now(), response: json}; return v } );
+      return json;
+    } else if (responseType === 'csvStream') {
+      if (ReadableStream) {
+        const reader = response.body.getReader();
+        let streamCache = '';
+        const decoder = new TextDecoder("utf-8");
+        const stream = new ReadableStream({
+          start(controller) {
+            // The following function handles each data chunk
+            function push() {
+              // "done" is a Boolean and value a "Uint8Array"
+              reader.read().then(({ done, value }) => {
+                // Is there no more data to read?
+                if (done) {
+                  // Tell the browser that we have finished sending data
+                  controller.close();
+                  cachedResponses.update(v => { v[hash]={date: Date.now(), response: streamCache}; return v } );
+                  return;
+                }
+                // Get the data and send it to the browser via the controller
+                streamCache += decoder.decode(value);
+                controller.enqueue(value);
+                push();
+              });
+            }
+            push();
+          }
+        });
+        stream.headers = response.headers
+        return stream;
+        } else {
+        return response.body;
+      }
+    }
   }
 };

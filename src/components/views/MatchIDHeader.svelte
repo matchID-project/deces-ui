@@ -335,6 +335,11 @@
           icon: 'ri:table-line',
           isActive: $displayMode === 'table'
         },
+        { title: 'Statistiques',
+          mode: 'agg',
+          icon: 'ri:bar-chart-box-line',
+          isActive: $displayMode === 'agg'
+        },
         { title: 'Géographique',
           mode: 'geo',
           icon: 'ri:earth-line',
