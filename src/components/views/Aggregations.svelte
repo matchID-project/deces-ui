@@ -133,7 +133,7 @@
           let { datasetIndex } = tooltipItems[0]
           let date = data.datasets[datasetIndex].data[index].x;
           let month = date.replace(/\d{4}(\d{2})\d{2}/, '$1')
-          return date.replace(/(\d{4})(\d{2})(\d{2})/,`$3 ${months[month]} $1`)
+          return date.replace(/(\d{4})(\d{2})(\d{2})/,`${months[month]} $1`)
         }
       }
     },
@@ -210,7 +210,16 @@
         //  min: 0,
         //  max: 1586000000000,
         //}
-      }]
+      }],
+      tooltipCallback: {
+        title: (tooltipItems, data) => {
+          let { index } = tooltipItems[0]
+          let { datasetIndex } = tooltipItems[0]
+          let age = data.datasets[datasetIndex].data[index].x;
+          return `${age} ans`
+        }
+      }
+
     },
     'firstName': {
       title: 'Prénom',
