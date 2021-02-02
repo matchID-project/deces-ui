@@ -58,7 +58,7 @@
         </div>
       </div>
       {#if $advancedSearch}
-        <div class="rf-margin-top-1N rf-col-12" style="text-align: center">
+        <div class="rf-margin-top-1N rf-col-{$displayMode === 'agg' ? '6' : '12'}" style="text-align: center">
           <div
             on:click|preventDefault={ toggleFuzzySearch }
           >
@@ -70,6 +70,11 @@
           </div>
         </div>
       {/if}
+      {#if ($displayMode === 'agg')}
+        <div class="rf-col-{$advancedSearch ? '6' : '12'} rf-text--center rf-margin-top-2N">
+          <input value="Rechercher" type="submit" class="rf-btn">
+        </div>
+      {/if}
     </div>
   </form>
 </div>
@@ -79,7 +84,7 @@
 
   import { advancedSearch, searchInput, searchCanvas,
     sortInput, resultsPerPage, searchInputFocus,
-    searchTyping, fuzzySearch } from '../tools/stores.js';
+    searchTyping, fuzzySearch, displayMode, triggerAggregations } from '../tools/stores.js';
   import { search, searchString, searchSubmit, searchURLUpdate, toggleAdvancedSearch, toggleFuzzySearch } from '../tools/search.js';
   import GoogleAnalytics from './GoogleAnalytics.svelte';
 
@@ -128,6 +133,9 @@
   const handleSubmit = async () => {
     searchSubmit();
     searchURLUpdate();
+    if ($displayMode === 'agg') {
+      $triggerAggregations = true;
+    }
     tag = {
       command: 'event',
       commandParam: 'button',
@@ -153,20 +161,22 @@
   }
 
   const handleInput = (key) => {
-    if ($searchInput[key].mask && $searchInput[key].mask.typing) {
-      if (!$searchInput[key].mask.typing($searchInput[key].value)) {
-        $searchInput[key].value = lastInput[key] || '';
+    if ($displayMode !== 'agg') {
+      if ($searchInput[key].mask && $searchInput[key].mask.typing) {
+        if (!$searchInput[key].mask.typing($searchInput[key].value)) {
+          $searchInput[key].value = lastInput[key] || '';
+        }
+        lastInput[key] = $searchInput[key].value
       }
-      lastInput[key] = $searchInput[key].value
-    }
-    if (isValid(key)) {
-      $searchTyping = date() + 350;
-      setTimeout(() => {
-        if (date() > $searchTyping) {
-          handleSubmit();
-        } else {
-          console.log("key input limiter")
-        } }, 355)
+      if (isValid(key)) {
+        $searchTyping = date() + 350;
+        setTimeout(() => {
+          if (date() > $searchTyping) {
+            handleSubmit();
+          } else {
+            console.log("key input limiter")
+          } }, 355)
+      }
     }
   }
 

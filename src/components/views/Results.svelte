@@ -17,7 +17,7 @@
                 </h4>
                 <p class="rf-text--left rf-padding-left-2N rf-padding-right-2N">
                     {@html $searchResults[0].status === 429
-                        ? "Le service est momentanément saturé, veuillez réessayer dans quelques secondes."
+                        ? "Le service étant fortement sollicité, votre requête est temporisée. Veuillez réessayer dans quelques secondes. Si le problème persiste, vous devrez revenir ultérieurement."
                         : "Le service est indisponible. Veuillez réessayer dans quelques minutes. Si l'erreur perdure, veuillez nous contacter matchid-project@gmail.com"
                     }
                 </p>
@@ -72,9 +72,11 @@
               {#if Geo}
                 <svelte:component this={Geo}/>
               {/if}
+            {:else if ($displayMode === 'agg')}
+              <Aggregations />
             {/if}
           </div>
-          {#if !($displayMode === 'geo')}
+          {#if !(['geo', 'agg'].includes($displayMode))}
             <div class="rf-col-12 rf-content--center rf-margin-top-1N rf-margin-bottom-2N">
               <Pagination/>
             </div>
@@ -94,6 +96,7 @@
   import('./Geo.svelte').then(module => {
     Geo = module.default;
   });
+  import Aggregations from './Aggregations.svelte';
   import Pagination from './Pagination.svelte';
   import ResultCard from "./ResultCard.svelte";
   import ResultRow from "./ResultRow.svelte";

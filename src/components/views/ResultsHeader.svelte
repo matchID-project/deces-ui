@@ -2,8 +2,11 @@
     <table class="rf-table rf-table--narrow rf-text--xs rf-color--black rf-margin-bottom-0" style="width: 100%!important;">
         <tr>
             <td class="rf-hide--mobile rf-td--vcenter rf-text--left" style="width: 20px;">
-                {#if $totalResults > 1}
+                {#if $totalResults > 1 && $displayMode !== 'agg' }
                     <Download disabled={$totalResults >= 500000}/>
+                {/if}
+                {#if $totalBuckets > 0 && $actualBuckets < $totalBuckets && $displayMode === 'agg' }
+                  <PieChart percent={$actualBuckets/$totalBuckets}/>
                 {/if}
             </td>
             <td class="rf-td--vcenter">
@@ -16,12 +19,12 @@
                         {/if}
                     </span>
             </td>
-            {#if (!($displayMode === 'geo') && ($totalPages > 1))}
+            {#if (!(['geo', 'agg'].includes($displayMode)) && ($totalPages > 1))}
                 <td class="rf-display--xl rf-td--vcenter rf-text--center">
                     <Pagination/>
                 </td>
             {/if}
-            {#if (!($displayMode === 'geo'))}
+            {#if (!(['geo', 'agg'].includes($displayMode)))}
                 {#if $totalPages > 1}
                     <td class="rf-hide--mobile rf-td--vcenter rf-text--center rf-text--right" style="width: 100px;">
                         <label for="per-page">par page</label>
@@ -105,12 +108,13 @@
 
 <script>
     import Icon from './Icon.svelte';
-    import { current, searchResults, sortInput, sortInputDisplay, updateURL, totalResults, totalPages,
+    import { current, searchResults, sortInput, sortInputDisplay, updateURL, totalResults, totalPages, totalBuckets, actualBuckets,
         resultsPerPage, searchInput, wasSearched, displayMode, activeElement } from '../tools/stores.js'
     import { enableDisplayMode, searchTrigger } from '../tools/search.js'
     import SortInput from './SortInput.svelte';
     import Download from './Download.svelte';
     import Pagination from './Pagination.svelte';
+    import PieChart from './PieChart.svelte';
 
     let from, to, query;
 
@@ -127,6 +131,7 @@
         {mode: 'card', icon: 'ri:list-check-2', label: "fiche compacte"},
         {mode: 'card-expand', icon: 'ri:profile-line', label: "fiche complète"},
         {mode: 'table', icon: 'ri:table-line', label: "tableur"},
+        {mode: 'agg', icon: 'ri:bar-chart-box-line', label: "statistiques"},
         {mode: 'geo', icon: 'ri:earth-line', label: "géographique"},
     ];
 

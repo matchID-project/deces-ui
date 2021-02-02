@@ -20,8 +20,9 @@ import {
     fuzzySearch,
     scrollId,
     displayMode,
-    activeElement
-} from './stores.js'
+    activeElement,
+    triggerAggregations
+} from './stores.js';
 
 import buildRequest from "./buildRequest.js";
 import { runSearchRequest, runIdRequest } from "./runRequest.js";
@@ -59,6 +60,10 @@ export const enableDisplayMode = async (mode) => {
                 searchResults.update(v => v.splice(0, resultsPerPageDefault));
             }
             resultsPerPage.update(v => resultsPerPageDefault);
+        } else if ((myDisplayMode !== 'agg') && (mode === 'agg')) {
+            if (searchTrigger(mySearchInput)) {
+                triggerAggregations.update(v => true);
+            }
         }
       displayMode.update(v => mode);
     }
@@ -73,7 +78,7 @@ const computeTotalPages = (resultsPerPage, totalResults) => {
     if (!resultsPerPage) return 0;
     if (totalResults === 0) return 1;
     return Math.ceil(totalResults / resultsPerPage);
-  }
+};
 
 export const searchTrigger = (searchInput) => {
     return Object.keys(searchInput).some(key => searchInput[key].value.length >= mySearchMinLength) &&
@@ -159,7 +164,7 @@ export const buildURLParams = (localSearchInput, localAdvancedSearch, localFuzzy
     } else {
         params.delete('fuzzy');
     }
-    if (['geo','table','card-expand'].includes(localDisplayMode)) {
+    if (['geo', 'agg', 'table','card-expand'].includes(localDisplayMode)) {
         params.set('view', localDisplayMode);
     } else {
         params.delete('view');
