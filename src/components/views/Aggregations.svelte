@@ -1,29 +1,50 @@
 <div class="rf-container">
   <div class="rf-grid-row rf-grid-row--gutters">
-    {#each Object.keys(params) as view}
-      {#if (!unavailable) && rawData[params[view].dataRef] && rawData[params[view].dataRef].length > 0}
-        <div class="rf-col-xl-{expanded[view] ? '12' : '6'} rf-col-lg-{expanded[view] ? '12' : '6'} rf-col-md-12 rf-col-sm-12 rf-col-xs-12">
-          <div class="rf-tile">
-            <div
-              class="rf-tile__icon rf-href rf-color--bf rf-hide--mobile"
-              on:click|preventDefault={() => expanded[view]=!expanded[view]}
-              >
-              <Icon icon="{expanded[view] ? 'ic:outline-minus' : 'ri:add-line'}"/>
-            </div>
-            <div class="rf-tile__body">
-              <h4 class="rf-tile__title rf-padding-bottom-1N">
-                {params[view].title||view}
-              </h4>
-              <svelte:component
-                style="max-height: {expanded[view] ? '500' : '250'}px;"
-                this={params[view] && params[view].type ? params[view].type : Line}
-                data={rawData[params[view].dataRef] && templateData(view)}
-                options={rawData[params[view].dataRef] && options(view)} />
+    {#if !unavailable}
+      {#each Object.keys(params) as view}
+        {#if (!unavailable) && rawData[params[view].dataRef] && rawData[params[view].dataRef].length > 0}
+          <div class="rf-col-xl-{expanded[view] ? '12' : '6'} rf-col-lg-{expanded[view] ? '12' : '6'} rf-col-md-12 rf-col-sm-12 rf-col-xs-12">
+            <div class="rf-tile">
+              <div
+                class="rf-tile__icon rf-href rf-color--bf rf-hide--mobile"
+                on:click|preventDefault={() => expanded[view]=!expanded[view]}
+                >
+                <Icon icon="{expanded[view] ? 'ic:outline-minus' : 'ri:add-line'}"/>
+              </div>
+              <div class="rf-tile__body">
+                <h4 class="rf-tile__title rf-padding-bottom-1N">
+                  {params[view].title||view}
+                </h4>
+                <svelte:component
+                  style="max-height: {expanded[view] ? '500' : '250'}px;"
+                  this={params[view] && params[view].type ? params[view].type : Line}
+                  data={rawData[params[view].dataRef] && templateData(view)}
+                  options={rawData[params[view].dataRef] && options(view)} />
+              </div>
             </div>
           </div>
-        </div>
-      {/if}
-    {/each}
+        {/if}
+      {/each}
+    {:else}
+      <div class="rf-col-xl-3 rf-col-lg-2 rf-col-md-1 rf-col-sm-12 rf-col-xs-12"></div>
+      <div class="rf-col-xl-6 rf-col-lg-8 rf-col-md-10 rf-col-sm-12 rf-col-xs-12 rf-margin-top-4N">
+        <h4 class="rf-h4 rf-text--center rf-color--rm">
+            <span class="rf-fi-alert-line rf-fi--xl">
+            </span>
+            <br>
+            {unavailable.status} {unavailable.statusText}
+        </h4>
+        <p class="rf-text--left rf-padding-left-2N rf-padding-right-2N">
+            { unavailable.status === 429
+                ? "Le service étant fortement sollicité, votre requête est temporisée quelques secondes... Si le problème persiste, vous devrez revenir ultérieurement."
+                : "Le service est indisponible. Veuillez réessayer dans quelques minutes. Si l'erreur perdure, veuillez nous contacter matchid-project@gmail.com"
+            }
+            {#if unavailable.status === 429}
+              <Icon icon="ri:loader-line" class="rf-fi--xxl rf-margin-top-1N" spin center/>
+            {/if}
+        </p>
+      </div>
+    {/if}
   </div>
 </div>
 
@@ -45,7 +66,6 @@
   import { searchTrigger } from '../tools/search.js';
   import buildRequest from '../tools/buildRequest.js';
   import { runAggregationRequest } from '../tools/runRequest.js';
-
 
   let style = getComputedStyle(document.body);
   const hexToRgba = (hex, alpha) => 'rgba(' + hex.match(/^\s*\#?([\da-f]{2})([\da-f]{2})([\da-f]{2})\s*$/)
@@ -309,19 +329,33 @@
   const refreshAggregations = async (mySearchInput) => {
     actualBuckets.set(0);
     totalBuckets.set(0);
-    ["sex", "birthDepartment", "deathDate"].forEach(s => {
+    ["sex", "birthDepartment", "deathAge","firstName","lastName","deathDate"].forEach(s => {
       cancelRequest[s] = true
     })
-    await getData("sex", mySearchInput);
-    await getData("birthDepartment", mySearchInput);
-    // await getData("deathDepartment", mySearchInput);
-    // await getData("birthDate", mySearchInput);
-    await getData("deathDate", mySearchInput);
-    await getData("deathAge", mySearchInput);
-    await getData("firstName", mySearchInput);
-    await getData("lastName", mySearchInput);
+    let success = false;
+    while (!success) {
+      try {
+        await getData("sex", mySearchInput);
+        await getData("birthDepartment", mySearchInput);
+        // await getData("deathDepartment", mySearchInput);
+        // await getData("birthDate", mySearchInput);
+        await getData("deathDate", mySearchInput);
+        await getData("deathAge", mySearchInput);
+        await getData("firstName", mySearchInput);
+        await getData("lastName", mySearchInput);
+        success = true;
+        unavailable = false;
+      } catch(e) {
+        console.log(e);
+        unavailable = e;
+        await sleep(unavailable.status === 429 ? 7000 : 30000);
+      }
+    }
   }
 
+  const sleep = (ms) => {
+      return new Promise(resolve => setTimeout(resolve, ms));
+  }
 
   const smartNumber = (n) => {
     if (typeof n !== 'number') {
@@ -408,79 +442,77 @@
       rawData[s] = [];
       return;
     }
-    try {
-      let headerLine = true;
-      const body = buildRequest(mySearchInput);
-      Object.keys(body).forEach(key => {
-        if (!validKeys.includes(key)) {
-          delete body[key];
-        }
-      })
-
-      const aggRequest = {
-        ...body,
-        aggs: [s]
-      };
-
-      if (['firstName', 'lastName'].includes(s)) {
-        aggRequest.aggsSize = 15;
+    let headerLine = true;
+    const body = buildRequest(mySearchInput);
+    Object.keys(body).forEach(key => {
+      if (!validKeys.includes(key)) {
+        delete body[key];
       }
+    })
 
-      const response = await runAggregationRequest(aggRequest);
+    const aggRequest = {
+      ...body,
+      aggs: [s]
+    };
 
-      const reader = response.getReader && response.getReader();
-      totalBuckets.update(v => v + response.headers ? +response.headers.get(`total-results-${s}`) : 0);
+    if (['firstName', 'lastName'].includes(s)) {
+      aggRequest.aggsSize = 15;
+    }
+    let response
+    response = await runAggregationRequest(aggRequest);
+    if (response.status) {
+      throw(response);
+    }
 
-      let header;
-      rawData[s] = [];
-      let tempChunk = []
-      cancelRequest[s] = false;
-      const decoder = new TextDecoder("utf-8");
-      while(true) {
-        let parsedChunk;
-        if (reader) {
-          const {done, value} = await reader.read();
-          if (done) {
-            break;
-          }
-          parsedChunk = decoder.decode(value).split("\n").filter(x => x);
-        } else {
-          parsedChunk = response.split("\n").filter(x => x);
-          totalBuckets.update(v => v + parsedChunk.length - 1);
-        }
+    const reader = response.getReader && response.getReader();
+    totalBuckets.update(v => v + response.headers ? +response.headers.get(`total-results-${s}`) : 0);
 
-        if (headerLine) {
-          header = parsedChunk.splice(0,1);
-          headerLine = false;
-        }
-        actualBuckets.update(v => v + parsedChunk.length);
-        const parsedArray = parsedChunk.map(x => {
-          const _row = {};
-          header[0].split(",").forEach((key, ind) => {
-            _row[key] = x.split(",")[ind]
-          })
-          return _row
-        })
-        if (cancelRequest[s]) {
-          break
-        }
-        tempChunk = [...tempChunk, ...parsedArray];
-        if (tempChunk.length > 1000) {
-          rawData[s] = [...rawData[s], ...tempChunk];
-          tempChunk = []
-        }
-        if ($actualBuckets >= $totalBuckets) {
-          rawData[s] = [...rawData[s], ...tempChunk];
-          tempChunk = []
-          break
-        }
-        if (!reader) {
+    let header;
+    rawData[s] = [];
+    let tempChunk = []
+    cancelRequest[s] = false;
+    const decoder = new TextDecoder("utf-8");
+    while(true) {
+      let parsedChunk;
+      if (reader) {
+        const {done, value} = await reader.read();
+        if (done) {
           break;
         }
+        parsedChunk = decoder.decode(value).split("\n").filter(x => x);
+      } else {
+        parsedChunk = response.split("\n").filter(x => x);
+        totalBuckets.update(v => v + parsedChunk.length - 1);
       }
-    } catch(e) {
-      console.log(e);
-      unavailable = true
+
+      if (headerLine) {
+        header = parsedChunk.splice(0,1);
+        headerLine = false;
+      }
+      actualBuckets.update(v => v + parsedChunk.length);
+      const parsedArray = parsedChunk.map(x => {
+        const _row = {};
+        header[0].split(",").forEach((key, ind) => {
+          _row[key] = x.split(",")[ind]
+        })
+        return _row
+      })
+      if (cancelRequest[s]) {
+        break
+      }
+      tempChunk = [...tempChunk, ...parsedArray];
+      if (tempChunk.length > 1000) {
+        rawData[s] = [...rawData[s], ...tempChunk];
+        tempChunk = []
+      }
+      if ($actualBuckets >= $totalBuckets) {
+        rawData[s] = [...rawData[s], ...tempChunk];
+        tempChunk = []
+        break
+      }
+      if (!reader) {
+        break;
+      }
     }
   };
 
