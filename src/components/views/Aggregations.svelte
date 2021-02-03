@@ -452,17 +452,14 @@
       return;
     }
     let headerLine = true;
-    const body = buildRequest(mySearchInput);
-    Object.keys(body).forEach(key => {
+    const aggRequest = buildRequest(mySearchInput);
+    Object.keys(aggRequest).forEach(key => {
       if (!validKeys.includes(key)) {
-        delete body[key];
+        delete aggRequest[key];
       }
     })
 
-    const aggRequest = {
-      ...body,
-      aggs: [s]
-    };
+    aggRequest.aggs = [s];
 
     if (['firstName', 'lastName'].includes(s)) {
       aggRequest.aggsSize = 15;

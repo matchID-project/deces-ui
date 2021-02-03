@@ -72,7 +72,7 @@ const runRequest = async (api, method, request, cache=true, responseType = 'json
       cachedResponses.update(v => { v[hash]={date: Date.now(), response: json}; return v } );
       return json;
     } else if (responseType === 'csvStream') {
-      if (ReadableStream) {
+      if (response.body) {
         const reader = response.body.getReader();
         let streamCache = '';
         const decoder = new TextDecoder("utf-8");
@@ -101,7 +101,9 @@ const runRequest = async (api, method, request, cache=true, responseType = 'json
         stream.headers = response.headers
         return stream;
         } else {
-        return response.body;
+          const streamCache = await response.text();
+          cachedResponses.update(v => { v[hash]={date: Date.now(), response: streamCache}; return v } );
+          return streamCache;
       }
     }
   }
