@@ -2,7 +2,7 @@
   <div class="rf-grid-row rf-grid-row--gutters">
     {#if !unavailable}
       {#each Object.keys(params) as view}
-        {#if (!unavailable) && rawData[params[view].dataRef] && rawData[params[view].dataRef].length > 0}
+        {#if (!unavailable) && params[view].type && rawData[params[view].dataRef] && (rawData[params[view].dataRef].length > 0)}
           <div class="rf-col-xl-{expanded[view] ? '12' : '6'} rf-col-lg-{expanded[view] ? '12' : '6'} rf-col-md-12 rf-col-sm-12 rf-col-xs-12">
             <div class="rf-tile">
               <div
@@ -53,9 +53,18 @@
   import { onMount } from 'svelte';
   import Icon from './Icon.svelte';
   import FranceChroropleth from './FranceChoropleth.svelte';
-  import Line from "svelte-chartjs/src/Line.svelte"
-  import Pie from "svelte-chartjs/src/Pie.svelte"
-  import Bar from "svelte-chartjs/src/Bar.svelte"
+  let Line;
+  import('svelte-chartjs/src/Line.svelte').then(module => {
+    Line = module.default;
+  });
+  let Bar;
+  import('svelte-chartjs/src/Bar.svelte').then(module => {
+    Bar = module.default;
+  });
+  let Pie;
+  import('svelte-chartjs/src/Pie.svelte').then(module => {
+    Pie = module.default;
+  });
   import {
     searchInput,
     triggerAggregations,
@@ -443,17 +452,14 @@
       return;
     }
     let headerLine = true;
-    const body = buildRequest(mySearchInput);
-    Object.keys(body).forEach(key => {
+    const aggRequest = buildRequest(mySearchInput);
+    Object.keys(aggRequest).forEach(key => {
       if (!validKeys.includes(key)) {
-        delete body[key];
+        delete aggRequest[key];
       }
     })
 
-    const aggRequest = {
-      ...body,
-      aggs: [s]
-    };
+    aggRequest.aggs = [s];
 
     if (['firstName', 'lastName'].includes(s)) {
       aggRequest.aggsSize = 15;
