@@ -149,7 +149,7 @@
             Quelques informations sur le fichier :
             <ul class="rf-margin-0 rf-padding-0 rf-padding-left-4N">
               <li class="rf-margin-0">
-                le fichier comporte ${$version && $version.data.recordsCount} décès
+                le fichier comporte ${$version && $version.data.uniqRecordsCount} décès et ${$version.data.rawRecordsCount - $version.data.uniqRecordsCount} doublons (stricts)
               </li>
               <li class="rf-margin-0">
                 il comporte les décès de 1970 à aujourd'hui (jusqu'au ${$version && $version.data.lastRecordDate})
