@@ -17,11 +17,25 @@
 		<link rel="preload" href="/fonts/Marianne-Bold.woff2" as="font" type="font/woff2" crossorigin="anonymous">
 		<link rel="preload" href="/fonts/Marianne-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
 		<script defer src='/js/dsfr.min.js'></script>
-		<!-- for modern browsers -->
-		<script type='module' src='/build/module/main.js'></script>
-
-		<!-- for older browsers (firefox 52.9esr ...) -->
-		<script nomodule defer src='/build/nomodule/main.js'>
+		<script>
+			function supportsDynamicImport() {
+				try {
+					new Function('import("")');
+					return true;
+				} catch (err) {
+					return false;
+				}
+			}
+			const script = document.createElement('script');
+			if (supportsDynamicImport() && ('noModule' in script)) {
+				// for modern browsers
+				script.type = "module"
+				script.src = '/build/module/main.js';
+			} else {
+				// for old browsers
+				script.src = '/build/nomodule/main.js';
+			}
+			document.head.appendChild(script);
 		</script>
 
 		<!--if not working-->
