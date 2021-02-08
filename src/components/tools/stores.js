@@ -471,11 +471,11 @@ export const version = writable({
     ui: '__APP__ version __APP_VERSION__',
     data: {
         version: 'd8cd99c0',
-        updateDate: '04/02/2021',
-        lastRecordDate: '30/12/2020',
-        lastDataset: 'deces-2020',
-        rawRecordsCount: 25596593,
-        uniqRecordsCount: 25437024
+        updateDate: '08/02/2021',
+        lastRecordDate: '29/01/2021',
+        lastDataset: 'deces-2021-m01',
+        rawRecordsCount: 25662699,
+        uniqRecordsCount: 25503104
     }
 })
 
