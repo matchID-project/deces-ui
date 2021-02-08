@@ -53,6 +53,7 @@
   import { onMount } from 'svelte';
   import Icon from './Icon.svelte';
   import FranceChroropleth from './FranceChoropleth.svelte';
+  import Radar from './Radar.svelte';
   let Line;
   import('svelte-chartjs/src/Line.svelte').then(module => {
     Line = module.default;
@@ -216,6 +217,14 @@
       dataRef: 'birthDepartment',
       dataCB: (data) => data.map(x => {
           return {data: x["key"], count: +x.doc_count}
+        })
+    },
+    'polarDeathDate': {
+      title: 'Mois de décès',
+      type: Radar,
+      dataRef: 'deathDate',
+      dataCB: (data) => data.map(x => {
+          return {data: x["key_as_string"], count: +x.doc_count}
         })
     },
     'deathAge': {
