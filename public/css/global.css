@@ -402,7 +402,15 @@ tr .th-inactive {
 .rf-padding-right-4px {
   padding-right: 4px;
 }
-
+.rf-padding-bottom-4px {
+  padding-bottom: 4px;
+}
+.rf-padding-top-4px {
+  padding-top: 4px;
+}
+.rf-padding-4px {
+  padding: 4px;
+}
 
 .rf-col--vcenter {
   margin: 0;

@@ -1,36 +1,38 @@
-<div class="rf-container-fluid">
-    {#if $linkSourceHeader}
-        <div class="rf-grid-row">
-            {#each header as col, colNumber}
-                <div
-                    class="rf-col"
-                    draggable={true}
-                    on:dragstart={event => dragstart(event, col)}
-                >
-                    <div class="rf-tile">
-                        <table
-                            class="rf-table rf-table--narrow rf-table--striped"
-                            class:rf-inactive={!(mapping && mapping.direct && mapping.direct[col])}
-                        >
-                            <tbody>
-                                <tr>
-                                    <th
-                                    >{col}</th>
-                                </tr>
-                                {#each displayRows as row, rowNumber}
-                                    <tr class="rf-text--sm">
-                                        <td
-                                            title={row[colNumber]}
-                                        >{row[colNumber]}</td>
+<div style="height: 450px;overflow-y:scroll;overflow-x:None;">
+    <div class="rf-container-fluid">
+        {#if $linkSourceHeader}
+            <div class="rf-grid-row">
+                {#each header as col, colNumber}
+                    <div
+                        class="rf-col rf-padding-4px"
+                        draggable={true}
+                        on:dragstart={event => dragstart(event, col)}
+                    >
+                        <div class="rf-tile">
+                            <table
+                                class="rf-table rf-table--narrow rf-table--striped"
+                                class:rf-inactive={!(mapping && mapping.direct && mapping.direct[col])}
+                            >
+                                <tbody>
+                                    <tr>
+                                        <th
+                                        >{col}</th>
                                     </tr>
-                                {/each}
-                            </tbody>
-                        </table>
+                                    {#each displayRows as row, rowNumber}
+                                        <tr class="rf-text--sm">
+                                            <td
+                                                title={row[colNumber]}
+                                            >{row[colNumber]}</td>
+                                        </tr>
+                                    {/each}
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
-                </div>
-            {/each}
-        </div>
-    {/if}
+                {/each}
+            </div>
+        {/if}
+    </div>
 </div>
 
 <script>

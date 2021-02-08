@@ -1,19 +1,33 @@
 <div class="rf-container-fluid">
-    <div class="rf-grid-row rf-margin-top-2N rf-text--center">
-        <div class="rf-col-12">
+    <div class="rf-grid-row rf-text--center">
+        <div class="rf-col-6">
             <p>
                 <strong>Choisissez les champs à apparier:</strong><br/>
                 <span class="rf-text--sm">
-                si une colonne automatiquement associée ci-dessous est erronnée, <br>
+                si un champ automatiquement associé ci-dessous est erronné, <br>
                 cliquez dessus pour supprimer l'association
                 </span>
             </p>
             <LinkFields bind:mapping={mapping} bind:fields={fields}/>
+        </div>
+        <div class="rf-col-1" style="position:relative">
+            <div class="rf-col--vcenter">
+                <Icon icon="ri:arrow-left-line" class="rf-fi--xxl"/>
+            </div>
+        </div>
+        <div class="rf-col-5">
+            <p>
+                <strong>Depuis les colonnes ci-dessous:</strong><br/>
+                <span class="rf-text--sm">glissez-collez une colonne du bas sur un champ ci-contre</span>
+            </p>
+            <LinkSampleTable bind:mapping={mapping} bind:fields={fields}/>
+        </div>
+        <div class="rf-col-12 rf-margin-top-2N">
             {#if warning}
                 <p class="rf-text--sm rf-color--rm">
                     Le contenu des colonnes suivantes n'est pas reconnu :
                     {#each fields.filter(f => (f.warning && !f.blockOnWarning)) as field}
-                        <strong>{field.label} ({field.mapTo})</strong>,
+                        <strong>{@html field.label} ({field.mapTo})</strong>,
                     {/each}
                     <br/>
                     ceci n'est pas bloquant pour le traitement mais pourrait conduire à une absence de résultats.
@@ -50,31 +64,28 @@
             >
                 Valider
             </button>
-            <p>
-                <strong>Depuis les colonnes ci-dessous:</strong><br/>
-                <span class="rf-text--sm">glissez-collez une colonne du bas sur un champ au-dessus</span>
-            </p>
-
-            <LinkSampleTable bind:mapping={mapping} bind:fields={fields}/>
-
         </div>
     </div>
 </div>
 <script>
     import { linkStep, linkMapping, linkMinFields, linkSourceHeaderTypes, linkCsvType } from '../tools/stores.js';
+    import Icon from './Icon.svelte';
     import LinkFields from './LinkFields.svelte';
     import LinkSampleTable from './LinkSampleTable.svelte';
     let mapping = {};
     let fields = [
-        { label: "nom", field: "lastName", mapTo: undefined, type: "lastName"},
-        { label: "prénom(s)", field: "firstName", mapTo: undefined, type: "firstName"},
-        { label: "sexe", field: "sex", mapTo: undefined, type: "sex"},
-        { label: "date de naissance", field: "birthDate", mapTo: undefined, type: "date", blockOnWarning: true,
+        { group: '', size: 6, label: "Nom", field: "lastName", mapTo: undefined, type: "lastName"},
+        { group: '', size: 6, label: "Nom&nbsp;d'usage", field: "legalName", mapTo: undefined, type: "lastName"},
+        { group: '', size: 8, label: "Prénom(s)", field: "firstName", mapTo: undefined, type: "firstName"},
+        { group: '', size: 4, label: "Sexe", field: "sex", mapTo: undefined, type: "sex"},
+        { group: 'Naissance', size: 6, label: "Date", field: "birthDate", mapTo: undefined, type: "date", blockOnWarning: true,
             errorMessage: "le champ date ne supporte que les format JJ/MM/AAAA, JJ-MM-AAAA, AAAA/MM/JJ et AAAA-MM-JJ"},
-        { label: "commune de naissance", field: "birthCity", mapTo: undefined, type: "city"},
-        { label: "département de naissance", field: "birthDepartment", mapTo: undefined, type: "depCode"},
-        { label: "pays de naissance", field: "birthCountry", mapTo: undefined, type: "country"},
-        { label: "décès ultérieur à (date)", field: { query: "lastSeenAliveDate", result: "deathDate" }, mapTo: undefined, type: "date", blockOnWarning: true,
+        { group: 'Naissance', size: 6, label: "Commune", field: "birthCity", mapTo: undefined, type: "city"},
+        { group: 'Naissance', size: 4, label: "Code&nbsp;INSEE", field: "birthLocationCode", mapTo: undefined, type: "locationCode"},
+        { group: 'Naissance', size: 4, label: "Département", field: "birthDepartment", mapTo: undefined, type: "depCode"},
+        { group: 'Naissance', size: 4, label: "Pays", field: "birthCountry", mapTo: undefined, type: "country"},
+        { group: 'Décès', size: 6, label: "Département", field: "deathDepartment", mapTo: undefined, type: "depCode"},
+        { group: 'Décès', size: 6, label: "Après&nbsp;le&nbsp;(date)", field: { query: "lastSeenAliveDate", result: "deathDate" }, mapTo: undefined, type: "date", blockOnWarning: true,
             errorMessage: "le champ date ne supporte que les format JJ/MM/AAAA, JJ-MM-AAAA, AAAA/MM/JJ et AAAA-MM-JJ"}
     ];
     let done = false;
