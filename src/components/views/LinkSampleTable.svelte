@@ -197,11 +197,31 @@
         $linkSourceHeader = rows.shift();
     };
 
-    const read = (ev) => {
-        const reader = new FileReader();
+
+
+    const read = async (ev) => {
         const blob = $linkFile.slice(0, 100000);
+        const badChars = 'a';
+        const encodings = ['utf8','latin1','windows-1252','mac'];
+        let min = 9999;
+        let guessedEncoding = '';
+        await Promise.all(encodings.map(async encoding => {
+            const reader = new FileReader();
+            reader.readAsText(blob, encoding);
+            const result = await new Promise((resolve, reject) => {
+                reader.onload = (ev) => {
+                    resolve(ev.target.result.normalize('NFKD').replace(/[\u0300-\u036f]/g, '').toLocaleLowerCase().replace(/[\x00-\x7F]*/g,'').length)
+                }
+            });
+            if (result < min) {
+                guessedEncoding = encoding;
+                min = result;
+            }
+        }));
+        console.log('guessedEncoding', guessedEncoding);
+        const reader = new FileReader();
+        reader.readAsText(blob, guessedEncoding);
         reader.onload = parseCsv;
-        reader.readAsText(blob);
     };
 
 	export function dragstart (ev, col) {
