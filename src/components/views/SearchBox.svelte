@@ -23,7 +23,7 @@
                       </div>
                     {/if}
 
-                    <div class="rf-margin-top-1N rf-padding-left-4px rf-padding-right-4px {$searchInput[key].size}">
+                    <div class="rf-margin-top-1N rf-padding-left-4px rf-padding-right-4px rf-padding-bottom-4px {$searchInput[key].size}">
                       <label
                         class="rf-label"
                         for={$searchInput[key].url}

@@ -81,7 +81,8 @@
                                             <table class="rf-table rf-table--narrow rf-table--striped">
                                                 <tbody>
                                                     {#each conf[column] as field}
-                                                        {#if field.value}
+                                                        {#if field.value &&
+                                                            (Array.isArray(field.value) ? field.value.some(x => x) : true)}
                                                             <tr>
                                                                 <td>{ field.label }</td>
                                                                 <td>{@html field.cb ? field.cb(field.value) : field.value }</td>
