@@ -13,7 +13,7 @@
 >
     <label
         class="rf-label"
-        for={field.label}
+        for={field.group+field.label}
         style="overflow:hidden;text-overflow:ellipsis;"
     >
         {@html field.label}
@@ -21,7 +21,7 @@
     <div class="rf-field">
         <input
             class="rf-input"
-            id={field.label}
+            id={field.group+field.label}
             name={field.label}
             autoComplete="off"
             placeholder="non associé"
