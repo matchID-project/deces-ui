@@ -1,6 +1,12 @@
+
 <div style="height: 450px;overflow-y:scroll;overflow-x:None;">
     <div class="rf-container-fluid">
         {#if $linkSourceHeader}
+            <datalist id="LinkSampleTable">
+                {#each header as col, colNumber}
+                    <option>{col}</option>
+                {/each}
+            </datalist>
             <div class="rf-grid-row">
                 {#each header as col, colNumber}
                     <div
@@ -81,7 +87,7 @@
 
     $: if ($linkSourceHeader && mapping) {
         header = [
-            ...fields.map(f => mapping.reverse && mapping.reverse[f.field])
+            ...fields.map(f => mapping.reverse && $linkSourceHeader.includes(mapping.reverse[f.field]) && mapping.reverse[f.field])
                 .filter(x => x),
             ...$linkSourceHeader.map(h => !(mapping.direct && mapping.direct[h]) && h).filter(x => x)
         ];
