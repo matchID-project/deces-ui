@@ -21,9 +21,9 @@
     <div class="rf-field">
         <input
             class="rf-input"
+            list="LinkSampleTable"
             id={field.group+field.label}
             name={field.label}
-            autoComplete="off"
             placeholder="non associé"
             bind:value={field.mapTo}
             title={field.label}

@@ -1,6 +1,12 @@
+
 <div style="height: 450px;overflow-y:scroll;overflow-x:None;">
     <div class="rf-container-fluid">
         {#if $linkSourceHeader}
+            <datalist id="LinkSampleTable">
+                {#each header as col, colNumber}
+                    <option>{col}</option>
+                {/each}
+            </datalist>
             <div class="rf-grid-row">
                 {#each header as col, colNumber}
                     <div
@@ -46,6 +52,8 @@
     export let pageSize=5;
     export let mapping;
     export let fields;
+    export let skipLines;
+    export let encoding;
     let rows;
     let header;
     let displayRows;
@@ -79,7 +87,7 @@
 
     $: if ($linkSourceHeader && mapping) {
         header = [
-            ...fields.map(f => mapping.reverse && mapping.reverse[f.field])
+            ...fields.map(f => mapping.reverse && $linkSourceHeader.includes(mapping.reverse[f.field]) && mapping.reverse[f.field])
                 .filter(x => x),
             ...$linkSourceHeader.map(h => !(mapping.direct && mapping.direct[h]) && h).filter(x => x)
         ];
@@ -142,19 +150,34 @@
     const guessSeparator = (csv) => {
         let max = 0;
         const csvLines = csv.split(/(\r\n|\n\r|\n|\r)/).map(r => r.trim()).filter(r => r);
+        const pLines = csvLines.length ? (1/csvLines.length) : 1;
         potentialSeparators.map(c => {
-            const n = csvLines.map(r => r.split(c).length).reduce((a,b) => Math.min(a,b))
-            if (n > max) { max = n; sep = c}
+            const dist={};
+            csvLines.forEach(r => {
+                const m = r.split(c).length;
+                if (dist[m]) { dist[m]+=pLines } else { dist[m] = pLines }
+            });
+            let n = 0;
+            let p = 0;
+            Object.keys(dist).forEach(m => {if (dist[m]>p) {n = parseInt(m); p = dist[m]}});
+            if ((p > 0.5) && (n > max)) { max = n; sep = c; }
+        });
+        skipLines= 0;
+        csvLines.slice(0,10).forEach(r => {
+            const m = r.split(sep).length;
+            if (m !== max) {
+                skipLines++;
+            }
         });
     };
 
-    const guessQuote = (csv, sep) => {
+    const guessQuote = (csv, sep, skipLines) => {
         let rows
         potentialQuotes.map(q => {
             const re = new RegExp(`^(${q}(([^${q}]|${q}${q})*?)${q}|([^${protect(sep)}]*))(\\${protect(sep)}(.*))?$`);
             const re2 = new RegExp(`${q}${q}`,'g');
             const quoteCounts = [0, 0];
-            rows = csv.split(/(\r\n|\n\r|\n|\r)/).map(r => r.trim()).filter(r => r).map(r => {
+            rows = csv.split(/(\r\n|\n\r|\n|\r)/).slice(skipLines).map(r => r.trim()).filter(r => r).map(r => {
                 const row = [];
                 let i = 0;
                 while(r !== undefined) {
@@ -189,38 +212,37 @@
     const parseCsv = (ev) => {
         const contents = ev.target.result;
         guessSeparator(contents);
-        rows = guessQuote(contents, sep);
+        rows = guessQuote(contents, sep, skipLines);
         $linkCsvType = {
             sep: sep,
-            quote: quote
+            quote: quote,
+            skipLines: skipLines,
+            encoding: encoding
         };
+        console.log($linkCsvType);
         $linkSourceHeader = rows.shift();
     };
-
-
 
     const read = async (ev) => {
         const blob = $linkFile.slice(0, 100000);
         const badChars = 'a';
-        const encodings = ['utf8','latin1','windows-1252','mac'];
+        const potentialEncodings = ['utf8','latin1','windows-1252','mac'];
         let min = 9999;
-        let guessedEncoding = '';
-        await Promise.all(encodings.map(async encoding => {
+        await Promise.all(potentialEncodings.map(async enc => {
             const reader = new FileReader();
-            reader.readAsText(blob, encoding);
+            reader.readAsText(blob, enc);
             const result = await new Promise((resolve, reject) => {
                 reader.onload = (ev) => {
                     resolve(ev.target.result.normalize('NFKD').replace(/[\u0300-\u036f]/g, '').toLocaleLowerCase().replace(/[\x00-\x7F]*/g,'').length)
                 }
             });
             if (result < min) {
-                guessedEncoding = encoding;
+                encoding = enc;
                 min = result;
             }
         }));
-        console.log('guessedEncoding', guessedEncoding);
         const reader = new FileReader();
-        reader.readAsText(blob, guessedEncoding);
+        reader.readAsText(blob, encoding);
         reader.onload = parseCsv;
     };
 

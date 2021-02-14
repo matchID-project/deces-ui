@@ -148,6 +148,8 @@
         progressUpload = 0;
         let formData = new FormData();
         formData.append('sep', $linkCsvType.sep);
+        formData.append('encoding', $linkCsvType.encoding);
+        formData.append('skipLines', $linkCsvType.skipLines);
         formData.append('candidateNumber', 10);
         formData.append('dateFormat', $linkCsvType.dateFormat || 'DD/MM/YYYY');
         Object.keys($linkMapping && $linkMapping.reverse).map(k => formData.append(k,$linkMapping.reverse[k]));
