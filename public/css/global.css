@@ -160,6 +160,16 @@ border-radius: 0 .25rem 0 0;
   color: var(--rm500)!important;
 }
 
+.rf-color-hover--rm:hover  {
+  color: var(--rm500)!important;
+  opacity: 1;
+}
+
+.rf-color-hover--bf:hover  {
+  color: var(--bf500)!important;
+  opacity: 1;
+}
+
 .rf-text--error {
   color: var(--rm500)!important;
 }
@@ -402,7 +412,15 @@ tr .th-inactive {
 .rf-padding-right-4px {
   padding-right: 4px;
 }
-
+.rf-padding-bottom-4px {
+  padding-bottom: 4px;
+}
+.rf-padding-top-4px {
+  padding-top: 4px;
+}
+.rf-padding-4px {
+  padding: 4px;
+}
 
 .rf-col--vcenter {
   margin: 0;

@@ -49,9 +49,9 @@
                         {#each subFilteredRows.slice((page-1)*page,page*pageSize) as rowGroup, rowNumber}
                             {#each rowGroup as row, candidateNumber}
                                 <tr
-                                    on:click={() => {rowSelect = row[$linkResults.header.indexOf('sourceLineNumber')]}}
+                                    on:click={() => selectRow(row)}
+                                    class:rf-inactive={selectedRow !== row[$linkResults.header.indexOf('sourceLineNumber')]}
                                     class:rf-background--beige={rowNumber%2}
-                                    class:rf-inactive={rowSelect !== row[$linkResults.header.indexOf('sourceLineNumber')]}
                                 >
                                     {#each header.filter((h,index) => index < mappedColumns).map(h => row[$linkResults.header.indexOf(h)]) as col, index}
                                         <td title={col}>
@@ -60,25 +60,39 @@
                                     {/each}
                                     <td
                                         class="hcenter"
-                                        title={get(row,'scores')}
+                                        title={JSON.stringify(selectedScores) + '<br>' + get(row,'scores')}
                                     >
                                         {Math.round(get(row,'score')*100)}%
                                     </td>
                                     <td class="hcenter has-text-grey-light">
                                         <span
-                                            class="rf-fi-close-circle-line rf-fi--lg {(row[row.length - 2].valid === false) ? "rf-color--rm" : "rf-inactive"}"
-                                            class:is-hidden={(row[$linkResults.header.indexOf('sourceLineNumber')] !== rowSelect) && (row[row.length - 2].valid !== false)}
-                                            on:click={() => {row[row.length - 2].valid = autoCheckSimlarRows(row, candidateNumber, false);}}
+                                            class="rf-fi-close-circle-line rf-fi--lg {(row[row.length - 2].valid === false) ? "rf-color--rm" : "rf-color-hover--rm rf-inactive"}"
+                                            class:is-hidden={
+                                                (row[$linkResults.header.indexOf('sourceLineNumber')] !== selectedRow)
+                                                && (row[row.length - 2].valid !== false)
+                                                && ((autoCheckSimilarPreview !== false)
+                                                || (!similarScores(selectedScores, JSON.parse(get(row,'scores')))))
+                                            }
+                                            on:click={() => {row[row.length - 2].valid = autoCheckSimilarRows(row, candidateNumber, false);}}
+                                            on:mouseenter={() => {autoCheckSimilarPreview = autoCheckSimilar ? false : undefined}}
+                                            on:mouseleave={() => {autoCheckSimilarPreview = undefined}}
                                             title="invalider l'appariement"
                                         >
                                         </span>
-                                        {#if row[$linkResults.header.indexOf('sourceLineNumber')] === rowSelect}
+                                        {#if row[$linkResults.header.indexOf('sourceLineNumber')] === selectedRow}
                                             &nbsp;
                                         {/if}
                                         <span
-                                            class="rf-fi-checkbox-line rf-fi--lg {(row[row.length - 2].valid === true) ? "rf-color--bf" : "rf-inactive"}"
-                                            class:is-hidden={(row[$linkResults.header.indexOf('sourceLineNumber')] !== rowSelect) && (row[row.length - 2].valid !== true)}
-                                            on:click={() => {row[row.length -2].valid = autoCheckSimlarRows(row, candidateNumber, true);}}
+                                            class="rf-fi-checkbox-line rf-fi--lg {(row[row.length - 2].valid === true) ? "rf-color--bf" : "rf-color-hover--bf rf-inactive"}"
+                                            class:is-hidden={
+                                                (row[$linkResults.header.indexOf('sourceLineNumber')] !== selectedRow)
+                                                && (row[row.length - 2].valid !== false)
+                                                && ((autoCheckSimilarPreview !== true)
+                                                || (!similarScores(selectedScores, JSON.parse(get(row,'scores')))))
+                                            }
+                                            on:click={() => {row[row.length -2].valid = autoCheckSimilarRows(row, candidateNumber, true);}}
+                                            on:mouseenter={() => {autoCheckSimilarPreview = autoCheckSimilar ? true : undefined}}
+                                            on:mouseleave={() => {autoCheckSimilarPreview = undefined}}
                                             title="valider l'appariement"
                                         >
                                         </span>
@@ -130,7 +144,10 @@
     let header;
     let mappedColumns;
     let displayUnmappedColumns = false;
-    let autoCheckSimilar = false;
+    export let autoCheckSimilar = true;
+    let autoCheckSimilarPreview = undefined;
+    const similarThreshold = 0.001;
+    let wait = false;
 
     const sorts = {
         scoreDesc: (a, b) => get(a[0],'score') > get(b[0],'score') ? -1 : ( get(a[0],'score') < get(b[0],'score') ? 1 : 0 ),
@@ -138,7 +155,7 @@
     }
     let filteredRows;
     let subFilteredRows;
-    export let rowSelect;
+    export let selectedRow;
     const headerMapping = {
         firstName: 'name.first',
         lastName: 'name.last',
@@ -174,19 +191,30 @@
 
     $: if (filteredRows) {
         if (master) {
-            if (!rowSelect ||
-                ( filteredRows && filteredRows.length && !filteredRows.some(r => rowSelect === r[0][$linkResults.header.indexOf('sourceLineNumber')]))
+            if (!selectedRow ||
+                ( filteredRows && filteredRows.length && !filteredRows.some(r => selectedRow === r[0][$linkResults.header.indexOf('sourceLineNumber')]))
             ) {
                 if (filteredRows && filteredRows.length) {
-                    rowSelect = filteredRows[0][0][$linkResults.header.indexOf('sourceLineNumber')];
+                    selectRow(filteredRows[0][0]);
                 } else {
-                    rowSelect = -1;
+                    selectRow();
                 }
             }
         } else {
-            if (filteredRows && filteredRows.length && (rowSelect === -1)) {
-                rowSelect = filteredRows[0][0][$linkResults.header.indexOf('sourceLineNumber')];
+            if (filteredRows && filteredRows.length && (selectedRow === -1)) {
+                selectRow(filteredRows[0][0]);
             }
+        }
+    }
+
+    let selectedScores = undefined;
+    const selectRow = (row) => {
+        if (row) {
+            selectedRow = row[$linkResults.header.indexOf('sourceLineNumber')];
+            selectedScores = JSON.parse(get(row,'scores'));
+        } else {
+            selectedRow = -1;
+            selectedScores = undefined;
         }
     }
 
@@ -291,11 +319,11 @@
         return dateString.replace(/(\d{4})(\d{2})(\d{2})/, format);
     };
 
-    const autoCheckSimlarRows = (row, candidateNumber, status) => {
+    const autoCheckSimilarRows = async (row, candidateNumber, status) => {
         if (autoCheckSimilar) {
             const scores = JSON.parse(get(row,'scores'));
             const c = check(row, candidateNumber, status, 'manual');
-            filteredRows.forEach(rg => rg.forEach (r => {
+            filteredRows.forEach(rg => rg.forEach(r => {
                 if (r !== row) {
                     const s = JSON.parse(get(r, 'scores'));
                     if (similarScores(scores, s)) {
@@ -307,13 +335,21 @@
         } else {
             return check(row, candidateNumber, status, 'manual');
         }
-    }
+    };
+
+    const scoresDistance = (s1, s2) => {
+        if (!s1 || !s2) { return 1 }
+        return Math.max(
+            (s1.score - s2.score) ** 2,
+            ((s1.date ? s1.date : 0) - (s2.date ? s2.date : 0)) ** 2,
+            ((s1.location ? s1.location.score : 0) - (s2.location ? s2.location.score : 0)) ** 2,
+            (( s1.name ? s1.name.score : 0 )- (s2.name ? s2.name.score : 0)) ** 2
+        );
+    };
 
     const similarScores = (s1, s2) => {
-        const dist = Math.max((s1.score - s2.score) ** 2, (s1.date - s2.date) ** 2, ((s1.location ? s1.location.score : 0) - (s2.location ? s2.location.score : 0)) ** 2, (s1.name - s2.name) ** 2);
-        return dist < 0.001;
-    }
-
+        return scoresDistance(s1, s2) < similarThreshold;
+    };
 
 </script>
 

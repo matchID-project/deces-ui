@@ -1,5 +1,5 @@
 <div
-    class="rf-tile hover-parent"
+    class="hover-parent rf-text--left rf-margin-top-1N rf-padding-left-4px rf-padding-right-4px rf-padding-bottom-4px"
     class:rf-background--hovering={(hovering === true)}
     on:dragover={() => {hovering = true}}
     on:dragleave={() => {hovering = false}}
@@ -11,21 +11,23 @@
     class:hovering={hovering === true}
     on:click|preventDefault={reset}
 >
-    <div class="rf-tile__body">
-        <div class="rf-tile_desc">
-            {field.label}<br/>
-            {#if field && field.mapTo}
-                <span class="rf-fi-arrow-down-s-line rf-fi--lg"></span>
-                <br/>
-                <strong>
-                    {field.mapTo}
-                </strong>
-            {:else}
-                <span class="rf-text--sm">
-                    <br> non associé
-                </span>
-            {/if}
-        </div>
+    <label
+        class="rf-label"
+        for={field.group+field.label}
+        style="overflow:hidden;text-overflow:ellipsis;"
+    >
+        {@html field.label}
+    </label>
+    <div class="rf-field">
+        <input
+            class="rf-input"
+            list="LinkSampleTable"
+            id={field.group+field.label}
+            name={field.label}
+            placeholder="non associé"
+            bind:value={field.mapTo}
+            title={field.label}
+        />
     </div>
 </div>
 

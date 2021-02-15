@@ -1,9 +1,18 @@
 <div class="rf-container--fluid">
-    <div class="rf-grid-row">
-        {#each fields as field}
-            <div class="rf-col rf-margin-1N">
-                <LinkField bind:field={field}/>
-            </div>
+    <div class="rf-grid-row rf-text--left">
+        {#each groups as group}
+            {#if group}
+                <div class="rf-col-12 rf-margin-top-2N rf-padding-left-4px">
+                    <strong>
+                        {group}
+                    </strong>
+                </div>
+            {/if}
+            {#each fields.filter(f => f.group === group) as field}
+                <div class="rf-col{field.size ? "-" + field.size : ""} rf-text-left">
+                    <LinkField bind:field={field}/>
+                </div>
+            {/each}
         {/each}
     </div>
 </div>
@@ -12,6 +21,14 @@
     import LinkField from './LinkField.svelte';
     export let mapping = {};
     export let fields;
+
+    let groups = [];
+
+    $: fields.forEach(field => {
+        if (!groups.includes(field.group)) {
+            groups.push(field.group);
+        }
+    })
 
     $: if (fields) {
         mapping={

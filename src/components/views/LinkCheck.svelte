@@ -54,8 +54,8 @@
                         </button>
                     </span>
                 </p>
-                <LinkCheckTable filter={filterUnchecked} bind:rowSelect={rowSelect} sort={'scoreDesc'} master=true actionTitle={"à valider"} bind:size={unCheckedLinks}/>
-                <LinkCheckTable filter={ filterChecked } bind:rowSelect={rowSelect} sort={'scoreAsc'} actionTitle={"validées"} bind:size={checkedLinks}/>
+                <LinkCheckTable filter={filterUnchecked} bind:autoCheckSimilar={autoCheckSimilar} bind:selectedRow={selectedRow} sort={'scoreDesc'} master=true actionTitle={"à valider"} bind:size={unCheckedLinks}/>
+                <LinkCheckTable filter={ filterChecked } bind:autoCheckSimilar={autoCheckSimilar} bind:selectedRow={selectedRow} sort={'scoreAsc'} actionTitle={"validées"} bind:size={checkedLinks}/>
             {/if}
         </div>
 
@@ -71,7 +71,8 @@
 
     let isDownloading = false;
 
-    let rowSelect;
+    let selectedRow;
+    let autoCheckSimilar;
     const filterUnchecked = {
         check: (r) => {return r.some(v => (!v || v.checked === false))},
     };
