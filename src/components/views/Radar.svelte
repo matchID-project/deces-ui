@@ -13,7 +13,7 @@
        <polyline stroke="black" fill="none" style="stroke:#666666;stroke-width: 0.4;stroke-opacity:0.4;"
                                             points="{axis.points}"/>
      {/each}
-     {#each polarValues.groups.caption as element, elementId}
+     {#each polarValues.groups.caption as element}
        <text x={element.x} y={element.y} 
              font-family={element.fontFamily}
              font-size={element.fontSize}
@@ -28,7 +28,7 @@
                  font-family={element.fontFamily}
                  font-size={element.fontSize}
                  fill="{seasonColor(element.text)}"
-                 dy="20"  text-anchor="{element.textAnchor}"
+                 dy="{element.y > 0 ? -10 : 20}"  text-anchor="{element.textAnchor}"
                           >
                           {renderData[selected][element.col]}
            </text>
@@ -129,9 +129,9 @@
 
   const seasonColor = (text) => {
     if (seasons.ete.includes(text)) return "#e63946"
-    if (seasons.hiver.includes(text)) return "#1d3557"
-    if (seasons.printemps.includes(text)) return "#457b9d"
-    if (seasons.autom.includes(text)) return "#a8dadc"
+    if (seasons.hiver.includes(text)) return "#457b9d"
+    if (seasons.printemps.includes(text)) return "#666666"
+    if (seasons.autom.includes(text)) return "#666666"
   }
 
   const toggle = (id) => {
