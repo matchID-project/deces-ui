@@ -1,15 +1,16 @@
-<svg {width} {height} viewBox="0 0 400 300">
+<svg {width} {height} viewBox="0 0 {widthBox} {heightBox}">
   <g transform={polarValues.transform}
      >
      {#each polarValues.groups.scale as element}
        <circle
-         style="fill:#fff;fill-opacity:0.993535;stroke:#666666;stroke-width:0.4"
+         fill="none"
+         style="stroke:#666666;stroke-width:0.4;stroke-opacity:0.4;"
          cx="{element.cx}"
          cy="{element.cy}"
          r="{element.r}" />
      {/each}
      {#each polarValues.groups.axis as axis}
-       <polyline stroke="black" fill="none" style="stroke:#666666;stroke-width: 0.4;"
+       <polyline stroke="black" fill="none" style="stroke:#666666;stroke-width: 0.4;stroke-opacity:0.4;"
                                             points="{axis.points}"/>
      {/each}
      {#each polarValues.groups.caption as element, elementId}
@@ -22,7 +23,7 @@
                               >
                               {element.text}
        </text>
-       {#if selected !== undefined}
+       {#if selected !== undefined && renderData[selected][element.col] !== undefined}
            <text x={element.x} y={element.y} 
                  font-family={element.fontFamily}
                  font-size={element.fontSize}
@@ -35,13 +36,13 @@
      {/each}
      {#each polarValues.groups.shapes as element, ind}
        <path
-         style="stroke:{colors[ind%10]};stroke-width:{selected === element.year ? 2.0 : 1}px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         style="stroke:{colors[ind%4]};stroke-width:{selected === element.year ? 3.0 : 1}px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
          d="{element.d}"
          fill="none"
          on:mouseenter={()=> toggle(element.year)}
          on:mouseleave={()=> toggle(element.year)}
          />
-         <text x="180" y="{-100}" class="small" style="opacity:{selected === element.year ? 0.9: 0}">{element.year}</text>
+         <text x="150" y="-100" class="small" style="opacity:{selected === element.year ? 0.9: 0};stroke:{colors[ind%4]};">{element.year}</text>
      {/each}
   </g>
 </svg>
@@ -56,8 +57,19 @@
   let renderData;
   let polarValues;
   let maxVal = 0;
-  const colors = ["#7400B8","#6930C3","#5E60CE","#5390D9","#4EA8DE",
-    "#48BFE3","#56CFE1","#64DFDF","#72EFDD","#80FFDB"]
+  const widthBox = 400;
+  const heightBox = 300;
+
+  let style = getComputedStyle(document.body);
+  const hexToRgba = (hex, alpha) => 'rgba(' + hex.match(/^\s*\#?([\da-f]{2})([\da-f]{2})([\da-f]{2})\s*$/)
+        .slice(1).map(e => parseInt(e, 16)).join(',') + `,${alpha})`;
+  const colors = [
+    hexToRgba(style.getPropertyValue('--bf500'), 0.7),
+    hexToRgba(style.getPropertyValue('--bf500'), 0.55),
+    hexToRgba(style.getPropertyValue('--bf500'), 0.4),
+    hexToRgba(style.getPropertyValue('--bf500'), 0.25)
+  ]
+
   const seasons = {
     printemps: ["Mars", "Avril", "Mai"],
     ete: ["Juin", "Juillet", "Août"],
@@ -102,13 +114,15 @@
   $: if (renderData) {
     polarValues = render(columns, renderData, {
       maxVal,
-      size: 250, // size of the chart (including captions)
+      size: 300, // size of the chart (including captions)
+      width: widthBox,
+      height: heightBox,
       axes: true, // show axes?
-      scales: 5, // show scale circles?
+      scales: 10, // show scale circles?
       captionProps: () => ({
         className: 'caption',
         textAnchor: 'middle', fontSize: 8,
-        fontFamily: 'sans-serif'
+        fontFamily: 'Marianne'
       })
     })
   }

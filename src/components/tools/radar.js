@@ -108,9 +108,10 @@ const render = (columns, data, opt = {}) => {
 		groups.scale = scales
 	}
 
-	const delta = (opt.size / 2).toFixed(4)
+	const deltaX = (opt.width / 2).toFixed(4)
+	const deltaY = (opt.height / 2).toFixed(4)
   return {
-    transform: `translate(${delta},${delta})`,
+    transform: `translate(${deltaX},${deltaY})`,
     groups
   }
 }
