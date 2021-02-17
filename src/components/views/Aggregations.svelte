@@ -134,38 +134,13 @@
 
   let params;
   $: params = {
-    'deathDate': {
-      title: 'Date de décès',
+    'polarDeathDate': {
+      title: 'Mois de décès',
+      type: Radar,
       dataRef: 'deathDate',
-      type: Line,
       dataCB: (data) => data.map(x => {
           return {data: x["key_as_string"], count: +x.doc_count}
         })
-        .filter(x => x.data >= "19700000"),
-      xAxes: [{
-        ticks: {
-          autoSkip: true,
-          fontFamily : fontFamily,
-        },
-        id: 'axisDeathDate',
-        type: 'time',
-        gridLines: {
-          display: false
-        },
-        //ticks: {
-        //  min: 0,
-        //  max: 1586000000000,
-        //}
-      }],
-      tooltipCallback: {
-        title: (tooltipItems, data) => {
-          let { index } = tooltipItems[0]
-          let { datasetIndex } = tooltipItems[0]
-          let date = data.datasets[datasetIndex].data[index].x;
-          let month = date.replace(/\d{4}(\d{2})\d{2}/, '$1')
-          return date.replace(/(\d{4})(\d{2})(\d{2})/,`${months[month]} $1`)
-        }
-      }
     },
     // 'deathDepartments': {
     //   title: 'Département de décès',
@@ -219,13 +194,38 @@
           return {data: x["key"], count: +x.doc_count}
         })
     },
-    'polarDeathDate': {
-      title: 'Mois de décès',
-      type: Radar,
+    'deathDate': {
+      title: 'Date de décès',
       dataRef: 'deathDate',
+      type: Line,
       dataCB: (data) => data.map(x => {
           return {data: x["key_as_string"], count: +x.doc_count}
         })
+        .filter(x => x.data >= "19700000"),
+      xAxes: [{
+        ticks: {
+          autoSkip: true,
+          fontFamily : fontFamily,
+        },
+        id: 'axisDeathDate',
+        type: 'time',
+        gridLines: {
+          display: false
+        },
+        //ticks: {
+        //  min: 0,
+        //  max: 1586000000000,
+        //}
+      }],
+      tooltipCallback: {
+        title: (tooltipItems, data) => {
+          let { index } = tooltipItems[0]
+          let { datasetIndex } = tooltipItems[0]
+          let date = data.datasets[datasetIndex].data[index].x;
+          let month = date.replace(/\d{4}(\d{2})\d{2}/, '$1')
+          return date.replace(/(\d{4})(\d{2})(\d{2})/,`${months[month]} $1`)
+        }
+      }
     },
     'deathAge': {
       title: 'Âge au décès',
