@@ -23,6 +23,7 @@ config
 log-db
 # dependencies
 /node_modules
+/cypress/screenshots/
 
 
 # testing
