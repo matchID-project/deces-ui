@@ -455,8 +455,26 @@
   };
 
   const getData = async (s, mySearchInput) => {
-    if (((s === 'birthDepartement') && ( (mySearchInput.birthCountry !== 'FRANCE') ||   mySearchInput.birthCity))
-       || (mySearchInput[s].value)) {
+    if (
+        (
+          (s === 'birthDepartement')
+          &&
+          (
+            (mySearchInput.birthCountry !== 'FRANCE')
+            ||
+            mySearchInput.birthCity
+          )
+        )
+       ||
+        (
+          (mySearchInput[s].value)
+          &&
+          !(
+            ['deathDate','deathAge','birthDate'].includes(s)
+            && /^(\d{4}|.*-.*)$/.test(mySearchInput[s].value)
+          )
+        )
+     ) {
       rawData[s] = [];
       return;
     }
