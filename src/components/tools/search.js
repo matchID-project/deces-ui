@@ -81,7 +81,7 @@ const computeTotalPages = (resultsPerPage, totalResults) => {
 };
 
 export const searchTrigger = (searchInput) => {
-    return Object.keys(searchInput).some(key => searchInput[key].value.length >= mySearchMinLength) &&
+    return (myDisplayMode === 'agg') || Object.keys(searchInput).some(key => searchInput[key].value.length >= mySearchMinLength) &&
            Object.keys(searchInput).every(key =>
             (searchInput[key].mask && searchInput[key].mask.validation)
             ? searchInput[key].mask.validation(searchInput[key].value)

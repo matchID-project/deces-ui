@@ -71,7 +71,7 @@
     $: if (Object.keys($searchInput).some(k => $searchInput[k].value)) {
         $firstSearch = false;
     };
-    $: displayResults = (Object.keys($searchInput).some(k => $searchInput[k].value));
+    $: displayResults = (Object.keys($searchInput).some(k => $searchInput[k].value)) || ($displayMode === 'agg');
     $: reduceSearchBox = displayResults || (!$firstSearch);
 
     $: size = {
