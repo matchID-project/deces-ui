@@ -32,19 +32,19 @@
                     </label>
                 </div>
             </div>
-        </div>
-        <div class="rf-col-12">
             {#if subFilteredRows.length}
-                <div style="overflow-x: auto">
-                    <table class="rf-table rf-table--narrow rf-text--sm">
+                <div class="rf-col-2">
+                    <table
+                        class="rf-table rf-table--narrow rf-text--sm"
+                        style="border-right: .25em solid;"
+                    >
                         <tr>
-                            {#each header as col, index}
-                                {#if displayUnmappedColumns || (index < mappedColumns+2)}
-                                    <th class:is-active={!($linkMapping.direct[col] || ['score', 'check'].includes(col))}>
-                                        {col}
-                                    </th>
-                                {/if}
-                            {/each}
+                            <th class="is-active">
+                                score
+                            </th>
+                            <th class="is-active">
+                                check
+                            </th>
                         </tr>
                         {#each subFilteredRows.slice((page-1)*page,page*pageSize) as rowGroup, rowNumber}
                             {#each rowGroup as row, candidateNumber}
@@ -52,12 +52,8 @@
                                     on:click={() => selectRow(row)}
                                     class:rf-inactive={selectedRow !== row[$linkResults.header.indexOf('sourceLineNumber')]}
                                     class:rf-background--beige={rowNumber%2}
+                                    style="height:3.25rem;"
                                 >
-                                    {#each header.filter((h,index) => index < mappedColumns).map(h => row[$linkResults.header.indexOf(h)]) as col, index}
-                                        <td title={col}>
-                                            {@html formatField(col, header[index], row)}
-                                        </td>
-                                    {/each}
                                     <td
                                         class="hcenter"
                                         title={JSON.stringify(selectedScores) + '<br>' + get(row,'scores')}
@@ -97,31 +93,74 @@
                                         >
                                         </span>
                                     </td>
-                                    {#if displayUnmappedColumns}
-                                        {#each header.filter((h,index) => index >= (mappedColumns+2)).map(h => row[$linkResults.header.indexOf(h)]) as col, index}
-                                            <td title={col}>
-                                                {col}
-                                            </td>
-                                        {/each}
-                                    {/if}
                                 </tr>
                             {/each}
                         {/each}
                         {#if filteredRows.length > pageSize}
                             <tr>
-                                {#each header as col, index}
-                                    {#if displayUnmappedColumns || (index < mappedColumns+2)}
-                                        <td>
-                                            ...
-                                        </td>
-                                    {/if}
-                                {/each}
+                                <td>
+                                    ...
+                                </td>
+                                <td>
+                                    ...
+                                </td>
                             </tr>
                         {/if}
                     </table>
                 </div>
+                <div class="rf-col-10">
+                    <div style="overflow-x: auto">
+                        <table class="rf-table rf-table--narrow rf-text--sm">
+                            <tr>
+                                {#each header.filter(x => x!=='score' && x!=='check') as col, index}
+                                    {#if displayUnmappedColumns || (index < mappedColumns)}
+                                        <th class:is-active={!($linkMapping.direct[col])}>
+                                            {col}
+                                        </th>
+                                    {/if}
+                                {/each}
+                            </tr>
+                            {#each subFilteredRows.slice((page-1)*page,page*pageSize) as rowGroup, rowNumber}
+                                {#each rowGroup as row, candidateNumber}
+                                    <tr
+                                        on:click={() => selectRow(row)}
+                                        class:rf-inactive={selectedRow !== row[$linkResults.header.indexOf('sourceLineNumber')]}
+                                        class:rf-background--beige={rowNumber%2}
+                                        style="height:3.25rem;"
+                                    >
+                                        {#each header.filter(x => x!=='score' && x!=='check').filter((h,index) => index < mappedColumns).map(h => row[$linkResults.header.indexOf(h)]) as col, index}
+                                            <td title={col}>
+                                                {@html formatField(col, header[index], row)}
+                                            </td>
+                                        {/each}
+                                        {#if displayUnmappedColumns}
+                                            {#each header.filter((h,index) => index >= (mappedColumns+2)).map(h => row[$linkResults.header.indexOf(h)]) as col, index}
+                                                <td title={col}>
+                                                    {col}
+                                                </td>
+                                            {/each}
+                                        {/if}
+                                    </tr>
+                                {/each}
+                            {/each}
+                            {#if filteredRows.length > pageSize}
+                                <tr>
+                                    {#each header as col, index}
+                                        {#if displayUnmappedColumns || (index < mappedColumns+2)}
+                                            <td>
+                                                ...
+                                            </td>
+                                        {/if}
+                                    {/each}
+                                </tr>
+                            {/if}
+                        </table>
+                    </div>
+                </div>
             {:else if subFilter}
-                <p>attention, le filtre <strong>{subFilter}</strong> est trop restrictif </p>
+                <div class="rf-col-12">
+                    <p>attention, le filtre <strong>{subFilter}</strong> est trop restrictif </p>
+                </div>
             {/if}
         </div>
     </div>
