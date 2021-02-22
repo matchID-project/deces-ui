@@ -85,6 +85,8 @@
         { group: 'Naissance', size: 4, label: "Département", field: "birthDepartment", mapTo: undefined, type: "depCode"},
         { group: 'Naissance', size: 4, label: "Pays", field: "birthCountry", mapTo: undefined, type: "country"},
         { group: 'Décès', size: 6, label: "Département", field: "deathDepartment", mapTo: undefined, type: "depCode"},
+        { group: 'Décès', size: 6, label: "Date", field: { query: "deathDate", result: "deathDate" }, mapTo: undefined, type: "date", blockOnWarning: true,
+            errorMessage: "le champ date ne supporte que les format JJ/MM/AAAA, JJ-MM-AAAA, AAAA/MM/JJ et AAAA-MM-JJ"},
         { group: 'Décès', size: 6, label: "Après&nbsp;le&nbsp;(date)", field: { query: "lastSeenAliveDate", result: "deathDate" }, mapTo: undefined, type: "date", blockOnWarning: true,
             errorMessage: "le champ date ne supporte que les format JJ/MM/AAAA, JJ-MM-AAAA, AAAA/MM/JJ et AAAA-MM-JJ"}
     ];
