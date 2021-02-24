@@ -6,9 +6,13 @@
         <div class="rf-grid-row">
             <div class="rf-col-4 rf-content--center">
                 <div style="overflow:hidden;text-overflow:ellipsis">
-                    <input id="displayColumns" type="checkbox" bind:checked={displayUnmappedColumns}/>
-                    <label class="rf-label" for="displayColumns">
-                        Afficher toutes les colonnes
+                    <input id="autocheck" type="checkbox" bind:checked={autoCheckSimilar}/>
+                    <label
+                        class="rf-label"
+                        for="autocheck"
+                        title="Cette option validera automatiquement toute les paires ayant le même profil de rapprochement"
+                    >
+                        Valider les paires similaires
                     </label>
                 </div>
             </div>
@@ -22,13 +26,9 @@
             </div>
             <div class="rf-col-4 rf-content--center">
                 <div style="overflow:hidden;text-overflow:ellipsis">
-                    <input id="autocheck" type="checkbox" bind:checked={autoCheckSimilar}/>
-                    <label
-                        class="rf-label"
-                        for="autocheck"
-                        title="Cette option validera automatiquement toute les paires ayant le même profil de rapprochement"
-                    >
-                        Valider les paires similaires
+                    <input id="displayColumns" type="checkbox" bind:checked={displayUnmappedColumns}/>
+                    <label class="rf-label" for="displayColumns">
+                        Afficher toutes les colonnes
                     </label>
                 </div>
             </div>
