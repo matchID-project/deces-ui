@@ -397,8 +397,11 @@
         if (!s1 || !s2) { return 1 }
         return Math.max(
             (s1.score - s2.score) ** 2,
-            ((s1.date ? s1.date : 0) - (s2.date ? s2.date : 0)) ** 2,
-            ((s1.location ? s1.location.score : 0) - (s2.location ? s2.location.score : 0)) ** 2,
+            ((s1.birthDate ? s1.birthDate : 0) - (s2.birthDate ? s2.birthDate : 0)) ** 2,
+            ((s1.birthLocation ? s1.birthLocation.score : 0) - (s2.birthLocation ? s2.birthLocation.score : 0)) ** 2,
+            ((s1.deathDate ? s1.deathDate : 0) - (s2.deathDate ? s2.deathDate : 0)) ** 2,
+            ((s1.deathLocation ? s1.deathLocation.score : 0) - (s2.deathLocation ? s2.deathLocation.score : 0)) ** 2,
+            (( s1.sex ? s1.sex : 0 )- (s2.sex ? s2.sex : 0)) ** 2,
             (( s1.name ? s1.name.score : 0 )- (s2.name ? s2.name.score : 0)) ** 2
         );
     };
