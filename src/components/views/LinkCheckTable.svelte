@@ -56,7 +56,7 @@
                                 >
                                     <td
                                         class="hcenter"
-                                        title={JSON.stringify(selectedScores) + '<br>' + get(row,'scores')}
+                                        title={get(row,'scores')}
                                     >
                                         {Math.round(get(row,'score')*100)}%
                                     </td>
@@ -70,9 +70,12 @@
                                                 || (!similarScores(selectedScores, JSON.parse(get(row,'scores')))))
                                             }
                                             on:click={() => {row[row.length - 2].valid = autoCheckSimilarRows(row, candidateNumber, false);}}
-                                            on:mouseenter={() => {autoCheckSimilarPreview = autoCheckSimilar ? false : undefined}}
+                                            on:mouseenter={() => {
+                                                selectedScores = JSON.parse(get(row,'scores'));
+                                                autoCheckSimilarPreview = autoCheckSimilar ? false : undefined;
+                                                }}
                                             on:mouseleave={() => {autoCheckSimilarPreview = undefined}}
-                                            title="invalider l'appariement"
+                                            title={autoCheckSimilar ? `invalider l'appariement et ${similarRowCount - 1} paire(s) similaire(s)` : "invalider l'appariement"}
                                         >
                                         </span>
                                         {#if row[$linkResults.header.indexOf('sourceLineNumber')] === selectedRow}
@@ -87,9 +90,12 @@
                                                 || (!similarScores(selectedScores, JSON.parse(get(row,'scores')))))
                                             }
                                             on:click={() => {row[row.length -2].valid = autoCheckSimilarRows(row, candidateNumber, true);}}
-                                            on:mouseenter={() => {autoCheckSimilarPreview = autoCheckSimilar ? true : undefined}}
+                                            on:mouseenter={() => {
+                                                selectedScores = JSON.parse(get(row,'scores'));
+                                                autoCheckSimilarPreview = autoCheckSimilar ? true : undefined
+                                                }}
                                             on:mouseleave={() => {autoCheckSimilarPreview = undefined}}
-                                            title="valider l'appariement"
+                                            title={autoCheckSimilar ? `valider l'appariement et ${similarRowCount - 1} paire(s) similaire(s)` : "valider l'appariement"}
                                         >
                                         </span>
                                     </td>
@@ -108,11 +114,11 @@
                         {/if}
                     </table>
                 </div>
-                <div class="rf-col-10">
+                <div class="rf-col-10 rf-padding-left-1N">
                     <div style="overflow-x: auto">
                         <table class="rf-table rf-table--narrow rf-text--sm">
                             <tr>
-                                {#each header.filter(x => x!=='score' && x!=='check') as col, index}
+                                {#each header.filter(x => (x!=='score') && (x!=='check')) as col, index}
                                     {#if displayUnmappedColumns || (index < mappedColumns)}
                                         <th class:is-active={!($linkMapping.direct[col])}>
                                             {col}
@@ -128,7 +134,7 @@
                                         class:rf-background--beige={rowNumber%2}
                                         style="height:3.25rem;"
                                     >
-                                        {#each header.filter(x => x!=='score' && x!=='check').filter((h,index) => index < mappedColumns).map(h => row[$linkResults.header.indexOf(h)]) as col, index}
+                                        {#each header.filter(x => (x!=='score') && (x!=='check')).filter((h,index) => index < mappedColumns).map(h => row[$linkResults.header.indexOf(h)]) as col, index}
                                             <td title={col}>
                                                 {@html formatField(col, header[index], row)}
                                             </td>
@@ -146,7 +152,7 @@
                             {#if filteredRows.length > pageSize}
                                 <tr>
                                     {#each header as col, index}
-                                        {#if displayUnmappedColumns || (index < mappedColumns+2)}
+                                        {#if displayUnmappedColumns || (index < mappedColumns)}
                                             <td>
                                                 ...
                                             </td>
@@ -250,7 +256,6 @@
     const selectRow = (row) => {
         if (row) {
             selectedRow = row[$linkResults.header.indexOf('sourceLineNumber')];
-            selectedScores = JSON.parse(get(row,'scores'));
         } else {
             selectedRow = -1;
             selectedScores = undefined;
@@ -356,6 +361,18 @@
             .replace('MM','$2')
             .replace('YYYY','$1');
         return dateString.replace(/(\d{4})(\d{2})(\d{2})/, format);
+    };
+
+    let similarRowCount = undefined;
+
+    $: if (selectedScores) {
+        let count = 0
+        filteredRows.forEach(rg => rg.forEach(r => {
+            if (similarScores(selectedScores, JSON.parse(get(r, 'scores')))) {
+                count++
+            }
+        }));
+        similarRowCount = count;
     };
 
     const autoCheckSimilarRows = async (row, candidateNumber, status) => {
