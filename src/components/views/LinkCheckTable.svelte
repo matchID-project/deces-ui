@@ -140,7 +140,7 @@
                                             </td>
                                         {/each}
                                         {#if displayUnmappedColumns}
-                                            {#each header.filter((h,index) => index >= (mappedColumns+2)).map(h => row[$linkResults.header.indexOf(h)]) as col, index}
+                                            {#each header.filter(x => (x!=='score') && (x!=='check')).filter((h,index) => index >= mappedColumns).map(h => row[$linkResults.header.indexOf(h)]) as col, index}
                                                 <td title={col}>
                                                     {col}
                                                 </td>
@@ -151,7 +151,7 @@
                             {/each}
                             {#if filteredRows.length > pageSize}
                                 <tr>
-                                    {#each header as col, index}
+                                    {#each header.filter(x => (x!=='score') && (x!=='check')) as col, index}
                                         {#if displayUnmappedColumns || (index < mappedColumns)}
                                             <td>
                                                 ...
