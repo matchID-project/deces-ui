@@ -68,7 +68,7 @@
     const guessTypeRegexp = [
         [/^[1-2]\d{3}\/[0-1]\d\/[0-3]\d$/, 'date=YYYY/MM/DD'],
         [/^[1-2]\d{3}-[0-1]\d-[0-3]\d$/, 'date=YYYY-MM-DD'],
-        [/^[1-2]\d{3}[0-1]\d[0-3]\d$/, 'date=YYYY-MM-DD'],
+        [/^[1-2]\d{3}[0-1]\d[0-3]\d$/, 'date=YYYYMMDD'],
         [/^[0-3]\d-[0-1]\d-[1-2]\d{3}$/, 'date=DD-MM-YYYY'],
         [/^[0-3]\d\/[0-1]\d\/[1-2]\d{3}$/, 'date=DD/MM/YYYY'],
         [/^[0-3]\d[0-1]\d[1-2]\d{3}$/, 'date=DDMMYYYY'],
