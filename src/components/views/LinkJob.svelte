@@ -57,7 +57,7 @@
     export let error=false;
 
     import { linkWaiter, linkMapping, linkFile, linkFileSize, linkJob, linkStep,
-        linkCompleteResults, linkResults, linkCsvType, linkAutoCheckThreshold,
+        linkCompleteResults, linkResults, linkCsvType, linkAlgoOptions,
         linkValidations, themeDnum
     } from '../tools/stores.js';
     let progressUpload = 0;
@@ -150,7 +150,8 @@
         formData.append('sep', $linkCsvType.sep);
         formData.append('encoding', $linkCsvType.encoding);
         formData.append('skipLines', $linkCsvType.skipLines);
-        formData.append('candidateNumber', 10);
+        formData.append('candidateNumber', $linkAlgoOptions.api.candidateNumber);
+        formData.append('pruneScoe', $linkAlgoOptions.api.pruneScore);
         formData.append('dateFormat', $linkCsvType.dateFormat || 'DD/MM/YYYY');
         Object.keys($linkMapping && $linkMapping.reverse).map(k => formData.append(k,$linkMapping.reverse[k]));
         formData.append('csv', $linkFile);

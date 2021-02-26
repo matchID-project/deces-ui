@@ -463,7 +463,16 @@ export const linkCompleteResults = writable(null);
 
 export const linkValidations = writable(null);
 
-export const linkAutoCheckThreshold = writable(0.85);
+export const linkAlgoOptions = writable({
+    api: {
+        candidateNumber: 10,
+        pruneScore: 0.3
+    },
+    check: {
+        autoCheckThreshold: 0.85,
+        similarThreshold: 0.001
+    }
+});
 
 export const linkCompleted = writable(false);
 
