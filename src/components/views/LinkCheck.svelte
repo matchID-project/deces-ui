@@ -12,7 +12,7 @@
                     <p>
                         Toutes les identé(s) ({checkedLinks}) ont été validées* !
                         <br/>
-                        <span class="rf-text--sm">* validation automatique pour les scores > {Math.round($linkAutoCheckThreshold*100)}</span>
+                        <span class="rf-text--sm">* validation automatique pour les scores > {Math.round($linkAlgoOptions.check.autoCheckThreshold*100)}</span>
                     </p>
                 {/if}
                 <p>
@@ -54,8 +54,9 @@
                         </button>
                     </span>
                 </p>
-                <LinkCheckTable filter={filterUnchecked} bind:autoCheckSimilar={autoCheckSimilar} bind:selectedRow={selectedRow} sort={'scoreDesc'} master=true actionTitle={"à valider"} bind:size={unCheckedLinks}/>
-                <LinkCheckTable filter={ filterChecked } bind:autoCheckSimilar={autoCheckSimilar} bind:selectedRow={selectedRow} sort={'scoreAsc'} actionTitle={"validées"} bind:size={checkedLinks}/>
+                <LinkConfigureOptions check/>
+                <LinkCheckTable filter={filterUnchecked} bind:selectedRow={selectedRow} sort={'scoreDesc'} master=true actionTitle={"à valider"} bind:size={unCheckedLinks}/>
+                <LinkCheckTable filter={ filterChecked } bind:selectedRow={selectedRow} sort={'scoreAsc'} actionTitle={"validées"} bind:size={checkedLinks}/>
             {/if}
         </div>
 
@@ -64,9 +65,10 @@
 
 <script>
     import { linkWaiter, linkCompleteResults, linkResults, linkFileName, linkCsvType,
-        linkCompleted, linkAutoCheckThreshold, linkValidations
+        linkCompleted, linkAlgoOptions, linkValidations
     } from '../tools/stores.js';
     import LinkCheckTable from './LinkCheckTable.svelte';
+    import LinkConfigureOptions from './LinkConfigureOptions.svelte';
     import Icon from './Icon.svelte';
 
     let isDownloading = false;

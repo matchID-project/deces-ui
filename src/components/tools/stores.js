@@ -469,8 +469,11 @@ export const linkAlgoOptions = writable({
         pruneScore: 0.3
     },
     check: {
+        autoCheckSimilar: true,
+        displayUnmappedColumns: false,
         autoCheckThreshold: 0.85,
-        similarThreshold: 0.001
+        similarThreshold: 0.001,
+        filter: undefined
     }
 });
 

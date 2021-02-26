@@ -4,34 +4,6 @@
         <strong>{filteredRows.length} identités {actionTitle || ''} :</strong>
         </p>
         <div class="rf-grid-row">
-            <div class="rf-col-4 rf-content--center">
-                <div style="overflow:hidden;text-overflow:ellipsis">
-                    <input id="autocheck" type="checkbox" bind:checked={autoCheckSimilar}/>
-                    <label
-                        class="rf-label"
-                        for="autocheck"
-                        title="Cette option validera automatiquement toute les paires ayant le même profil de rapprochement"
-                    >
-                        Valider les paires similaires
-                    </label>
-                </div>
-            </div>
-            <div class="rf-col-4 rf-padding-left-2N rf-padding-right-2N">
-                <input
-                    class="rf-input"
-                    style="height:1.75rem;margin-top:12px;"
-                    placeholder="filtre"
-                    bind:value={subFilter}
-                />
-            </div>
-            <div class="rf-col-4 rf-content--center">
-                <div style="overflow:hidden;text-overflow:ellipsis">
-                    <input id="displayColumns" type="checkbox" bind:checked={displayUnmappedColumns}/>
-                    <label class="rf-label" for="displayColumns">
-                        Afficher toutes les colonnes
-                    </label>
-                </div>
-            </div>
             {#if subFilteredRows.length}
                 <div class="rf-col-2">
                     <table
@@ -72,10 +44,10 @@
                                             on:click={() => {row[row.length - 2].valid = autoCheckSimilarRows(row, candidateNumber, false);}}
                                             on:mouseenter={() => {
                                                 selectedScores = JSON.parse(get(row,'scores'));
-                                                autoCheckSimilarPreview = autoCheckSimilar ? false : undefined;
+                                                autoCheckSimilarPreview = $linkAlgoOptions.check.autoCheckSimilar ? false : undefined;
                                                 }}
                                             on:mouseleave={() => {autoCheckSimilarPreview = undefined}}
-                                            title={autoCheckSimilar ? `invalider l'appariement et ${similarRowCount - 1} paire(s) similaire(s)` : "invalider l'appariement"}
+                                            title={$linkAlgoOptions.check.autoCheckSimilar ? `invalider l'appariement et ${similarRowCount - 1} paire(s) similaire(s)` : "invalider l'appariement"}
                                         >
                                         </span>
                                         {#if row[$linkResults.header.indexOf('sourceLineNumber')] === selectedRow}
@@ -92,10 +64,10 @@
                                             on:click={() => {row[row.length -2].valid = autoCheckSimilarRows(row, candidateNumber, true);}}
                                             on:mouseenter={() => {
                                                 selectedScores = JSON.parse(get(row,'scores'));
-                                                autoCheckSimilarPreview = autoCheckSimilar ? true : undefined
+                                                autoCheckSimilarPreview = $linkAlgoOptions.check.autoCheckSimilar ? true : undefined
                                                 }}
                                             on:mouseleave={() => {autoCheckSimilarPreview = undefined}}
-                                            title={autoCheckSimilar ? `valider l'appariement et ${similarRowCount - 1} paire(s) similaire(s)` : "valider l'appariement"}
+                                            title={$linkAlgoOptions.check.autoCheckSimilar ? `valider l'appariement et ${similarRowCount - 1} paire(s) similaire(s)` : "valider l'appariement"}
                                         >
                                         </span>
                                     </td>
@@ -119,7 +91,7 @@
                         <table class="rf-table rf-table--narrow rf-text--sm">
                             <tr>
                                 {#each header.filter(x => (x!=='score') && (x!=='check')) as col, index}
-                                    {#if displayUnmappedColumns || (index < mappedColumns)}
+                                    {#if $linkAlgoOptions.check.displayUnmappedColumns || (index < mappedColumns)}
                                         <th class:is-active={!($linkMapping.direct[col])}>
                                             {col}
                                         </th>
@@ -139,7 +111,7 @@
                                                 {@html formatField(col, header[index], row)}
                                             </td>
                                         {/each}
-                                        {#if displayUnmappedColumns}
+                                        {#if $linkAlgoOptions.check.displayUnmappedColumns}
                                             {#each header.filter(x => (x!=='score') && (x!=='check')).filter((h,index) => index >= mappedColumns).map(h => row[$linkResults.header.indexOf(h)]) as col, index}
                                                 <td title={col}>
                                                     {col}
@@ -152,7 +124,7 @@
                             {#if filteredRows.length > pageSize}
                                 <tr>
                                     {#each header.filter(x => (x!=='score') && (x!=='check')) as col, index}
-                                        {#if displayUnmappedColumns || (index < mappedColumns)}
+                                        {#if $linkAlgoOptions.check.displayUnmappedColumns || (index < mappedColumns)}
                                             <td>
                                                 ...
                                             </td>
@@ -163,9 +135,9 @@
                         </table>
                     </div>
                 </div>
-            {:else if subFilter}
+            {:else if $linkAlgoOptions.check.filter}
                 <div class="rf-col-12">
-                    <p>attention, le filtre <strong>{subFilter}</strong> est trop restrictif </p>
+                    <p>attention, le filtre <strong>{$linkAlgoOptions.check.filter}</strong> est trop restrictif </p>
                 </div>
             {/if}
         </div>
@@ -174,7 +146,7 @@
 <script>
     import { linkResults, resultsPerPage, linkStep,
         linkSourceHeader, linkMapping, linkValidations,
-        linkCsvType
+        linkCsvType, linkAlgoOptions
     } from '../tools/stores.js';
     import jsdiff from 'diff';
 
@@ -182,16 +154,12 @@
     export let page = 1;
     export let pageSize=5;
     export let filter;
-    export let subFilter='';
     export let sort = 'scoreDesc';
     export let master;
     export let size;
     let header;
     let mappedColumns;
-    let displayUnmappedColumns = false;
-    export let autoCheckSimilar = true;
     let autoCheckSimilarPreview = undefined;
-    const similarThreshold = 0.001;
     let wait = false;
 
     const sorts = {
@@ -212,7 +180,7 @@
         sex: 'sex'
     };
 
-    $: if ($linkResults || ($linkResults && subFilter)) {
+    $: if ($linkResults || ($linkResults && $linkAlgoOptions.check.filter)) {
         header = [
             ...$linkSourceHeader.map(h => ($linkMapping.direct && $linkMapping.direct[h]) && h)
                 .filter(x => x),
@@ -262,7 +230,7 @@
         }
     }
 
-    $: subFilteredRows = filteredRows.filter(row => (new RegExp(subFilter,'i')).test(JSON.stringify(row)));
+    $: subFilteredRows = filteredRows.filter(row => (new RegExp($linkAlgoOptions.check.filter,'i')).test(JSON.stringify(row)));
 
     $: size = filteredRows && filteredRows.length || 0;
 
@@ -376,7 +344,7 @@
     };
 
     const autoCheckSimilarRows = async (row, candidateNumber, status) => {
-        if (autoCheckSimilar) {
+        if ($linkAlgoOptions.check.autoCheckSimilar) {
             const scores = JSON.parse(get(row,'scores'));
             const c = check(row, candidateNumber, status, 'manual');
             filteredRows.forEach(rg => rg.forEach(r => {
@@ -407,7 +375,7 @@
     };
 
     const similarScores = (s1, s2) => {
-        return scoresDistance(s1, s2) < similarThreshold;
+        return scoresDistance(s1, s2) < $linkAlgoOptions.check.similarThreshold;
     };
 
 </script>

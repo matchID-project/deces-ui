@@ -1,4 +1,4 @@
-<div class:rf-padding-2N={!display} class:rf-padding-bottom-2N={display} style="position:relative">
+<div id="options" class:rf-padding-2N={!display} class:rf-padding-bottom-2N={display} style="position:relative">
     <div
         style="position: absolute;top: 16px; right: 16px;z-index:1200;"
         on:click={() =>{display = !display; deactivateElement();}}
@@ -7,7 +7,7 @@
             <Icon
                 icon="ri:settings-5-line"
                 label="Options"
-                href="#"
+                href="#options"
                 class="rf-fi--lg"
             />
         </span>
@@ -53,7 +53,7 @@
                     {/if}
                     {#if (api || check)}
                         <div class="rf-col-12 rf-padding-top-1N">
-                            <strong>Options de l'algorithme :</strong>
+                            <strong>Options {#if api}de l'algorithme{/if} :</strong>
                         </div>
                     {/if}
                     {#if api}
@@ -90,33 +90,51 @@
                     {/if}
                     {#if check}
                         {#each Object.keys(checkOptions) as key}
-                            <div class="rf-col-xl-6 rf-col-lg-6 rf-col-md-6 rf-col-sm-6 rf-col-xs-6 rf-padding-1N">
-                                <label
-                                    class="rf-label"
-                                    for={key}
-                                    style="overflow:hidden;text-overflow:ellipsis;"
-                                >
-                                    {checkOptions[key].label}
-                                </label>
-                                <div class="rf-field">
-                                    {#if checkOptions[key].options}
-                                        <select
-                                            class="rf-select"
-                                            id={key}
-                                            bind:value={$linkAlgoOptions.check[key]}
-                                        >
-                                            {#each checkOptions[key].options as option}
-                                                <option value={option[1]} selected={$linkAlgoOptions.check[key] === option[1]}>{option[0]}</option>
-                                            {/each}
-                                        </select>
-                                    {:else}
+                            <div class="rf-col-xl-{checkOptions[key].size ? checkOptions[key].size : 6} rf-col-lg-{checkOptions[key].size ? checkOptions[key].size : 6} rf-col-md-6 rf-col-sm-6 rf-col-xs-6 rf-padding-1N">
+                                {#if checkOptions[key].checkbox}
+                                    <div class="rf-checkbox-group">
                                         <input
                                             class="rf-input"
+                                            type="checkbox"
                                             id={key}
-                                            bind:value={$linkAlgoOptions.check[key]}
+                                            bind:checked={$linkAlgoOptions.check[key]}
+                                        />
+                                        <label
+                                            class="rf-label"
+                                            for={key}
+                                            style="overflow:hidden;text-overflow:ellipsis;"
                                         >
-                                    {/if}
-                                </div>
+                                            {checkOptions[key].label}
+                                        </label>
+                                    </div>
+                                {:else}
+                                    <label
+                                        class="rf-label"
+                                        for={key}
+                                        style="overflow:hidden;text-overflow:ellipsis;"
+                                    >
+                                        {checkOptions[key].label}
+                                    </label>
+                                    <div class="rf-field">
+                                        {#if checkOptions[key].options}
+                                            <select
+                                                class="rf-select"
+                                                id={key}
+                                                bind:value={$linkAlgoOptions.check[key]}
+                                            >
+                                                {#each checkOptions[key].options as option}
+                                                    <option value={option[1]} selected={$linkAlgoOptions.check[key] === option[1]}>{option[0]}</option>
+                                                {/each}
+                                            </select>
+                                        {:else}
+                                            <input
+                                                class="rf-input"
+                                                id={key}
+                                                bind:value={$linkAlgoOptions.check[key]}
+                                            >
+                                        {/if}
+                                    </div>
+                                {/if}
                             </div>
                         {/each}
                     {/if}
@@ -146,8 +164,11 @@
         pruneScore: {label: "Seuil minimal de correspondance (entre 0 et 1"}
     };
     const checkOptions = {
+        autoCheckSimilar: {label: "Valider automatiquement les paires similaires", checkbox: true},
+        displayUnmappedColumns: {label: "Afficher toutes les colonnes", checkbox: true},
+        similarThreshold: {label: "Seuil de regroupement des paires similaires"},
         autoCheckThreshold: {label: "Valider les scores au dessus de"},
-        similarThreshold: {label: "Seuil de regroupement des paires similaires"}
+        filter: {size:12, label: "Rechercher dans les résultats"}
     }
 
     const deactivateElement = () => {

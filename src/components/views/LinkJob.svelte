@@ -296,7 +296,7 @@
         })
         linkValidations.update(v => {
             return $linkResults.rows.map(r => {
-                return r.map(rr => (rr[headerMapping['score']] >= $linkAutoCheckThreshold) ?
+                return r.map(rr => (rr[headerMapping['score']] >= $linkAlgoOptions.check.autoCheckThreshold) ?
                     { valid: true, checked: "auto" } : { checked: false })
             });
         });
