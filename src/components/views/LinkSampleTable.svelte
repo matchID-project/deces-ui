@@ -1,7 +1,7 @@
 
 <div style="height: 450px;overflow-y:scroll;overflow-x:None;">
     <div class="rf-container-fluid">
-        {#if $linkSourceHeader}
+        {#if header}
             <datalist id="LinkSampleTable">
                 {#each header as col, colNumber}
                     <option>{col}</option>
@@ -42,11 +42,12 @@
 </div>
 
 <script>
+    import { onMount } from 'svelte';
     import { linkFile, resultsPerPage, linkStep, linkSourceHeader, linkSourceHeaderTypes, linkCsvType } from '../tools/stores.js';
 
     export let potentialSeparators = [';',',','|','\t'];
     export let potentialQuotes = ["'",'"'];
-    export let sep = ';';
+    export let sep;
     export let quote;
     export let page = 1;
     export let pageSize=5;
@@ -83,9 +84,17 @@
         [/^\s*(france|algerie|maroc|tunisie|italie|portugal|espagne)\s*$/, 'country'],
     ];
 
-    $: $linkFile && read($linkFile);
+    $: if ($linkCsvType &&
+        (
+            ($linkCsvType.sep !== sep) ||
+            ($linkCsvType.skipLines !== skipLines) ||
+            ($linkCsvType.quote !== quote) ||
+            ($linkCsvType.encoding !== encoding)
+        )) {
+            read($linkCsvType);
+        }
 
-    $: if ($linkSourceHeader && mapping) {
+    $: if ($linkSourceHeader && mapping && rows) {
         header = [
             ...fields.map(f => mapping.reverse && $linkSourceHeader.includes(mapping.reverse[f.field]) && mapping.reverse[f.field])
                 .filter(x => x),
@@ -96,7 +105,7 @@
             .map(row => header.map(h => row[$linkSourceHeader.indexOf(h)]))
     }
 
-    $: rows && linkSourceHeaderTypes.update(v => {
+    $: $linkSourceHeader && linkSourceHeaderTypes.update(v => {
         const types = {};
         $linkSourceHeader.forEach(col => {
             types[col] = guessFieldType(rows.map(row => row[$linkSourceHeader.indexOf(col)]))
@@ -172,7 +181,8 @@
     };
 
     const guessQuote = (csv, sep, skipLines) => {
-        let rows
+        let rows;
+        if (quote) {potentialQuotes = [quote]}
         potentialQuotes.map(q => {
             const re = new RegExp(`^(${q}(([^${q}]|${q}${q})*?)${q}|([^${protect(sep)}]*))(\\${protect(sep)}(.*))?$`);
             const re2 = new RegExp(`${q}${q}`,'g');
@@ -211,36 +221,46 @@
 
     const parseCsv = (ev) => {
         const contents = ev.target.result;
-        guessSeparator(contents);
+        if (!sep) { guessSeparator(contents) }
         rows = guessQuote(contents, sep, skipLines);
-        $linkCsvType = {
-            sep: sep,
-            quote: quote,
-            skipLines: skipLines,
-            encoding: encoding
-        };
-        console.log($linkCsvType);
+        if ((!$linkCsvType) && ($linkFile)) {
+            $linkCsvType = {
+                sep: sep,
+                quote: quote,
+                skipLines: skipLines,
+                encoding: encoding
+            };
+            console.log('Guessed CSV type:',$linkCsvType);
+        }
+        mapping = {};
         $linkSourceHeader = rows.shift();
     };
 
-    const read = async (ev) => {
+    const read = async (myLinkCsvType) => {
         const blob = $linkFile.slice(0, 100000);
-        const badChars = 'a';
-        const potentialEncodings = ['utf8','latin1','windows-1252','mac'];
-        let min = 9999;
-        await Promise.all(potentialEncodings.map(async enc => {
-            const reader = new FileReader();
-            reader.readAsText(blob, enc);
-            const result = await new Promise((resolve, reject) => {
-                reader.onload = (ev) => {
-                    resolve(ev.target.result.normalize('NFKD').replace(/[\u0300-\u036f]/g, '').toLocaleLowerCase().replace(/[\x00-\x7F]*/g,'').length)
+        if (myLinkCsvType) {
+            sep = myLinkCsvType.sep;
+            encoding = myLinkCsvType.encoding;
+            quote = myLinkCsvType.quote;
+            skipLines = myLinkCsvType.skipLines;
+        } else {
+            const badChars = 'a';
+            const potentialEncodings = ['utf8','latin1','windows-1252','mac'];
+            let min = 9999;
+            await Promise.all(potentialEncodings.map(async enc => {
+                const reader = new FileReader();
+                reader.readAsText(blob, enc);
+                const result = await new Promise((resolve, reject) => {
+                    reader.onload = (ev) => {
+                        resolve(ev.target.result.normalize('NFKD').replace(/[\u0300-\u036f]/g, '').toLocaleLowerCase().replace(/[\x00-\x7F]*/g,'').length)
+                    }
+                });
+                if (result < min) {
+                    encoding = enc;
+                    min = result;
                 }
-            });
-            if (result < min) {
-                encoding = enc;
-                min = result;
-            }
-        }));
+            }));
+        }
         const reader = new FileReader();
         reader.readAsText(blob, encoding);
         reader.onload = parseCsv;
@@ -255,7 +275,11 @@
                 format: $linkSourceHeaderTypes[col] && $linkSourceHeaderTypes[col].format,
                 freq: $linkSourceHeaderTypes[col] && $linkSourceHeaderTypes[col].freq
         }));
-	};
+    };
+
+    onMount(() => {
+        $linkFile && read();
+    })
 
 </script>
 

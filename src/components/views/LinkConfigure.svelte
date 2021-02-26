@@ -1,5 +1,10 @@
 <div class="rf-container-fluid">
     <div class="rf-grid-row rf-text--center">
+        {#if $linkCsvType}
+            <div class="rf-col-12 rf-margin-top-2N">
+                <LinkConfigureOptions csv api/>
+            </div>
+        {/if}
         <div class="rf-col-6">
             <p>
                 <strong>Choisissez les champs à apparier:</strong><br/>
@@ -68,11 +73,13 @@
     </div>
 </div>
 <script>
-    import { linkStep, linkMapping, linkMinFields, linkSourceHeaderTypes, linkCsvType } from '../tools/stores.js';
+    import { linkStep, linkFile, linkMapping, linkMinFields, linkSourceHeaderTypes, linkCsvType } from '../tools/stores.js';
     import Icon from './Icon.svelte';
     import LinkFields from './LinkFields.svelte';
     import LinkSampleTable from './LinkSampleTable.svelte';
+    import LinkConfigureOptions from './LinkConfigureOptions.svelte';
     let mapping = {};
+
     let fields = [
         { group: '', size: 6, label: "Nom", field: "lastName", mapTo: undefined, type: "lastName"},
         { group: '', size: 6, label: "Nom&nbsp;d'usage", field: "legalName", mapTo: undefined, type: "lastName"},
@@ -126,7 +133,7 @@
         });
     };
 
-    $: if ($linkCsvType && fields.filter(f => f.field === "birthDate")[0].guessedFormat) {
+    $: if ($linkCsvType && ($linkCsvType.dateFormat === undefined) && fields.filter(f => f.field === "birthDate")[0].guessedFormat) {
         linkCsvType.update(v => {
             v.dateFormat = fields.filter(f => f.field === "birthDate")[0].guessedFormat
             return v;

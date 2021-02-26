@@ -93,7 +93,7 @@
     import { onMount } from 'svelte';
     import { fade } from 'svelte/transition';
     import { linkWaiter, linkStep, linkFile, linkFileName, linkFileSize, linkFileSizeLimit, linkMapping,
-        linkSourceHeader, linkMinFields, linkJob,
+        linkSourceHeader, linkMinFields, linkJob, linkSourceHeaderTypes,
         linkCompleteResults, linkResults, linkCsvType, linkCompleted, linkValidations
     } from '../tools/stores.js';
     import { clear } from 'idb-keyval'
@@ -144,7 +144,7 @@
             $linkFileName = $linkFile.name ;
             $linkFileSize = $linkFile.size;
             steps[0].error = false;
-            $linkStep=2;
+            $linkStep = 2;
         } else {
             steps[0].label = `${$linkFile.name }: volume > ${Math.round($linkFileSizeLimit / 1000**2)}Mo<br>
                                 réessayez avec un fichier plus petit`
@@ -263,17 +263,6 @@
 
     const reset = async () => {
         await clearAll();
-        $linkStep = 1;
-        $linkFile = undefined;
-        $linkFileName = undefined;
-        $linkFileSize = undefined;
-        $linkSourceHeader = undefined;
-        $linkJob = undefined;
-        $linkCompleteResults = undefined;
-        $linkResults = undefined;
-        $linkValidations = undefined;
-        $linkCompleted = false;
-        $linkMapping = {};
         steps[0].label = step0Label;
         steps[0].error = false;
         steps[1].label = step1Label;
@@ -282,6 +271,19 @@
         steps[2].error = false;
         steps[3].label = step3Label;
         steps[3].error = false;
+        $linkStep = 1;
+        $linkFile = undefined;
+        $linkFileName = undefined;
+        $linkFileSize = undefined;
+        $linkCsvType = undefined;
+        $linkSourceHeader = undefined;
+        $linkSourceHeaderTypes = undefined;
+        $linkJob = undefined;
+        $linkCompleteResults = undefined;
+        $linkResults = undefined;
+        $linkValidations = undefined;
+        $linkCompleted = false;
+        $linkMapping = {};
     }
 
     onMount(async () => {
