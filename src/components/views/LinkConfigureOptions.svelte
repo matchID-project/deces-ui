@@ -127,14 +127,14 @@
             }
         },
         check: {
-            label: "Paramères de validation",
+            label: "Paramètres de validation",
             defaultSize: 6,
             items: {
                 autoCheckSimilar: {label: "Valider automatiquement les paires similaires", checkbox: true},
                 displayUnmappedColumns: {label: "Afficher toutes les colonnes", checkbox: true},
                 similarThreshold: {label: "Regrouper les pairs similaires à plus de", range: { type: 'percent', min: 0, max: 1, step: 0.005}},
                 autoCheckThreshold: {label: "Valider les scores au dessus de", range: { type: 'percent', min: $linkOptions.api.pruneScoe, max: 1, step: 0.01}},
-                filter: {size:12, label: "Rechercher dans les résultats"}
+                filter: {size:12, label: "Rechercher dans les résultats (filtre)"}
             }
         }
     };
