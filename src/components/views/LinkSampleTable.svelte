@@ -43,7 +43,7 @@
 
 <script>
     import { onMount } from 'svelte';
-    import { linkFile, resultsPerPage, linkStep, linkSourceHeader, linkSourceHeaderTypes, linkCsvType } from '../tools/stores.js';
+    import { linkFile, resultsPerPage, linkStep, linkSourceHeader, linkSourceHeaderTypes, linkOptions } from '../tools/stores.js';
 
     export let potentialSeparators = [';',',','|','\t'];
     export let potentialQuotes = ["'",'"'];
@@ -84,14 +84,14 @@
         [/^\s*(france|algerie|maroc|tunisie|italie|portugal|espagne)\s*$/, 'country'],
     ];
 
-    $: if ($linkCsvType &&
+    $: if ($linkOptions && $linkOptions.csv &&
         (
-            ($linkCsvType.sep !== sep) ||
-            ($linkCsvType.skipLines !== skipLines) ||
-            ($linkCsvType.quote !== quote) ||
-            ($linkCsvType.encoding !== encoding)
+            ($linkOptions.csv.sep !== sep) ||
+            ($linkOptions.csv.skipLines !== skipLines) ||
+            ($linkOptions.csv.quote !== quote) ||
+            ($linkOptions.csv.encoding !== encoding)
         )) {
-            read($linkCsvType);
+            read($linkOptions.csv);
         }
 
     $: if ($linkSourceHeader && mapping && rows) {
@@ -223,26 +223,26 @@
         const contents = ev.target.result;
         if (!sep) { guessSeparator(contents) }
         rows = guessQuote(contents, sep, skipLines);
-        if ((!$linkCsvType) && ($linkFile)) {
-            $linkCsvType = {
+        if ((!$linkOptions.csv) && ($linkFile)) {
+            $linkOptions.csv = {
                 sep: sep,
                 quote: quote,
                 skipLines: skipLines,
                 encoding: encoding
             };
-            console.log('Guessed CSV type:',$linkCsvType);
+            console.log('Guessed CSV type:',$linkOptions.csv);
         }
         mapping = {};
         $linkSourceHeader = rows.shift();
     };
 
-    const read = async (myLinkCsvType) => {
+    const read = async (csvOptions) => {
         const blob = $linkFile.slice(0, 100000);
-        if (myLinkCsvType) {
-            sep = myLinkCsvType.sep;
-            encoding = myLinkCsvType.encoding;
-            quote = myLinkCsvType.quote;
-            skipLines = myLinkCsvType.skipLines;
+        if (csvOptions) {
+            sep = csvOptions.sep;
+            encoding = csvOptions.encoding;
+            quote = csvOptions.quote;
+            skipLines = csvOptions.skipLines;
         } else {
             const badChars = 'a';
             const potentialEncodings = ['utf8','latin1','windows-1252','mac'];

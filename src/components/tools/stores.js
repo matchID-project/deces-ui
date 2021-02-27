@@ -450,7 +450,20 @@ export const linkSourceHeader = writable(null);
 
 export const linkSourceHeaderTypes = writable(null);
 
-export const linkCsvType = writable(null);
+export const linkOptions = writable({
+    csv: undefined,
+    api: {
+        candidateNumber: 10,
+        pruneScore: 0.3
+    },
+    check: {
+        autoCheckSimilar: true,
+        displayUnmappedColumns: false,
+        autoCheckThreshold: 0.85,
+        similarThreshold: 0.001,
+        filter: ''
+    }
+});
 
 export const linkMapping = writable({});
 
@@ -462,20 +475,6 @@ export const linkResults = writable(null);
 export const linkCompleteResults = writable(null);
 
 export const linkValidations = writable(null);
-
-export const linkAlgoOptions = writable({
-    api: {
-        candidateNumber: 10,
-        pruneScore: 0.3
-    },
-    check: {
-        autoCheckSimilar: true,
-        displayUnmappedColumns: false,
-        autoCheckThreshold: 0.85,
-        similarThreshold: 0.001,
-        filter: undefined
-    }
-});
 
 export const linkCompleted = writable(false);
 

@@ -12,7 +12,7 @@
                     <p>
                         Toutes les identé(s) ({checkedLinks}) ont été validées* !
                         <br/>
-                        <span class="rf-text--sm">* validation automatique pour les scores > {Math.round($linkAlgoOptions.check.autoCheckThreshold*100)}</span>
+                        <span class="rf-text--sm">* validation automatique pour les scores > {Math.round($linkOptions.check.autoCheckThreshold*100)}</span>
                     </p>
                 {/if}
                 <p>
@@ -65,8 +65,8 @@
 
 <script>
     import { onMount } from 'svelte';
-    import { linkWaiter, linkCompleteResults, linkResults, linkFileName, linkCsvType,
-        linkCompleted, linkAlgoOptions, linkValidations
+    import { linkWaiter, linkCompleteResults, linkResults, linkFileName, linkOptions,
+        linkCompleted, linkValidations
     } from '../tools/stores.js';
     import LinkCheckTable from './LinkCheckTable.svelte';
     import LinkConfigureOptions from './LinkConfigureOptions.svelte';
@@ -101,8 +101,8 @@
 
     const protectField = (field) => {
         if (typeof(field) === 'string') {
-            if (/^0\d+$/.test(field) || field.includes($linkCsvType.sep)) {
-                const q = $linkCsvType.quote || '"'
+            if (/^0\d+$/.test(field) || field.includes($linkOptions.csv.sep)) {
+                const q = $linkOptions.csv.quote || '"'
                 const re = new RegExp(`${q}`,'g');
                 return `${q}${field.replace(re, `${q}${q}`)}${q}`
             } else {
@@ -145,7 +145,7 @@
             index = (i) => map[i];
         }
         return [
-            header.map(h => protectField(h)).join($linkCsvType.sep) + '\r\n',
+            header.map(h => protectField(h)).join($linkOptions.csv.sep) + '\r\n',
             ...flatten(rows.map((r,i) => {
                     const l = $linkValidations[index(i)];
                     return r.map((rr,j) => {
@@ -156,7 +156,7 @@
                     });
                 }),1)
                 .filter(row => !filter || row[header.indexOf('score')])
-                .map(row => header.map((col, i) => protectField(row[i])).join($linkCsvType.sep) + '\r\n')];
+                .map(row => header.map((col, i) => protectField(row[i])).join($linkOptions.csv.sep) + '\r\n')];
     }
 
     const flatten = (array, depth) => {
@@ -182,14 +182,14 @@
       return flat(array, depth);
     };
 
-    $: updateValidationThreshold($linkAlgoOptions.check.autoCheckThreshold);
+    $: updateValidationThreshold($linkOptions.check.autoCheckThreshold);
 
     const updateValidationThreshold = () => {
         const headerMapping = {};
         $linkCompleteResults.header.forEach((h,i) => headerMapping[h] = i);
         linkValidations.update(v => {
             return $linkResults.rows.map(r => {
-                return r.map(rr => (rr[headerMapping['score']] >= $linkAlgoOptions.check.autoCheckThreshold) ?
+                return r.map(rr => (rr[headerMapping['score']] >= $linkOptions.check.autoCheckThreshold) ?
                     { valid: true, checked: "auto" } : { checked: false })
             });
         });

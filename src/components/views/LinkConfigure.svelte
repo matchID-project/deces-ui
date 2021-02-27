@@ -1,6 +1,6 @@
 <div class="rf-container-fluid">
     <div class="rf-grid-row rf-text--center">
-        {#if $linkCsvType}
+        {#if $linkOptions.csv}
             <div class="rf-col-12 rf-margin-top-2N">
                 <LinkConfigureOptions csv api/>
             </div>
@@ -73,7 +73,7 @@
     </div>
 </div>
 <script>
-    import { linkStep, linkFile, linkMapping, linkMinFields, linkSourceHeaderTypes, linkCsvType } from '../tools/stores.js';
+    import { linkStep, linkFile, linkMapping, linkMinFields, linkSourceHeaderTypes, linkOptions } from '../tools/stores.js';
     import Icon from './Icon.svelte';
     import LinkFields from './LinkFields.svelte';
     import LinkSampleTable from './LinkSampleTable.svelte';
@@ -133,11 +133,8 @@
         });
     };
 
-    $: if ($linkCsvType && ($linkCsvType.dateFormat === undefined) && fields.filter(f => f.field === "birthDate")[0].guessedFormat) {
-        linkCsvType.update(v => {
-            v.dateFormat = fields.filter(f => f.field === "birthDate")[0].guessedFormat
-            return v;
-        });
+    $: if ($linkOptions && $linkOptions.csv && ($linkOptions.csv.dateFormat === undefined) && fields.filter(f => f.field === "birthDate")[0].guessedFormat) {
+        $linkOptions.csv.dateFormat = fields.filter(f => f.field === "birthDate")[0].guessedFormat;
     }
 
     $: if (done) {$linkStep = 3};

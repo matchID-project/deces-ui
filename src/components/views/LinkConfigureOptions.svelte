@@ -16,95 +16,26 @@
         <div class="rf-card rf-card--no-arrow">
             <div class="rf-card__body rf-text--left">
                 <div class="rf-grid-row">
-                    {#if csv}
-                        <div class="rf-col-12">
-                            <strong>Options de formattage du fichier :</strong>
-                        </div>
-                        {#each Object.keys(csvOptions) as key}
-                            <div class="rf-col-xl-{csvOptions[key].size ? csvOptions[key].size : 2} rf-col-lg-{csvOptions[key].size ? csvOptions[key].size : 2} rf-col-md-6 rf-col-sm-6 rf-col-xs-6 rf-padding-1N">
-                                <label
-                                    class="rf-label"
-                                    for={key}
-                                    style="overflow:hidden;text-overflow:ellipsis;"
-                                >
-                                    {csvOptions[key].label}
-                                </label>
-                                <div class="rf-field">
-                                    {#if csvOptions[key].options}
-                                        <select
-                                            class="rf-select"
-                                            id={key}
-                                            bind:value={$linkCsvType[key]}
-                                        >
-                                            {#each csvOptions[key].options as option}
-                                                <option value={option[1]} selected={$linkCsvType[key] === option[1]}>{option[0]}</option>
-                                            {/each}
-                                        </select>
-                                    {:else}
-                                        <input
-                                            class="rf-input"
-                                            id={key}
-                                            bind:value={$linkCsvType[key]}
-                                        >
-                                    {/if}
-                                </div>
-                            </div>
-                        {/each}
-                    {/if}
-                    {#if (api || check)}
+                    {#each ['csv','api','check'].filter(x => showSection(x)) as section}
                         <div class="rf-col-12 rf-padding-top-1N">
-                            <strong>Options {#if api}de l'algorithme{/if} :</strong>
+                            <strong>{options[section].label} :</strong>
                         </div>
-                    {/if}
-                    {#if api}
-                        {#each Object.keys(apiOptions) as key}
-                            <div class="rf-col-xl-6 rf-col-lg-6 rf-col-md-6 rf-col-sm-6 rf-col-xs-6 rf-padding-1N">
-                                <label
-                                    class="rf-label"
-                                    for={key}
-                                    style="overflow:hidden;text-overflow:ellipsis;"
-                                >
-                                    {apiOptions[key].label}
-                                </label>
-                                <div class="rf-field">
-                                    {#if apiOptions[key].options}
-                                        <select
-                                            class="rf-select"
-                                            id={key}
-                                            bind:value={$linkAlgoOptions.api[key]}
-                                        >
-                                            {#each apiOptions[key].options as option}
-                                                <option value={option[1]} selected={$linkAlgoOptions.api[key] === option[1]}>{option[0]}</option>
-                                            {/each}
-                                        </select>
-                                    {:else}
-                                        <input
-                                            class="rf-input"
-                                            id={key}
-                                            bind:value={$linkAlgoOptions.api[key]}
-                                        >
-                                    {/if}
-                                </div>
-                            </div>
-                        {/each}
-                    {/if}
-                    {#if check}
-                        {#each Object.keys(checkOptions) as key}
-                            <div class="rf-col-xl-{checkOptions[key].size ? checkOptions[key].size : 6} rf-col-lg-{checkOptions[key].size ? checkOptions[key].size : 6} rf-col-md-6 rf-col-sm-6 rf-col-xs-6 rf-padding-1N">
-                                {#if checkOptions[key].checkbox}
+                        {#each Object.keys(options[section].items) as key}
+                            <div class="rf-col-xl-{options[section].items[key].size ? options[section].items[key].size : options[section].defaultSize } rf-col-lg-{options[section].items[key].size ? options[section].items[key].size : options[section].defaultSize} rf-col-md-6 rf-col-sm-6 rf-col-xs-6 rf-padding-1N">
+                                {#if options[section].items[key].checkbox}
                                     <div class="rf-checkbox-group">
                                         <input
                                             class="rf-input"
                                             type="checkbox"
                                             id={key}
-                                            bind:checked={$linkAlgoOptions.check[key]}
+                                            bind:checked={$linkOptions[section][key]}
                                         />
                                         <label
                                             class="rf-label"
                                             for={key}
                                             style="overflow:hidden;text-overflow:ellipsis;"
                                         >
-                                            {checkOptions[key].label}
+                                            {options[section].items[key].label}
                                         </label>
                                     </div>
                                 {:else}
@@ -113,31 +44,31 @@
                                         for={key}
                                         style="overflow:hidden;text-overflow:ellipsis;"
                                     >
-                                        {checkOptions[key].label}
+                                        {options[section].items[key].label}
                                     </label>
                                     <div class="rf-field">
-                                        {#if checkOptions[key].options}
+                                        {#if options[section].items[key].options}
                                             <select
                                                 class="rf-select"
                                                 id={key}
-                                                bind:value={$linkAlgoOptions.check[key]}
+                                                bind:value={$linkOptions[section][key]}
                                             >
-                                                {#each checkOptions[key].options as option}
-                                                    <option value={option[1]} selected={$linkAlgoOptions.check[key] === option[1]}>{option[0]}</option>
+                                                {#each options[section].items[key].options as option}
+                                                    <option value={option[1]} selected={$linkOptions[section][key] === option[1]}>{option[0]}</option>
                                                 {/each}
                                             </select>
                                         {:else}
                                             <input
                                                 class="rf-input"
                                                 id={key}
-                                                bind:value={$linkAlgoOptions.check[key]}
+                                                bind:value={$linkOptions[section][key]}
                                             >
                                         {/if}
                                     </div>
                                 {/if}
                             </div>
                         {/each}
-                    {/if}
+                    {/each}
                 </div>
             </div>
         </div>
@@ -145,31 +76,53 @@
 </div>
 
 <script>
-    import { linkCsvType, linkAlgoOptions, activeElement } from '../tools/stores.js';
+    import { linkOptions, activeElement } from '../tools/stores.js';
     import Icon from './Icon.svelte';
     export let csv = false;
     export let api = false;
     export let check = false;
 
     let display = false;
-    const csvOptions = {
-        encoding: {label: "Codage", options: [['Unicode','utf8'], ['Latin','latin1'],['Mac'],['Windows 1252','windows-1252']]},
-        sep: {label: "Séparateur", options:[["Point-virgule (;)",";"],["Virgule (,)",","],["Tabulation","\t","Barre verticale (|)",'|'],["Espace"," "]]},
-        quote: {size:3,label: "Délimiteur", options:[['aucun', undefined],['guillemets doubles (")','"'],["guillemets simples (')","'"]]},
-        skipLines: {label: "Sauter des lignes:", options: [['aucune',0],[1,1],[2,2],[3,3],[4,4],[5,5]]},
-        dateFormat: {size: 3,label: "Format des dates", options:[['DD/MM/YYYY','DD/MM/YYYY'],['YYYY-MM-DD','YYYY-MM-DD'],['YYYYMMDD','YYYYMMDD'],['DDMMYYYY','DDMMYYYY'],['DD-MM-YYYY','DD-MM-YYYY'],['YYYY/MM/DD']]},
-    };
-    const apiOptions = {
-        candidateNumber: {label: "Maximum de correspondances (1 à 10)"},
-        pruneScore: {label: "Seuil minimal de correspondance (entre 0 et 1"}
-    };
-    const checkOptions = {
-        autoCheckSimilar: {label: "Valider automatiquement les paires similaires", checkbox: true},
-        displayUnmappedColumns: {label: "Afficher toutes les colonnes", checkbox: true},
-        similarThreshold: {label: "Seuil de regroupement des paires similaires"},
-        autoCheckThreshold: {label: "Valider les scores au dessus de"},
-        filter: {size:12, label: "Rechercher dans les résultats"}
+    let options;
+
+    const showSection = (section) => {
+        if (section === 'csv') {return csv};
+        if (section === 'api') {return api};
+        if (section === 'check') {return check};
     }
+
+    $: options = {
+        csv: {
+            label: "Formattage du fichier",
+            defaultSize: 2,
+            items: {
+                encoding: {label: "Codage", options: [['Unicode','utf8'], ['Latin','latin1'],['Mac'],['Windows 1252','windows-1252']]},
+                sep: {label: "Séparateur", options:[["Point-virgule (;)",";"],["Virgule (,)",","],["Tabulation","\t","Barre verticale (|)",'|'],["Espace"," "]]},
+                quote: {size:3,label: "Délimiteur", options:[['aucun', undefined],['guillemets doubles (")','"'],["guillemets simples (')","'"]]},
+                skipLines: {label: "Sauter des lignes:", options: [['aucune',0],[1,1],[2,2],[3,3],[4,4],[5,5]]},
+                dateFormat: {size: 3,label: "Format des dates", options:[['DD/MM/YYYY','DD/MM/YYYY'],['YYYY-MM-DD','YYYY-MM-DD'],['YYYYMMDD','YYYYMMDD'],['DDMMYYYY','DDMMYYYY'],['DD-MM-YYYY','DD-MM-YYYY'],['YYYY/MM/DD']]},
+            }
+        },
+        api: {
+            label: "Paramètres de l'algorithme",
+            defaultSize: 6,
+            items: {
+                candidateNumber: {label: "Maximum de correspondances", range: [1, 10,'integer']},
+                pruneScore: {label: "Seuil minimal de correspondance", range: [0, 1,'percent']}
+            }
+        },
+        check: {
+            label: "Paramères de validation",
+            defaultSize: 6,
+            items: {
+                autoCheckSimilar: {label: "Valider automatiquement les paires similaires", checkbox: true},
+                displayUnmappedColumns: {label: "Afficher toutes les colonnes", checkbox: true},
+                similarThreshold: {label: "Seuil de regroupement des paires similaires", range: [0, 0.01,'log']},
+                autoCheckThreshold: {label: "Valider les scores au dessus de", range: [$linkOptions.api.pruneScore,1,'percent']},
+                filter: {size:12, label: "Rechercher dans les résultats"}
+            }
+        }
+    };
 
     const deactivateElement = () => {
             activeElement.update(v => {

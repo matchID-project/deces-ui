@@ -94,7 +94,7 @@
     import { fade } from 'svelte/transition';
     import { linkWaiter, linkStep, linkFile, linkFileName, linkFileSize, linkFileSizeLimit, linkMapping,
         linkSourceHeader, linkMinFields, linkJob, linkSourceHeaderTypes,
-        linkCompleteResults, linkResults, linkCsvType, linkCompleted, linkValidations
+        linkCompleteResults, linkResults, linkOptions, linkCompleted, linkValidations
     } from '../tools/stores.js';
     import { clear } from 'idb-keyval'
     import Icon from './Icon.svelte';
@@ -277,7 +277,7 @@
         $linkFile = undefined;
         $linkFileName = undefined;
         $linkFileSize = undefined;
-        $linkCsvType = undefined;
+        $linkOptions.csv = undefined;
         $linkSourceHeader = undefined;
         $linkSourceHeaderTypes = undefined;
         $linkJob = undefined;
@@ -293,14 +293,14 @@
         await useLocalSync(linkFileName, 'linkFileName');
         await useLocalSync(linkFileSize, 'linkFileSize');
         await useLocalSync(linkSourceHeader, 'linkSourceHeader');
-        await useLocalSync(linkCsvType, 'linkCsvType');
+        await useLocalSync(linkOptions, 'linkOptions');
         await useLocalSync(linkMapping, 'linkMapping');
         await useLocalSync(linkValidations, 'linkValidations');
         await useLocalSync(linkCompleteResults, 'linkCompleteResults');
         await useLocalSync(linkResults, 'linkResults');
         await useLocalSync(linkJob, 'linkJob');
         $linkWaiter = false;
-        if (!$linkMapping || !$linkFileName || !$linkCsvType || !$linkSourceHeader || !$linkJob) {
+        if (!$linkMapping || !$linkFileName || !$linkOptions.csv || !$linkSourceHeader || !$linkJob) {
             console.log('reset');
             reset();
         }
