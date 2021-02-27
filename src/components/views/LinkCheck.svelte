@@ -190,7 +190,6 @@
         linkValidations.update(v => {
             return $linkResults.rows.map((r,i) => {
                 return r.map((rr,j) => {
-                    console.log(i,j,rr[headerMapping['score']],linkValidations && $linkValidations[i] && $linkValidations[i][j]);
                     return $linkValidations && $linkValidations[i] && $linkValidations[i][j] && $linkValidations[i][j].checked && ($linkValidations[i][j].checked !== "auto") ?
                         $linkValidations[i][j]
                         :
