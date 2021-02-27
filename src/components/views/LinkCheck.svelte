@@ -64,6 +64,7 @@
 {/if}
 
 <script>
+    import { onMount } from 'svelte';
     import { linkWaiter, linkCompleteResults, linkResults, linkFileName, linkCsvType,
         linkCompleted, linkAlgoOptions, linkValidations
     } from '../tools/stores.js';
@@ -180,6 +181,23 @@
       };
       return flat(array, depth);
     };
+
+    $: updateValidationThreshold($linkAlgoOptions.check.autoCheckThreshold);
+
+    const updateValidationThreshold = () => {
+        const headerMapping = {};
+        $linkCompleteResults.header.forEach((h,i) => headerMapping[h] = i);
+        linkValidations.update(v => {
+            return $linkResults.rows.map(r => {
+                return r.map(rr => (rr[headerMapping['score']] >= $linkAlgoOptions.check.autoCheckThreshold) ?
+                    { valid: true, checked: "auto" } : { checked: false })
+            });
+        });
+    }
+
+    onMount(() => {
+        updateValidationThreshold();
+    })
 
 </script>
 
