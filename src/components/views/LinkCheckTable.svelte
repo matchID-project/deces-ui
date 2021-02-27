@@ -375,7 +375,7 @@
     };
 
     const similarScores = (s1, s2) => {
-        return scoresDistance(s1, s2) < $linkOptions.check.similarThreshold;
+        return scoresDistance(s1, s2) < ((1 - $linkOptions.check.similarThreshold) ** 2);
     };
 
 </script>

@@ -460,7 +460,7 @@ export const linkOptions = writable({
         autoCheckSimilar: true,
         displayUnmappedColumns: false,
         autoCheckThreshold: 0.85,
-        similarThreshold: 0.001,
+        similarThreshold: 0.97,
         filter: ''
     }
 });
