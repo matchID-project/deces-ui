@@ -93,8 +93,8 @@
     import { onMount } from 'svelte';
     import { fade } from 'svelte/transition';
     import { linkWaiter, linkStep, linkFile, linkFileName, linkFileSize, linkFileSizeLimit, linkMapping,
-        linkSourceHeader, linkMinFields, linkJob,
-        linkCompleteResults, linkResults, linkCsvType, linkCompleted, linkValidations
+        linkSourceHeader, linkMinFields, linkJob, linkSourceHeaderTypes,
+        linkCompleteResults, linkResults, linkOptions, linkCompleted, linkValidations
     } from '../tools/stores.js';
     import { clear } from 'idb-keyval'
     import Icon from './Icon.svelte';
@@ -144,7 +144,7 @@
             $linkFileName = $linkFile.name ;
             $linkFileSize = $linkFile.size;
             steps[0].error = false;
-            $linkStep=2;
+            $linkStep = 2;
         } else {
             steps[0].label = `${$linkFile.name }: volume > ${Math.round($linkFileSizeLimit / 1000**2)}Mo<br>
                                 réessayez avec un fichier plus petit`
@@ -170,9 +170,11 @@
 
     $: if ($linkResults) {
         $linkStep = 4;
+    }
+    $: if ($linkResults && $linkValidations) {
         const s = $linkResults.header.indexOf('score');
         const sLinks = $linkResults.rows.filter(r => r.some(rr => rr[s])).length;
-        steps[2].label = `${sLinks} identifications potentielles`;
+        steps[2].label = `${sLinks}/${$linkCompleteResults.rows.length} identifications potentielles`;
         const c = $linkResults.header.indexOf('check');
         const cLinks = $linkValidations.filter(r => r.every(rr => rr && rr.checked)).length;
         steps[3].label = `${cLinks}/${sLinks} identifications validées`;
@@ -263,17 +265,6 @@
 
     const reset = async () => {
         await clearAll();
-        $linkStep = 1;
-        $linkFile = undefined;
-        $linkFileName = undefined;
-        $linkFileSize = undefined;
-        $linkSourceHeader = undefined;
-        $linkJob = undefined;
-        $linkCompleteResults = undefined;
-        $linkResults = undefined;
-        $linkValidations = undefined;
-        $linkCompleted = false;
-        $linkMapping = {};
         steps[0].label = step0Label;
         steps[0].error = false;
         steps[1].label = step1Label;
@@ -282,6 +273,19 @@
         steps[2].error = false;
         steps[3].label = step3Label;
         steps[3].error = false;
+        $linkStep = 1;
+        $linkFile = undefined;
+        $linkFileName = undefined;
+        $linkFileSize = undefined;
+        $linkOptions.csv = undefined;
+        $linkSourceHeader = undefined;
+        $linkSourceHeaderTypes = undefined;
+        $linkJob = undefined;
+        $linkCompleteResults = undefined;
+        $linkResults = undefined;
+        $linkValidations = undefined;
+        $linkCompleted = false;
+        $linkMapping = {};
     }
 
     onMount(async () => {
@@ -289,14 +293,14 @@
         await useLocalSync(linkFileName, 'linkFileName');
         await useLocalSync(linkFileSize, 'linkFileSize');
         await useLocalSync(linkSourceHeader, 'linkSourceHeader');
-        await useLocalSync(linkCsvType, 'linkCsvType');
+        await useLocalSync(linkOptions, 'linkOptions');
         await useLocalSync(linkMapping, 'linkMapping');
         await useLocalSync(linkValidations, 'linkValidations');
         await useLocalSync(linkCompleteResults, 'linkCompleteResults');
         await useLocalSync(linkResults, 'linkResults');
         await useLocalSync(linkJob, 'linkJob');
         $linkWaiter = false;
-        if (!$linkMapping || !$linkFileName || !$linkCsvType || !$linkSourceHeader || !$linkJob) {
+        if (!$linkMapping || !$linkFileName || !$linkOptions.csv || !$linkSourceHeader || !$linkJob) {
             console.log('reset');
             reset();
         }

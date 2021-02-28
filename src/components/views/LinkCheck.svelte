@@ -12,7 +12,7 @@
                     <p>
                         Toutes les identé(s) ({checkedLinks}) ont été validées* !
                         <br/>
-                        <span class="rf-text--sm">* validation automatique pour les scores > {Math.round($linkAutoCheckThreshold*100)}</span>
+                        <span class="rf-text--sm">* validation automatique pour les scores > {Math.round($linkOptions.check.autoCheckThreshold*100)}</span>
                     </p>
                 {/if}
                 <p>
@@ -54,8 +54,9 @@
                         </button>
                     </span>
                 </p>
-                <LinkCheckTable filter={filterUnchecked} bind:autoCheckSimilar={autoCheckSimilar} bind:selectedRow={selectedRow} sort={'scoreDesc'} master=true actionTitle={"à valider"} bind:size={unCheckedLinks}/>
-                <LinkCheckTable filter={ filterChecked } bind:autoCheckSimilar={autoCheckSimilar} bind:selectedRow={selectedRow} sort={'scoreAsc'} actionTitle={"validées"} bind:size={checkedLinks}/>
+                <LinkConfigureOptions check/>
+                <LinkCheckTable filter={filterUnchecked} bind:selectedRow={selectedRow} sort={'scoreDesc'} master=true actionTitle={"à valider"} bind:size={unCheckedLinks}/>
+                <LinkCheckTable filter={ filterChecked } bind:selectedRow={selectedRow} sort={'scoreAsc'} actionTitle={"validées"} bind:size={checkedLinks}/>
             {/if}
         </div>
 
@@ -63,10 +64,12 @@
 {/if}
 
 <script>
-    import { linkWaiter, linkCompleteResults, linkResults, linkFileName, linkCsvType,
-        linkCompleted, linkAutoCheckThreshold, linkValidations
+    import { onMount } from 'svelte';
+    import { linkWaiter, linkCompleteResults, linkResults, linkFileName, linkOptions,
+        linkCompleted, linkValidations
     } from '../tools/stores.js';
     import LinkCheckTable from './LinkCheckTable.svelte';
+    import LinkConfigureOptions from './LinkConfigureOptions.svelte';
     import Icon from './Icon.svelte';
 
     let isDownloading = false;
@@ -98,8 +101,8 @@
 
     const protectField = (field) => {
         if (typeof(field) === 'string') {
-            if (/^0\d+$/.test(field) || field.includes($linkCsvType.sep)) {
-                const q = $linkCsvType.quote || '"'
+            if (/^0\d+$/.test(field) || field.includes($linkOptions.csv.sep)) {
+                const q = $linkOptions.csv.quote || '"'
                 const re = new RegExp(`${q}`,'g');
                 return `${q}${field.replace(re, `${q}${q}`)}${q}`
             } else {
@@ -142,7 +145,7 @@
             index = (i) => map[i];
         }
         return [
-            header.map(h => protectField(h)).join($linkCsvType.sep) + '\r\n',
+            header.map(h => protectField(h)).join($linkOptions.csv.sep) + '\r\n',
             ...flatten(rows.map((r,i) => {
                     const l = $linkValidations[index(i)];
                     return r.map((rr,j) => {
@@ -153,7 +156,7 @@
                     });
                 }),1)
                 .filter(row => !filter || row[header.indexOf('score')])
-                .map(row => header.map((col, i) => protectField(row[i])).join($linkCsvType.sep) + '\r\n')];
+                .map(row => header.map((col, i) => protectField(row[i])).join($linkOptions.csv.sep) + '\r\n')];
     }
 
     const flatten = (array, depth) => {
@@ -178,6 +181,32 @@
       };
       return flat(array, depth);
     };
+
+    $: updateValidationThreshold($linkOptions.check.autoCheckThreshold);
+
+    const updateValidationThreshold = () => {
+        const headerMapping = {};
+        $linkCompleteResults.header.forEach((h,i) => headerMapping[h] = i);
+        linkValidations.update(v => {
+            return $linkResults.rows.map((r,i) => {
+                return r.map((rr,j) => {
+                    return $linkValidations && $linkValidations[i] && $linkValidations[i][j] && $linkValidations[i][j].checked && ($linkValidations[i][j].checked !== "auto") ?
+                        $linkValidations[i][j]
+                        :
+                        (
+                            (rr[headerMapping['score']] >= $linkOptions.check.autoCheckThreshold) ?
+                            { valid: true, checked: "auto" }
+                            :
+                            { checked: false }
+                        )
+                });
+            });
+        });
+    }
+
+    onMount(() => {
+        updateValidationThreshold();
+    })
 
 </script>
 

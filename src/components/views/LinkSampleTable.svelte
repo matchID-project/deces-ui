@@ -1,7 +1,7 @@
 
 <div style="height: 450px;overflow-y:scroll;overflow-x:None;">
     <div class="rf-container-fluid">
-        {#if $linkSourceHeader}
+        {#if header}
             <datalist id="LinkSampleTable">
                 {#each header as col, colNumber}
                     <option>{col}</option>
@@ -42,11 +42,12 @@
 </div>
 
 <script>
-    import { linkFile, resultsPerPage, linkStep, linkSourceHeader, linkSourceHeaderTypes, linkCsvType } from '../tools/stores.js';
+    import { onMount } from 'svelte';
+    import { linkFile, resultsPerPage, linkStep, linkSourceHeader, linkSourceHeaderTypes, linkOptions } from '../tools/stores.js';
 
     export let potentialSeparators = [';',',','|','\t'];
     export let potentialQuotes = ["'",'"'];
-    export let sep = ';';
+    export let sep;
     export let quote;
     export let page = 1;
     export let pageSize=5;
@@ -67,7 +68,7 @@
     const guessTypeRegexp = [
         [/^[1-2]\d{3}\/[0-1]\d\/[0-3]\d$/, 'date=YYYY/MM/DD'],
         [/^[1-2]\d{3}-[0-1]\d-[0-3]\d$/, 'date=YYYY-MM-DD'],
-        [/^[1-2]\d{3}[0-1]\d[0-3]\d$/, 'date=YYYY-MM-DD'],
+        [/^[1-2]\d{3}[0-1]\d[0-3]\d$/, 'date=YYYYMMDD'],
         [/^[0-3]\d-[0-1]\d-[1-2]\d{3}$/, 'date=DD-MM-YYYY'],
         [/^[0-3]\d\/[0-1]\d\/[1-2]\d{3}$/, 'date=DD/MM/YYYY'],
         [/^[0-3]\d[0-1]\d[1-2]\d{3}$/, 'date=DDMMYYYY'],
@@ -83,9 +84,17 @@
         [/^\s*(france|algerie|maroc|tunisie|italie|portugal|espagne)\s*$/, 'country'],
     ];
 
-    $: $linkFile && read($linkFile);
+    $: if ($linkOptions && $linkOptions.csv &&
+        (
+            ($linkOptions.csv.sep !== sep) ||
+            ($linkOptions.csv.skipLines !== skipLines) ||
+            ($linkOptions.csv.quote !== quote) ||
+            ($linkOptions.csv.encoding !== encoding)
+        )) {
+            read($linkOptions.csv);
+        }
 
-    $: if ($linkSourceHeader && mapping) {
+    $: if ($linkSourceHeader && mapping && rows) {
         header = [
             ...fields.map(f => mapping.reverse && $linkSourceHeader.includes(mapping.reverse[f.field]) && mapping.reverse[f.field])
                 .filter(x => x),
@@ -96,7 +105,7 @@
             .map(row => header.map(h => row[$linkSourceHeader.indexOf(h)]))
     }
 
-    $: rows && linkSourceHeaderTypes.update(v => {
+    $: $linkSourceHeader && linkSourceHeaderTypes.update(v => {
         const types = {};
         $linkSourceHeader.forEach(col => {
             types[col] = guessFieldType(rows.map(row => row[$linkSourceHeader.indexOf(col)]))
@@ -172,7 +181,8 @@
     };
 
     const guessQuote = (csv, sep, skipLines) => {
-        let rows
+        let rows;
+        if (quote) {potentialQuotes = [quote]}
         potentialQuotes.map(q => {
             const re = new RegExp(`^(${q}(([^${q}]|${q}${q})*?)${q}|([^${protect(sep)}]*))(\\${protect(sep)}(.*))?$`);
             const re2 = new RegExp(`${q}${q}`,'g');
@@ -211,36 +221,46 @@
 
     const parseCsv = (ev) => {
         const contents = ev.target.result;
-        guessSeparator(contents);
+        if (!sep) { guessSeparator(contents) }
         rows = guessQuote(contents, sep, skipLines);
-        $linkCsvType = {
-            sep: sep,
-            quote: quote,
-            skipLines: skipLines,
-            encoding: encoding
-        };
-        console.log($linkCsvType);
+        if ((!$linkOptions.csv) && ($linkFile)) {
+            $linkOptions.csv = {
+                sep: sep,
+                quote: quote,
+                skipLines: skipLines,
+                encoding: encoding
+            };
+            console.log('Guessed CSV type:',$linkOptions.csv);
+        }
+        mapping = {};
         $linkSourceHeader = rows.shift();
     };
 
-    const read = async (ev) => {
+    const read = async (csvOptions) => {
         const blob = $linkFile.slice(0, 100000);
-        const badChars = 'a';
-        const potentialEncodings = ['utf8','latin1','windows-1252','mac'];
-        let min = 9999;
-        await Promise.all(potentialEncodings.map(async enc => {
-            const reader = new FileReader();
-            reader.readAsText(blob, enc);
-            const result = await new Promise((resolve, reject) => {
-                reader.onload = (ev) => {
-                    resolve(ev.target.result.normalize('NFKD').replace(/[\u0300-\u036f]/g, '').toLocaleLowerCase().replace(/[\x00-\x7F]*/g,'').length)
+        if (csvOptions) {
+            sep = csvOptions.sep;
+            encoding = csvOptions.encoding;
+            quote = csvOptions.quote;
+            skipLines = csvOptions.skipLines;
+        } else {
+            const badChars = 'a';
+            const potentialEncodings = ['utf8','latin1','windows-1252','mac'];
+            let min = 9999;
+            await Promise.all(potentialEncodings.map(async enc => {
+                const reader = new FileReader();
+                reader.readAsText(blob, enc);
+                const result = await new Promise((resolve, reject) => {
+                    reader.onload = (ev) => {
+                        resolve(ev.target.result.normalize('NFKD').replace(/[\u0300-\u036f]/g, '').toLocaleLowerCase().replace(/[\x00-\x7F]*/g,'').length)
+                    }
+                });
+                if (result < min) {
+                    encoding = enc;
+                    min = result;
                 }
-            });
-            if (result < min) {
-                encoding = enc;
-                min = result;
-            }
-        }));
+            }));
+        }
         const reader = new FileReader();
         reader.readAsText(blob, encoding);
         reader.onload = parseCsv;
@@ -255,7 +275,11 @@
                 format: $linkSourceHeaderTypes[col] && $linkSourceHeaderTypes[col].format,
                 freq: $linkSourceHeaderTypes[col] && $linkSourceHeaderTypes[col].freq
         }));
-	};
+    };
+
+    onMount(() => {
+        $linkFile && read();
+    })
 
 </script>
 
