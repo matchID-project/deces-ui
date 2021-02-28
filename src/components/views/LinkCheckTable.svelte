@@ -32,44 +32,48 @@
                                     >
                                         {Math.round(get(row,'score')*100)}%
                                     </td>
-                                    <td class="hcenter has-text-grey-light">
-                                        <span
-                                            class="rf-fi-close-circle-line rf-fi--lg {(row[row.length - 2].valid === false) ? "rf-color--rm" : "rf-color-hover--rm rf-inactive"}"
-                                            class:is-hidden={
-                                                (row[$linkResults.header.indexOf('sourceLineNumber')] !== selectedRow)
-                                                && (row[row.length - 2].valid !== false)
-                                                && ((autoCheckSimilarPreview !== false)
-                                                || (!similarScores(selectedScores, JSON.parse(get(row,'scores')))))
-                                            }
-                                            on:click={() => {row[row.length - 2].valid = autoCheckSimilarRows(row, candidateNumber, false);}}
-                                            on:mouseenter={() => {
-                                                selectedScores = JSON.parse(get(row,'scores'));
-                                                autoCheckSimilarPreview = $linkOptions.check.autoCheckSimilar ? false : undefined;
-                                                }}
-                                            on:mouseleave={() => {autoCheckSimilarPreview = undefined}}
-                                            title={$linkOptions.check.autoCheckSimilar ? `invalider l'appariement et ${similarRowCount - 1} paire(s) similaire(s)` : "invalider l'appariement"}
-                                        >
-                                        </span>
-                                        {#if row[$linkResults.header.indexOf('sourceLineNumber')] === selectedRow}
-                                            &nbsp;
-                                        {/if}
-                                        <span
-                                            class="rf-fi-checkbox-line rf-fi--lg {(row[row.length - 2].valid === true) ? "rf-color--bf" : "rf-color-hover--bf rf-inactive"}"
-                                            class:is-hidden={
-                                                (row[$linkResults.header.indexOf('sourceLineNumber')] !== selectedRow)
-                                                && (row[row.length - 2].valid !== false)
-                                                && ((autoCheckSimilarPreview !== true)
-                                                || (!similarScores(selectedScores, JSON.parse(get(row,'scores')))))
-                                            }
-                                            on:click={() => {row[row.length -2].valid = autoCheckSimilarRows(row, candidateNumber, true);}}
-                                            on:mouseenter={() => {
-                                                selectedScores = JSON.parse(get(row,'scores'));
-                                                autoCheckSimilarPreview = $linkOptions.check.autoCheckSimilar ? true : undefined
-                                                }}
-                                            on:mouseleave={() => {autoCheckSimilarPreview = undefined}}
-                                            title={$linkOptions.check.autoCheckSimilar ? `valider l'appariement et ${similarRowCount - 1} paire(s) similaire(s)` : "valider l'appariement"}
-                                        >
-                                        </span>
+                                    <td class="parent-tooltip hcenter has-text-grey-light">
+                                        <div>
+                                            <span
+                                                class="rf-fi-close-circle-line rf-fi--lg {(row[row.length - 2].valid === false) ? "rf-color--rm" : "rf-color-hover--rm rf-inactive"}"
+                                                class:is-hidden={
+                                                    (row[$linkResults.header.indexOf('sourceLineNumber')] !== selectedRow)
+                                                    && (row[row.length - 2].valid !== false)
+                                                    && ((autoCheckSimilarPreview !== false)
+                                                    || (!similarScores(selectedScores, JSON.parse(get(row,'scores')))))
+                                                }
+                                                on:click={() => {row[row.length - 2].valid = autoCheckSimilarRows(row, candidateNumber, false);}}
+                                                on:mouseenter={() => {
+                                                    selectedScores = JSON.parse(get(row,'scores'));
+                                                    autoCheckSimilarPreview = $linkOptions.check.autoCheckSimilar ? false : undefined;
+                                                    showToolTip=true;}}
+                                                on:mouseleave={() => {autoCheckSimilarPreview = undefined;showToolTip=false;}}
+                                                class:tooltip={showToolTip}
+                                                data-tooltip={$linkOptions.check.autoCheckSimilar ? `invalider l'appariement et ${similarRowCount - 1} paire(s) similaire(s)` : "invalider l'appariement"}
+                                            >
+                                            </span>
+                                            {#if row[$linkResults.header.indexOf('sourceLineNumber')] === selectedRow}
+                                                &nbsp;
+                                            {/if}
+                                            <span
+                                                class="rf-fi-checkbox-line rf-fi--lg {(row[row.length - 2].valid === true) ? "rf-color--bf" : "rf-color-hover--bf rf-inactive"}"
+                                                class:is-hidden={
+                                                    (row[$linkResults.header.indexOf('sourceLineNumber')] !== selectedRow)
+                                                    && (row[row.length - 2].valid !== false)
+                                                    && ((autoCheckSimilarPreview !== true)
+                                                    || (!similarScores(selectedScores, JSON.parse(get(row,'scores')))))
+                                                }
+                                                on:click={() => {row[row.length -2].valid = autoCheckSimilarRows(row, candidateNumber, true);}}
+                                                on:mouseenter={() => {
+                                                    selectedScores = JSON.parse(get(row,'scores'));
+                                                    autoCheckSimilarPreview = $linkOptions.check.autoCheckSimilar ? true : undefined
+                                                    showToolTip=true;}}
+                                                on:mouseleave={() => {autoCheckSimilarPreview = undefined;showToolTip=false;}}
+                                                class:tooltip={showToolTip}
+                                                data-tooltip={$linkOptions.check.autoCheckSimilar ? `valider l'appariement et ${similarRowCount - 1} paire(s) similaire(s)` : "valider l'appariement"}
+                                            >
+                                            </span>
+                                        </div>
                                     </td>
                                 </tr>
                             {/each}
@@ -161,6 +165,7 @@
     let mappedColumns;
     let autoCheckSimilarPreview = undefined;
     let wait = false;
+    let showToolTip;
 
     const sorts = {
         scoreDesc: (a, b) => get(a[0],'score') > get(b[0],'score') ? -1 : ( get(a[0],'score') < get(b[0],'score') ? 1 : 0 ),
@@ -224,6 +229,7 @@
     const selectRow = (row) => {
         if (row) {
             selectedRow = row[$linkResults.header.indexOf('sourceLineNumber')];
+            selectedScores = JSON.parse(get(row,'scores'));
         } else {
             selectedRow = -1;
             selectedScores = undefined;
@@ -387,14 +393,31 @@
 
   td {
     max-width: 120px;
+    overflow:hidden;
     white-space: nowrap;
-    overflow: hidden;
     text-overflow: ellipsis;
     vertical-align:middle!important;
   }
 
   td.hcenter {
     text-align: center;
+  }
+
+  td.parent-tooltip {
+    overflow:visible!important;
+    position: relative;
+  }
+
+  .tooltip:hover::after {
+    position: absolute;
+    content: attr(data-tooltip);
+    bottom: -32px;
+    left: 0px;
+    padding: 8px;
+    background-color: var(--w);
+    opacity: 1;
+    border: 3px solid;
+    padding: .25em .5em;
   }
 
 </style>
