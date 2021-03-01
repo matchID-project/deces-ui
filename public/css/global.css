@@ -10,11 +10,17 @@
 
 @media (hover: hover) and (pointer: fine) {
   .rf-link:not(:disabled):hover, .rf-link:not([disabled]):hover {
-      background-image: linear-gradient(0deg,var(--color-hover),var(--color-hover));
+      color: var(--bf500-plain);
+      background-image: linear-gradient(0deg,var(--bf200-bf300),var(--bf200-bf300));
   }
 }
 
-.rf-link {
+.rf-menu__item--active::before {
+  width: 3px!important;
+  z-index: 1200;
+}
+
+a[target=_blank].rf-link {
   font-size: 1rem;
   line-height: 1.25rem;
   min-height: 2rem;
