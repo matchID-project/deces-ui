@@ -9,11 +9,18 @@
                         on:click|preventDefault={toggleExpand}
                     >
                         <div class="rf-card__img">
-                            <img
-                                class="rf-background--g400"
-                                alt={ result.sex }
-                                src={ result.sex === 'M' ? '/male.svg' : '/female.svg' }
-                            />
+                            {#if (result.links && result.links.wikimedia)}
+                                <img
+                                    alt={ result.links.wikimedia }
+                                    src={ result.links.wikimedia }
+                                />
+                            {:else}
+                                <img
+                                    class="rf-background--g400"
+                                    alt={ result.sex }
+                                    src={ result.sex === 'M' ? '/male.svg' : '/female.svg' }
+                                />
+                            {/if}
                             {#if result.correction}
                                 <div
                                     style="position:absolute;top:6px;left:6px"
@@ -93,6 +100,20 @@
                                             </table>
                                         </div>
                                     {/each}
+                                    {#if (result.links && Object.keys(result.links).length)}
+                                        {#each Object.keys(result.links).filter(x => ['wikipedia','wikidata'].includes(x)) as key}
+                                            <div class="rf-col-xs-12 rf-col-sm-12 rf-col-md-6 rf-cold-rf-col-xl-6 rf-text--center rf-padding-top-1N">
+                                                <a
+                                                    href={result.links[key]}
+                                                    title={`lien ${key}`}
+                                                    target="_blank"
+                                                    class="rf-link"
+                                                >
+                                                    Voir sur {key}
+                                                </a>
+                                            </div>
+                                        {/each}
+                                    {/if}
                                 </div>
                             </div>
                         </div>
