@@ -1,34 +1,38 @@
 <div
-    class="hover-parent rf-text--left rf-margin-top-1N rf-padding-left-4px rf-padding-right-4px rf-padding-bottom-4px"
+    class="rf-input-group hover-parent rf-text--left rf-margin-top-1N rf-padding-left-4px rf-padding-right-4px rf-padding-bottom-4px"
     class:rf-background--hovering={(hovering === true)}
+    class:rf-input-group--valid={field && field.mapTo && !field.warning}
+    class:rf-input-group--error={field && field.warning}
+    class:hovering={hovering === true}
     on:dragover={() => {hovering = true}}
     on:dragleave={() => {hovering = false}}
     on:drop|preventDefault={drop}
     ondragover="return false"
-    class:rf-inactive={(!field || !field.mapTo)}
-    class:rf-color--bf={(field && field.mapTo && !field.warning)}
-    class:rf-color--rm={field && field.warning}
-    class:hovering={hovering === true}
     on:click|preventDefault={reset}
 >
     <label
         class="rf-label"
         for={field.group+field.label}
-        style="overflow:hidden;text-overflow:ellipsis;"
+        style="overflow:hidden;text-overflow:ellipsis;position: relative"
     >
-        {@html field.label}
+        <span
+            class:rf-fi-check-line={field && field.mapTo && !field.warning}
+            class:rf-fi-alert-line={field && field.warning}
+        >
+            &nbsp;
+        </span>
+        <span style="position:absolute;top:-2px">{@html field.label}</span>
     </label>
-    <div class="rf-field">
-        <input
-            class="rf-input"
-            list="LinkSampleTable"
-            id={field.group+field.label}
-            name={field.label}
-            placeholder="non associé"
-            bind:value={field.mapTo}
-            title={field.label}
-        />
-    </div>
+    <input
+        class="rf-input rf-margin-top-0"
+        list="LinkSampleTable"
+        id={field.group+field.label}
+        name={field.label}
+        class:rf-input--valid={(field && field.mapTo && !field.warning)}
+        placeholder="non associé"
+        bind:value={field.mapTo}
+        title={field.label}
+    />
 </div>
 
 <script>

@@ -1,44 +1,26 @@
-<div class="rf-tile hover-parent rf-href"
+<div class="rf-callout rf-callout--scheme-soft-blue-soft rf-padding-top-4N rf-padding-left-2N rf-padding-right-2N rf-padding-bottom-1N hover-parent rf-href"
     on:drop|preventDefault={drop}
+    class:rf-fi-alert-line={error}
+    class:rf-fi-checkbox-line={$linkFile}
+    class:rf-fi-play-line={!error && !$linkFile}
     ondragover="return false"
     on:dragover={() => {hovering = true}}
     on:dragleave={() => hovering = false}
     class:hovering={((hovering === true) || $linkFile) && !error}
     class:rf-text--error={error}
     on:click|preventDefault={chooseFile}
+    style="postition: relative;"
 >
+    <p style="position: absolute;top: 1rem;left: 3rem;margin: 0">
+            <strong>Étape {step}. {title}</strong>
+    </p>
     <a
         href="#step{step}"
-        aria-label="Étape {step} {title}"
+        aria-label={label}
     >
-        <div class="rf-tile__body">
-            <h4
-                class="rf-tile__title"
-                style="position: relative"
-                class:rf-text--error={error}
-            >
-                <span class="rf-margin-right-3N">Étape {step}. {title}</span>
-                {#if error}
-                    <span
-                        class="rf-fi-alert-line rf-fi--lg"
-                        style="position: absolute;top: 0px;right:0px;"
-                    ></span>
-                {:else if $linkFile}
-                    <span
-                        class="rf-fi-checkbox-line rf-fi--lg"
-                        style="position: absolute;top: 0px;right:0px;"
-                    ></span>
-                {:else}
-                    <span
-                        class="rf-fi-play-line rf-fi--lg"
-                        style="position: absolute;top: 0px;right:0px;"
-                    ></span>
-                {/if}
-            </h4>
-            <p class="rf-tile__desc rf-text--center">
-                {@html label}
-            </p>
-        </div>
+        <p class="rf-text--center" style="overflow:hidden;text-overflow:ellipsis;">
+            {@html label}
+        </p>
     </a>
 </div>
 <script>

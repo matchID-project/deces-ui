@@ -57,7 +57,7 @@
     export let error=false;
 
     import { linkWaiter, linkMapping, linkFile, linkFileSize, linkJob, linkStep,
-        linkCompleteResults, linkResults, linkCsvType, linkAutoCheckThreshold,
+        linkCompleteResults, linkResults, linkOptions,
         linkValidations, themeDnum
     } from '../tools/stores.js';
     let progressUpload = 0;
@@ -147,11 +147,12 @@
     const upload = async () =>  {
         progressUpload = 0;
         let formData = new FormData();
-        formData.append('sep', $linkCsvType.sep);
-        formData.append('encoding', $linkCsvType.encoding);
-        formData.append('skipLines', $linkCsvType.skipLines);
-        formData.append('candidateNumber', 10);
-        formData.append('dateFormat', $linkCsvType.dateFormat || 'DD/MM/YYYY');
+        formData.append('sep', $linkOptions.csv.sep);
+        formData.append('encoding', $linkOptions.csv.encoding);
+        formData.append('skipLines', $linkOptions.csv.skipLines);
+        formData.append('candidateNumber', $linkOptions.api.candidateNumber);
+        formData.append('pruneScoe', $linkOptions.api.pruneScore);
+        formData.append('dateFormat', $linkOptions.csv.dateFormat || 'DD/MM/YYYY');
         Object.keys($linkMapping && $linkMapping.reverse).map(k => formData.append(k,$linkMapping.reverse[k]));
         formData.append('csv', $linkFile);
         try {
@@ -237,8 +238,8 @@
     }
 
     const parseLinkResults = (data) => {
-        const q = $linkCsvType.quote || '"';
-        const sep = $linkCsvType.sep;
+        const q = $linkOptions.csv.quote || '"';
+        const sep = $linkOptions.csv.sep;
         const re = new RegExp(`^(${q}(([^${q}]|${q}${q})*?)${q}|([^${protect(sep)}]*))(\\${protect(sep)}(.*))?$`);
         const re2 = new RegExp(`${q}${q}`,'g');
         const rows = [];
@@ -293,12 +294,6 @@
                 rows: rows.filter(r => r[0][headerMapping['score']])
             }
         })
-        linkValidations.update(v => {
-            return $linkResults.rows.map(r => {
-                return r.map(rr => (rr[headerMapping['score']] >= $linkAutoCheckThreshold) ?
-                    { valid: true, checked: "auto" } : { checked: false })
-            });
-        });
         $linkStep = 4;
     };
 
