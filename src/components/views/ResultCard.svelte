@@ -163,7 +163,7 @@
 
     const wikimediaThumbUrl = (img) => {
         try {
-            const imgName = decodeURI(img).replace(/^.*\//,'').replace(/ /g,'_');
+            const imgName = decodeURIComponent(img).replace(/^.*\//,'').replace(/ /g,'_');
             const md = md5(imgName);
             return `https://upload.wikimedia.org/wikipedia/commons/thumb/${md[0]}/${md.substring(0,2)}/${imgName}/80px-${imgName}`
         } catch(e) {
@@ -174,6 +174,7 @@
     $: wikimediaImgSrc = result.links && wikimediaThumbUrl(result.links.wikimedia);
 
     $: if (wikimediaImg && wikimediaImgSrc) {
+        wikimediaImgLoaded = false;
         wikimediaImg.src = wikimediaImgSrc;
         wikimediaImg.onload = () => { wikimediaImgLoaded = true }
     }
