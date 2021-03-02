@@ -137,7 +137,7 @@
                         >
                             <a
                                 href="/link"
-                                class="rf-link rf-href rf-fi-db-line rf-link--icon-left"
+                                class="rf-link rf-href"
                             >
                                 Appariement
                             </a>

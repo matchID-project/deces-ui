@@ -8,12 +8,19 @@
                         class:rf-card--left-arrow={expand}
                         on:click|preventDefault={toggleExpand}
                     >
-                        <div class="rf-card__img">
-                            <img
-                                class="rf-background--g400"
-                                alt={ result.sex }
-                                src={ result.sex === 'M' ? '/male.svg' : '/female.svg' }
-                            />
+                        <div class="rf-card__img" style="position:relative">
+                            {#if (result.links && result.links.wikimedia)}
+                                <img
+                                    alt={ result.links.wikimedia }
+                                    src={ result.links.wikimedia }
+                                />
+                            {:else}
+                                <img
+                                    class="rf-background--{result.links ? 'bf' : 'g400'}"
+                                    alt={ result.sex }
+                                    src={ result.sex === 'M' ? '/male.svg' : '/female.svg' }
+                                />
+                            {/if}
                             {#if result.correction}
                                 <div
                                     style="position:absolute;top:6px;left:6px"
@@ -76,7 +83,7 @@
                             <div class="rf-container-fluid">
                                 <div class="rf-grid-row">
                                     {#each Object.keys(conf) as column}
-                                        <div class="rf-col-xs-12 rf-col-sm-12 rf-col-md-6 rf-cold-rf-col-xl-6">
+                                        <div class="rf-col-xs-12 rf-col-sm-12 rf-col-md-6 rf-col-lg-6 rf-col-xl-6">
                                             <span><strong>{ column }</strong></span>
                                             <table class="rf-table rf-table--narrow rf-table--striped">
                                                 <tbody>
@@ -93,6 +100,20 @@
                                             </table>
                                         </div>
                                     {/each}
+                                    {#if (result.links && Object.keys(result.links).length)}
+                                        {#each wikilinks as key}
+                                            <div class="rf-col-xs-12 rf-col-sm-12 rf-col-md-{wikilinks.length === 2 ? 6 : 12} rf-col-lg-{wikilinks.length === 2 ? 6 : 12} rf-col-xl-{wikilinks.length === 2 ? 6 : 12} rf-text--center rf-padding-top-1N">
+                                                <a
+                                                    href={result.links[key]}
+                                                    title={`lien ${key}`}
+                                                    target="_blank"
+                                                    class="rf-link"
+                                                >
+                                                    Voir sur {key}
+                                                </a>
+                                            </div>
+                                        {/each}
+                                    {/if}
                                 </div>
                             </div>
                         </div>
@@ -113,6 +134,7 @@
     export let index = undefined;
     export let forceExpand = undefined;
     let linkCopied = false;
+    let wikilinks;
 
     let expand = forceExpand || ($displayMode === 'card-expand');
 
@@ -180,6 +202,10 @@
                     : city[0])
                 : city)
             : ''
+    };
+
+    $: if (result.links) {
+        wikilinks = Object.keys(result.links).filter(x => ['wikipedia','wikidata'].includes(x))
     };
 
 </script>
