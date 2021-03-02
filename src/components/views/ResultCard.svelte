@@ -8,9 +8,17 @@
                         class:rf-card--left-arrow={expand}
                         on:click|preventDefault={toggleExpand}
                     >
-                        <div class="rf-card__img">
+                        <div class="rf-card__img" style="position:relative">
+                            {#if (wikimediaImgSrc)}
+                                <img
+                                    class:rf-hide={!wikimediaImgLoaded}
+                                    alt={ wikimediaImgSrc }
+                                    bind:this={ wikimediaImg }
+                                />
+                            {/if}
                             <img
-                                class="rf-background--g400"
+                                class="rf-background--{result.links ? 'bf' : 'g400'}"
+                                class:rf-hide={wikimediaImgLoaded}
                                 alt={ result.sex }
                                 src={ result.sex === 'M' ? '/male.svg' : '/female.svg' }
                             />
@@ -23,7 +31,10 @@
                                 </div>
                             {/if}
                         </div>
-                        <div class="rf-card__body">
+                        <div
+                            class="rf-card__body"
+                            style={(expand && !(result.links && result.links.label)) ? "padding-top: 14px!important;" : ""}
+                        >
                             <a
                                 href="#{index}"
                                 aria-label="étendre la carte de {result.name.last.toUpperCase()} { result.name.first ? result.name.first.join(' ') : '' }"
@@ -34,18 +45,31 @@
                                 >
                                     {result.name.last.toUpperCase()} { result.name.first ? result.name.first.join(' ') : '' }
                                 </h4>
-                                <p class="rf-card__desc rf-margin-0">
+                                <p class="rf-card__desc rf-margin-0" style="display: inline;">
                                     <span class="{expand ? "" : "rf-text--xs"}">
-                                        <span class="rf-hide--mobile">
-                                            { cityString(result.birth.location.city, false) }
-                                        </span>
-                                        { dateFormat(result.birth.date) }
+                                        {#if ((result.links && result.links.label))}
+                                            <strong>
+                                                {(expand || (result.links.label.length < 40)) ?
+                                                    result.links.label : result.links.label.substring(0,40) + ' ...'
+                                                }
+                                            </strong>
+                                            {expand ? '(source: wikidata.org)' : ''}
+                                            {#if expand} <br> {:else} - {/if}
+                                        {/if}
+                                        {#if (expand || !(result.links && result.links.label))}
+                                            <span class="rf-hide--mobile">
+                                                { cityString(result.birth.location.city, false) }
+                                            </span>
+                                        {/if}
+                                        { dateFormat(result.birth.date, !expand) }
                                         {#if result.death}
                                             -
-                                            <span class="rf-hide--mobile">
-                                                { cityString(result.death.location.city, false) }
-                                            </span>
-                                            { dateFormat(result.death.date) }
+                                            {#if (expand || !(result.links && result.links.label))}
+                                                <span class="rf-hide--mobile">
+                                                    { cityString(result.death.location.city, false) }
+                                                </span>
+                                            {/if}
+                                            { dateFormat(result.death.date, !expand) }
                                         {/if}
                                     </span>
                                 </p>
@@ -76,7 +100,7 @@
                             <div class="rf-container-fluid">
                                 <div class="rf-grid-row">
                                     {#each Object.keys(conf) as column}
-                                        <div class="rf-col-xs-12 rf-col-sm-12 rf-col-md-6 rf-cold-rf-col-xl-6">
+                                        <div class="rf-col-xs-12 rf-col-sm-12 rf-col-md-6 rf-col-lg-6 rf-col-xl-6">
                                             <span><strong>{ column }</strong></span>
                                             <table class="rf-table rf-table--narrow rf-table--striped">
                                                 <tbody>
@@ -93,6 +117,20 @@
                                             </table>
                                         </div>
                                     {/each}
+                                    {#if (result.links && Object.keys(result.links).length)}
+                                        {#each wikilinks as key}
+                                            <div class="rf-col-xs-12 rf-col-sm-12 rf-col-md-{wikilinks.length === 2 ? 6 : 12} rf-col-lg-{wikilinks.length === 2 ? 6 : 12} rf-col-xl-{wikilinks.length === 2 ? 6 : 12} rf-text--center rf-padding-top-1N">
+                                                <a
+                                                    href={result.links[key]}
+                                                    title={`lien ${key}`}
+                                                    target="_blank"
+                                                    class="rf-link"
+                                                >
+                                                    Voir sur {key}
+                                                </a>
+                                            </div>
+                                        {/each}
+                                    {/if}
                                 </div>
                             </div>
                         </div>
@@ -108,15 +146,38 @@
     import { slide } from 'svelte/transition';
     import { dataGouvCatalog, displayMode, searchInput, activeElement } from '../tools/stores.js';
     import Icon from './Icon.svelte';
+    import md5 from 'md5';
 
     export let result  = undefined;
     export let index = undefined;
     export let forceExpand = undefined;
     let linkCopied = false;
+    let wikilinks;
+    let wikimediaImgSrc;
+    let wikimediaImg;
+    let wikimediaImgLoaded;
 
     let expand = forceExpand || ($displayMode === 'card-expand');
 
     $: expand = forceExpand || ($displayMode === 'card-expand');
+
+    const wikimediaThumbUrl = (img) => {
+        try {
+            const imgName = decodeURIComponent(img).replace(/^.*\//,'').replace(/ /g,'_');
+            const md = md5(imgName);
+            return `https://upload.wikimedia.org/wikipedia/commons/thumb/${md[0]}/${md.substring(0,2)}/${imgName}/80px-${imgName}`
+        } catch(e) {
+            return img;
+        }
+    }
+
+    $: wikimediaImgSrc = result.links && wikimediaThumbUrl(result.links.wikimedia);
+
+    $: if (wikimediaImg && wikimediaImgSrc) {
+        wikimediaImgLoaded = false;
+        wikimediaImg.src = wikimediaImgSrc;
+        wikimediaImg.onload = () => { wikimediaImgLoaded = true }
+    }
 
     let conf = {};
     $: conf.Naissance = [
@@ -160,8 +221,12 @@
         setTimeout(() => linkCopied = false, 5000)
     }
 
-    const dateFormat = (dateString) => {
-        return dateString.replace(/(\d{4})(\d{2})(\d{2})/,"$3/$2/$1");
+    const dateFormat = (dateString, short=false) => {
+        if (short) {
+            return dateString.replace(/(\d{4})(\d{2})(\d{2})/,"$1");
+        } else {
+            return dateString.replace(/(\d{4})(\d{2})(\d{2})/,"$3/$2/$1");
+        }
     };
 
     const toDate = (dateString) => {
@@ -180,6 +245,10 @@
                     : city[0])
                 : city)
             : ''
+    };
+
+    $: if (result.links) {
+        wikilinks = Object.keys(result.links).filter(x => ['wikipedia','wikidata'].includes(x))
     };
 
 </script>
