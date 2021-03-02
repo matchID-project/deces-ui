@@ -9,18 +9,19 @@
                         on:click|preventDefault={toggleExpand}
                     >
                         <div class="rf-card__img" style="position:relative">
-                            {#if (result.links && result.links.wikimedia)}
+                            {#if (wikimediaImgSrc)}
                                 <img
-                                    alt={ result.links.wikimedia }
-                                    src={ result.links.wikimedia }
-                                />
-                            {:else}
-                                <img
-                                    class="rf-background--{result.links ? 'bf' : 'g400'}"
-                                    alt={ result.sex }
-                                    src={ result.sex === 'M' ? '/male.svg' : '/female.svg' }
+                                    class:rf-hide={!wikimediaImgLoaded}
+                                    alt={ wikimediaImgSrc }
+                                    bind:this={ wikimediaImg }
                                 />
                             {/if}
+                            <img
+                                class="rf-background--{result.links ? 'bf' : 'g400'}"
+                                class:rf-hide={wikimediaImgLoaded}
+                                alt={ result.sex }
+                                src={ result.sex === 'M' ? '/male.svg' : '/female.svg' }
+                            />
                             {#if result.correction}
                                 <div
                                     style="position:absolute;top:6px;left:6px"
@@ -145,16 +146,37 @@
     import { slide } from 'svelte/transition';
     import { dataGouvCatalog, displayMode, searchInput, activeElement } from '../tools/stores.js';
     import Icon from './Icon.svelte';
+    import md5 from 'md5';
 
     export let result  = undefined;
     export let index = undefined;
     export let forceExpand = undefined;
     let linkCopied = false;
     let wikilinks;
+    let wikimediaImgSrc;
+    let wikimediaImg;
+    let wikimediaImgLoaded;
 
     let expand = forceExpand || ($displayMode === 'card-expand');
 
     $: expand = forceExpand || ($displayMode === 'card-expand');
+
+    const wikimediaThumbUrl = (img) => {
+        try {
+            const imgName = decodeURI(img).replace(/^.*\//,'').replace(/ /g,'_');
+            const md = md5(imgName);
+            return `https://upload.wikimedia.org/wikipedia/commons/thumb/${md[0]}/${md.substring(0,2)}/${imgName}/80px-${imgName}`
+        } catch(e) {
+            return img;
+        }
+    }
+
+    $: wikimediaImgSrc = result.links && wikimediaThumbUrl(result.links.wikimedia);
+
+    $: if (wikimediaImg && wikimediaImgSrc) {
+        wikimediaImg.src = wikimediaImgSrc;
+        wikimediaImg.onload = () => { wikimediaImgLoaded = true }
+    }
 
     let conf = {};
     $: conf.Naissance = [
