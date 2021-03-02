@@ -41,18 +41,31 @@
                                 >
                                     {result.name.last.toUpperCase()} { result.name.first ? result.name.first.join(' ') : '' }
                                 </h4>
-                                <p class="rf-card__desc rf-margin-0">
+                                <p class="rf-card__desc rf-margin-0" style="display: inline;">
                                     <span class="{expand ? "" : "rf-text--xs"}">
-                                        <span class="rf-hide--mobile">
-                                            { cityString(result.birth.location.city, false) }
-                                        </span>
-                                        { dateFormat(result.birth.date) }
+                                        {#if ((result.links && result.links.label))}
+                                            <strong>
+                                                {(expand || (result.links.label.length < 40)) ?
+                                                    result.links.label : result.links.label.substring(0,40) + ' ...'
+                                                }
+                                            </strong>
+                                            {expand ? '(source: wikidata.org)' : ''}
+                                            {#if expand} <br> {:else} - {/if}
+                                        {/if}
+                                        {#if (expand || !(result.links && result.links.label))}
+                                            <span class="rf-hide--mobile">
+                                                { cityString(result.birth.location.city, false) }
+                                            </span>
+                                        {/if}
+                                        { dateFormat(result.birth.date, !expand) }
                                         {#if result.death}
                                             -
-                                            <span class="rf-hide--mobile">
-                                                { cityString(result.death.location.city, false) }
-                                            </span>
-                                            { dateFormat(result.death.date) }
+                                            {#if (expand || !(result.links && result.links.label))}
+                                                <span class="rf-hide--mobile">
+                                                    { cityString(result.death.location.city, false) }
+                                                </span>
+                                            {/if}
+                                            { dateFormat(result.death.date, !expand) }
                                         {/if}
                                     </span>
                                 </p>
@@ -182,8 +195,12 @@
         setTimeout(() => linkCopied = false, 5000)
     }
 
-    const dateFormat = (dateString) => {
-        return dateString.replace(/(\d{4})(\d{2})(\d{2})/,"$3/$2/$1");
+    const dateFormat = (dateString, short=false) => {
+        if (short) {
+            return dateString.replace(/(\d{4})(\d{2})(\d{2})/,"$1");
+        } else {
+            return dateString.replace(/(\d{4})(\d{2})(\d{2})/,"$3/$2/$1");
+        }
     };
 
     const toDate = (dateString) => {
