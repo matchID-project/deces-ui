@@ -267,11 +267,15 @@ border-radius: 0 .25rem 0 0;
 
 .rf-card.rf-card--sm {
   min-height: 48px;
+  height: 48px;
+  max-height: 48px;
   flex-direction: row;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .rf-card.rf-card--md {
-  min-height: 64px;
+  min-height: 80px;
   flex-direction: row;
 }
 
@@ -324,8 +328,8 @@ border-radius: 0 .25rem 0 0;
 }
 
 .rf-card--md .rf-card__img {
-  width: 64px !important;
-  min-width: 64px !important;
+  width: 80px !important;
+  min-width: 80px !important;
   background: var(--beige)
 }
 
