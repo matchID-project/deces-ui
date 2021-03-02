@@ -30,7 +30,10 @@
                                 </div>
                             {/if}
                         </div>
-                        <div class="rf-card__body">
+                        <div
+                            class="rf-card__body"
+                            style={(expand && !(result.links && result.links.label)) ? "padding-top: 14px!important;" : ""}
+                        >
                             <a
                                 href="#{index}"
                                 aria-label="étendre la carte de {result.name.last.toUpperCase()} { result.name.first ? result.name.first.join(' ') : '' }"
