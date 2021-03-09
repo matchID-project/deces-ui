@@ -156,7 +156,7 @@
 
     const jsonToGedcom = (json, level=0) => {
         if (!json) {return ''}
-        return Object.keys(json).map(key => {
+        const gedcomPart = Object.keys(json).map(key => {
             if (!json[key]) {return `${level} ${key.toUpperCase()}\n`}
             if (['boolean','string','number'].includes(typeof(json[key]))) {
                 return `${level} ${key.toUpperCase()} ${json[key]}\n`;
@@ -178,8 +178,11 @@
             }
         }).join('\n')
         .replace(/\n\n/mg,'\n')
-        .replace(/^\S+ XXXX[^\n]*\n/mg, '')
-        .replace(/\n/mg,'\r\n');
+        .replace(/^\S+ XXXX[^\n]*\n/mg, '');
+        if (level) { return gedcomPart }
+        else {
+            return gedcomPart.replace(/\n/mg,'\r\n');
+        }
     }
 
     const months = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
