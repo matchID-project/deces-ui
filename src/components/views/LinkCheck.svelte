@@ -119,7 +119,7 @@
         isDownloading = filter ? 'matched' : 'complete';
         setTimeout(() => {
             let blob;
-            if ($linkOptions.csv.type === 'gedcom') {
+            if (($linkOptions.csv.type === 'gedcom') && filter) {
                 blob = new Blob(toGedcom(), { type: 'text/plain; charset=utf-8;' });
             } else {
                 blob = new Blob(toCsv(filter), { type: 'text/csv; charset=utf-8;' });
