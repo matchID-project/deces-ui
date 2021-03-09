@@ -242,7 +242,7 @@ sub flushResults {
     'Dec' => 12
 );
 $match = qr/\[..\/...\/202[0-9]:/;
-$parse = qr/^(\S+) - (\S+) \[([^\]]*)\] "([^"]*)" (\d+) (\d+) "([^"]*)" "([^"]*)" "([^"]*)"( ([0-9\.-]+) ([0-9\.-]+|[0-9\.-]+, [0-9\.-]+) \.)?$/;
+$parse = qr/^(\S+) - (\S+) \[([^\]]*)\] "([^"]*)" (\d+) (\d+) "([^"]*)" "([^"]*)"( "([^"]*)")?( ([0-9\.-]+) ([0-9\.-]+|[0-9\.-]+, [0-9\.-]+) \.)?$/;
 $parseDate = qr|^(\d{2})/(\S{3})/(\d{4}):(\d{2}):(\d{2})|;
 $ip4 = qr/^\d+\./;
 # 07/Feb/2018:22:28:10 +0000
@@ -273,7 +273,7 @@ while(<STDIN>){
         $m++;
         if (/$parse/) {
             $v++;
-            ($ip,$user,$date,$request,$status,$size,$from,$browser,$ipfw,$duration,$remote_duration)=($1,$2,$3,$4,$5,$6,$7,$8,$9,$11,$12);
+            ($ip,$user,$date,$request,$status,$size,$from,$browser,$ipfw,$duration,$remote_duration)=($1,$2,$3,$4,$5,$6,$7,$8,$10,$12,$13);
             if ($date =~ /$parseDate/) {
                 ($day,$month,$year,$hh,$mm)=($1,$2,$3,$4,$5);
                 $month = $months{$month};
@@ -319,7 +319,7 @@ while(<STDIN>){
                     $hh="${hh}00";
                     $dowh="$dow-$hh";
 
-                    if ("$ipfw" eq "-") {
+                    if ("$ipfw" eq "-" || "$ipfw" eq "") {
                         $ipfw = $ip;
                     }
 
