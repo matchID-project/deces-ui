@@ -234,11 +234,15 @@
                     gedcom[gedcomId].note = { cont: results[0] };
                 }
                 if (!gedcom[gedcomId].deat && results[0].deat) { gedcom[gedcomId].deat = results[0].deat}
-                if (!gedcom[gedcomId].deat.plac && results[0].deat.plac) { gedcom[gedcomId].deat.plac = results[0].deat.plac }
-                if (!gedcom[gedcomId].deat.date && results[0].deat.date) { gedcom[gedcomId].deat.plac = results[0].deat.date }
+                else if (results[0].deat && gedcom[gedcomId].deat) {
+                    if (!gedcom[gedcomId].deat.plac && results[0].deat.plac) { gedcom[gedcomId].deat.plac = results[0].deat.plac }
+                    if (!gedcom[gedcomId].deat.date && results[0].deat.date) { gedcom[gedcomId].deat.plac = results[0].deat.date }
+                }
                 if (!gedcom[gedcomId].birt && results[0].birt) { gedcom[gedcomId].birt = results[0].birt}
-                if (!gedcom[gedcomId].birt.plac && results[0].birt.plac) { gedcom[gedcomId].birt.plac = results[0].birt.plac }
-                if (!gedcom[gedcomId].birt.date && results[0].birt.date) { gedcom[gedcomId].birt.plac = results[0].birt.date }
+                else if (results[0].birt && gedcom[gedcomId].birt) {
+                    if (!gedcom[gedcomId].birt.plac && results[0].birt.plac) { gedcom[gedcomId].birt.plac = results[0].birt.plac }
+                    if (!gedcom[gedcomId].birt.date && results[0].birt.date) { gedcom[gedcomId].birt.plac = results[0].birt.date }
+                }
                 if (!gedcom[gedcomId].surn && results[0].surn) { gedcom[gedcomId].surn = results[0].surn}
                 if (!gedcom[gedcomId].givn && results[0].givn) { gedcom[gedcomId].surn = results[0].givn}
             }
