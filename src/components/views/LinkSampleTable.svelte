@@ -241,6 +241,7 @@
         [/^6 /mg,'            '],
         [/^( *)(\S+) (\S+.*)\n  \1(\S+)/mg,'$1$2\n  $1XXXX $3\n  $1$4'],
         [/^( *)([a-zA-Z_0-9\-\@]+):?/mg, (a,b,c) => {return b+c.toLowerCase()+':'}],
+        [/(\@\S+\@)/mg, (a,b) => {return b.toLowerCase()}],
         // simple array
         [/^( *)(\w{4}): *([^\n]+)\n(\1(\2): *([^\n]+)\n)+/mg,(a) => {
             return a.replace(/:.*$/s,':\n') + a.replace(/( +)\w{4}: +(.*)/mg,'  $1- $2');

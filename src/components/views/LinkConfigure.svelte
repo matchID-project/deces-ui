@@ -70,6 +70,9 @@
                 Valider
             </button>
         </div>
+        {#if $linkOptions.csv && $linkOptions.csv.gedcom}
+            <GedcomTree gedcom={$linkOptions.csv.gedcom}/>
+        {/if}
     </div>
 </div>
 <script>
@@ -78,6 +81,7 @@
     import LinkFields from './LinkFields.svelte';
     import LinkSampleTable from './LinkSampleTable.svelte';
     import LinkConfigureOptions from './LinkConfigureOptions.svelte';
+    import GedcomTree from './GedcomTree.svelte';
     let mapping = {};
 
     let fields = [

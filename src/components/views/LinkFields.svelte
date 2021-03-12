@@ -31,7 +31,7 @@
     })
 
     $: if (fields) {
-        mapping={
+        mapping = {
             direct: {},
             reverse: {}
         };

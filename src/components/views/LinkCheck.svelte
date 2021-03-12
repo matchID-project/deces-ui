@@ -60,7 +60,9 @@
                 <LinkCheckTable filter={ filterChecked } bind:selectedRow={selectedRow} sort={'scoreAsc'} actionTitle={"validées"} bind:size={checkedLinks}/>
             {/if}
         </div>
-
+        {#if resultsGedcom}
+            <GedcomTree gedcom={resultsGedcom}/>
+        {/if}
     {/if}
 {/if}
 
@@ -71,6 +73,7 @@
     } from '../tools/stores.js';
     import LinkCheckTable from './LinkCheckTable.svelte';
     import LinkConfigureOptions from './LinkConfigureOptions.svelte';
+    import GedcomTree from './GedcomTree.svelte';
     import Icon from './Icon.svelte';
     import yaml from 'yamljs';
 
@@ -86,6 +89,11 @@
     };
     let unCheckedLinks;
     let checkedLinks;
+    let resultsGedcom;
+
+    $: if ($linkOptions.csv && $linkOptions.csv.gedcom && $linkValidations) {
+        resultsGedcom = toJsonGedcom()
+    };
 
     $: if (checkedLinks && (unCheckedLinks === 0)) {
         $linkCompleted = true;
@@ -120,7 +128,7 @@
         setTimeout(() => {
             let blob;
             if (($linkOptions.csv.type === 'gedcom') && filter) {
-                blob = new Blob(toGedcom(), { type: 'text/plain; charset=utf-8;' });
+                blob = new Blob([jsonToGedcom(resultsGedcom)], { type: 'text/plain; charset=utf-8;' });
             } else {
                 blob = new Blob(toCsv(filter), { type: 'text/csv; charset=utf-8;' });
             }
@@ -181,7 +189,8 @@
         .replace(/^\S+ XXXX[^\n]*\n/mg, '');
         if (level) { return gedcomPart }
         else {
-            return gedcomPart.replace(/\n/mg,'\r\n');
+            return gedcomPart.replace(/\n/mg,'\r\n')
+                .replace(/(\@\S+\@)/mg,(a,b)=>{return b.toUpperCase()});
         }
     }
 
@@ -198,8 +207,8 @@
                 : undefined;
     }
 
-    const toGedcom = () => {
-        let gedcom = $linkOptions.csv.gedcom;
+    const toJsonGedcom = () => {
+        let gedcom = JSON.parse(JSON.stringify($linkOptions.csv.gedcom));
         const idCol = $linkResults.header.indexOf('id');
 
         $linkResults.rows.forEach((r,i) => {
@@ -220,7 +229,7 @@
                         date: toGedcomDate(r['birth.date']),
                         plac: `${r['birth.city']},${r['birth.deathDepartmentCode']||''}, ${r['birth.country']}`.replace(/,\s*,/,',')
                     },
-                    death: {
+                    deat: {
                         date: toGedcomDate(r['death.date']),
                         plac: `${r['death.city']},${r['death.deathDepartmentCode']||''}, ${r['death.country']}`.replace(/,\s*,/,',')
                     }
@@ -250,8 +259,7 @@
                 if (!gedcom[gedcomId].givn && results[0].givn) { gedcom[gedcomId].surn = results[0].givn}
             }
         });
-        gedcom = jsonToGedcom(gedcom);
-        return [gedcom];
+        return gedcom;
     }
 
     const toCsv = (filter) => {
