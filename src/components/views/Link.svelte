@@ -8,9 +8,11 @@
     </div>
 {/if}
 <div class="rf-container-fluid rf-padding-right-1N" style="position: relative">
-    <div class="rf-badge">
-        Bêta
-    </div>
+    {#if $linkOptions && $linkOptions.csv && $linkOptions.csv.gedcom}
+        <div class="rf-badge">
+            Bêta
+        </div>
+    {/if}
     <div class="rf-grid-row">
         {#if ($linkStep <= 1)}
             <div class="rf-col-3"></div>
