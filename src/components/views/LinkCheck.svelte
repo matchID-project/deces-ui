@@ -22,17 +22,18 @@
                             </span>
                         {/if}
                         <span>Téléchargez:</span>
+
                         {#if (unCheckedLinks === 0)}
                             <span class="rf-color--rm rf-fi-arrow-left-line rf-fi">
                             </span>
                         {/if}
                         <br/>
                         <button
-                            title="télécharger le fichier complet"
+                            title="télécharger le fichier ${$linkOptions.csv.type === 'gedcom' ? 'CSV' : 'complet'}"
                             class="rf-btn rf-margin-1N"
                             on:click|preventDefault={e => download(false)}
                         >
-                            <span class="rf-text--center">le fichier complet</span>
+                            <span class="rf-text--center">{$linkOptions.csv.type === 'gedcom' ? 'le fichier CSV' : 'le fichier complet'}</span>
                             {#if isDownloading === 'complete'}
                                 <div style="z-index: 1200;position: absolute;right: 45%;top: 2px;color: #fff;opacity: 0.8;">
                                     <Icon icon="ri:loader-line" class="rf-fi--lg rf-margin-top-1N" spin center/>
@@ -41,11 +42,11 @@
                         </button>
 
                         <button
-                            title="télécharger les décès identifiés"
+                            title="télécharger {$linkOptions.csv.type === 'gedcom' ? 'le fichier Gedcom' : 'les décès identifiés'}"
                             class="rf-btn rf-btn--secondary rf-margin-1N"
                             on:click|preventDefault={e => download(true)}
                         >
-                            les décès identifiés
+                            {$linkOptions.csv.type === 'gedcom' ? 'le fichier Gedcom' : 'les décès identifiés'}
                             {#if isDownloading === 'matched'}
                                 <div style="z-index: 1200;position: absolute;right: 45%;top: 2px;background-color: #fff;opacity: 0.5;">
                                   <Icon icon="ri:loader-line" class="rf-fi--lg rf-margin-top-1N" spin center/>
@@ -59,7 +60,9 @@
                 <LinkCheckTable filter={ filterChecked } bind:selectedRow={selectedRow} sort={'scoreAsc'} actionTitle={"validées"} bind:size={checkedLinks}/>
             {/if}
         </div>
-
+        {#if resultsGedcom}
+            <GedcomTree gedcom={resultsGedcom}/>
+        {/if}
     {/if}
 {/if}
 
@@ -70,7 +73,9 @@
     } from '../tools/stores.js';
     import LinkCheckTable from './LinkCheckTable.svelte';
     import LinkConfigureOptions from './LinkConfigureOptions.svelte';
+    import GedcomTree from './GedcomTree.svelte';
     import Icon from './Icon.svelte';
+    import yaml from 'yamljs';
 
     let isDownloading = false;
 
@@ -84,6 +89,11 @@
     };
     let unCheckedLinks;
     let checkedLinks;
+    let resultsGedcom;
+
+    $: if ($linkOptions.csv && $linkOptions.csv.gedcom && $linkValidations) {
+        resultsGedcom = toJsonGedcom()
+    };
 
     $: if (checkedLinks && (unCheckedLinks === 0)) {
         $linkCompleted = true;
@@ -116,10 +126,15 @@
     const download = (filter) => {
         isDownloading = filter ? 'matched' : 'complete';
         setTimeout(() => {
-            const blob = new Blob(toCsv(filter), { type: 'text/csv; charset=utf-8;' });
+            let blob;
+            if (($linkOptions.csv.type === 'gedcom') && filter) {
+                blob = new Blob([jsonToGedcom(resultsGedcom)], { type: 'text/plain; charset=utf-8;' });
+            } else {
+                blob = new Blob(toCsv(filter), { type: 'text/csv; charset=utf-8;' });
+            }
             const link = document.createElement('a');
             link.href = URL.createObjectURL(blob);
-            link.download = $linkFileName.replace(/\.(.*?)$/,'_deces_INSEE.$1');
+            link.download = $linkFileName.replace(/\.(.*?)$/,`_deces_INSEE.${($linkOptions.csv.type === 'gedcom' && !filter) ? 'csv' : '$1'}`);
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
@@ -127,6 +142,124 @@
             isDownloading = false;
             $linkCompleted = true;
         }, 500);
+    }
+
+    const jsonToGedcomRegexp = [
+        [/^\s*[\{\}]/mg, ''],
+        [/[\{\]},]\s*$/mg, ''],
+        [/"([^"]*?)":?/mg, "$1"],
+        [/^  (\S)/mg,'0 $1'],
+        [/\\\\/mg,'\\'],
+        [/^              /mg,'6 '],
+        [/^            /mg,'5 '],
+        [/^          /mg,'4 '],
+        [/^        /mg,'3 '],
+        [/^      /mg,'2 '],
+        [/^    /mg,'1 '],
+        [/^([0-6]\s)(\S+)/mg, (a,b,c) => {return b+c.toUpperCase()}],
+        [/\s*\n[0-6]\s+TYPE (.*)\n/mg, ' $1\n'],
+        [/\s+null\s*$/mg,""],
+        [/^\s*\n/mg, '']
+    ];
+
+    const jsonToGedcom = (json, level=0) => {
+        if (!json) {return ''}
+        const gedcomPart = Object.keys(json).map(key => {
+            if (!json[key]) {return `${level} ${key.toUpperCase()}\n`}
+            if (['boolean','string','number'].includes(typeof(json[key]))) {
+                return `${level} ${key.toUpperCase()} ${json[key]}\n`;
+            } else if (Array.isArray(json[key])) {
+                return json[key].map(v => {
+                    if (['boolean','string','number'].includes(typeof(v))) {
+                        return `${level} ${key.toUpperCase()} ${v}`;
+                    } else {
+                        return `${level} ${key.toUpperCase()}\n${jsonToGedcom(v, level+1)}`;
+                    }
+                }).join('\n');
+            } else {
+                if (Object.keys(json[key]).length && Object.keys(json[key]).includes('xxxx')) {
+                    const result = `${level} ${key.toUpperCase()} ${json[key].xxxx}\n${jsonToGedcom(json[key], level+1)}`;
+                    return result
+                } else {
+                    return `${level} ${key.toUpperCase()}\n${jsonToGedcom(json[key], level+1)}`;
+                }
+            }
+        }).join('\n')
+        .replace(/\n\n/mg,'\n')
+        .replace(/^\S+ XXXX[^\n]*\n/mg, '');
+        if (level) { return gedcomPart }
+        else {
+            return gedcomPart.replace(/\n/mg,'\r\n')
+                .replace(/(\@\S+\@)/mg,(a,b)=>{return b.toUpperCase()});
+        }
+    }
+
+    const months = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+
+    const toGedcomDate = (dateString) =>  {
+        const year = parseInt(dateString.substring(0,4));
+        const day = parseInt(dateString.substring(6,8));
+        const month = parseInt(dateString.substring(4,6));
+        return year ?
+                (month ?
+                    (day ? `${day} ${months[month-1]} ${year}` : `${months[month+1]} ${year}`)
+                    : `${year}`)
+                : undefined;
+    }
+
+    const toJsonGedcom = () => {
+        let gedcom = JSON.parse(JSON.stringify($linkOptions.csv.gedcom));
+        const idCol = $linkResults.header.indexOf('id');
+
+        $linkResults.rows.forEach((r,i) => {
+            const l = $linkValidations[i];
+            const gedcomId = r[0][0];
+            const results = r.filter((rr,j) => l && l[j] && l[j].valid && l[j].checked)
+                .map((rr) => {
+                    const dic = {};
+                    $linkResults.header.forEach((col, c) => dic[col] = rr[c]);
+                    return dic;
+                })
+                .map(r => { return {
+                    matchid: `${window.location.href.replace(/\/link.*/,'/id/')}${r.id} à ${r.score*100}%`,
+                    name: `${r['name.first']} /${r['name.last']}/`,
+                    surn: r['name.last'],
+                    givn: r['name.first'],
+                    birt: {
+                        date: toGedcomDate(r['birth.date']),
+                        plac: `${r['birth.city']},${r['birth.deathDepartmentCode']||''}, ${r['birth.country']}`.replace(/,\s*,/,',')
+                    },
+                    deat: {
+                        date: toGedcomDate(r['death.date']),
+                        plac: `${r['death.city']},${r['death.deathDepartmentCode']||''}, ${r['death.country']}`.replace(/,\s*,/,',')
+                    }
+                }})
+                .map(r => yaml.stringify(r).replace(/\'/g,'').split('\n'))
+            if (results.length > 0) {
+                if (gedcom[gedcomId].note) {
+                    if (gedcom[gedcomId].note.cont) {
+                        gedcom[gedcomId].note.cont.push('',...results[0])
+                    } else {
+                        gedcom[gedcomId].note = { cont: [gedcom[gedcomId].note, ...results[0]] };
+                    }
+                } else {
+                    gedcom[gedcomId].note = { cont: results[0] };
+                }
+                if (!gedcom[gedcomId].deat && results[0].deat) { gedcom[gedcomId].deat = results[0].deat}
+                else if (results[0].deat && gedcom[gedcomId].deat) {
+                    if (!gedcom[gedcomId].deat.plac && results[0].deat.plac) { gedcom[gedcomId].deat.plac = results[0].deat.plac }
+                    if (!gedcom[gedcomId].deat.date && results[0].deat.date) { gedcom[gedcomId].deat.plac = results[0].deat.date }
+                }
+                if (!gedcom[gedcomId].birt && results[0].birt) { gedcom[gedcomId].birt = results[0].birt}
+                else if (results[0].birt && gedcom[gedcomId].birt) {
+                    if (!gedcom[gedcomId].birt.plac && results[0].birt.plac) { gedcom[gedcomId].birt.plac = results[0].birt.plac }
+                    if (!gedcom[gedcomId].birt.date && results[0].birt.date) { gedcom[gedcomId].birt.plac = results[0].birt.date }
+                }
+                if (!gedcom[gedcomId].surn && results[0].surn) { gedcom[gedcomId].surn = results[0].surn}
+                if (!gedcom[gedcomId].givn && results[0].givn) { gedcom[gedcomId].surn = results[0].givn}
+            }
+        });
+        return gedcom;
     }
 
     const toCsv = (filter) => {

@@ -8,9 +8,11 @@
     </div>
 {/if}
 <div class="rf-container-fluid rf-padding-right-1N" style="position: relative">
-    <div class="rf-badge">
-        Bêta
-    </div>
+    {#if $linkOptions && $linkOptions.csv && $linkOptions.csv.gedcom}
+        <div class="rf-badge">
+            Bêta
+        </div>
+    {/if}
     <div class="rf-grid-row">
         {#if ($linkStep <= 1)}
             <div class="rf-col-3"></div>
@@ -180,7 +182,7 @@
         steps[3].label = `${cLinks}/${sLinks} identifications validées`;
     }
 
-    const step0Label = `Glissez un fichier au format CSV ici <br/> (${Math.round($linkFileSizeLimit / 1000**2)}Mo maximum)`;
+    const step0Label = `Glissez un fichier au format CSV ou Gedcom ici <br/> (${Math.round($linkFileSizeLimit / 1000**2)}Mo maximum)`;
     const step1Label = 'Choisissez les colonnes à apparier';
     const step2Label= 'Attendez le traitement de l\'appariement';
     const step3Label= 'Vérifiez les identités appariées';

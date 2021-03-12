@@ -44,6 +44,7 @@
 <script>
     import { onMount } from 'svelte';
     import { linkFile, resultsPerPage, linkStep, linkSourceHeader, linkSourceHeaderTypes, linkOptions } from '../tools/stores.js';
+    import yaml from 'yamljs';
 
     export let potentialSeparators = [';',',','|','\t'];
     export let potentialQuotes = ["'",'"'];
@@ -55,6 +56,7 @@
     export let fields;
     export let skipLines;
     export let encoding;
+    export let type = 'csv';
     let rows;
     let header;
     let displayRows;
@@ -219,8 +221,141 @@
         return sep === '|' ? '\|' : sep;
     }
 
-    const parseCsv = (ev) => {
+    const guessFileType = (ev) => {
         const contents = ev.target.result;
+        if (type === 'gedcom') {
+            parseGedcom(contents);
+        } else {
+           parseCsv(contents);
+        }
+    }
+
+    const gedcomToYaml = [
+        [/(\r\n|\n\r|\r)/mg, '\n'],
+        [/^0 /mg,''],
+        [/^1 /mg,'  '],
+        [/^2 /mg,'    '],
+        [/^3 /mg,'      '],
+        [/^4 /mg,'        '],
+        [/^5 /mg,'          '],
+        [/^6 /mg,'            '],
+        [/^( *)(\S+) (\S+.*)\n  \1(\S+)/mg,'$1$2\n  $1XXXX $3\n  $1$4'],
+        [/^( *)([a-zA-Z_0-9\-\@]+):?/mg, (a,b,c) => {return b+c.toLowerCase()+':'}],
+        [/(\@\S+\@)/mg, (a,b) => {return b.toLowerCase()}],
+        // simple array
+        [/^( *)(\w{4}): *([^\n]+)\n(\1(\2): *([^\n]+)\n)+/mg,(a) => {
+            return a.replace(/:.*$/s,':\n') + a.replace(/( +)\w{4}: +(.*)/mg,'  $1- $2');
+        }],
+        //complex arrays
+        [/^(\s*)(\w{4}):\s*([^\n]*\n(\s+\1[a-zA-Z0-9_\-][^\n]*\n)*)\1(\2):\s*([^\n]*)\n/mg,'$1$2:\n  $1- $3  $1- $6\n'],
+        [/^( *)\- *\-/mg,'$1-'],
+        [/^( *)\- *([^\n]+\n(  \1[^\- ][^\n]*\n)*)\1(\w[^\n]*)\n/mg,'$1- $2$1  $4\n']
+    ];
+
+    const gedcomDatesPattern = /^(((de|entre|between|from)\s)?(((\d{1,2})\s+)?(JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC)\S?\s+)?(\d{4})\s+)?((à|et|to|avant|bef|before|après|aft|after|autour de|vers|around)\s)?(((\d{1,2})\s+)?(JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC)\S?\s+)?(\d{4})/;
+
+    const months = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+
+    const gedcomDate = (stringDate) => {
+        stringDate=`${stringDate}`;
+        const parsed = stringDate.match(gedcomDatesPattern);
+        if (parsed) {
+            const startMonth = `${months.indexOf(parsed[7])+1}`;
+            const endMonth = `${months.indexOf(parsed[14])+1}`;
+            if (parsed[3]) {
+                // range
+                stringDate = `${parsed[8]}${startMonth.padStart(2, '0')}${parsed[6]}-${parsed[15]}${endMonth.padStart(2, '0')}${parsed[13]}`;
+            } else {
+                let limit = '';
+                if (['before','bef','avant'].includes(parsed[10])) {
+                    limit = '<'
+                } else if (['après','aft','after'].includes(parsed[10])) {
+                    limit = '<'
+                }
+                stringDate = `${parsed[15]}${endMonth.padStart(2, '0')}${parsed[13]}`;
+            }
+        }
+        return stringDate;
+    }
+
+    const parseGedcom = (contents) => {
+        if (!(/^0 HEAD/.test(contents))) {
+            return false;
+        }
+        let tree = contents;
+        gedcomToYaml.forEach(r => {
+            let changed = tree.replace(r[0],r[1]);
+            while (changed!==tree) {
+                tree = changed;
+                changed = tree.replace(r[0],r[1]);
+            }
+        });
+        tree = yaml.parse(tree);
+        rows = Object.keys(tree).map(k => {
+            if (/^\@i.*\@$/.test(k)) {
+                const id = k;
+                let firstName = tree[k].surn;
+                let lastName = tree[k].givn;
+                const name = tree[k].name;
+                const normName = name.replace(/^\s*(Mr|Monsieur|Madame|Mme|M\.|Mrs)\s+/gi,'');
+                const sex = tree[k].sex;
+                if (normName) {
+                    if (!firstName) {
+                        firstName = normName.replace(/^(.*)\s+\/.*$/,'$1');
+                    }
+                    if (!lastName) {
+                        lastName = name.replace(/^.*\/\s*(.*)\s*\/.*$/,'$1');
+                    }
+                }
+                let birthDate, birthPlace, birthCity, birthCountry, birthDep;
+                if (tree[k].birt) {
+                    birthDate = tree[k].birt.date ? gedcomDate(tree[k].birt.date) : '';
+                    birthPlace = tree[k].birt.plac;
+                    if (birthPlace && birthPlace.includes(',')) {
+                        birthCity = birthPlace.replace(/^(.*)\s*,.*/,'$1');
+                        birthCountry = birthPlace.replace(/^.*,\s*(.*)$/,'$1');
+                        birthDep = birthPlace.replace(/.*,\s*(.*)\s*,\.*/,'$1');
+                    }
+                }
+                let deathDate, deathPlace, deathCity, deathCountry, deathDep;
+                if (tree[k].deat) {
+                    deathDate = tree[k].deat.date ? gedcomDate(tree[k].deat.date) : '';
+                    deathPlace = tree[k].deat.plac;
+                    if (deathPlace && deathPlace.includes(',')) {
+                        deathCity = deathPlace.replace(/^(.*)\s*,.*/,'$1');
+                        deathCountry = deathPlace.replace(/^.*,\s*(.*)$/,'$1');
+                        deathDep = deathPlace.replace(/.*,\s*(.*)\s*,\.*/,'$1');
+                    }
+                }
+                return [
+                    id,lastName,firstName,name, sex,
+                    birthDate, birthCity, birthCountry, birthDep, birthPlace,
+                    deathDate, deathCity, deathCountry, deathDep, deathPlace,
+                ].map(x => x || '');
+            }
+        }).filter(x => x);
+        const myHeader = [
+            'gedcom_id','nom','prénom(s)','nom_prénom(s)','sexe',
+            'date de naissance', 'ville de naissance','pays de naissance','département de naissance','lieu de naissance',
+            'date de décès', 'ville de décès','pays de décès','département de décès','lieu de décès'
+        ];
+        if ((!$linkOptions.csv) && ($linkFile)) {
+            $linkOptions.csv = {
+                sep: '\t',
+                skipLines: 0,
+                dateFormat: 'YYYYMMDD',
+                encoding: 'utf-8',
+                type: type,
+                gedcom: tree,
+                csv: myHeader.join('\t')+'\n'+rows.map(r => r.join('\t')).join('\n')
+            };
+            console.log('Guessed type:',$linkOptions.csv);
+        }
+        $linkSourceHeader = myHeader;
+        return true;
+    }
+
+    const parseCsv = (contents) => {
         if (!sep) { guessSeparator(contents) }
         rows = guessQuote(contents, sep, skipLines);
         if ((!$linkOptions.csv) && ($linkFile)) {
@@ -228,7 +363,8 @@
                 sep: sep,
                 quote: quote,
                 skipLines: skipLines,
-                encoding: encoding
+                encoding: encoding,
+                type: type
             };
             console.log('Guessed CSV type:',$linkOptions.csv);
         }
@@ -237,7 +373,7 @@
     };
 
     const read = async (csvOptions) => {
-        const blob = $linkFile.slice(0, 100000);
+        let blob = $linkFile.slice(0, 100000);
         if (csvOptions) {
             sep = csvOptions.sep;
             encoding = csvOptions.encoding;
@@ -252,7 +388,11 @@
                 reader.readAsText(blob, enc);
                 const result = await new Promise((resolve, reject) => {
                     reader.onload = (ev) => {
-                        resolve(ev.target.result.normalize('NFKD').replace(/[\u0300-\u036f]/g, '').toLocaleLowerCase().replace(/[\x00-\x7F]*/g,'').length)
+                        const contents = ev.target.result;
+                        if (/^0 HEAD/.test(ev.target.result)) {
+                            type = 'gedcom';
+                        }
+                        resolve(contents.normalize('NFKD').replace(/[\u0300-\u036f]/g, '').toLocaleLowerCase().replace(/\s*/,'').replace(/[\x00-\x7F]*/g,'').length)
                     }
                 });
                 if (result < min) {
@@ -261,9 +401,10 @@
                 }
             }));
         }
+        console.log('type',type)
         const reader = new FileReader();
         reader.readAsText(blob, encoding);
-        reader.onload = parseCsv;
+        reader.onload = guessFileType;
     };
 
 	export function dragstart (ev, col) {

@@ -1,0 +1,175 @@
+{#if computed}
+    <div
+        class="rf-container-fluid"
+        on:click={actualizeLines}
+    >
+        <div class="rf-grid-row rf-text--center">
+            <div class="rf-col-12 rf-margin-3N">
+                <strong>Visualisation des individus de l'arbre généalogique: </strong>
+            </div>
+            {#each Object.keys(gedcom).filter(x => /\@i.*@/i.test(x)).sort((a,b) => gedcom[a].rank - gedcom[b].rank) as id}
+                <GedcomPersonCard
+                    id={id}
+                    active={showFamily && ((showFamily === gedcom[id].fams) || (showFamily === gedcom[id].famc))}
+                    record={gedcom[id]}
+                    mouseenter={() => {
+                        actualizeLines();
+                        showFamily = gedcom[id].fams;
+                        }}
+                />
+            {/each}
+        </div>
+    </div>
+    {#each Object.keys(gedcom).filter(x => /\@f.*@/i.test(x)) as id}
+        <div class="line" class:rf-hide={showFamily !== id} id={id}></div>
+    {/each}
+{/if}
+
+<script>
+    import { onMount } from 'svelte';
+    import GedcomPersonCard from './GedcomPersonCard.svelte';
+    export let gedcom;
+    let computed = false;
+    let fmax = 10000;
+    let showFamily;
+
+    const getGenerationRank = (i) => {
+        if(gedcom[i] && gedcom[i].pare) {
+            let fRank = 0;
+            if (gedcom[i].fams) {
+                if (typeof(gedcom[i].fams)==='string') {
+                    fRank = parseInt((gedcom[i].fams.replace(/\@f(.*)\@/i,'$1'))) / fmax;
+                } else {
+                    fRank = Math.max(...gedcom[i].fams.map(f => parseInt((f.replace(/\@f(.*)\@/i,'$1'))))) / fmax;
+                }
+            }
+            return  1 + fRank + Math.min(...gedcom[i].pare.map(p => getGenerationRank(p.id)));
+        }
+        return 0;
+    }
+
+    const actualizeLines = () => {
+        Object.keys(gedcom).filter(x => /\@f.*\@/i.test(x)).forEach(f => {
+            const fId = f;
+            f = gedcom[fId];
+            if (f.wife && f.husb) {
+                gedcom[fId].rank = gedcom[f.wife].rank;
+                setTimeout(() => {
+                    adjustLine(
+                        f.wife,
+                        f.husb,
+                        fId
+                    );
+                }, 500);
+            }
+        })
+    };
+
+    onMount(() => {
+        if (gedcom) {
+            Object.keys(gedcom).filter(x => /\@f.*\@/i.test(x)).forEach(f => {
+                fmax = Math.max(parseInt(f.replace(/\@f(.*)\@/i,'$1')),fmax);
+                const fId = f;
+                f = gedcom[fId];
+                if (f.chil) {
+                    const parents = f.husb && f.wife ? [f.husb, f.wife] : (f.wife ? [f.wife] : [f.husb]);
+                    if (typeof(f.chil) === 'string') {
+                        f.chil = [f.chil]
+                    } else {
+                        f.chil = f.chil.map(c => c)
+                    }
+                    f.chil.forEach(c => {
+                        gedcom[c].pare = parents.map(p => {
+                            return {
+                                id: p,
+                                surn: gedcom[p].surn || gedcom[p].name.replace(/^.*\/\s*(.*)\s*\/.*$/,'$1'),
+                                givn: gedcom[p].givn || gedcom[p].name.replace(/^(.*)\/\s*(.*)\s*\/.*$/,'$1')
+                            }
+                        })
+                    })
+                    parents.forEach(p => {
+                        gedcom[p].chil = f.chil.map(c => {
+                            return {
+                                id: c,
+                                surn: gedcom[c].surn || gedcom[c].name.replace(/^.*\/\s*(.*)\s*\/.*$/,'$1'),
+                                givn: gedcom[c].givn || gedcom[c].name.replace(/^(.*)\/\s*(.*)\s*\/.*$/,'$1')
+                            }
+                        })
+                    })
+                }
+                if (f.wife && f.husb) {
+                    gedcom[f.wife].cons = {
+                        id: f.husb,
+                        surn: gedcom[f.husb].surn || gedcom[f.husb].name.replace(/^.*\/\s*(.*)\s*\/.*$/,'$1'),
+                        givn: gedcom[f.husb].givn || gedcom[f.husb].name.replace(/^(.*)\/\s*(.*)\s*\/.*$/,'$1')
+                    }
+                    gedcom[f.husb].cons = {
+                        id: f.wife,
+                        surn: gedcom[f.wife].surn || gedcom[f.wife].name.replace(/^.*\/\s*(.*)\s*\/.*$/,'$1'),
+                        givn: gedcom[f.wife].givn || gedcom[f.wife].name.replace(/^(.*)\/\s*(.*)\s*\/.*$/,'$1')
+                    }
+                }
+            });
+            Object.keys(gedcom).filter(x => /\@i.*\@/i.test(x)).forEach(i => {
+                gedcom[i].rank = getGenerationRank(i);
+            });
+            computed = true;
+            actualizeLines();
+        }
+    });
+
+    const adjustLine = (f, t, l) => {
+        const from = document.getElementById(f);
+        const to = document.getElementById(t);
+        const line = document.getElementById(l);
+        if (from && to && line) {
+            const fT = from.offsetTop  + from.offsetHeight/2;
+            const tT = to.offsetTop    + to.offsetHeight/2;
+            const fL = from.offsetLeft + from.offsetWidth/2;
+            const tL = to.offsetLeft   + to.offsetWidth/2;
+
+            const CA   = Math.abs(tT - fT);
+            const CO   = Math.abs(tL - fL);
+            const H    = Math.sqrt(CA*CA + CO*CO);
+            let ANG  = 180 / Math.PI * Math.acos( CA/H );
+
+            let top, left;
+
+            if(tT > fT){
+                top  = (tT-fT)/2 + fT;
+            }else{
+                top  = (fT-tT)/2 + tT;
+            }
+            if(tL > fL){
+                left = (tL-fL)/2 + fL;
+            }else{
+                left = (fL-tL)/2 + tL;
+            }
+
+            if(( fT < tT && fL < tL) || ( tT < fT && tL < fL) || (fT > tT && fL > tL) || (tT > fT && tL > fL)){
+                ANG *= -1;
+            }
+            top-= H/2;
+
+            line.style["-webkit-transform"] = 'rotate('+ ANG +'deg)';
+            line.style["-moz-transform"] = 'rotate('+ ANG +'deg)';
+            line.style["-ms-transform"] = 'rotate('+ ANG +'deg)';
+            line.style["-o-transform"] = 'rotate('+ ANG +'deg)';
+            line.style["-transform"] = 'rotate('+ ANG +'deg)';
+            line.style.top    = top+'px';
+            line.style.left   = left+'px';
+            line.style.height = H + 'px';
+        }
+    }
+
+</script>
+
+<style>
+.line{
+  position:absolute;
+  width:2px;
+  color: var(--bf500);
+  background-color: var(--bf500);
+}
+
+</style>

@@ -154,7 +154,11 @@
         formData.append('pruneScoe', $linkOptions.api.pruneScore);
         formData.append('dateFormat', $linkOptions.csv.dateFormat || 'DD/MM/YYYY');
         Object.keys($linkMapping && $linkMapping.reverse).map(k => formData.append(k,$linkMapping.reverse[k]));
-        formData.append('csv', $linkFile);
+        if ($linkOptions.csv.type === 'gedcom') {
+            formData.append('csv', new Blob([$linkOptions.csv.csv], {type: 'text/csv;charset=utf-8;'}));
+        } else {
+            formData.append('csv', $linkFile);
+        }
         try {
             const res = await axios.post('__BACKEND_PROXY_PATH__/search/csv', formData, axiosUploadConfig);
             if(res.status == 200){
