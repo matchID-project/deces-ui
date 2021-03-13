@@ -208,7 +208,7 @@
                         }
                     }
                 };
-                return row.map(col => col.replace(/^\s*/,'') || '<vide>');
+                return row.map(col => col.replace(/^\s*/,'').replace(/\s*$/,'') || '<vide>');
             });
             if (quoteCounts[0] > quoteCounts[1]) {
                 quote = q;
