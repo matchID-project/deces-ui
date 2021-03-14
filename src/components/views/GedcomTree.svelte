@@ -34,6 +34,10 @@
     let showFamily;
 
     const getGenerationRank = (i) => {
+        if (!i) {return -1;}
+        if (gedcom[i].rank !== undefined) {
+            return gedcom[i].rank
+        }
         if(gedcom[i] && gedcom[i].pare) {
             let fRank = 0;
             if (gedcom[i].fams) {
@@ -43,9 +47,12 @@
                     fRank = Math.max(...gedcom[i].fams.map(f => parseInt((f.replace(/\@f(.*)\@/i,'$1'))))) / fmax;
                 }
             }
-            return  1 + fRank + Math.min(...gedcom[i].pare.map(p => getGenerationRank(p.id)));
+            gedcom[i].rank = 1 + fRank + Math.max(...gedcom[i].pare.map(p => getGenerationRank(p.id)));
+        } else {
+            gedcom[i].rank = 0;
         }
-        return 0;
+        gedcom[i].rank = Math.max(gedcom[i].rank || 0, getGenerationRank(gedcom[i].cons && gedcom[i].cons.id) || 0);
+        return gedcom[i].rank;
     }
 
     const actualizeLines = () => {
@@ -111,7 +118,7 @@
                 }
             });
             Object.keys(gedcom).filter(x => /\@i.*\@/i.test(x)).forEach(i => {
-                gedcom[i].rank = getGenerationRank(i);
+                getGenerationRank(i);
             });
             computed = true;
             actualizeLines();
