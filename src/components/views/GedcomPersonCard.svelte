@@ -142,8 +142,6 @@
 
     let expand;
 
-    $: console.log(record.note, note);
-
     window.addEventListener('hashchange', () => {
         expand = (window.location.hash.replace('#','') === id);
     }, false)
@@ -187,7 +185,6 @@
                         }
                         return x && !match;
                     }).forEach(n => {
-                        console.log('la',n);
                         note += '<br>' + `${n}`.replace(/(http:\S+)/g,'<a target="_blank" class="rf-link" href="$1">$1</a>')
                     });
                 }
