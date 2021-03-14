@@ -2,26 +2,46 @@
     <div
         class="rf-container-fluid"
         on:click={actualizeLines}
+        on:mouseleave={() => {showFamily = undefined; showId = undefined}}
     >
         <div class="rf-grid-row rf-text--center">
             <div class="rf-col-12 rf-margin-3N">
                 <strong>Visualisation des individus de l'arbre généalogique: </strong>
             </div>
-            {#each Object.keys(gedcom).filter(x => /\@i.*@/i.test(x)).sort((a,b) => gedcom[a].rank - gedcom[b].rank) as id}
-                <GedcomPersonCard
-                    id={id}
-                    active={showFamily && ((showFamily === gedcom[id].fams) || (showFamily === gedcom[id].famc))}
-                    record={gedcom[id]}
-                    mouseenter={() => {
-                        actualizeLines();
-                        showFamily = gedcom[id].fams;
-                        }}
-                />
+            {#each Object.keys(gedcom)
+                    .filter(x => /\@i.*@/i.test(x))
+                    .map(i => Math.round(gedcom[i].rank))
+                    .sort()
+                    .filter(function(el,i,a){return i===a.indexOf(el)})
+                as gen}
+                <div class="rf-container-fluid">
+                    <div class="rf-grid-row rf-text--center rf-margin-bottom-2N">
+                        {#each Object.keys(gedcom)
+                            .filter(i => /\@i.*@/i.test(i) && (Math.round(gedcom[i].rank) === gen))
+                            as id}
+                            <GedcomPersonCard
+                                id={id}
+                                focus={(showId  === id)}
+                                active={(!showId)
+                                    || sameFamily(gedcom[id].fams,showFamily)
+                                    || sameFamily(gedcom[id].famc,showFamily)
+                                    || (gedcom[id].chil && gedcom[id].chil.some(c => c.id === showId))
+                                }
+                                record={gedcom[id]}
+                                mouseenter={() => {
+                                    actualizeLines();
+                                    showFamily = gedcom[id].fams;
+                                    showId = id;
+                                }}
+                            />
+                        {/each}
+                    </div>
+                </div>
             {/each}
         </div>
     </div>
-    {#each Object.keys(gedcom).filter(x => /\@f.*@/i.test(x)) as id}
-        <div class="line" class:rf-hide={showFamily !== id} id={id}></div>
+    {#each Object.keys(gedcom).filter(x => /\@f.*@/i.test(x)) as f}
+        <div class="line" class:rf-hide={!sameFamily(f,showFamily)} id={f}></div>
     {/each}
 {/if}
 
@@ -31,7 +51,7 @@
     export let gedcom;
     let computed = false;
     let fmax = 10000;
-    let showFamily;
+    let showFamily, showId;
 
     const getGenerationRank = (i) => {
         if (!i) {return -1;}
@@ -51,8 +71,19 @@
         } else {
             gedcom[i].rank = 0;
         }
-        gedcom[i].rank = Math.max(gedcom[i].rank || 0, getGenerationRank(gedcom[i].cons && gedcom[i].cons.id) || 0);
+        gedcom[i].rank = Math.max(
+            gedcom[i].rank || 0,
+            (gedcom[i].cons && Math.max(...gedcom[i].cons.map(c => getGenerationRank(c.id)))) || 0
+        );
         return gedcom[i].rank;
+    }
+
+    const sameFamily = (f1, f2) => {
+        if (!f1) {return false}
+        if (f1 && typeof(f1) === 'string') {
+            f1 = [f1];
+        }
+        return f1.some(f => f2 && f2.includes(f));
     }
 
     const actualizeLines = () => {
@@ -86,7 +117,7 @@
                         f.chil = f.chil.map(c => c)
                     }
                     f.chil.forEach(c => {
-                        gedcom[c].pare = parents.map(p => {
+                        gedcom[c].pare = parents.filter(p => gedcom[p]).map(p => {
                             return {
                                 id: p,
                                 surn: gedcom[p].surn || gedcom[p].name.replace(/^.*\/\s*(.*)\s*\/.*$/,'$1'),
@@ -95,7 +126,7 @@
                         })
                     })
                     parents.forEach(p => {
-                        gedcom[p].chil = f.chil.map(c => {
+                        gedcom[p].chil = f.chil.filter(c => gedcom[c]).map(c => {
                             return {
                                 id: c,
                                 surn: gedcom[c].surn || gedcom[c].name.replace(/^.*\/\s*(.*)\s*\/.*$/,'$1'),
@@ -105,16 +136,18 @@
                     })
                 }
                 if (f.wife && f.husb) {
-                    gedcom[f.wife].cons = {
+                    if (!gedcom[f.wife].cons) { gedcom[f.wife].cons = [] }
+                    gedcom[f.wife].cons.push({
                         id: f.husb,
                         surn: gedcom[f.husb].surn || gedcom[f.husb].name.replace(/^.*\/\s*(.*)\s*\/.*$/,'$1'),
                         givn: gedcom[f.husb].givn || gedcom[f.husb].name.replace(/^(.*)\/\s*(.*)\s*\/.*$/,'$1')
-                    }
-                    gedcom[f.husb].cons = {
+                    });
+                    if (!gedcom[f.husb].cons) { gedcom[f.husb].cons = [] }
+                    gedcom[f.husb].cons.push({
                         id: f.wife,
                         surn: gedcom[f.wife].surn || gedcom[f.wife].name.replace(/^.*\/\s*(.*)\s*\/.*$/,'$1'),
                         givn: gedcom[f.wife].givn || gedcom[f.wife].name.replace(/^(.*)\/\s*(.*)\s*\/.*$/,'$1')
-                    }
+                    });
                 }
             });
             Object.keys(gedcom).filter(x => /\@i.*\@/i.test(x)).forEach(i => {
@@ -172,6 +205,7 @@
 </script>
 
 <style>
+
 .line{
   position:absolute;
   width:2px;

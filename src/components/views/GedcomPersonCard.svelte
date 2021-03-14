@@ -13,10 +13,11 @@
                         class="rf-card rf-card--horizontal rf-card--{expand ? "md": "sm"}"
                         class:rf-card--left-arrow={expand}
                         on:click={toggleExpand}
+                        class:rf-inactive={(!active)&&(!focus)}
                     >
                         <div class="rf-card__img" style="position:relative">
                             <img
-                                class="rf-background--{ active ? "bf" : "g400"}"
+                                class="{ focus ? "rf-background--bf" : (active? "rf-callout--scheme-soft-blue-soft" : "rf-background--g400") }"
                                 class:match={match}
                                 alt={ record.sex }
                                 src={ record.sex === 'M' ? '/male.svg' : '/female.svg' }
@@ -98,8 +99,10 @@
                                         {/if}
                                         {#if record.cons}
                                             <p>
-                                                <strong>Conjoint</strong><br>
-                                                <a class="rf-link" href="#{record.cons.id}" title={record.cons.surn+' '+(record.cons.givn || '')}>{record.cons.surn} {record.cons.givn || ''}</a>
+                                                <strong>Conjoint{record.cons.lengh > 1 ? 's' : ''}</strong><br>
+                                                {#each record.cons as cons}
+                                                    <a class="rf-link" href="#{cons.id}" title={cons.surn+' '+(cons.givn || '')}>{cons.surn} {cons.givn || ''}</a>
+                                                {/each}
                                             </p>
                                         {/if}
                                         {#if record.chil}
@@ -136,6 +139,7 @@
     export let mouseenter = () => {};
     export let mouseleave = () => {};
     export let active = false;
+    export let focus = false;
     let match = false;
 
     let linkCopied = false;
