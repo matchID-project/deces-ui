@@ -211,6 +211,13 @@
         let gedcom = JSON.parse(JSON.stringify($linkOptions.csv.gedcom));
         const idCol = $linkResults.header.indexOf('id');
 
+        Object.keys(gedcom).filter(i => /\@i.*@/i.test(i)).forEach(i => {
+            delete gedcom[i].rank;
+            delete gedcom[i].cons;
+            delete gedcom[i].pare;
+            delete gedcom[i].chil;
+        })
+
         $linkResults.rows.forEach((r,i) => {
             const l = $linkValidations[i];
             const gedcomId = r[0][0];

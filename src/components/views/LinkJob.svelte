@@ -151,7 +151,7 @@
         formData.append('encoding', $linkOptions.csv.encoding);
         formData.append('skipLines', $linkOptions.csv.skipLines);
         formData.append('candidateNumber', $linkOptions.api.candidateNumber);
-        formData.append('pruneScoe', $linkOptions.api.pruneScore);
+        formData.append('pruneScore', $linkOptions.api.pruneScore);
         formData.append('dateFormat', $linkOptions.csv.dateFormat || 'DD/MM/YYYY');
         Object.keys($linkMapping && $linkMapping.reverse).map(k => formData.append(k,$linkMapping.reverse[k]));
         if ($linkOptions.csv.type === 'gedcom') {

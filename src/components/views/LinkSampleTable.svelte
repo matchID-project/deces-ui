@@ -208,7 +208,7 @@
                         }
                     }
                 };
-                return row.map(col => col.replace(/^\s*/,'') || '<vide>');
+                return row.map(col => col.replace(/^\s*/,'').replace(/\s*$/,'') || '<vide>');
             });
             if (quoteCounts[0] > quoteCounts[1]) {
                 quote = q;
@@ -244,7 +244,7 @@
         [/(\@\S+\@)/mg, (a,b) => {return b.toLowerCase()}],
         // simple array
         [/^( *)(\w{4}): *([^\n]+)\n(\1(\2): *([^\n]+)\n)+/mg,(a) => {
-            return a.replace(/:.*$/s,':\n') + a.replace(/( +)\w{4}: +(.*)/mg,'  $1- $2');
+            return a.substring(0,a.indexOf(':')+1) + '\n' + a.replace(/( +)\w{4}: +(.*)/mg,'  $1- $2');
         }],
         //complex arrays
         [/^(\s*)(\w{4}):\s*([^\n]*\n(\s+\1[a-zA-Z0-9_\-][^\n]*\n)*)\1(\2):\s*([^\n]*)\n/mg,'$1$2:\n  $1- $3  $1- $6\n'],

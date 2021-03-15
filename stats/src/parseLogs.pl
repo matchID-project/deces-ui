@@ -18,6 +18,7 @@ $reportName = @ARGV[0] || full;
 
 @referrerUrlRegexp = (
         [qr|^(https?://)?(www\.)?|,'""'],
+        [qr/^(fr|fr\.m|m)\./,'""'],
         [qr|/.*$|,'""'],
         [qr|\d+.\d+.\d+.\d+(:\d+)?$|,'"internal"'],
         [qr|^(https?://)?[a-z].*matchid.io?$|,'"matchid.io"'],
