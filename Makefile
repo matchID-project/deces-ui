@@ -49,6 +49,7 @@ export API_PATH = deces
 export BACKEND_PROXY_PATH=/${API_PATH}/api/v1
 export NGINX = ${APP_PATH}/nginx
 export NGINX_TIMEOUT = 30
+export API_TIMEOUT = 30
 export NGINX_CSP=default-src https: 'self' 'unsafe-inline' 'unsafe-eval';font-src 'self' data:;img-src 'self' data: https://*.cartocdn.com http://*.wikimedia.org;
 #export NGINX_CSP=default-src https: 'self' 'unsafe-inline' 'unsafe-eval';font-src 'self' data:;img-src 'self' data: https://*.cartocdn.com http://*.wikimedia.org https://www.google-analytics.com https://www.googletagmanager.com https://*.doubleclick.net;
 export API_SEARCH_LIMIT_RATE=1r/s
@@ -423,10 +424,18 @@ backend-test:
 	@${MAKE} -C ${APP_PATH}/${GIT_BACKEND} backend-test
 
 local-test-api:
-	@${MAKE} -C ${APP_PATH}/${GIT_TOOLS} local-test-api \
-		PORT=${PORT} \
-		API_TEST_PATH=${API_TEST_PATH} API_TEST_JSON_PATH=${API_TEST_JSON_PATH} API_TEST_DATA='${API_TEST_REQUEST}'\
-		${MAKEOVERRIDES}
+	@timeout=${API_TIMEOUT} ;\
+	ret=1 ; until [ "$$timeout" -le 0 -o "$$ret" -eq "0"  ] ; do \
+		(${MAKE} -C ${APP_PATH}/${GIT_TOOLS} local-test-api \
+			PORT=${PORT} \
+			API_TEST_PATH=${API_TEST_PATH} API_TEST_JSON_PATH=${API_TEST_JSON_PATH} API_TEST_DATA='${API_TEST_REQUEST}'\
+			${MAKEOVERRIDES} 2>&1 | grep ': ok' ); \
+		ret=$$? ;\
+		if [ "$$ret" -ne "0" ] ; then echo "waiting for API to start $$timeout" ; fi ;\
+		((timeout--)); sleep 1 ; \
+	done ; \
+	exit $$ret
+
 
 deploy-remote-instance: config backend-config
 	@BACKEND_APP_VERSION=$(shell cd ${APP_PATH}/${GIT_BACKEND} && git describe --tags);\
