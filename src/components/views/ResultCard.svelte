@@ -89,16 +89,39 @@
                                     {/if}
                                 </span>
                             {/if}
-                            <span
-                                class="rf-top-right-6px rf-text--sm rf-link rf-fi-- rf-href rf-text--right"
-                                title="copier le lien permanent"
-                                on:click|preventDefault={() => copyLink(result)}
-                            >
-                                    <Icon icon='ri:link' class="rf-fi--md" href={link(result)} label="copier le lien permanent"/>
-                                    lien {linkCopied ? "copié !" : "permanent"}
+                            <span class="rf-top-right-6px">
+                                {#if $route.path === '/search'}
+                                    <a
+                                        class="rf-text--sm rf-link rf-fi-- rf-href rf-text--right"
+                                        title="afficher le lien permanent"
+                                        href="/id/{result.id}"
+                                    >
+                                            <Icon icon='ri:link' class="rf-fi--md" href={link(result)} label="copier le lien permanent"/>
+                                            {linkCopied ? "Copié !" : "Permalien"}
+                                    </a>
+                                {:else}
+                                    <a
+                                        class="rf-text--sm rf-link rf-fi-- rf-href rf-text--right"
+                                        title="copier le lien permanent"
+                                        on:click|preventDefault={() => copyLink(result)}
+                                        href="/id/{result.id}"
+                                    >
+                                            <Icon icon='ri:link' class="rf-fi--md" href={link(result)} label="copier le lien permanent"/>
+                                            {linkCopied ? "Copié !" : "Permalien"}
+                                    </a>
+                                {/if}
                             </span>
                             <div class="rf-container-fluid">
                                 <div class="rf-grid-row">
+                                    {#if edit}
+                                        <div class="rf-col-12 rf-text--center">
+                                            <p>
+                                                <strong>
+                                                    Vous pouver maintenant éditer les champs ci-dessous :
+                                                </strong>
+                                            </p>
+                                        </div>
+                                    {/if}
                                     {#each Object.keys(conf) as column}
                                         <div class="rf-col-xs-12 rf-col-sm-12 rf-col-md-6 rf-col-lg-6 rf-col-xl-6">
                                             <span><strong>{ column }</strong></span>
@@ -108,8 +131,38 @@
                                                         {#if field.value &&
                                                             (Array.isArray(field.value) ? field.value.some(x => x) : true)}
                                                             <tr>
-                                                                <td>{ field.label }</td>
-                                                                <td>{@html field.cb ? field.cb(field.value) : field.value }</td>
+                                                                <td width="10rem">{ field.label }</td>
+                                                                <td
+                                                                    on:mouseenter={() => {
+                                                                        editInput[`${column}.${field.label}`] = edit;
+                                                                        editTmpValue[`${column}.${field.label}`] = editValue[`${column}.${field.label}`] || (field.cb ? field.cb(field.value) : field.value);
+                                                                    }}
+                                                                    on:mouseleave={() => {
+                                                                        editInput[`${column}.${field.label}`] = false;
+                                                                        if (editTmpValue[`${column}.${field.label}`] === (field.cb ? field.cb(field.value) : field.value)) {
+                                                                            delete editValue[`${column}.${field.label}`]
+                                                                        } else {
+                                                                            editValue[`${column}.${field.label}`] = editTmpValue[`${column}.${field.label}`]
+                                                                        }
+                                                                    }}
+                                                                >
+                                                                    {#if ((field.editable!==false)&&editInput[`${column}.${field.label}`])}
+                                                                        <input
+                                                                            class="rf-input"
+                                                                            style="height:1.3rem;padding:0;"
+                                                                            bind:value={editTmpValue[`${column}.${field.label}`]}
+                                                                            use:focus
+                                                                        >
+                                                                    {:else}
+                                                                        {#if (editValue[`${column}.${field.label}`] && (editValue[`${column}.${field.label}`] !== (field.cb ? field.cb(field.value) : field.value)))}
+                                                                            <span class="rf-color--rm">
+                                                                                {@html `<strike>${field.cb ? field.cb(field.value) : field.value}</strike> ${editValue[`${column}.${field.label}`]}`}
+                                                                            </span>
+                                                                        {:else}
+                                                                            {@html field.cb ? field.cb(field.value) : field.value }
+                                                                        {/if}
+                                                                    {/if}
+                                                                </td>
                                                             </tr>
                                                         {/if}
                                                     {/each}
@@ -131,6 +184,90 @@
                                             </div>
                                         {/each}
                                     {/if}
+                                    <div class="rf-col-12 rf-text--center rf-margin-top-2N">
+                                        {#if edit}
+                                            <p>
+                                                <strong>
+                                                    Fournir une pièce justificative
+                                                </strong>
+                                            </p>
+                                            <p>
+                                                Pour renforcer la confiance dans votre suggestion, un acte de décès est demandé, ou à défaut, un acte de naissance avec mention marginale du décès,
+                                                est nécessaire. Nous acceptons également un lien vers un document public d'un site d'archive départementale.
+                                            </p>
+                                        {/if}
+                                    </div>
+                                    {#if ($alphaFeatures && !edit)}
+                                        <div class="rf-col-12 rf-text--center">
+                                            <button
+                                                class="rf-btn rf-btn--secondary rf-padding-right-2N"
+                                                title="Proposer une correction"
+                                                on:click|preventDefault={toggleEdit}
+                                            >
+                                                    Proposer une correction
+                                                    &nbsp;<Icon icon='ri:edit-line' class="rf-fi--md" href={link(result)} label="copier le lien permanent"/>
+                                            </button>
+                                        </div>
+                                    {:else if $alphaFeatures}
+                                        <div class="rf-col-xs-12 rf-col-sm-12 rf-col-md-12 rf-rcol-lg-2 rf-col-xl-2"></div>
+                                        <div class="rf-col-xs-12 rf-col-sm-6 rf-col-md-6 rf-col-lg-4 rf-col-xl-4 rf-text--center">
+                                            <button
+                                                class="rf-btn rf-btn--secondary rf-padding-right-2N rf-inactive"
+                                                class:rf-inactive={editUrlValidate}
+                                                title="Charger un fichier"
+                                                on:click|preventDefault={chooseFile}
+                                            >
+                                                    { editFile ? ellipsis(editFile.name) : 'Charger un fichier'}
+                                                    &nbsp;<Icon icon={editFile ? 'ri:check-line' : 'ri:upload-cloud-line'} class="rf-fi--md" href={link(result)} label="copier le lien permanent"/>
+                                            </button>
+                                        </div>
+                                        <div class="rf-col-xs-12 rf-col-sm-6 rf-col-md-6 rf-col-lg-4 rf-col-xl-4">
+                                            <div style="width:80%">
+                                                <div
+                                                    class="rf-input-group"
+                                                    class:rf-input-group--valid={editUrl && editUrlValidate}
+                                                    class:rf-input-group--error={editUrl && (editUrlValidate===false)}
+                                                >
+                                                    <label
+                                                        class="rf-label rf-text--left"
+                                                        for="editUrl"
+                                                        style="overflow:hidden;text-overflow:ellipsis;position: relative"
+                                                    >
+                                                        <span
+                                                            class:rf-fi-check-line={editUrl && editUrlValidate}
+                                                            class:rf-fi-alert-line={editUrl && (editUrlValidate===false)}
+                                                        >
+                                                            &nbsp;
+                                                        </span>
+                                                        <span style="position:absolute;top:-2px">Lien</span>
+                                                    </label>
+                                                    <input
+                                                        id="editUrl"
+                                                        class:rf-input--valid={editUrlValidate}
+                                                        class="rf-input rf-margin-top-0"
+                                                        bind:value={editUrl}
+                                                        on:focus={() => { editUrlValidate = undefined }}
+                                                        on:blur={testEditUrl}
+                                                        disabled={editFile}
+                                                    >
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="rf-col-xs-12 rf-col-sm-12 rf-col-md-12 rf-col-lg-2 rf-col-xl-2"></div>
+                                        <div class="rf-col-12 rf-text--center">
+                                            <button
+                                                class="rf-btn rf-padding-right-2N"
+                                                title={editValidate ? 'Transmettre' : 'Annuler'}
+                                                on:click={() => {
+                                                    if (editValidate) { return }
+                                                    else { toggleEdit() }
+                                                }}
+                                            >
+                                                    {editValidate ? 'Transmettre' : 'Annuler'}
+                                                    &nbsp;<Icon icon={editValidate ? 'ri:send-plane-line' : 'ri:close-line'} class="rf-fi--md" href={link(result)} label="copier le lien permanent"/>
+                                            </button>
+                                        </div>
+                                    {/if}
                                 </div>
                             </div>
                         </div>
@@ -144,7 +281,7 @@
 
 <script>
     import { slide } from 'svelte/transition';
-    import { dataGouvCatalog, displayMode, searchInput, activeElement } from '../tools/stores.js';
+    import { alphaFeatures, route, dataGouvCatalog, displayMode, searchInput, activeElement } from '../tools/stores.js';
     import Icon from './Icon.svelte';
     import md5 from 'md5';
 
@@ -156,10 +293,57 @@
     let wikimediaImgSrc;
     let wikimediaImg;
     let wikimediaImgLoaded;
-
+    let edit = false;
+    let editInput = {};
+    let editTmpValue = {};
+    let editValue = {};
+    let editFile;
+    let editUrl;
+    let editUrlValidate;
+    let editValidate;
     let expand = forceExpand || ($displayMode === 'card-expand');
 
     $: expand = forceExpand || ($displayMode === 'card-expand');
+
+    $: editValidate = ((editFile || editUrlValidate) && (Object.keys(editValue).length));
+
+    const testEditUrl = async () => {
+        if (!/https?:\/\/\S+\.\S+/.test(editUrl)) {
+            editUrlValidate = false;
+
+            return
+        }
+        try {
+            const response = await fetch(editUrl, { mode: 'cors' });
+            if (response.status>=400) { throw(response); }
+            editUrlValidate = true;
+        } catch(e) {
+            editUrlValidate = false;
+        }
+    }
+
+    const chooseFile = () => {
+        if (editUrl) {return}
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.onchange = ev => {
+            editFile = ev.target.files[0];
+        }
+        activeElement.update(v => {
+            v && v.blur();
+            return undefined;
+        });
+        input.click();
+    }
+
+    const focus = (el) => {
+        el.focus();
+    }
+
+    const ellipsis = (s) => {
+        if (s.length < 20) { return s }
+        return `${s.substring(0,9)}...${s.substring(s.length-9,s.length)}`;
+    }
 
     const wikimediaThumbUrl = (img) => {
         try {
@@ -192,16 +376,24 @@
     $: if (result.death) {
         conf['Décès'] = [
             { label: 'Date',  value: result.death.date, cb: dateFormat },
-            { label: 'Age',  value: result.death.age, cb: (a) => `${a} ans`},
+            { label: 'Age',  editable: false, value: result.death.age, cb: (a) => `${a} ans`},
             { label: 'Commune',  value: [result.death.location.city, result.death.location.code], cb: (c) => `${cityString(c[0],true)} (${c[1]})` },
             { label: 'Département',  value: result.death.location.departmentCode },
             { label: 'Pays',  value: [result.death.location.country, result.death.location.countryCode], cb: (c) => `${c[0]}${c[1] ? ` (${c[1]})` : ''}` },
             { label: 'Acte n°',  value: result.death.certificateId },
-            { label: 'Source INSEE',  value: $dataGouvCatalog && [result.source, result.sourceLine], cb: (s) => `<a href=${$dataGouvCatalog[s[0]]} title="source INSEE ${s[0]}" target="_blank">fichier ${s[0]}</a>, ligne n°${s[1]}` }
+            { label: 'Source INSEE', editable: false, value: $dataGouvCatalog && [result.source, result.sourceLine], cb: (s) => `<a href=${$dataGouvCatalog[s[0]]} title="source INSEE ${s[0]}" target="_blank">fichier ${s[0]}</a>, ligne n°${s[1]}` }
         ]
     } else {
         conf['Décès'] && delete conf['Décès'];
     };
+
+    const toggleEdit = () => {
+        edit = !edit;
+        activeElement.update(v => {
+            v && v.blur();
+            return undefined;
+        });
+    }
 
     const toggleExpand = () => {
         expand = !expand;
@@ -218,6 +410,10 @@
     const copyLink = (result) => {
         navigator.clipboard.writeText(link(result));
         linkCopied = true;
+        activeElement.update(v => {
+            v && v.blur();
+            return undefined;
+        });
         setTimeout(() => linkCopied = false, 5000)
     }
 
@@ -254,6 +450,5 @@
 </script>
 
 <style>
-
 
 </style>

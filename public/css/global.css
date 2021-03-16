@@ -20,7 +20,7 @@
   z-index: 1200;
 }
 
-a[target=_blank].rf-link {
+:not(.rf-nav__item,li) > a.rf-link {
   font-size: 1rem;
   line-height: 1.25rem;
   min-height: 2rem;
@@ -105,6 +105,12 @@ a[target=_blank].rf-link::before  {
 
 .rf-margin-top-2px {
   margin-top: 2px;
+}
+
+@media (max-width:768px) {
+  .rf-margin-top-3N--mobile {
+    margin-top: 24px!important;
+  }
 }
 
 @media (min-width:769px) {
@@ -1222,5 +1228,9 @@ svg.leaflet-image-layer.leaflet-interactive path {
   margin-left: -12px;
   border-right-color: var(--w);
   }
+
+.rf-input.input[type="file"] {
+  display: none;
+}
 
   /* Leaflet */
