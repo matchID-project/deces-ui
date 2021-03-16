@@ -12,8 +12,8 @@
 <div class="rf-container-fluid">
     <div class="rf-grid-row">
         <div class="rf-col-12 rf-hide--mobile rf-padding-top-4N"></div>
-        <div class="rf-col-xs-0 rf-col-sm-0 rf-col-md-1 rf-col-lg-2 rf-col-xl-3"></div>
-        <div class="rf-col-xs-12 rf-col-sm-12 rf-col-md-10 rf-col-lg-8 rf-col-xl-6">
+        <div class="rf-col-xs-0 rf-col-sm-0 rf-col-md-1 rf-col-lg-2 rf-col-xl-2"></div>
+        <div class="rf-col-xs-12 rf-col-sm-12 rf-col-md-10 rf-col-lg-8 rf-col-xl-8">
             {#if result}
                 <ResultCard result={result} index={1}/>
             {:else if $wasSearched}
@@ -21,7 +21,7 @@
                 <Info filter={true}/>
             {/if}
         </div>
-        <div class="rf-col-xs-0 rf-col-sm-0 rf-col-md-1 rf-col-lg-2 rf-col-xl-3"></div>
+        <div class="rf-col-xs-0 rf-col-sm-0 rf-col-md-1 rf-col-lg-2 rf-col-xl-2"></div>
         <div class="rf-col-12">
             <PunchMessage/>
         </div>
