@@ -209,8 +209,8 @@
                                             </button>
                                         </div>
                                     {:else if $alphaFeatures}
-                                        <div class="rf-col-xs-12 rf-col-sm-12 rf-col-md-12 rf-rcol-lg-2 rf-col-xl-2"></div>
-                                        <div class="rf-col-xs-12 rf-col-sm-6 rf-col-md-6 rf-col-lg-4 rf-col-xl-4 rf-text--center">
+                                        <div class="rf-col-xs-12 rf-col-sm-12 rf-col-md-12 rf-col-lg-12 rf-col-xl-2"></div>
+                                        <div class="rf-col-xs-12 rf-col-sm-6 rf-col-md-6 rf-col-lg-6 rf-col-xl-4 rf-text--center">
                                             <button
                                                 class="rf-btn rf-btn--secondary rf-padding-right-2N rf-inactive"
                                                 class:rf-inactive={editUrlValidate}
@@ -221,8 +221,8 @@
                                                     &nbsp;<Icon icon={editFile ? 'ri:check-line' : 'ri:upload-cloud-line'} class="rf-fi--md" href={link(result)} label="copier le lien permanent"/>
                                             </button>
                                         </div>
-                                        <div class="rf-col-xs-12 rf-col-sm-6 rf-col-md-6 rf-col-lg-4 rf-col-xl-4">
-                                            <div style="width:80%">
+                                        <div class="rf-col-xs-12 rf-col-sm-6 rf-col-md-6 rf-col-lg-6 rf-col-xl-4">
+                                            <div style="width:80%;padding-left:8px;">
                                                 <div
                                                     class="rf-input-group"
                                                     class:rf-input-group--valid={editUrl && editUrlValidate}
@@ -253,7 +253,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="rf-col-xs-12 rf-col-sm-12 rf-col-md-12 rf-col-lg-2 rf-col-xl-2"></div>
+                                        <div class="rf-col-xs-12 rf-col-sm-12 rf-col-md-12 rf-col-lg-12 rf-col-xl-2"></div>
                                         <div class="rf-col-12 rf-text--center">
                                             <button
                                                 class="rf-btn rf-padding-right-2N"
