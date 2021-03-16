@@ -9,7 +9,7 @@
 <script>
 	import { onMount } from 'svelte';
 	import MatchIDHeader from './components/views/MatchIDHeader.svelte';
-	import { version, route, searchInput, searchCanvas, current, resultsPerPage,
+	import { alphaFeatures, version, route, searchInput, searchCanvas, current, resultsPerPage,
 		updateURL, advancedSearch, fuzzySearch, displayMode, themeDnum, wasSearched
 	} from './components/tools/stores.js';
 	import { URLSearchSubmit } from './components/tools/search.js';
@@ -80,6 +80,10 @@
 		if (event.ctrlKey && event.altKey && event.key === 'd') {
 			await themeDnum.update(v => v === 0 ? 1 : 0);
 			console.log(`switch theme to ${$themeDnum ? 'DNUM' : 'public site'}`);
+		}
+		if (event.ctrlKey && event.altKey && event.key === 'a') {
+			$alphaFeatures = !$alphaFeatures;
+			console.log('enable alpha features');
 		}
 	}
 
