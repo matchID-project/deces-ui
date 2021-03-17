@@ -34,6 +34,8 @@ jobs:
           LOG_BUCKET: ${{ secrets.LOG_BUCKET }}
           LOG_DB_BUCKET: ${{ secrets.LOG_DB_BUCKET }}
           STATS_BUCKET: ${{ secrets.STATS_BUCKET }}
+          BACKEND_TOKEN_KEY: ${{ secrets.BACKEND_TOKEN_KEY }}
+          BACKEND_TOKEN_PASSWORD: ${{ secrets.BACKEND_TOKEN_PASSWORD }}
       - name: publish (if dev or master)
         if: success()
         run: |
@@ -108,5 +110,5 @@ jobs:
           STATS_BUCKET: ${{ secrets.STATS_BUCKET }}
           BLOCK_DEPLOY: ${{ secrets.BLOCK_DEPLOY }}
           SSH_AUTH_SOCK: /tmp/ssh_agent.sock
-
-
+          BACKEND_TOKEN_KEY: ${{ secrets.BACKEND_TOKEN_KEY }}
+          BACKEND_TOKEN_PASSWORD: ${{ secrets.BACKEND_TOKEN_PASSWORD }}
