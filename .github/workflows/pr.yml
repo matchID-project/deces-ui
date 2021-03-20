@@ -34,3 +34,5 @@ jobs:
           LOG_BUCKET: ${{ secrets.LOG_BUCKET }}
           LOG_DB_BUCKET: ${{ secrets.LOG_DB_BUCKET }}
           STATS_BUCKET: ${{ secrets.STATS_BUCKET }}
+          BACKEND_TOKEN_KEY: ${{ secrets.BACKEND_TOKEN_KEY }}
+          BACKEND_TOKEN_PASSWORD: ${{ secrets.BACKEND_TOKEN_PASSWORD }}
