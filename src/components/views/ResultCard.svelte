@@ -114,7 +114,7 @@
                             <div class="rf-container-fluid">
                                 <div class="rf-grid-row">
                                     {#if edit}
-                                        <div class="rf-col-12 rf-text--center">
+                                        <div class="rf-col-12 rf-text--center" transition:slide>
                                             <p>
                                                 <strong>
                                                     Vous pouver maintenant éditer les champs ci-dessous :
@@ -145,11 +145,12 @@
                                                                             editValue[`${column}.${field.label}`] = editTmpValue[`${column}.${field.label}`]
                                                                         }
                                                                     }}
+                                                                    style={((field.editable!==false)&&editInput[`${column}.${field.label}`]) ? 'padding:0;' : ''}
                                                                 >
                                                                     {#if ((field.editable!==false)&&editInput[`${column}.${field.label}`])}
                                                                         <input
                                                                             class="rf-input"
-                                                                            style="height:1.3rem;padding:0;"
+                                                                            style="height:100%;outline:none;font-size:inherit;padding: .125em .5em;"
                                                                             bind:value={editTmpValue[`${column}.${field.label}`]}
                                                                             use:focus
                                                                         >
@@ -185,44 +186,36 @@
                                         {/each}
                                     {/if}
                                     <div class="rf-col-12 rf-text--center rf-margin-top-2N">
-                                        {#if edit}
+                                        {#if edit && (Object.keys(editValue).length)}
                                             <p>
                                                 <strong>
                                                     Fournir une pièce justificative
                                                 </strong>
                                             </p>
                                             <p>
-                                                Pour renforcer la confiance dans votre suggestion, un acte de décès est demandé, ou à défaut, un acte de naissance avec mention marginale du décès,
+                                                Pour renforcer la confiance dans votre proposition, un acte de décès est demandé, ou à défaut, un acte de naissance avec mention marginale du décès,
                                                 est nécessaire. Nous acceptons également un lien vers un document public d'un site d'archive départementale.
+                                            </p>
+                                            <p>
+                                                Un courriel est demandé pour enregistrer votre demande. Il n'en sera fait aucun autre usage.
                                             </p>
                                         {/if}
                                     </div>
                                     {#if ($alphaFeatures && !edit)}
-                                        <div class="rf-col-12 rf-text--center">
+                                        <div class="rf-col-12 rf-text--center" transition:fade>
                                             <button
                                                 class="rf-btn rf-btn--secondary rf-padding-right-2N"
                                                 title="Proposer une correction"
                                                 on:click|preventDefault={toggleEdit}
                                             >
                                                     Proposer une correction
-                                                    &nbsp;<Icon icon='ri:edit-line' class="rf-fi--md" href={link(result)} label="copier le lien permanent"/>
+                                                    &nbsp;<Icon icon='ri:edit-line' class="rf-fi--md"/>
                                             </button>
                                         </div>
-                                    {:else if $alphaFeatures}
-                                        <div class="rf-col-xs-12 rf-col-sm-12 rf-col-md-12 rf-col-lg-12 rf-col-xl-2"></div>
-                                        <div class="rf-col-xs-12 rf-col-sm-6 rf-col-md-6 rf-col-lg-6 rf-col-xl-4 rf-text--center">
-                                            <button
-                                                class="rf-btn rf-btn--secondary rf-padding-right-2N rf-inactive"
-                                                class:rf-inactive={editUrlValidate}
-                                                title="Charger un fichier"
-                                                on:click|preventDefault={chooseFile}
-                                            >
-                                                    { editFile ? ellipsis(editFile.name) : 'Charger un fichier'}
-                                                    &nbsp;<Icon icon={editFile ? 'ri:check-line' : 'ri:upload-cloud-line'} class="rf-fi--md" href={link(result)} label="copier le lien permanent"/>
-                                            </button>
-                                        </div>
-                                        <div class="rf-col-xs-12 rf-col-sm-6 rf-col-md-6 rf-col-lg-6 rf-col-xl-4">
-                                            <div style="width:80%;padding-left:8px;">
+                                    {:else if $alphaFeatures && (Object.keys(editValue).length)}
+                                        <div class="rf-col-xs-12 rf-col-sm-12 rf-col-md-12 rf-col-lg-12 rf-col-xl-2" transition:fade></div>
+                                        <div class="rf-col-xs-6 rf-col-sm-6 rf-col-md-6 rf-col-lg-6 rf-col-xl-4 rf-padding-bottom-1N" transition:fade>
+                                            <div style="padding-left:8px;padding-right:8px;margin-top:-3px;">
                                                 <div
                                                     class="rf-input-group"
                                                     class:rf-input-group--valid={editUrl && editUrlValidate}
@@ -245,6 +238,7 @@
                                                         id="editUrl"
                                                         class:rf-input--valid={editUrlValidate}
                                                         class="rf-input rf-margin-top-0"
+                                                        style="width: 100%; max-width: 240px;"
                                                         bind:value={editUrl}
                                                         on:focus={() => { editUrlValidate = undefined }}
                                                         on:blur={testEditUrl}
@@ -253,19 +247,93 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="rf-col-xs-12 rf-col-sm-12 rf-col-md-12 rf-col-lg-12 rf-col-xl-2"></div>
-                                        <div class="rf-col-12 rf-text--center">
+                                        <div class="rf-col-xs-6 rf-col-sm-6 rf-col-md-6 rf-col-lg-6 rf-col-xl-4 rf-text--center" transition:fade>
+                                            <button
+                                                class="rf-btn rf-btn--secondary rf-padding-right-2N rf-inactive"
+                                                style="width: 100%; justify-content: center; max-width: 240px;"
+                                                class:rf-inactive={editUrlValidate}
+                                                title="Charger un fichier"
+                                                on:click|preventDefault={chooseFile}
+                                            >
+                                                    { editFile ? ellipsis(editFile.name) : 'Charger un fichier'}
+                                                    &nbsp;<Icon icon={editFile ? 'ri:check-line' : 'ri:upload-cloud-line'} class="rf-fi--md"/>
+                                            </button>
+                                        </div>
+                                        <div class="rf-col-xs-12 rf-col-sm-12 rf-col-md-12 rf-col-lg-12 rf-col-xl-2" transition:fade></div>
+                                        <div class="rf-col-12 rf-margin-top-1N" transition:fade></div>
+                                        <div class="rf-col-xs-12 rf-col-sm-12 rf-col-md-12 rf-col-lg-12 rf-col-xl-2" transition:fade></div>
+                                        <div class="rf-col-xs-6 rf-col-sm-6 rf-col-md-6 rf-col-lg-6 rf-col-xl-4" transition:fade>
+                                            <div style="padding-left:8px;padding-right:8px;margin-top:-3px;">
+                                                <div
+                                                    class="rf-input-group"
+                                                    class:rf-input-group--valid={editMail && editMailValidate}
+                                                    class:rf-input-group--error={editMail && (editMailValidate===false)}
+                                                >
+                                                    <label
+                                                        class="rf-label rf-text--left"
+                                                        for="editMail"
+                                                        style="overflow:hidden;text-overflow:ellipsis;position: relative"
+                                                    >
+                                                        <span
+                                                            class:rf-fi-check-line={editMail && editMailValidate}
+                                                            class:rf-fi-alert-line={editMail && (editMailValidate===false)}
+                                                        >
+                                                            &nbsp;
+                                                        </span>
+                                                        <span style="position:absolute;top:-2px">Courriel</span>
+                                                    </label>
+                                                    <input
+                                                        id="editMail"
+                                                        type="email"
+                                                        class:rf-input--valid={editUrlValidate}
+                                                        class="rf-input rf-margin-top-0"
+                                                        style="width: 100%; max-width: 240px;"
+                                                        bind:value={editMail}
+                                                        on:focus={() => { editMail = undefined }}
+                                                        on:blur={() => {
+                                                            if (/^\S+\@\S+\.\S+$/.test(editMail)) {
+                                                                editMailValidate = true
+                                                            }
+                                                        }}
+                                                    >
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="rf-col-xs-6 rf-col-sm-6 rf-col-md-6 rf-col-lg-6 rf-col-xl-4 rf-text--center" transition:fade>
                                             <button
                                                 class="rf-btn rf-padding-right-2N"
+                                                style="width: 100%; justify-content: center; max-width: 240px;"
                                                 title={editValidate ? 'Transmettre' : 'Annuler'}
                                                 on:click={() => {
-                                                    if (editValidate) { return }
+                                                    if (editValidate) {
+                                                        updateRecord(editValue);
+                                                    }
                                                     else { toggleEdit() }
                                                 }}
                                             >
                                                     {editValidate ? 'Transmettre' : 'Annuler'}
-                                                    &nbsp;<Icon icon={editValidate ? 'ri:send-plane-line' : 'ri:close-line'} class="rf-fi--md" href={link(result)} label="copier le lien permanent"/>
+                                                    &nbsp;
+                                                    <Icon
+                                                        icon={editValidate ? (editSuccess ? 'ri:check-line' : 'ri:send-plane-line') : 'ri:close-line'}
+                                                        class="rf-fi--md"
+                                                        spin={editUpdating}
+                                                    />
                                             </button>
+                                        </div>
+                                    {/if}
+                                    {#if editSuccess}
+                                        <div class="rf-col-12 rf-text--center" transition:fade>
+                                            <p>
+                                                <strong>
+                                                    Merci !
+                                                </strong>
+                                            </p>
+                                            <p>
+                                                Vous recevrez sous peu un lien de confirmation à l'adresse indiquée <strong>{editMail}</strong>.
+                                                Votre suggestion sera ensuite examinée par un
+                                                administrateur pour prise en compte.
+                                            </p>
+
                                         </div>
                                     {/if}
                                 </div>
@@ -280,10 +348,11 @@
 
 
 <script>
-    import { slide } from 'svelte/transition';
+    import { fade, slide } from 'svelte/transition';
     import { alphaFeatures, route, dataGouvCatalog, displayMode, searchInput, activeElement } from '../tools/stores.js';
     import Icon from './Icon.svelte';
     import md5 from 'md5';
+    import axios from 'axios';
 
     export let result  = undefined;
     export let index = undefined;
@@ -300,17 +369,40 @@
     let editFile;
     let editUrl;
     let editUrlValidate;
+    let editMail;
+    let editMailValidate;
     let editValidate;
+    let editUpdating;
+    let editSuccess;
     let expand = forceExpand || ($displayMode === 'card-expand');
 
     $: expand = forceExpand || ($displayMode === 'card-expand');
 
     $: editValidate = ((editFile || editUrlValidate) && (Object.keys(editValue).length));
 
+
+    const updateRecord = async (inputValues) => {
+        const formData = new FormData();
+        Object.keys(conf).forEach(column => {
+            conf[column].forEach(field => {
+                if (inputValues[`${column}.${field.label}`]) {
+                    console.log(field.update, `${column}.${field.label}`, inputValues[`${column}.${field.label}`])
+                    formData.append(field.update, inputValues[`${column}.${field.label}`])
+                }
+            });
+        });
+        formData.append('proof', editFile);
+        formData.append('author_id', editMail);
+        editUpdating = true;
+        const res = await axios.post(`__BACKEND_PROXY_PATH__/id/${result.id}`, formData);
+        editUpdating = false;
+        editSuccess = true;
+        console.log(res);
+    }
+
     const testEditUrl = async () => {
         if (!/https?:\/\/\S+\.\S+/.test(editUrl)) {
             editUrlValidate = false;
-
             return
         }
         try {
@@ -342,7 +434,7 @@
 
     const ellipsis = (s) => {
         if (s.length < 20) { return s }
-        return `${s.substring(0,9)}...${s.substring(s.length-9,s.length)}`;
+        return `${s.substring(0,7)}...${s.substring(s.length-7,s.length)}`;
     }
 
     const wikimediaThumbUrl = (img) => {
@@ -365,22 +457,22 @@
 
     let conf = {};
     $: conf.Naissance = [
-            { label: 'Nom', value: result.name.last },
-            { label: 'Prénom(s)', value: result.name.first, cb: (p) => p ? p.join(' ') : '(sans prénom)' },
-            { label: 'Sexe', value: result.sex, cb: (s) => s === 'M' ? 'masculin' : 'féminin' },
-            { label: 'Date',  value: result.birth.date, cb: dateFormat },
-            { label: 'Commune',  value: [result.birth.location.city, result.birth.location.code], cb: (c) => `${cityString(c[0],true)} (${c[1]})` },
-            { label: 'Département',  value: result.birth.location.departmentCode },
-            { label: 'Pays',  value: [ result.birth.location.country, result.birth.location.countryCode], cb: (c) => `${c[0]}${c[1] ? ` (${c[1]})` : ''}` }
+            { label: 'Nom', value: result.name.last, update: 'lastName' },
+            { label: 'Prénom(s)', value: result.name.first, cb: (p) => p ? p.join(' ') : '(sans prénom)', update: 'firstName' },
+            { label: 'Sexe', value: result.sex, cb: (s) => s === 'M' ? 'masculin' : 'féminin' , update: 'sex'},
+            { label: 'Date',  value: result.birth.date, cb: dateFormat, update: 'birthDate'},
+            { label: 'Commune',  value: [result.birth.location.city, result.birth.location.code], cb: (c) => `${cityString(c[0],true)} (${c[1]})`, update: 'birthCity' },
+            { label: 'Département',  value: result.birth.location.departmentCode, update: 'birthDepartment' },
+            { label: 'Pays',  value: [ result.birth.location.country, result.birth.location.countryCode], cb: (c) => `${c[0]}${c[1] ? ` (${c[1]})` : ''}`, update: 'birthCountry'}
         ];
     $: if (result.death) {
         conf['Décès'] = [
-            { label: 'Date',  value: result.death.date, cb: dateFormat },
+            { label: 'Date',  value: result.death.date, cb: dateFormat, update: 'deathDate' },
             { label: 'Age',  editable: false, value: result.death.age, cb: (a) => `${a} ans`},
-            { label: 'Commune',  value: [result.death.location.city, result.death.location.code], cb: (c) => `${cityString(c[0],true)} (${c[1]})` },
-            { label: 'Département',  value: result.death.location.departmentCode },
-            { label: 'Pays',  value: [result.death.location.country, result.death.location.countryCode], cb: (c) => `${c[0]}${c[1] ? ` (${c[1]})` : ''}` },
-            { label: 'Acte n°',  value: result.death.certificateId },
+            { label: 'Commune',  value: [result.death.location.city, result.death.location.code], cb: (c) => `${cityString(c[0],true)} (${c[1]})`, update: 'deathCity' },
+            { label: 'Département',  value: result.death.location.departmentCode, update: 'deathDepartment' },
+            { label: 'Pays',  value: [result.death.location.country, result.death.location.countryCode], cb: (c) => `${c[0]}${c[1] ? ` (${c[1]})` : ''}`, update: 'deathCountry'},
+            { label: 'Acte n°',  editable: false, value: result.death.certificateId, },
             { label: 'Source INSEE', editable: false, value: $dataGouvCatalog && [result.source, result.sourceLine], cb: (s) => `<a href=${$dataGouvCatalog[s[0]]} title="source INSEE ${s[0]}" target="_blank">fichier ${s[0]}</a>, ligne n°${s[1]}` }
         ]
     } else {
