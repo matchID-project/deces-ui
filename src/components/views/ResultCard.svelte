@@ -314,7 +314,9 @@
                                                     {editValidate ? 'Transmettre' : 'Annuler'}
                                                     &nbsp;
                                                     <Icon
-                                                        icon={editValidate ? (editSuccess ? 'ri:check-line' : 'ri:send-plane-line') : 'ri:close-line'}
+                                                        icon={editValidate ?
+                                                            (editSuccess === true ? 'ri:check-line' :
+                                                                (editSuccess === false ? 'ri:alert-line' : 'ri:send-plane-line')) : 'ri:close-line'}
                                                         class="rf-fi--md"
                                                         spin={editUpdating}
                                                     />
@@ -386,7 +388,6 @@
         Object.keys(conf).forEach(column => {
             conf[column].forEach(field => {
                 if (inputValues[`${column}.${field.label}`]) {
-                    console.log(field.update, `${column}.${field.label}`, inputValues[`${column}.${field.label}`])
                     formData.append(field.update, inputValues[`${column}.${field.label}`])
                 }
             });
@@ -394,10 +395,14 @@
         formData.append('proof', editFile);
         formData.append('author_id', editMail);
         editUpdating = true;
-        const res = await axios.post(`__BACKEND_PROXY_PATH__/id/${result.id}`, formData);
-        editUpdating = false;
-        editSuccess = true;
-        console.log(res);
+        try {
+            const res = await axios.post(`__BACKEND_PROXY_PATH__/id/${result.id}`, formData);
+            editUpdating = false;
+            editSuccess = true;
+        } catch(e) {
+            editUpdating = false;
+            editSuccess = false;
+        }
     }
 
     const testEditUrl = async () => {
