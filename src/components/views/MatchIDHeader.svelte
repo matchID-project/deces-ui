@@ -48,7 +48,7 @@
                     <ul class="rf-nav__list">
                         <li
                             class="rf-nav__item rf-nav__item--hoverable rf-nav__item--shadow"
-                            class:rf-nav__item--active={($route.path === '/search')}
+                            class:rf-nav__item--active={!modal && ($route.path === '/search')}
                             on:mouseenter={() => {expandMenu = true}}
                             on:mouseleave={() => {expandMenu = false}}
                             bind:this={searchMenu}
@@ -73,7 +73,7 @@
                                     {#each searchOptions as item}
                                         <li
                                             class="rf-menu__item rf-href"
-                                            class:rf-menu__item--active={($route.path === '/search') && item.isActive}
+                                            class:rf-menu__item--active={!modal && ($route.path === '/search') && item.isActive}
                                             on:click|preventDefault={() => goToPage('search',item.mode)}
                                         >
                                             <a
@@ -101,7 +101,7 @@
                                     {#each viewOptions as item}
                                         <li
                                             class="rf-menu__item"
-                                            class:rf-menu__item--active={($route.path === '/search') && item.isActive}
+                                            class:rf-menu__item--active={!modal && ($route.path === '/search') && item.isActive}
                                             class:rf-href={viewOptionsActive}
                                             class:rf-inactive={!viewOptionsActive}
                                             on:click|preventDefault={() => {
@@ -133,7 +133,7 @@
                         <li
                             class="rf-nav__item"
                             on:click|preventDefault={() => goToPage('link')}
-                            class:rf-nav__item--active={($route.path === '/link')}
+                            class:rf-nav__item--active={!modal && ($route.path === '/link')}
                         >
                             <a
                                 href="/link"
@@ -145,7 +145,7 @@
                         <li
                             class="rf-nav__item"
                             on:click|preventDefault={() => goToPage('about')}
-                            class:rf-nav__item--active={($route.path === '/about')}
+                            class:rf-nav__item--active={!modal && ($route.path === '/about')}
                         >
                             <a
                                 href="/about"
@@ -154,6 +154,20 @@
                                 À propos
                             </a>
                         </li>
+                        {#if $alphaFeatures}
+                            <li
+                                class="rf-nav__item"
+                                on:click|preventDefault={() => showLogin = !showLogin}
+                                class:rf-nav__item--active={showLogin}
+                            >
+                                <a
+                                    href="/login"
+                                    class="rf-link rf-href rf-fi-question-line rf-link--icon-left"
+                                >
+                                    S'identifier
+                                </a>
+                            </li>
+                        {/if}
                     </ul>
                 </div>
             </div>
@@ -185,7 +199,7 @@
                     <ul class="rf-nav__list">
                         <li
                             class="rf-nav__item"
-                            class:rf-nav__item--active={($route.path === '/search')}
+                            class:rf-nav__item--active={!modal && ($route.path === '/search')}
                             aria-expanded={expandMenu}
                             aria-controls="rf-recherche-popin"
                         >
@@ -208,7 +222,7 @@
                                     {#each searchOptions as item}
                                         <li
                                             class="rf-menu__item rf-href"
-                                            class:rf-menu__item--active={($route.path === '/search') && item.isActive}
+                                            class:rf-menu__item--active={!modal && ($route.path === '/search') && item.isActive}
                                             on:click|preventDefault={() => goToPage('search',item.mode)}
                                         >
                                             <tr>
@@ -230,7 +244,7 @@
                                     {#each viewOptions as item}
                                         <li
                                             class="rf-menu__item"
-                                            class:rf-menu__item--active={($route.path === '/search') && item.isActive}
+                                            class:rf-menu__item--active={!modal && ($route.path === '/search') && item.isActive}
                                             class:rf-href={viewOptionsActive}
                                             class:rf-inactive={!viewOptionsActive}
                                             on:click|preventDefault={() => {
@@ -252,11 +266,10 @@
                                 </ul>
                             </div>
                         </li>
-
                         <li
                             class="rf-nav__item"
                             on:click|preventDefault={() => goToPage('link')}
-                            class:rf-nav__item--active={($route.path === '/link')}
+                            class:rf-nav__item--active={!modal && ($route.path === '/link')}
                         >
                             <span class="rf-link rf-href rf-fi-db-line rf-link--icon-left">
                                 Appariement
@@ -265,23 +278,39 @@
                         <li
                             class="rf-nav__item"
                             on:click|preventDefault={() => goToPage('about')}
-                            class:rf-nav__item--active={($route.path === '/about')}
+                            class:rf-nav__item--active={!modal && ($route.path === '/about')}
                         >
                             <span class="rf-link rf-href rf-fi-question-line rf-link--icon-left">
                                 À propos
                             </span>
                         </li>
+                        {#if $alphaFeatures}
+                            <li
+                                class="rf-nav__item"
+                                on:click|preventDefault={() => showLogin = !showLogin}
+                                class:rf-nav__item--active={showLogin}
+                            >
+                                <a
+                                    href="/login"
+                                    class="rf-link rf-href rf-fi-question-line rf-link--icon-left"
+                                >
+                                    S'identifier
+                                </a>
+                            </li>
+                        {/if}
                     </ul>
                 </nav>
             </div>
         </div>
     </div>
 </header>
+<Login bind:show={showLogin}/>
 
 <script>
-    import { firstSearch, themeDnum, advancedSearch, displayMode, wasSearched, activeElement } from '../tools/stores.js';
+    import { alphaFeatures, firstSearch, themeDnum, advancedSearch, displayMode, wasSearched, activeElement } from '../tools/stores.js';
     import Icon from './Icon.svelte';
     import SearchBox from './SearchBox.svelte';
+    import Login from './Login.svelte';
     import { toggleAdvancedSearch, enableDisplayMode } from '../tools/search.js';
     import { goTo } from '../tools/routes.js';
     import { route } from '../tools/stores.js';
@@ -292,11 +321,15 @@
 
     let burgerState = false;
     let expandMenu = false;
+    let showLogin = false;
+    let modal = false;
     let organization;
     let searchOptions;
     let viewOptions;
     let viewOptionsActive;
     let searchMenu;
+
+    $: modal = showLogin;
 
     $: searchOptions = [
         { title: 'Simple',

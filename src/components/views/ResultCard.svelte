@@ -351,7 +351,7 @@
 
 <script>
     import { fade, slide } from 'svelte/transition';
-    import { alphaFeatures, route, dataGouvCatalog, displayMode, searchInput, activeElement } from '../tools/stores.js';
+    import { accessToken, alphaFeatures, route, dataGouvCatalog, displayMode, searchInput, activeElement } from '../tools/stores.js';
     import Icon from './Icon.svelte';
     import md5 from 'md5';
     import axios from 'axios';
@@ -396,7 +396,9 @@
         formData.append('author_id', editMail);
         editUpdating = true;
         try {
-            const res = await axios.post(`__BACKEND_PROXY_PATH__/id/${result.id}`, formData);
+            const res = await axios.post(`__BACKEND_PROXY_PATH__/id/${result.id}`,
+                formData,
+                {headers: {Authorization: `Bearer ${$accessToken}`}});
             editUpdating = false;
             editSuccess = true;
         } catch(e) {
