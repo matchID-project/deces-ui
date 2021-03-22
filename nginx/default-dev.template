@@ -61,7 +61,7 @@ server {
     proxy_http_version 1.1;
   }
 
-  location ~ "^<BACKEND_PROXY_PATH>/(search|version|healthcheck|queue(/.*)?|id/.*|docs(/.*)?)$" {
+  location ~ "^<BACKEND_PROXY_PATH>/(search|version|healthcheck|queue(/.*)?|auth|id/.*|docs(/.*)?)$" {
     limit_req zone=search burst=<API_SEARCH_USER_BURST>;
     limit_req zone=search_global burst=<API_SEARCH_GLOBAL_BURST>;
     limit_req_status 429;
