@@ -85,7 +85,6 @@
 import { onMount } from 'svelte';
 import { fade, slide } from 'svelte/transition';
 import { accessToken } from '../tools/stores.js';
-import { useLocalSync } from '../tools/useLocalStorage.js';
 import Icon from './Icon.svelte'
 
 let authToken = '';
@@ -93,9 +92,7 @@ let mount = false;
 export let show;
 
 onMount(async () => {
-    await useLocalSync(accessToken, 'accessToken');
     mount = true;
-
 })
 
 $: if (authToken && !$accessToken) {

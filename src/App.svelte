@@ -9,14 +9,16 @@
 <script>
 	import { onMount } from 'svelte';
 	import MatchIDHeader from './components/views/MatchIDHeader.svelte';
-	import { alphaFeatures, version, route, searchInput, searchCanvas, current, resultsPerPage,
+	import { accessToken, alphaFeatures, version, route, searchInput, searchCanvas, current, resultsPerPage,
 		updateURL, advancedSearch, fuzzySearch, displayMode, themeDnum, wasSearched
 	} from './components/tools/stores.js';
 	import { URLSearchSubmit } from './components/tools/search.js';
 	import { routes } from './components/tools/routes.js';
 	import { register } from 'register-service-worker';
+	import { useLocalSync } from './components/tools/useLocalStorage.js';
 
 	onMount(async () => {
+		await useLocalSync(accessToken, 'accessToken');
 		if ($version && !$version.api) {
 			try {
 				const r = await fetch('__BACKEND_PROXY_PATH__/version');
