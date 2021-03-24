@@ -394,15 +394,25 @@ border-radius: 0 .25rem 0 0;
 }
 
 .rf-table {
-	width: 100%;
+  width: 100%;
+  border-collapse:collapse;
 }
 
 .rf-table td {
-	border: solid var(--g400);
-	border-width: 0 0 1px;
+	border: 0;
 	padding: .5em .75em;
 	vertical-align: top;
 }
+
+
+table.rf-table thead tr th {
+  text-align: left;
+}
+
+table.rf-table thead tr:last-child th {
+  border-bottom: 3px solid var(--g800);;
+}
+
 
 .rf-table tbody tr:last-child td,.rf-table tbody tr:last-child th {
 	border-bottom-width: 0;

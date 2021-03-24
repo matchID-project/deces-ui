@@ -33,7 +33,7 @@
                         </div>
                         <div
                             class="rf-card__body"
-                            style={(expand && !(result.links && result.links.label)) ? "padding-top: 14px!important;" : ""}
+                            style={(expand && !(result.links && result.links.label)) ? "" : ""}
                         >
                             <a
                                 href="#{index}"
@@ -124,8 +124,12 @@
                                     {/if}
                                     {#each Object.keys(conf) as column}
                                         <div class="rf-col-xs-12 rf-col-sm-12 rf-col-md-6 rf-col-lg-6 rf-col-xl-6">
-                                            <span><strong>{ column }</strong></span>
-                                            <table class="rf-table rf-table--narrow rf-table--striped">
+                                            <table class="rf-table rf-table--narrow rf-table--striped rf">
+                                                <thead>
+                                                    <tr>
+                                                        <th colspan="2" scope="colgroup">{column}</th>
+                                                    </tr>
+                                                </thead>
                                                 <tbody>
                                                     {#each conf[column] as field}
                                                         {#if field.value &&

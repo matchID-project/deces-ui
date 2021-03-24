@@ -38,30 +38,32 @@
                   {#each columns as column}
                     <col style={column.width ? `width: ${column.width};`: ""}/>
                   {/each}
-                  <tr class="is-grey" >
-                    <th colspan="3" scope="colgroup">état civil</th>
-                    <th colspan="5" scope="colgroup">naissance</th>
-                    <th colspan="8" scope="colgroup">décès</th>
-                  </tr>
-                  <tr class="is-grey" >
-                    {#each columns as column, index}
-                      <th
-                        class="rf-table-th--label {column.field ? "rf-table-th--sortable" : ""}"
-                        scope="col"
-                        on:click={e => toggleSort(column.field)}
-                        title={column.field ? "cliquez pour activer/désactiver le tri" : undefined}
-                      >
+                  <thead>
+                    <tr>
+                      <th colspan="3" scope="colgroup">état civil</th>
+                      <th colspan="5" scope="colgroup">naissance</th>
+                      <th colspan="8" scope="colgroup">décès</th>
+                    </tr>
+                    <tr>
+                      {#each columns as column, index}
+                        <th
+                          class="rf-table-th--label {column.field ? "rf-table-th--sortable" : ""}"
+                          scope="col"
+                          on:click={e => toggleSort(column.field)}
+                          title={column.field ? "cliquez pour activer/désactiver le tri" : undefined}
+                        >
 
-                        {#if column.order === "desc"}
-                          <span class="rf-fi-arrow-down-s-line rf-fi--md">{column.label}</span>
-                        {:else if column.order === "asc"}
-                          <span class="rf-fi-arrow-up-s-line rf-fi--md">{column.label}</span>
-                        {:else}
-                          {column.label}
-                        {/if}
-                      </th>
-                    {/each}
-                  </tr>
+                          {#if column.order === "desc"}
+                            <span class="rf-fi-arrow-down-s-line rf-fi--md">{column.label}</span>
+                          {:else if column.order === "asc"}
+                            <span class="rf-fi-arrow-up-s-line rf-fi--md">{column.label}</span>
+                          {:else}
+                            {column.label}
+                          {/if}
+                        </th>
+                      {/each}
+                    </tr>
+                  </thead>
                   {#each $searchResults as result, index}
                     <ResultRow result={result} index={index}/>
                   {/each}

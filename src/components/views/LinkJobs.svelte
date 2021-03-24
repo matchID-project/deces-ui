@@ -7,13 +7,15 @@
             </p>
             {#if jobs.length}
                 <table class="rf-table rf-table--narrow rf-table--striped">
-                    <tbody>
+                    <thead>
                         <tr>
-                            <td><strong>id</strong></td>
-                            <td><strong>date</strong></td>
-                            <td><strong>lignes</strong></td>
-                            <td><strong>statut</strong></td>
+                            <th>id</th>
+                            <th>date</th>
+                            <th>lignes</th>
+                            <th>statut</th>
                         </tr>
+                    </thead>
+                    <tbody>
                         {#each jobs as job}
                             <tr>
                                 <td>{job.id.substring(0,20) + '...'}</td>
