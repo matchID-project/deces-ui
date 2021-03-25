@@ -1,4 +1,4 @@
-{#if mount && show}
+{#if show}
     <div class="modal" transition:fade>
         <div class="modal-container">
             <div class="rf-container">
@@ -29,27 +29,59 @@
                                         </div>
                                         <div class="rf-card__body rf-text--center" style="margin-left: -80px!important; padding-top: 14px!important;">
                                             <h4 class="rf-card_lead rf-margin-0">Connexion</h4>
-                                            <p class="rf-card__desc rf-margin-0"> Accès restreint</p>
+                                            <p class="rf-card__desc rf-margin-0"> Accès aux fonctions personnalisées</p>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="rf-col-12">
                                     <div class="rf-padding-7N rf-background--white">
                                         {#if !$accessToken}
-                                            <form class="rf-input-group" transition:slide>
-                                                <label
-                                                    class="rf-label rf-text--left"
-                                                    for="token"
-                                                    style="overflow:hidden;text-overflow:ellipsis;position: relative"
-                                                >
-                                                    Saisissez votre token d'accès
-                                                </label>
-                                                <input
-                                                    id="token"
-                                                    type="password"
-                                                    class="rf-input"
-                                                    bind:value={authToken}
-                                                >
+                                            <form transition:slide>
+                                                <div class="rf-input-group" class:rf-input-group--error={authError}>
+                                                    <label
+                                                        class="rf-label rf-text--left"
+                                                        for="email"
+                                                        style="overflow:hidden;text-overflow:ellipsis;position: relative"
+                                                    >
+                                                        Courriel
+                                                    </label>
+                                                    <input
+                                                        id="email"
+                                                        type="email"
+                                                        class="rf-input"
+                                                        on:input={() => {authError = false}}
+                                                        bind:value={$user}
+                                                    >
+                                                </div>
+                                                <div class="rf-input-group rf-margin-top-1N" class:rf-input-group--error={authError}>
+                                                    <label
+                                                        class="rf-label rf-text--left"
+                                                        for="token"
+                                                        style="overflow:hidden;text-overflow:ellipsis;position: relative"
+                                                    >
+                                                        Mot de passe
+                                                    </label>
+                                                    <input
+                                                        id="token"
+                                                        type="password"
+                                                        class="rf-input"
+                                                        on:input={() => {authError = false}}
+                                                        bind:value={authPassword}
+                                                    >
+                                                    {#if authError}
+                                                        <p id="text-input-error-desc-error" class="rf-error-text">
+                                                            Mauvais courriel ou mot de passe
+                                                        </p>
+                                                    {/if}
+                                                </div>
+                                                <div class="rf-container--fluid rf-text--center">
+                                                    <button
+                                                        class="rf-btn rf-margin-top-1N"
+                                                        on:click|preventDefault={login}
+                                                    >
+                                                        Se connecter
+                                                    </button>
+                                                </div>
                                             </form>
                                         {:else}
                                             <div style="width:100%;text-align:center;" transition:slide>
@@ -58,7 +90,11 @@
                                                 </p>
                                                 <button
                                                     class="rf-btn rf-padding-right-2N"
-                                                    on:click|preventDefault={() => $accessToken = ''}
+                                                    on:click|preventDefault={() => {
+                                                        authPassword = '';
+                                                        authError = false;
+                                                        $accessToken = '';
+                                                    }}
                                                 >
                                                     Se déconnecter
                                                     &nbsp;
@@ -84,30 +120,32 @@
 <script>
 import { onMount } from 'svelte';
 import { fade, slide } from 'svelte/transition';
-import { accessToken } from '../tools/stores.js';
+import { user, accessToken } from '../tools/stores.js';
 import Icon from './Icon.svelte'
 
-let authToken = '';
-let mount = false;
+let authPassword = '';
+let authError = false;
 export let show;
 
-onMount(async () => {
-    mount = true;
-})
-
-$: if (authToken && !$accessToken) {
+const login = () => {
     fetch('__BACKEND_PROXY_PATH__/auth', {
         method: 'POST',
         headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ password: authToken})
+        body: JSON.stringify({ user: $user, password: authPassword})
     }).then((response) => {
+        if (response.status === 401) {
+            authError = true;
+            $accessToken = '';
+            return;
+        }
         return response.json().then((json) => {
+            authError = false;
             $accessToken = json.access_token;
         });
-    });
+    })
 }
 
 </script>
