@@ -138,35 +138,39 @@
                                                                 <td width="10rem">{ field.label }</td>
                                                                 <td
                                                                     on:mouseenter={() => {
-                                                                        editInput[`${column}.${field.label}`] = edit;
-                                                                        editTmpValue[`${column}.${field.label}`] = editValue[`${column}.${field.label}`] || (field.cb ? field.cb(field.value) : field.value);
+                                                                        editInput[field.update.join()]  = edit;
+                                                                        if (edit) { setInputValue(field) };
                                                                     }}
                                                                     on:mouseleave={() => {
-                                                                        editInput[`${column}.${field.label}`] = false;
-                                                                        if (editTmpValue[`${column}.${field.label}`] === (field.cb ? field.cb(field.value) : field.value)) {
-                                                                            delete editValue[`${column}.${field.label}`]
-                                                                        } else {
-                                                                            editValue[`${column}.${field.label}`] = editTmpValue[`${column}.${field.label}`]
-                                                                        }
+                                                                        editInput[field.update.join()]  = false;
+                                                                        if (edit) { updateEditValue(field);}
                                                                     }}
-                                                                    style={((field.editable!==false)&&editInput[`${column}.${field.label}`]) ? 'padding:0;' : ''}
+                                                                    style={((field.editable!==false)&&editInput[field.update.join()] ) ? 'padding:0;' : ''}
                                                                 >
-                                                                    {#if ((field.editable!==false)&&editInput[`${column}.${field.label}`])}
-                                                                        <input
-                                                                            class="rf-input"
-                                                                            style="height:100%;outline:none;font-size:inherit;padding: .125em .5em;"
-                                                                            bind:value={editTmpValue[`${column}.${field.label}`]}
-                                                                            use:focus
-                                                                        >
-                                                                    {:else}
-                                                                        {#if (editValue[`${column}.${field.label}`] && (editValue[`${column}.${field.label}`] !== (field.cb ? field.cb(field.value) : field.value)))}
-                                                                            <span class="rf-color--rm">
-                                                                                {@html `<strike>${field.cb ? field.cb(field.value) : field.value}</strike> ${editValue[`${column}.${field.label}`]}`}
-                                                                            </span>
+                                                                    <div style="display: inline-flex;width:100%;">
+                                                                        {#if ((field.editable!==false)&&editInput[field.update.join()] )}
+                                                                            {#each field.update as updateField}
+                                                                                <input
+                                                                                    class="rf-input"
+                                                                                    style="height:100%;width:{field.update.length>1 ? '50%':'100%'};outline:none;font-size:inherit;padding: .13em .5em;"
+                                                                                    bind:value={editTmpValue[updateField]}
+                                                                                    use:focus
+                                                                                >
+                                                                            {/each}
                                                                         {:else}
-                                                                            {@html field.cb ? field.cb(field.value) : field.value }
+                                                                            {#if (field.update && field.update
+                                                                                    .some((updateField,i) =>
+                                                                                        editValue[updateField] &&
+                                                                                        (editValue[updateField] !== defaultInputValue(field, i))
+                                                                                    ))}
+                                                                                <span class="rf-color--rm">
+                                                                                    {@html `<strike>${field.cb ? field.cb(field.value) : field.value}</strike> ${field.update.map(updateField => editValue[updateField])}`}
+                                                                                </span>
+                                                                            {:else}
+                                                                                {@html field.cb ? field.cb(field.value) : field.value }
+                                                                            {/if}
                                                                         {/if}
-                                                                    {/if}
+                                                                    </div>
                                                                 </td>
                                                             </tr>
                                                         {/if}
@@ -386,6 +390,33 @@
 
     $: editValidate = ((editFile || editUrlValidate) && (Object.keys(editValue).length));
 
+    const defaultInputValue = (field, i) => {
+        if (Array.isArray(field.value)) {
+            return field.value[i]
+        } else {
+            return field.updateCb ? field.updateCb(field.value) : field.value;
+        }
+    };
+
+    const setInputValue = (field) => {
+        console.log('setInput:before', editValue);
+        field.update.forEach((updateField,i) => {
+            editTmpValue[updateField] = editValue[updateField] || defaultInputValue(field, i);
+        });
+        console.log('setInput:after', editValue);
+    }
+
+    const updateEditValue = (field) => {
+        console.log('updateEdit:before', editValue);
+        field.update.forEach((updateField,i) => {
+            if (editTmpValue[updateField] === (editValue[updateField] || defaultInputValue(field, i))) {
+                delete editValue[updateField];
+            } else {
+                editValue[updateField] = editTmpValue[updateField];
+            }
+        });
+        console.log('updateEdit:before', editValue);
+    }
 
     const updateRecord = async (inputValues) => {
         const formData = new FormData();
@@ -468,21 +499,21 @@
 
     let conf = {};
     $: conf.Naissance = [
-            { label: 'Nom', value: result.name.last, update: 'lastName' },
-            { label: 'Prénom(s)', value: result.name.first, cb: (p) => p ? p.join(' ') : '(sans prénom)', update: 'firstName' },
-            { label: 'Sexe', value: result.sex, cb: (s) => s === 'M' ? 'masculin' : 'féminin' , update: 'sex'},
-            { label: 'Date',  value: result.birth.date, cb: dateFormat, update: 'birthDate'},
-            { label: 'Commune',  value: [result.birth.location.city, result.birth.location.code], cb: (c) => `${cityString(c[0],true)} (${c[1]})`, update: 'birthCity' },
-            { label: 'Département',  value: result.birth.location.departmentCode, update: 'birthDepartment' },
-            { label: 'Pays',  value: [ result.birth.location.country, result.birth.location.countryCode], cb: (c) => `${c[0]}${c[1] ? ` (${c[1]})` : ''}`, update: 'birthCountry'}
+            { label: 'Nom', value: result.name.last, update: ['lastName'] },
+            { label: 'Prénom(s)', value: result.name.first, cb: (p) => p ? p.join(' ') : '(sans prénom)', update: ['firstName'] },
+            { label: 'Sexe', editable: false, value: result.sex, cb: (s) => s === 'M' ? 'masculin' : 'féminin' , update: ['sex']},
+            { label: 'Date',  value: result.birth.date, cb: dateFormat, update: ['birthDate'], updateCb: dateFormat},
+            { label: 'Commune',  value: [result.birth.location.city, result.birth.location.code], cb: (c) => `${cityString(c[0],true)} (${c[1]})`, update: ['birthCity','birthLocationCode'] },
+            { label: 'Département',  value: result.birth.location.departmentCode, update: ['birthDepartment'] },
+            { label: 'Pays',  value: [ result.birth.location.country, result.birth.location.countryCode], cb: (c) => `${c[0]}${c[1] ? ` (${c[1]})` : ''}`, update: ['birthCountry', 'birthCountryCode']}
         ];
     $: if (result.death) {
         conf['Décès'] = [
-            { label: 'Date',  value: result.death.date, cb: dateFormat, update: 'deathDate' },
+            { label: 'Date',  value: result.death.date, cb: dateFormat, update: ['deathDate'] },
             { label: 'Age',  editable: false, value: result.death.age, cb: (a) => `${a} ans`},
-            { label: 'Commune',  value: [result.death.location.city, result.death.location.code], cb: (c) => `${cityString(c[0],true)} (${c[1]})`, update: 'deathCity' },
-            { label: 'Département',  value: result.death.location.departmentCode, update: 'deathDepartment' },
-            { label: 'Pays',  value: [result.death.location.country, result.death.location.countryCode], cb: (c) => `${c[0]}${c[1] ? ` (${c[1]})` : ''}`, update: 'deathCountry'},
+            { label: 'Commune',  value: [result.death.location.city, result.death.location.code], cb: (c) => `${cityString(c[0],true)} (${c[1]})`, update: ['deathCity','deathLocationCode'] },
+            { label: 'Département',  value: result.death.location.departmentCode, update: ['deathDepartment'] },
+            { label: 'Pays',  value: [result.death.location.country, result.death.location.countryCode], cb: (c) => `${c[0]}${c[1] ? ` (${c[1]})` : ''}`, update: ['deathCountry','deathCountryCode']},
             { label: 'Acte n°',  editable: false, value: result.death.certificateId, },
             { label: 'Source INSEE', editable: false, value: $dataGouvCatalog && [result.source, result.sourceLine], cb: (s) => `<a href=${$dataGouvCatalog[s[0]]} title="source INSEE ${s[0]}" target="_blank">fichier ${s[0]}</a>, ligne n°${s[1]}` }
         ]
