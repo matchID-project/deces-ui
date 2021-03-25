@@ -164,10 +164,17 @@
                                                                                         (editValue[updateField] !== defaultInputValue(field, i))
                                                                                     ))}
                                                                                 <span class="rf-color--rm">
-                                                                                    {@html `<strike>${field.cb ? field.cb(field.value) : field.value}</strike> ${field.update.map(updateField => editValue[updateField])}`}
+                                                                                    {@html `<strike>${field.cb ? field.cb(field.value) : field.value}</strike> ${field.update.map(updateField => editValue[updateField]).join()}`}
                                                                                 </span>
                                                                             {:else}
-                                                                                {@html field.cb ? field.cb(field.value) : field.value }
+                                                                                {#if (result.modifications && field.update && field.update
+                                                                                    .some(updateField => result.modifications[result.modifications.length-1].fields[updateField]))}
+                                                                                    <span class="rf-color--rm">
+                                                                                        {@html `<strike>${field.cb ? field.cb(field.value) : field.value}</strike> ${field.update.map(updateField => result.modifications[result.modifications.length-1].fields[updateField]).join()}`}
+                                                                                    </span>
+                                                                                {:else}
+                                                                                    {@html field.cb ? field.cb(field.value) : field.value }
+                                                                                {/if}
                                                                             {/if}
                                                                         {/if}
                                                                     </div>
@@ -179,6 +186,22 @@
                                             </table>
                                         </div>
                                     {/each}
+                                    {#if result.modifications}
+                                            <div class="rf-col-12 rf-text--center rf-padding-top-1N">
+                                                <p>
+                                                    <strong>
+                                                        Cette fiche a fait l'objet d'un signalement d'erreur.
+                                                    </strong>
+                                                    <a
+                                                        href={result.modifications[result.modifications.length-1].proof}
+                                                        target="_blank"
+                                                        class="rf-link"
+                                                    >
+                                                        Acte associé
+                                                    </a>
+                                                </p>
+                                            </div>
+                                    {/if}
                                     {#if (result.links && Object.keys(result.links).length)}
                                         {#each wikilinks as key}
                                             <div class="rf-col-xs-12 rf-col-sm-12 rf-col-md-{wikilinks.length === 2 ? 6 : 12} rf-col-lg-{wikilinks.length === 2 ? 6 : 12} rf-col-xl-{wikilinks.length === 2 ? 6 : 12} rf-text--center rf-padding-top-1N">
@@ -453,12 +476,8 @@
 
     const updateRecord = async (inputValues) => {
         const formData = new FormData();
-        Object.keys(conf).forEach(column => {
-            conf[column].forEach(field => {
-                if (inputValues[`${column}.${field.label}`]) {
-                    formData.append(field.update, inputValues[`${column}.${field.label}`])
-                }
-            });
+        Object.keys(inputValues).forEach(field => {
+            formData.append(field, inputValues[field])
         });
         formData.append('proof', editFile);
         formData.append('author_id', editMail);
@@ -542,7 +561,7 @@
         ];
     $: if (result.death) {
         conf['Décès'] = [
-            { label: 'Date',  value: result.death.date, cb: dateFormat, update: ['deathDate'] },
+            { label: 'Date',  value: result.death.date, cb: dateFormat, update: ['deathDate'], updateCb: dateFormat},
             { label: 'Age',  editable: false, value: result.death.age, cb: (a) => `${a} ans`},
             { label: 'Commune',  value: [result.death.location.city, result.death.location.code], cb: (c) => `${cityString(c[0],true)} (${c[1]})`, update: ['deathCity','deathLocationCode'] },
             { label: 'Département',  value: result.death.location.departmentCode, update: ['deathDepartment'] },
