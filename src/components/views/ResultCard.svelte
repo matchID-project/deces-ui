@@ -275,7 +275,7 @@
                                                 <div
                                                     class="rf-input-group"
                                                     class:rf-input-group--valid={editMail && editMailValidate}
-                                                    class:rf-input-group--error={editMail && (editMailValidate===false)}
+                                                    class:rf-input-group--error={editMailValidate===false}
                                                 >
                                                     <label
                                                         class="rf-label rf-text--left"
@@ -284,7 +284,7 @@
                                                     >
                                                         <span
                                                             class:rf-fi-check-line={editMail && editMailValidate}
-                                                            class:rf-fi-alert-line={editMail && (editMailValidate===false)}
+                                                            class:rf-fi-alert-line={editMailValidate===false}
                                                         >
                                                             &nbsp;
                                                         </span>
@@ -297,12 +297,12 @@
                                                         class="rf-input rf-margin-top-0"
                                                         style="width: 100%; max-width: 240px;"
                                                         bind:value={editMail}
-                                                        on:focus={() => { editMail = undefined }}
-                                                        on:blur={() => {
-                                                            if (/^\S+\@\S+\.\S+$/.test(editMail)) {
-                                                                editMailValidate = true
-                                                            }
+                                                        on:input={() => editMailValidate = undefined}
+                                                        on:focus={() => {
+                                                            editMail = undefined;
+                                                            editMailValidate = undefined;
                                                         }}
+                                                        on:blur={simpleLogin}
                                                     >
                                                 </div>
                                             </div>
@@ -359,7 +359,7 @@
 
 <script>
     import { fade, slide } from 'svelte/transition';
-    import { accessToken, alphaFeatures, route, dataGouvCatalog, displayMode, searchInput, activeElement } from '../tools/stores.js';
+    import { user, accessToken, alphaFeatures, route, dataGouvCatalog, displayMode, searchInput, activeElement } from '../tools/stores.js';
     import Icon from './Icon.svelte';
     import md5 from 'md5';
     import axios from 'axios';
@@ -386,7 +386,40 @@
     let editSuccess;
     let expand = forceExpand || ($displayMode === 'card-expand');
 
+    const simpleLogin = () => {
+        if (/^\S+\@\S+\.\S+$/.test(editMail)) {
+            if (!$accessToken) {
+                fetch('__BACKEND_PROXY_PATH__/auth', {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ user: editMail })
+                }).then((response) => {
+                    if (response.status === 401) {
+                        editMailValidate = false
+                        $accessToken = '';
+                        $user = '';
+                        return;
+                    }
+                    return response.json().then((json) => {
+                        $accessToken = json.access_token;
+                        $user = editMail;
+                        editMailValidate = true
+                    });
+                })
+            } else {
+                editMailValidate = true;
+            }
+        } else {
+            editMailValidate = false;
+        }
+    }
+
     $: expand = forceExpand || ($displayMode === 'card-expand');
+
+    $: if ($accessToken === '') { editMailValidate = undefined; };
 
     $: editValidate = ((editFile || editUrlValidate) && (Object.keys(editValue).length));
 
