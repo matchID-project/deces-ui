@@ -232,7 +232,30 @@
                                             </p>
                                         {/if}
                                     </div>
-                                    {#if ($alphaFeatures && !edit)}
+                                    {#if ($alphaFeatures && admin && result.modifications)}
+                                        <div class="rf-col-12 rf-text--center" transition:fade>
+                                            <button
+                                                class="rf-btn rf-padding-right-2N"
+                                                title="Valider la correction"
+                                                on:click|preventDefault={() => {
+                                                    const updates = {}
+                                                    result.modifications.forEach(m => {
+                                                        updates[m.id] = true
+                                                    })
+                                                    updateRecord(updates);
+                                                }}
+                                            >
+                                                    Valider la correction
+                                                    &nbsp;
+                                                    <Icon
+                                                        icon={(editSuccess === true ? 'ri:check-line' :
+                                                                (editSuccess === false ? 'ri:alert-line' : 'ri:send-plane-line'))}
+                                                        class="rf-fi--md"
+                                                        spin={editUpdating}
+                                                    />
+                                            </button>
+                                        </div>
+                                    {:else if ($alphaFeatures && !edit)}
                                         <div class="rf-col-12 rf-text--center" transition:fade>
                                             <button
                                                 class="rf-btn rf-btn--secondary rf-padding-right-2N"
