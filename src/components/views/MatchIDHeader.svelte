@@ -162,9 +162,10 @@
                             >
                                 <a
                                     href="/login"
+                                    title="S'identifier"
                                     class="rf-link rf-href rf-fi-question-line rf-link--icon-left"
                                 >
-                                    S'identifier
+                                    <Icon icon={$accessToken ? 'ri:user-follow-line' : 'ri:user-line'}/>
                                 </a>
                             </li>
                         {/if}
@@ -292,9 +293,10 @@
                             >
                                 <a
                                     href="/login"
+                                    title="S'identifier"
                                     class="rf-link rf-href rf-fi-question-line rf-link--icon-left"
                                 >
-                                    S'identifier
+                                    <Icon icon={$accessToken ? 'ri:user-follow-line' : 'ri:user-line'}/>
                                 </a>
                             </li>
                         {/if}
@@ -307,7 +309,7 @@
 <Login bind:show={showLogin}/>
 
 <script>
-    import { alphaFeatures, firstSearch, themeDnum, advancedSearch, displayMode, wasSearched, activeElement } from '../tools/stores.js';
+    import { accessToken, alphaFeatures, firstSearch, themeDnum, advancedSearch, displayMode, wasSearched, activeElement } from '../tools/stores.js';
     import Icon from './Icon.svelte';
     import SearchBox from './SearchBox.svelte';
     import Login from './Login.svelte';

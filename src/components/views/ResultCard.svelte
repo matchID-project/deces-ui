@@ -399,7 +399,7 @@
                                                             </p>
                                                         {:else if (editMailValidate === false)}
                                                             <p class="rf-error-text">
-                                                                Le code d'accès n'est pas valider<br>
+                                                                Le code d'accès n'est pas valide<br>
                                                                 Veuillez réessayer
                                                             </p>
                                                         {/if}

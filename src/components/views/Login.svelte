@@ -50,8 +50,22 @@
                                                         type="email"
                                                         class="rf-input"
                                                         on:input={() => {authError = false}}
-                                                        bind:value={$user}
+                                                        bind:value={id}
+                                                        on:focus={() => {
+                                                            validId = undefined;
+                                                            codeSent = undefined;
+                                                        }}
+                                                        on:blur={register}
                                                     >
+                                                    {#if ((id) && (validId === false))}
+                                                        <p class="rf-error-text">
+                                                            Le courriel fourni n'est pas valide.
+                                                        </p>
+                                                    {:else if codeSent}
+                                                        <p class="rf-valid-text">
+                                                            Un code vous a été envoyé à l'adresse indiquée
+                                                        </p>
+                                                    {/if}
                                                 </div>
                                                 <div class="rf-input-group rf-margin-top-1N" class:rf-input-group--error={authError}>
                                                     <label
@@ -59,18 +73,32 @@
                                                         for="token"
                                                         style="overflow:hidden;text-overflow:ellipsis;position: relative"
                                                     >
-                                                        Mot de passe
+                                                        {isAdmin ?  "Mot de pass" : "Code"}
                                                     </label>
-                                                    <input
-                                                        id="token"
-                                                        type="password"
-                                                        class="rf-input"
-                                                        on:input={() => {authError = false}}
-                                                        bind:value={authPassword}
-                                                    >
+                                                    {#if isAdmin}
+                                                        <input
+                                                            id="token"
+                                                            type="password"
+                                                            class="rf-input"
+                                                            on:input={() => {authError = false}}
+                                                            bind:value={authPassword}
+                                                        >
+                                                    {:else}
+                                                        <input
+                                                            id="token"
+                                                            type="text"
+                                                            maxlength="6"
+                                                            class="rf-input"
+                                                            on:input={() => {
+                                                                authPassword = authPassword.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1').replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');
+                                                                authError = false;
+                                                            }}
+                                                            bind:value={authPassword}
+                                                        >
+                                                    {/if}
                                                     {#if authError}
                                                         <p id="text-input-error-desc-error" class="rf-error-text">
-                                                            Mauvais courriel ou mot de passe
+                                                            Mauvais courriel ou code d'accès
                                                         </p>
                                                     {/if}
                                                 </div>
@@ -86,14 +114,18 @@
                                         {:else}
                                             <div style="width:100%;text-align:center;" transition:slide>
                                                 <p>
-                                                    <strong>Connecté avec succès</strong>
+                                                    <strong>Connecté en tant que {$user}</strong>
                                                 </p>
                                                 <button
                                                     class="rf-btn rf-padding-right-2N"
                                                     on:click|preventDefault={() => {
                                                         authPassword = '';
                                                         authError = false;
+                                                        id = '';
+                                                        validId = undefined;
                                                         $accessToken = '';
+                                                        $user = '';
+                                                        codeSent = '';
                                                     }}
                                                 >
                                                     Se déconnecter
@@ -126,6 +158,40 @@ import Icon from './Icon.svelte'
 let authPassword = '';
 let authError = false;
 export let show;
+let id;
+let codeSent;
+let validId;
+$: id = $user;
+$: isAdmin = ($user === '__BACKEND_TOKEN_USER__')
+
+const register = () => {
+    if (id === '__BACKEND_TOKEN_USER__') {
+        $user = id;
+        return
+    }
+    if (/^\S+\@\S+\.\S+$/.test(id)) {
+        validId = true;
+        fetch('__BACKEND_PROXY_PATH__/register', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ user: id })
+        }).then((response) => {
+            if (response.status === 422) {
+                codeSent = false
+                return;
+            }
+            return response.json().then((json) => {
+                codeSent = true;
+                $user = id;
+            });
+        })
+    } else {
+        validId = false;
+    }
+}
 
 const login = () => {
     fetch('__BACKEND_PROXY_PATH__/auth', {
