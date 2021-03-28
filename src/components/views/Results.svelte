@@ -18,7 +18,7 @@
                 <p class="rf-text--left rf-padding-left-2N rf-padding-right-2N">
                     {@html $searchResults[0].status === 429
                         ? "Le service étant fortement sollicité, votre requête est temporisée. Veuillez réessayer dans quelques secondes. Si le problème persiste, vous devrez revenir ultérieurement."
-                        : "Le service est indisponible. Veuillez réessayer dans quelques minutes. Si l'erreur perdure, veuillez nous contacter matchid-project@gmail.com"
+                        : "Le service est indisponible. Veuillez réessayer dans quelques minutes. Si l'erreur perdure, veuillez nous contacter __API_EMAIL__"
                     }
                 </p>
             </div>

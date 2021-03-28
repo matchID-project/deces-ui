@@ -37,7 +37,7 @@
         <p class="rf-text--left rf-padding-left-2N rf-padding-right-2N">
             { unavailable.status === 429
                 ? "Le service étant fortement sollicité, votre requête est temporisée quelques secondes... Si le problème persiste, vous devrez revenir ultérieurement."
-                : "Le service est indisponible. Veuillez réessayer dans quelques minutes. Si l'erreur perdure, veuillez nous contacter matchid-project@gmail.com"
+                : "Le service est indisponible. Veuillez réessayer dans quelques minutes. Si l'erreur perdure, veuillez nous contacter __API_EMAIL__"
             }
             {#if unavailable.status === 429}
               <Icon icon="ri:loader-line" class="rf-fi--xxl rf-margin-top-1N" spin center/>
