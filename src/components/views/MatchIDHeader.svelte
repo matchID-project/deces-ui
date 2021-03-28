@@ -165,7 +165,7 @@
                                     title="S'identifier"
                                     class="rf-link rf-href rf-fi-question-line rf-link--icon-left"
                                 >
-                                    <Icon icon={$accessToken ? 'ri:user-follow-line' : 'ri:user-line'}/>
+                                    <Icon icon={$accessToken ? 'ri:user-follow-line' : 'ri:user-line'} circleText={($user === '__BACKEND_TOKEN_USER__') && $user} zoom/>
                                 </a>
                             </li>
                         {/if}
@@ -296,7 +296,7 @@
                                     title="S'identifier"
                                     class="rf-link rf-href rf-fi-question-line rf-link--icon-left"
                                 >
-                                    <Icon icon={$accessToken ? 'ri:user-follow-line' : 'ri:user-line'}/>
+                                    <Icon icon={$accessToken ? 'ri:user-follow-line' : 'ri:user-line'} circleText={($user === '__BACKEND_TOKEN_USER__') && $user} zoom/>
                                 </a>
                             </li>
                         {/if}
@@ -309,7 +309,7 @@
 <Login bind:show={showLogin}/>
 
 <script>
-    import { accessToken, alphaFeatures, firstSearch, themeDnum, advancedSearch, displayMode, wasSearched, activeElement } from '../tools/stores.js';
+    import { user, accessToken, alphaFeatures, firstSearch, themeDnum, advancedSearch, displayMode, wasSearched, activeElement } from '../tools/stores.js';
     import Icon from './Icon.svelte';
     import SearchBox from './SearchBox.svelte';
     import Login from './Login.svelte';

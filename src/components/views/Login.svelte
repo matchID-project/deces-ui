@@ -73,7 +73,7 @@
                                                         for="token"
                                                         style="overflow:hidden;text-overflow:ellipsis;position: relative"
                                                     >
-                                                        {isAdmin ?  "Mot de pass" : "Code"}
+                                                        {isAdmin ?  "Mot de passe" : "Code"}
                                                     </label>
                                                     {#if isAdmin}
                                                         <input
@@ -162,11 +162,10 @@ let id;
 let codeSent;
 let validId;
 $: id = $user;
-$: isAdmin = ($user === '__BACKEND_TOKEN_USER__')
+$: isAdmin = (id === '__BACKEND_TOKEN_USER__')
 
 const register = () => {
     if (id === '__BACKEND_TOKEN_USER__') {
-        $user = id;
         return
     }
     if (/^\S+\@\S+\.\S+$/.test(id)) {
@@ -185,7 +184,6 @@ const register = () => {
             }
             return response.json().then((json) => {
                 codeSent = true;
-                $user = id;
             });
         })
     } else {
@@ -200,16 +198,18 @@ const login = () => {
             'Accept': 'application/json',
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ user: $user, password: authPassword})
+        body: JSON.stringify({ user: id, password: authPassword})
     }).then((response) => {
         if (response.status === 401) {
             authError = true;
             $accessToken = '';
+            $user = '';
             return;
         }
         return response.json().then((json) => {
             authError = false;
             $accessToken = json.access_token;
+            $user = id;
         });
     })
 }
