@@ -61,28 +61,4 @@
 
 <style>
 
-    .progress.is-info::-moz-progress-bar {
-        background-color: var(--bf500);
-    }
-
-    .progress::-moz-progress-bar {
-        background-color: var(--g500);
-    }
-
-    .progress.is-info::-webkit-progress-value {
-        background-color: var(--bf500);
-    }
-
-    .progress {
-        -moz-appearance: none;
-        -webkit-appearance: none;
-        border: none;
-        border-radius: 290486px;
-        display: block;
-        height: 1rem;
-        overflow: hidden;
-        padding: 0;
-        width: 100%;
-    }
-
 </style>
