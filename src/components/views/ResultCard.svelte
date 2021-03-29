@@ -114,7 +114,7 @@
                             <div class="rf-container-fluid">
                                 <div class="rf-grid-row">
                                     {#if result.modifications}
-                                        {#if (!admin && (modificationsValidated || modificationsWaiting))}
+                                        {#if ($alphaFeatures && (!admin && (modificationsValidated || modificationsWaiting)))}
                                             <div class="rf-col-12 rf-text--center rf-margin-top-0">
                                                 <p>
                                                     <strong>
@@ -130,6 +130,7 @@
                                                             href={modifications[modificationsCurrent].proof}
                                                             target="_blank"
                                                             class="rf-link"
+                                                            on:click|preventDefault={() => $showPdf = modifications[modificationsCurrent].proof}
                                                         >
                                                             Preuve associée
                                                         </a>
@@ -149,6 +150,7 @@
                                                         href={modifications[modificationsCurrent].proof}
                                                         target="_blank"
                                                         class="rf-link"
+                                                        on:click|preventDefault={() => $showPdf = modifications[modificationsCurrent].proof}
                                                     >
                                                         Preuve associée
                                                     </a>
@@ -556,7 +558,7 @@
 
 <script>
     import { fade, slide } from 'svelte/transition';
-    import { user, accessToken, alphaFeatures, route, dataGouvCatalog, displayMode, searchInput, activeElement } from '../tools/stores.js';
+    import { showPdf, user, accessToken, alphaFeatures, route, dataGouvCatalog, displayMode, searchInput, activeElement } from '../tools/stores.js';
     import Icon from './Icon.svelte';
     import md5 from 'md5';
     import axios from 'axios';
@@ -605,7 +607,10 @@
         modificationsRejected = result.modifications.filter(m => m.auth < 0).length;
         modificationsWaiting = result.modifications.filter(m => m.auth === 0).length;
         if (admin) {
-            modifications = result.modifications.slice();
+            modifications = result.modifications.slice().map(m => {
+                m.proof = `__BACKEND_PROXY_PATH__/updates/proof/${result.id}-${m.id}`;
+                return m;
+            });
             modificationsCurrent = modificationsNumber - 1;
             result.modifications.slice().reverse().forEach((m, i) => {
                 if (m.auth === 0) { modificationsCurrent = modificationsNumber - i - 1; }
@@ -613,13 +618,15 @@
         } else {
             // for enduser consolidate sum of every validated modif
             const fields = {};
+            let proof;
             result.modifications
                 .forEach(m => {
                     if (m.auth>0) {
                         Object.keys(m.fields).forEach(k => fields[k] = m.fields[k]);
+                        proof = `__BACKEND_PROXY_PATH__/updates/proof/${result.id}-${m.id}`;
                     }
                 });
-            modifications = [{fields: fields}];
+            modifications = [{fields: fields, proof: proof}];
             modificationsCurrent = 0;
         }
     };
@@ -627,7 +634,6 @@
     $: if ($user) { editMail = $user;}
 
     $: admin = ($user === '__BACKEND_TOKEN_USER__') && $accessToken
-
 
     const register = () => {
         if (/^\S+\@\S+\.\S+$/.test(editMail)) {

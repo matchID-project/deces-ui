@@ -508,3 +508,5 @@ export const alphaFeatures = writable(false);
 export const accessToken = writable('');
 
 export const user = writable('');
+
+export const showPdf = writable(undefined);
