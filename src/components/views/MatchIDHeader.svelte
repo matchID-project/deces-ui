@@ -159,13 +159,15 @@
                                 class="rf-nav__item"
                                 on:click|preventDefault={() => showLogin = !showLogin}
                                 class:rf-nav__item--active={showLogin}
+                                on:mouseenter={() => {zoom = true}}
+                                on:mouseleave={() => {zoom = false}}
                             >
                                 <a
                                     href="/login"
                                     title="S'identifier"
                                     class="rf-link rf-href rf-fi-question-line rf-link--icon-left"
                                 >
-                                    <Icon icon={$accessToken ? 'ri:user-follow-line' : 'ri:user-line'} circleText={($user === '__BACKEND_TOKEN_USER__') && $user} zoom/>
+                                    <Icon icon={$accessToken ? 'ri:user-follow-line' : 'ri:user-line'} circleText={($user === '__BACKEND_TOKEN_USER__') && $user} zoom={zoom}/>
                                 </a>
                             </li>
                         {/if}
@@ -290,13 +292,15 @@
                                 class="rf-nav__item"
                                 on:click|preventDefault={() => showLogin = !showLogin}
                                 class:rf-nav__item--active={showLogin}
+                                on:mouseenter={() => {zoom = true}}
+                                on:mouseleave={() => {zoom = false}}
                             >
                                 <a
                                     href="/login"
                                     title="S'identifier"
                                     class="rf-link rf-href rf-fi-question-line rf-link--icon-left"
                                 >
-                                    <Icon icon={$accessToken ? 'ri:user-follow-line' : 'ri:user-line'} circleText={($user === '__BACKEND_TOKEN_USER__') && $user} zoom/>
+                                    <Icon icon={$accessToken ? 'ri:user-follow-line' : 'ri:user-line'} circleText={($user === '__BACKEND_TOKEN_USER__') && $user} zoom={zoom}/>
                                 </a>
                             </li>
                         {/if}
@@ -330,6 +334,7 @@
     let viewOptions;
     let viewOptionsActive;
     let searchMenu;
+    let zoom;
 
     $: modal = showLogin;
 

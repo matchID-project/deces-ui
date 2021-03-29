@@ -1,9 +1,9 @@
 {#if icon}
   <div
     class={classes}
-    class:center={center}
     class:zoom={zoom}
-    class:zoomed={zoomed}
+    class:zoomed={zoom}
+    class:center={center}
     on:mouseenter={() => zoomed = zoom}
     on:mouseleave={() => zoomed = false}
   >
@@ -21,7 +21,7 @@
         {@html icons[icon] || icons['ri:alert-line']}
       {/if}
       {#if circleText}
-        <div style="width:3rem;height:3rem;position:absolute;z-index:9999;top:-0.75rem;left:-0.75rem;">
+        <div style="width:3rem;height:3rem;position:absolute;top:-0.75rem;left:-0.75rem;">
           <IconDecorator text={circleText}/>
         </div>
       {/if}
@@ -39,7 +39,6 @@
   export let label = undefined;
   export let circleText = undefined;
   export let zoom = undefined;
-  let zoomed = false;
 
   $: classes = `rf-fi--icon center ${$$props.class ? $$props.class : ""}`;
 
