@@ -113,6 +113,83 @@
                             </span>
                             <div class="rf-container-fluid">
                                 <div class="rf-grid-row">
+                                    {#if result.modifications}
+                                        {#if (!admin && (modificationsValidated || modificationsWaiting))}
+                                            <div class="rf-col-12 rf-text--center rf-margin-top-0">
+                                                <p>
+                                                    <strong>
+                                                        {#if modificationsValidated}
+                                                            Cette fiche a fait l'objet d'un signalement d'erreur.
+                                                        {:else if modificationsWaiting}
+                                                            Cette fiche a fait l'objet d'un signalement d'erreur, en cours de validation
+                                                            par un administrateur.
+                                                        {/if}
+                                                    </strong>
+                                                    {#if modificationsValidated}
+                                                        <a
+                                                            href={modifications[modificationsCurrent].proof}
+                                                            target="_blank"
+                                                            class="rf-link"
+                                                        >
+                                                            Preuve associée
+                                                        </a>
+                                                    {/if}
+                                                </p>
+                                            </div>
+                                        {:else if admin}
+                                            <div class="rf-col-12 rf-text--center rf-margin-top-0">
+                                                <p>
+                                                    <strong>
+                                                        Cette fiche a fait l'objet de {modificationsNumber} demande de modifications.
+                                                        {modificationsValidated} ont déjà été accetpées, {modificationsWaiting} en attente, {modificationsRejected} rejetées.
+                                                    </strong>
+                                                <br>
+                                                    proposition courrante de {modifications[modificationsCurrent].author} à {modifications[modificationsCurrent].date}
+                                                    <a
+                                                        href={modifications[modificationsCurrent].proof}
+                                                        target="_blank"
+                                                        class="rf-link"
+                                                    >
+                                                        Preuve associée
+                                                    </a>
+                                                <br>
+                                                <button
+                                                    class="rf-btn rf-padding-right-2N"
+                                                    class:rf-btn--reject={modifications[modificationsCurrent].auth === -1}
+                                                    class:rf-btn--secondary={modifications[modificationsCurrent].auth !== -1}
+                                                    title="Rejeter"
+                                                    on:click|preventDefault={() => {
+                                                        modifications[modificationsCurrent].auth = -1;
+                                                        blur();
+                                                    }}
+                                                >
+                                                        Rejeter
+                                                        &nbsp;
+                                                        <Icon
+                                                            icon='ri:close-line'
+                                                            class="rf-fi--md"
+                                                        />
+                                                </button>
+                                                <button
+                                                    class="rf-btn rf-padding-right-2N"
+                                                    class:rf-btn--valid={modifications[modificationsCurrent].auth === 1}
+                                                    class:rf-btn--secondary={modifications[modificationsCurrent].auth !== 1}
+                                                    on:click|preventDefault={() => {
+                                                        modifications[modificationsCurrent].auth = 1;
+                                                        blur();
+                                                    }}
+                                                >
+                                                        Valider
+                                                        &nbsp;
+                                                        <Icon
+                                                            icon='ri:check-line'
+                                                            class="rf-fi--md"
+                                                        />
+                                                </button>
+                                                </p>
+                                            </div>
+                                        {/if}
+                                    {/if}
                                     {#if edit}
                                         <div class="rf-col-12 rf-text--center" transition:slide>
                                             <p>
@@ -167,10 +244,10 @@
                                                                                     {@html `<strike>${field.cb ? field.cb(field.value) : field.value}</strike> ${field.update.map(updateField => editValue[updateField]).join()}`}
                                                                                 </span>
                                                                             {:else}
-                                                                                {#if (result.modifications && field.update && field.update
-                                                                                    .some(updateField => result.modifications[result.modifications.length-1].fields[updateField]))}
+                                                                                {#if (modifications && field.update && field.update
+                                                                                    .some(updateField => modifications[modificationsCurrent].fields[updateField]))}
                                                                                     <span class="rf-color--rm">
-                                                                                        {@html `<strike>${field.cb ? field.cb(field.value) : field.value}</strike> ${field.update.map(updateField => result.modifications[result.modifications.length-1].fields[updateField]).join()}`}
+                                                                                        {@html `<strike>${field.cb ? field.cb(field.value) : field.value}</strike> ${field.update.map(updateField => modifications[modificationsCurrent].fields[updateField]).join()}`}
                                                                                     </span>
                                                                                 {:else}
                                                                                     {@html field.cb ? field.cb(field.value) : field.value }
@@ -186,22 +263,6 @@
                                             </table>
                                         </div>
                                     {/each}
-                                    {#if result.modifications}
-                                            <div class="rf-col-12 rf-text--center rf-padding-top-1N">
-                                                <p>
-                                                    <strong>
-                                                        Cette fiche a fait l'objet d'un signalement d'erreur.
-                                                    </strong>
-                                                    <a
-                                                        href={result.modifications[result.modifications.length-1].proof}
-                                                        target="_blank"
-                                                        class="rf-link"
-                                                    >
-                                                        Acte associé
-                                                    </a>
-                                                </p>
-                                            </div>
-                                    {/if}
                                     {#if (result.links && Object.keys(result.links).length)}
                                         {#each wikilinks as key}
                                             <div class="rf-col-xs-12 rf-col-sm-12 rf-col-md-{wikilinks.length === 2 ? 6 : 12} rf-col-lg-{wikilinks.length === 2 ? 6 : 12} rf-col-xl-{wikilinks.length === 2 ? 6 : 12} rf-text--center rf-padding-top-1N">
@@ -236,19 +297,50 @@
                                         {/if}
                                     </div>
                                     {#if ($alphaFeatures && admin && result.modifications)}
+                                        <div class="rf-col-12 rf-text--center rf-margin-top-0">
+                                            <div class="rf-grid-row" style="justify-content: center;">
+                                                <div class="rf-pagination">
+                                                    <ul class="rf-pagination__list rf-text--xs">
+                                                        {#each modifications as m, i}
+                                                            <li
+                                                                class="rf-href rf-pagination__item rf-pagination__item--from-md"
+                                                                title="modification {i}"
+                                                                on:click|preventDefault={() => {
+                                                                    modificationsCurrent = i;
+                                                                    blur();
+                                                                }}
+                                                                class:rf-pagination__item--valid={(modificationsCurrent !== i) && (m.auth> 0)}
+                                                                class:rf-pagination__item--reject={(modificationsCurrent !== i) && (m.auth < 0)}
+                                                                class:rf-pagination__item--active={modificationsCurrent === i}
+                                                            >
+                                                                <a
+                                                                    class="rf-pagination__link"
+                                                                    href={i}
+                                                                    aria-label="modification {i}"
+                                                                >
+                                                                    {i}
+                                                                </a>
+                                                            </li>
+                                                        {/each}
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
                                         <div class="rf-col-12 rf-text--center" transition:fade>
                                             <button
                                                 class="rf-btn rf-padding-right-2N"
-                                                title="Valider la correction"
+                                                title="Transmettre les validations"
                                                 on:click|preventDefault={() => {
                                                     const updates = {}
-                                                    result.modifications.forEach(m => {
-                                                        updates[m.id] = true
+                                                    modifications.forEach(m => {
+                                                        if (m.auth) {
+                                                            updates[m.id] = (m.auth > 0)
+                                                        }
                                                     })
                                                     updateRecord(updates);
                                                 }}
                                             >
-                                                    Valider la correction
+                                                    Transmettre les validations
                                                     &nbsp;
                                                     <Icon
                                                         icon={(editSuccess === true ? 'ri:check-line' :
@@ -262,8 +354,9 @@
                                         <div class="rf-col-12 rf-text--center" transition:fade>
                                             <button
                                                 class="rf-btn rf-btn--secondary rf-padding-right-2N"
-                                                title="Proposer une correction"
+                                                title={modificationsWaiting ? "Une modification est déjà en attende de validation" : "Proposer une correction"}
                                                 on:click|preventDefault={toggleEdit}
+                                                disabled={modificationsWaiting}
                                             >
                                                     Proposer une correction
                                                     &nbsp;<Icon icon='ri:edit-line' class="rf-fi--md"/>
@@ -490,8 +583,46 @@
     let editValidate;
     let editUpdating;
     let editSuccess;
+    let modifications = [];
+    let modificationsCurrent = 0;
+    let modificationsRejected;
+    let modificationsValidated;
+    let modificationsWaiting;
+    let modificationsNumber;
     let expand = forceExpand || ($displayMode === 'card-expand');
     let admin = false;
+
+    const blur = () => {
+        activeElement.update(v => {
+            v && v.blur();
+            return undefined;
+        });
+    }
+
+    $: if (result.modifications) {
+        modificationsNumber = result.modifications.length;
+        modificationsValidated = result.modifications.filter(m => m.auth > 0).length;
+        modificationsRejected = result.modifications.filter(m => m.auth < 0).length;
+        modificationsWaiting = result.modifications.filter(m => m.auth === 0).length;
+        if (admin) {
+            modifications = result.modifications.slice();
+            modificationsCurrent = modificationsNumber - 1;
+            result.modifications.slice().reverse().forEach((m, i) => {
+                if (m.auth === 0) { modificationsCurrent = modificationsNumber - i - 1; }
+            });
+        } else {
+            // for enduser consolidate sum of every validated modif
+            const fields = {};
+            result.modifications
+                .forEach(m => {
+                    if (m.auth>0) {
+                        Object.keys(m.fields).forEach(k => fields[k] = m.fields[k]);
+                    }
+                });
+            modifications = [{fields: fields}];
+            modificationsCurrent = 0;
+        }
+    };
 
     $: if ($user) { editMail = $user;}
 
@@ -629,10 +760,7 @@
         input.onchange = ev => {
             editFile = ev.target.files[0];
         }
-        activeElement.update(v => {
-            v && v.blur();
-            return undefined;
-        });
+        blur();
         input.click();
     }
 
@@ -689,18 +817,12 @@
 
     const toggleEdit = () => {
         edit = !edit;
-        activeElement.update(v => {
-            v && v.blur();
-            return undefined;
-        });
+        blur();
     }
 
     const toggleExpand = () => {
         expand = !expand;
-        activeElement.update(v => {
-            v && v.blur();
-            return undefined;
-        });
+        blur();
     }
 
     const link = (result) => {
@@ -710,10 +832,7 @@
     const copyLink = (result) => {
         navigator.clipboard.writeText(link(result));
         linkCopied = true;
-        activeElement.update(v => {
-            v && v.blur();
-            return undefined;
-        });
+        blur();
         setTimeout(() => linkCopied = false, 5000)
     }
 
@@ -750,5 +869,6 @@
 </script>
 
 <style>
+
 
 </style>
