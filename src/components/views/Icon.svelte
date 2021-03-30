@@ -4,8 +4,6 @@
     class:zoom={zoom}
     class:zoomed={zoom}
     class:center={center}
-    on:mouseenter={() => zoomed = zoom}
-    on:mouseleave={() => zoomed = false}
   >
     <div
       class={classes}

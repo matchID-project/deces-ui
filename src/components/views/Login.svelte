@@ -164,6 +164,32 @@ let validId;
 $: id = $user;
 $: isAdmin = (id === '__BACKEND_TOKEN_USER__')
 
+
+$: if ($accessToken) { checkJwt() };
+
+const checkJwt = async () => {
+    while($accessToken) {
+        try {
+            const response = await fetch('__BACKEND_PROXY_PATH__/auth',
+                {
+                    method: 'GET',
+                    headers: { Authorization: `Bearer ${$accessToken}` }
+                });
+            if (response.status === 422) {
+                $accessToken = '';
+            }
+            await sleep(60000);
+        } catch(e) {
+            $accessToken = '';
+        }
+    }
+};
+
+const sleep = (ms) => {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+
 const register = () => {
     if (id === '__BACKEND_TOKEN_USER__') {
         return
