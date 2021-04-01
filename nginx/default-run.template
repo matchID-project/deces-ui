@@ -43,7 +43,7 @@ server {
     proxy_http_version 1.1;
   }
 
-  location ~ "^<BACKEND_PROXY_PATH>/(search|version|healthcheck|queue(/.*)?|id/.*|docs(/.*)?)$" {
+  location ~ "^<BACKEND_PROXY_PATH>/search$" {
     add_header Access-Control-Allow-Origin '$http_origin';
     limit_req zone=search burst=<API_SEARCH_USER_BURST>;
     limit_req zone=search_global burst=<API_SEARCH_GLOBAL_BURST>;
@@ -51,8 +51,6 @@ server {
     proxy_pass http://backend;
     proxy_read_timeout <API_READ_TIMEOUT>;
     proxy_send_timeout <API_SEND_TIMEOUT>;
-    # Allow large uploads
-    client_max_body_size <API_MAX_BODY>;
     # Allow protocol upgrade to websocket
     proxy_http_version 1.1;
     proxy_next_upstream off;
@@ -71,8 +69,6 @@ server {
     proxy_pass http://backend;
     proxy_read_timeout <API_READ_TIMEOUT>;
     proxy_send_timeout <API_SEND_TIMEOUT>;
-    # Allow large uploads
-    client_max_body_size <API_MAX_BODY>;
     # Allow protocol upgrade to websocket
     proxy_http_version 1.1;
     proxy_next_upstream off;
@@ -102,10 +98,10 @@ server {
     proxy_set_header Connection "upgrade";
   }
 
-  location ~ "^<BACKEND_PROXY_PATH>/search/(csv|json)/.*$" {
+  location ~ "^<BACKEND_PROXY_PATH>/(version|search/(csv|json)/.*|updates(/.*)?|id/.*|docs(/.*)?|auth(/confirm)?|register|healthcheck|queue(/.*)?)$" {
     add_header Access-Control-Allow-Origin '$http_origin';
-    limit_req zone=bulk_result burst=<API_BULK_RESULT_USER_BURST>;
-    limit_req zone=bulk_result_global burst=<API_BULK_RESULT_GLOBAL_BURST>;
+    limit_req zone=api_misc burst=<API_MISC_USER_BURST>;
+    limit_req zone=api_misc_global burst=<API_MISC_GLOBAL_BURST>;
     limit_req_status 429;
     proxy_pass http://backend;
     proxy_read_timeout <API_READ_TIMEOUT>;
@@ -121,5 +117,4 @@ server {
     proxy_set_header Upgrade $http_upgrade;
     proxy_set_header Connection "upgrade";
   }
-
 }
