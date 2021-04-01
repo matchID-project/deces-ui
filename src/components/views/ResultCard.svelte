@@ -217,11 +217,15 @@
                                                                 <td width="10rem">{ field.label }</td>
                                                                 <td
                                                                     on:mouseenter={() => {
-                                                                        editInput[field.update.join()]  = edit;
+                                                                        if (field.update) {
+                                                                            editInput[field.update.join()]  = edit;
+                                                                        }
                                                                         if (edit) { setInputValue(field) };
                                                                     }}
                                                                     on:mouseleave={() => {
-                                                                        editInput[field.update.join()]  = false;
+                                                                        if (field.update) {
+                                                                            editInput[field.update.join()]  = false;
+                                                                        }
                                                                         if (edit) { updateEditValue(field);}
                                                                     }}
                                                                     style={((field.editable!==false)&&editInput[field.update.join()] ) ? 'padding:0;' : ''}
