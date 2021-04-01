@@ -1,21 +1,21 @@
-{#if $showPdf}
+{#if $showProof}
     <div class="modal" transition:fade>
         <div class="modal-container">
             <div class="rf-container--fluid">
                 <div class="rf-grid-row" style="position:relative">
                     <div
                         style="position:absolute;top:8px;right:4px;color:var(--g300);"
-                        on:click={() => $showPdf = ''}
+                        on:click={() => $showProof = ''}
                     >
                         <span class="rf-fi-close-circle-line rf-fi--lg"></span>
                     </div>
                     <div class="rf-col-12" style="height:95vh;">
                         <object
                             class="pdf"
-                            data={$showPdf}
+                            data={$showProof}
                             type="application/pdf"
-                            title="Visualisateur PDF"
-                            aria-label="Visualisateur PDF"
+                            title="Visualisateur"
+                            aria-label="Visualisateur"
                         />
                     </div>
                 </div>
@@ -26,7 +26,8 @@
 
 <script>
 import { fade } from 'svelte/transition';
-import { showPdf } from '../tools/stores.js';
+import { showProof } from '../tools/stores.js';
+
 </script>
 
 <style>

@@ -311,14 +311,14 @@
     </div>
 </header>
 <Login bind:show={showLogin}/>
-<PdfViewer/>
+<ProofViewer/>
 
 <script>
-    import { showPdf, user, accessToken, alphaFeatures, firstSearch, themeDnum, advancedSearch, displayMode, wasSearched, activeElement } from '../tools/stores.js';
+    import { showProof, user, accessToken, alphaFeatures, firstSearch, themeDnum, advancedSearch, displayMode, wasSearched, activeElement } from '../tools/stores.js';
     import Icon from './Icon.svelte';
     import SearchBox from './SearchBox.svelte';
     import Login from './Login.svelte';
-    import PdfViewer from './PdfViewer.svelte';
+    import ProofViewer from './ProofViewer.svelte';
     import { toggleAdvancedSearch, enableDisplayMode } from '../tools/search.js';
     import { goTo } from '../tools/routes.js';
     import { route } from '../tools/stores.js';

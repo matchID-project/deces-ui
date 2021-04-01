@@ -509,4 +509,4 @@ export const accessToken = writable('');
 
 export const user = writable('');
 
-export const showPdf = writable(undefined);
+export const showProof = writable(undefined);

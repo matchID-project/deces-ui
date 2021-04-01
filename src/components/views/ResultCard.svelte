@@ -130,7 +130,7 @@
                                                             href={modifications[modificationsCurrent].proof}
                                                             target="_blank"
                                                             class="rf-link"
-                                                            on:click|preventDefault={() => $showPdf = modifications[modificationsCurrent].proof}
+                                                            on:click|preventDefault={() => $showProof = modifications[modificationsCurrent].proof}
                                                         >
                                                             Preuve associée
                                                         </a>
@@ -150,7 +150,7 @@
                                                         href={modifications[modificationsCurrent].proof}
                                                         target="_blank"
                                                         class="rf-link"
-                                                        on:click|preventDefault={() => $showPdf = modifications[modificationsCurrent].proof}
+                                                        on:click|preventDefault={() => $showProof = modifications[modificationsCurrent].proof}
                                                     >
                                                         Preuve associée
                                                     </a>
@@ -558,7 +558,7 @@
 
 <script>
     import { fade, slide } from 'svelte/transition';
-    import { showPdf, user, accessToken, alphaFeatures, route, dataGouvCatalog, displayMode, searchInput, activeElement } from '../tools/stores.js';
+    import { showProof, user, accessToken, alphaFeatures, route, dataGouvCatalog, displayMode, searchInput, activeElement } from '../tools/stores.js';
     import Icon from './Icon.svelte';
     import md5 from 'md5';
     import axios from 'axios';
@@ -731,6 +731,8 @@
         });
         if (editFile) {
             formData.append('proof', editFile);
+        } else {
+            formData.append('proof', editUrl);
         }
         editUpdating = true;
         try {
