@@ -246,7 +246,7 @@
                                                                                     {@html `<strike>${field.cb ? field.cb(field.value) : field.value}</strike> ${field.update.map(updateField => editValue[updateField]).join()}`}
                                                                                 </span>
                                                                             {:else}
-                                                                                {#if (modifications && field.update && field.update
+                                                                                {#if (modifications && modifications[modificationsCurrent] && field.update && field.update
                                                                                     .some(updateField => modifications[modificationsCurrent].fields[updateField]))}
                                                                                     <span class="rf-color--rm">
                                                                                         {@html `<strike>${field.cb ? field.cb(field.value) : field.value}</strike> ${field.update.map(updateField => modifications[modificationsCurrent].fields[updateField]).join()}`}
