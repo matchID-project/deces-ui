@@ -364,7 +364,10 @@
                                                 on:click|preventDefault={toggleEdit}
                                                 disabled={modificationsWaiting}
                                             >
-                                                    Proposer une correction
+                                                    { modificationsWaiting ?
+                                                        'Correction en cours de validation' :
+                                                        'Proposer une correction'
+                                                    }
                                                     &nbsp;<Icon icon='ri:edit-line' class="rf-fi--md"/>
                                             </button>
                                         </div>
@@ -398,7 +401,7 @@
                                                         bind:value={editUrl}
                                                         on:focus={() => { editUrlValidate = undefined }}
                                                         on:blur={testEditUrl}
-                                                        disabled={editFile}
+                                                        disabled={editFile || editSuccess}
                                                     >
                                                 </div>
                                             </div>
@@ -410,9 +413,18 @@
                                                 class:rf-inactive={editUrlValidate}
                                                 title="Charger un fichier"
                                                 on:click|preventDefault={chooseFile}
+                                                disabled={editUrlValidate || editSuccess}
                                             >
                                                     { editFile ? ellipsis(editFile.name) : 'Charger un fichier'}
-                                                    &nbsp;<Icon icon={editFile ? 'ri:check-line' : 'ri:upload-cloud-line'} class="rf-fi--md"/>
+                                                    &nbsp;
+                                                    <Icon
+                                                        icon={
+                                                            editFile ?
+                                                                ( editFileValidate ? 'ri:check-line' : 'ri:alert-line' )
+                                                                : 'ri:upload-cloud-line'
+                                                        }
+                                                        class="rf-fi--md"
+                                                    />
                                             </button>
                                         </div>
                                         <div class="rf-col-xs-12 rf-col-sm-12 rf-col-md-12 rf-col-lg-12 rf-col-xl-2" transition:fade></div>
@@ -523,6 +535,7 @@
                                                         }
                                                     }
                                                 }}
+                                                disabled={editSuccess}
                                             >
                                                     {editValidate ? 'Transmettre' : 'Annuler'}
                                                     &nbsp;
@@ -580,6 +593,7 @@
     let editTmpValue = {};
     let editValue = {};
     let editFile;
+    let editFileValidate;
     let editUrl;
     let editUrlValidate;
     let editMail;
@@ -605,33 +619,71 @@
         });
     }
 
-    $: if (result.modifications) {
-        modificationsNumber = result.modifications.length;
-        modificationsValidated = result.modifications.filter(m => m.auth > 0).length;
-        modificationsRejected = result.modifications.filter(m => m.auth < 0).length;
-        modificationsWaiting = result.modifications.filter(m => m.auth === 0).length;
-        if (admin) {
-            modifications = result.modifications.slice().map(m => {
-                m.proof = `__BACKEND_PROXY_PATH__/updates/proof/${result.id}-${m.id}`;
-                return m;
-            });
-            modificationsCurrent = modificationsNumber - 1;
-            result.modifications.slice().reverse().forEach((m, i) => {
-                if (m.auth === 0) { modificationsCurrent = modificationsNumber - i - 1; }
-            });
-        } else {
-            // for enduser consolidate sum of every validated modif
-            const fields = {};
-            let proof;
-            result.modifications
-                .forEach(m => {
-                    if (m.auth>0) {
-                        Object.keys(m.fields).forEach(k => fields[k] = m.fields[k]);
-                        proof = `__BACKEND_PROXY_PATH__/updates/proof/${result.id}-${m.id}`;
+    const validateFileType = () => {
+        if (editFile) {
+            const filereader = new FileReader()
+
+            filereader.onloadend = function(evt) {
+                if (evt.target.readyState === FileReader.DONE) {
+                    const uint = new Uint8Array(evt.target.result)
+                    let bytes = []
+                    uint.forEach((byte) => {
+                        bytes.push(byte.toString(16))
+                    })
+                    const hex = bytes.join('').toUpperCase()
+                    if (hex === '25504446') {
+                        editFileValidate = true
+                    } else {
+                        editFileValidate = false;
                     }
+                }
+            }
+
+            const blob = editFile.slice(0, 4);
+            filereader.readAsArrayBuffer(blob);
+        }
+    }
+
+    $: editFile && validateFileType();
+
+    $: if (result) {
+        if (result.modifications) {
+            modificationsNumber = result.modifications.length;
+            modificationsValidated = result.modifications.filter(m => m.auth > 0).length;
+            modificationsRejected = result.modifications.filter(m => m.auth < 0).length;
+            modificationsWaiting = result.modifications.filter(m => m.auth === 0).length;
+            if (admin) {
+                modifications = result.modifications.slice().map(m => {
+                    if (!/https?:/.test(m.proof)) {
+                        m.proof = `__BACKEND_PROXY_PATH__/updates/proof/${result.id}-${m.id}`;
+                    }
+                    return m;
                 });
-            modifications = [{fields: fields, proof: proof}];
-            modificationsCurrent = 0;
+                modificationsCurrent = modificationsNumber - 1;
+                result.modifications.slice().reverse().forEach((m, i) => {
+                    if (m.auth === 0) { modificationsCurrent = modificationsNumber - i - 1; }
+                });
+            } else {
+                // for enduser consolidate sum of every validated modif
+                const fields = {};
+                let proof;
+                result.modifications
+                    .forEach(m => {
+                        if (m.auth>0) {
+                            Object.keys(m.fields).forEach(k => fields[k] = m.fields[k]);
+                            if (/https?:/.test(m.proof)) {
+                                proof = m.proof
+                            } else {
+                                proof = `__BACKEND_PROXY_PATH__/updates/proof/${result.id}-${m.id}`;
+                            }
+                        }
+                    });
+                modifications = [{fields: fields, proof: proof}];
+                modificationsCurrent = 0;
+            }
+        } else {
+            modificationsWaiting = undefined;
+            modifications = undefined;
         }
     };
 
@@ -702,7 +754,7 @@
 
     $: if ($accessToken === '') { editMailValidate = undefined; };
 
-    $: editValidate = ((editFile || editUrlValidate) && (Object.keys(editValue).length));
+    $: editValidate = ((editFileValidate || editUrlValidate) && (Object.keys(editValue).length));
 
     const defaultInputValue = (field, i) => {
         if (Array.isArray(field.value)) {
@@ -781,7 +833,7 @@
     }
 
     const ellipsis = (s) => {
-        if (s.length < 20) { return s }
+        if (s.length < 16) { return s }
         return `${s.substring(0,7)}...${s.substring(s.length-7,s.length)}`;
     }
 
