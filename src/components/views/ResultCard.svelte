@@ -307,27 +307,29 @@
                                             <div class="rf-grid-row" style="justify-content: center;">
                                                 <div class="rf-pagination">
                                                     <ul class="rf-pagination__list rf-text--xs">
-                                                        {#each modifications as m, i}
-                                                            <li
-                                                                class="rf-href rf-pagination__item rf-pagination__item--from-md"
-                                                                title="modification {i}"
-                                                                on:click|preventDefault={() => {
-                                                                    modificationsCurrent = i;
-                                                                    blur();
-                                                                }}
-                                                                class:rf-pagination__item--valid={(modificationsCurrent !== i) && (m.auth> 0)}
-                                                                class:rf-pagination__item--reject={(modificationsCurrent !== i) && (m.auth < 0)}
-                                                                class:rf-pagination__item--active={modificationsCurrent === i}
-                                                            >
-                                                                <a
-                                                                    class="rf-pagination__link"
-                                                                    href={i}
-                                                                    aria-label="modification {i}"
+                                                        {#if modificationsNumber > 1}
+                                                            {#each modifications as m, i}
+                                                                <li
+                                                                    class="rf-href rf-pagination__item rf-pagination__item--from-md"
+                                                                    title="modification {i}"
+                                                                    on:click|preventDefault={() => {
+                                                                        modificationsCurrent = i;
+                                                                        blur();
+                                                                    }}
+                                                                    class:rf-pagination__item--valid={(modificationsCurrent !== i) && (m.auth> 0)}
+                                                                    class:rf-pagination__item--reject={(modificationsCurrent !== i) && (m.auth < 0)}
+                                                                    class:rf-pagination__item--active={modificationsCurrent === i}
                                                                 >
-                                                                    {i}
-                                                                </a>
-                                                            </li>
-                                                        {/each}
+                                                                    <a
+                                                                        class="rf-pagination__link"
+                                                                        href={i + 1}
+                                                                        aria-label="modification {i}"
+                                                                    >
+                                                                        {i+1}
+                                                                    </a>
+                                                                </li>
+                                                            {/each}
+                                                        {/if}
                                                     </ul>
                                                 </div>
                                             </div>
