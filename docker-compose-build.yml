@@ -11,6 +11,7 @@ services:
         https_proxy: ${https_proxy}
         no_proxy: ${no_proxy}
         npm_registry: ${NPM_REGISTRY}
+        npm_ssl: ${NPM_SSL}
         sass_registry: ${SASS_REGISTRY}
         MIRROR_DEBIAN: ${MIRROR_DEBIAN}
         app_path: /${APP}
