@@ -35,6 +35,7 @@ export FRONTEND_DEV_PORT = ${PORT}
 # export LOG_BUCKET = s3bucket/override/me
 # export STATS_BUCKET = s3bucket/override/me
 # export LOG_DB_BUCKET = s3bucket/override/me
+# export PROOFS_BUCKET = s3bucket/override/me
 export LOG_DIR = ${FRONTEND}/log/mirror
 export LOG_DB_DIR = ${FRONTEND}/log/db
 export STATS_SCRIPTS = ${FRONTEND}/stats/src
@@ -100,6 +101,8 @@ export GIT_ROOT = https://github.com/matchid-project
 export GIT_TOOLS = tools
 export API_URL?=${APP_DNS}
 export API_SSL?=1
+
+export PROOFS=${FRONTEND}/${GIT_BACKEND}/backend/data/proofs
 
 # backup dir
 export BACKUP_DIR = ${APP_PATH}/backup
@@ -237,7 +240,7 @@ backend-docker-check: backend-config
 	@BACKEND_APP_VERSION=$(shell cd ${APP_PATH}/${GIT_BACKEND} && git describe --tags);\
 	${MAKE} docker-check DC_IMAGE_NAME=deces-backend APP_VERSION=$$BACKEND_APP_VERSION GIT_BRANCH=${GIT_BACKEND_BRANCH}
 
-backend: backend-config backend-docker-check
+backend: backend-config backend-docker-check proofs-mount
 	@BACKEND_APP_VERSION=$(shell cd ${APP_PATH}/${GIT_BACKEND} && git describe --tags);\
 	${MAKE} -C ${APP_PATH}/${GIT_BACKEND} backend-start APP=deces-backend DC_NETWORK=${DC_NETWORK} APP_VERSION=$$BACKEND_APP_VERSION GIT_BRANCH=${GIT_BACKEND_BRANCH}\
 		API_URL=${API_URL} API_EMAIL=${API_EMAIL} API_SSL=${API_SSL}\
@@ -246,6 +249,7 @@ backend: backend-config backend-docker-check
 backend-stop:
 	@BACKEND_APP_VERSION=$(shell cd ${APP_PATH}/${GIT_BACKEND} && git describe --tags);\
 	${MAKE} -C ${APP_PATH}/${GIT_BACKEND} backend-stop DC_NETWORK=${DC_NETWORK} APP_VERSION=$$BACKEND_APP_VERSION GIT_BRANCH=${GIT_BACKEND_BRANCH}
+	@make proofs-umount
 
 backend-clean-dir:
 	@sudo rm -rf ${APP_PATH}/${GIT_BACKEND}
@@ -453,7 +457,7 @@ deploy-remote-services:
 		ACTIONS=deploy-local GIT_BRANCH=${GIT_BRANCH}\
 		TOOLS_STORAGE_ACCESS_KEY=${TOOLS_STORAGE_ACCESS_KEY}\
 		TOOLS_STORAGE_SECRET_KEY=${TOOLS_STORAGE_SECRET_KEY}\
-		LOG_BUCKET=${LOG_BUCKET} LOG_DB_BUCKET=${LOG_DB_BUCKET} STATS_BUCKET=${STATS_BUCKET}\
+		LOG_BUCKET=${LOG_BUCKET} LOG_DB_BUCKET=${LOG_DB_BUCKET} STATS_BUCKET=${STATS_BUCKET} DATA_BUCKET=${DATA_BUCKET\
 		${MAKEOVERRIDES}
 
 deploy-remote-publish:
@@ -546,3 +550,20 @@ stats-background:
 	make stats-restore || true;
 	(while (true); do make stats-update;sleep 3600;done) > .stats-update 2>&1 &
 	(while (true); do make stats-live;sleep 120;done) > .stats-live 2>&1 &
+
+${PROOFS}:
+	@mkdir -p ${PROOFS}
+
+proofs-restore: ${PROOFS}
+	@${MAKE} -C ${APP_PATH}/${GIT_TOOLS} storage-sync-pull STORAGE_BUCKET=${PROOFS_BUCKET}/${GIT_BACKEND_BRANCH} DATA_DIR=${PROOFS} \
+			STORAGE_ACCESS_KEY=${TOOLS_STORAGE_ACCESS_KEY} STORAGE_SECRET_KEY=${TOOLS_STORAGE_SECRET_KEY};
+
+proofs-backup: ${PROOFS}
+	@${MAKE} -C ${APP_PATH}/${GIT_TOOLS} storage-sync-push STORAGE_BUCKET=${PROOFS_BUCKET}/${GIT_BACKEND_BRANCH} DATA_DIR=${PROOFS} \
+			STORAGE_ACCESS_KEY=${TOOLS_STORAGE_ACCESS_KEY} STORAGE_SECRET_KEY=${TOOLS_STORAGE_SECRET_KEY};
+
+proofs-mount: proofs-restore
+	@(while (true); do  make proofs-backup;sleep 30;done) > .proofs-backup 2>&1 &
+
+proofs-umount:
+	@ps -elf | grep "make proofs-backup" | awk '{print $$4}'  | xargs kill || echo -n
