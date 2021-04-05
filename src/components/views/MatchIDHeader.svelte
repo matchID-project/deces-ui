@@ -300,7 +300,7 @@
                                     title="S'identifier"
                                     class="rf-link rf-href rf-fi-question-line rf-link--icon-left"
                                 >
-                                    <Icon icon={$accessToken ? 'ri:user-follow-line' : 'ri:user-line'} circleText={($user === '__BACKEND_TOKEN_USER__') && $user} zoom={zoom}/>
+                                    <Icon icon={$accessToken ? 'ri:user-follow-line' : 'ri:user-line'} circleText={($user === '__BACKEND_TOKEN_USER__') && $user}/>
                                 </a>
                             </li>
                         {/if}
