@@ -16,6 +16,7 @@
 	import { routes } from './components/tools/routes.js';
 	import { register } from 'register-service-worker';
 	import { useLocalSync } from './components/tools/useLocalStorage.js';
+	import Shake from 'shake.js';
 
 	onMount(async () => {
 		await useLocalSync(user, 'user');
@@ -55,6 +56,9 @@
 				}
 			});
 		}
+		const myShakeEvent = new Shake({});
+		myShakeEvent.start();
+		window.addEventListener('shake', handleShake, false);
 	});
 
 	$: if ($route.path === '/search') { URLSearchSubmit(new URLSearchParams(location.search)) };
@@ -86,8 +90,13 @@
 		}
 		if (event.ctrlKey && event.altKey && event.key === 'a') {
 			$alphaFeatures = !$alphaFeatures;
-			console.log('enable alpha features');
+			console.log($alphaFeatures ? 'alpha features enabled':'alpha features disabled');
 		}
+	}
+
+	const handleShake = () => {
+		$alphaFeatures = !$alphaFeatures;
+		console.log($alphaFeatures ? 'alpha features enabled':'alpha features disabled');
 	}
 
 </script>
