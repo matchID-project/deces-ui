@@ -45,8 +45,8 @@ export BACKEND_HOST=backend
 export BACKEND_JOB_CONCURRENCY=2
 export BACKEND_CHUNK_CONCURRENCY=4
 export BACKEND_TOKEN_USER?=${API_EMAIL}
-export BACKEND_TOKEN_KEY?=$(shell echo $$RANDOM )
-export BACKEND_TOKEN_PASSWORD?=$(shell echo $$RANDOM )
+export BACKEND_TOKEN_KEY?=$(shell openssl rand -base64 16)
+export BACKEND_TOKEN_PASSWORD?=$(shell openssl rand -base64 16)
 export SMTP_HOST=smtp
 export SMTP_PORT=25
 export SMTP_USER?=${API_EMAIL}
@@ -160,15 +160,14 @@ export BUILD_DIR=${APP_PATH}/${APP}-build
 include /etc/os-release
 
 config:
-	# this proc relies on matchid/tools and works both local and remote
-	which make || sudo apt-get install make
-	if [ -z "${TOOLS_PATH}" ];then\
+	@which make || sudo apt-get install make
+	@if [ -z "${TOOLS_PATH}" ];then\
 		git clone ${GIT_ROOT}/${GIT_TOOLS};\
 		${MAKE} -C ${APP_PATH}/${GIT_TOOLS} config ${MAKEOVERRIDES};\
 	else\
 		ln -s ${TOOLS_PATH} ${APP_PATH}/${GIT_TOOLS};\
 	fi
-	cp artifacts ${APP_PATH}/${GIT_TOOLS}/
+	@cp artifacts ${APP_PATH}/${GIT_TOOLS}/
 	@touch config
 
 
