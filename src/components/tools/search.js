@@ -89,14 +89,115 @@ export const searchTrigger = (searchInput) => {
            )
 };
 
+const capitalize = (s) => {
+    return s.charAt(0).toUpperCase() + s.slice(1).toLowerCase();
+}
+
 export const searchString = (searchInput) => {
-    return Object.keys(searchInput).map(key => {
-        if (searchInput[key].value.length >= 1) {
-          return ( key === "fullText" )
-            ? searchInput[key].value
-            : `${searchInput[key].field}: ${searchInput[key].value}`
+    if (searchInput.fullText.value) return searchInput.fullText.value.split(/\s+/).map(capitalize).join(' ');
+    console.log(searchInput);
+    let e = 'é.e';
+    if (searchInput.sex.value === 'F') {
+        e = 'ée';
+    } else if (searchInput.sex.value === 'M') {
+        e = 'é';
+    }
+    let name;
+    if (searchInput.lastName.value) {
+        if (!searchInput.firstName.value) {
+            name = `${searchInput.lastName.value.toUpperCase()}`;
+        } else {
+            name =`${searchInput.lastName.value.toUpperCase()} ${capitalize(searchInput.firstName.value)}`;
         }
-      }).filter(x => x).join(' ');
+    } else {
+        if (searchInput.firstName.value) {
+            name = `prénomm${e} ${capitalize(searchInput.firstName.value)}`
+        }
+    }
+    let sex;
+    if (searchInput.sex.value === 'F') {
+        sex = name ? '(F)' : 'femme';
+    } else if (searchInput.sex.value === 'M') {
+        sex = name ? '(M)' : 'homme';
+    } else {
+        sex = name ? '' : 'personne'
+    }
+    let birth=''
+    if (searchInput.birthDate.value||searchInput.birthCity.value||searchInput.birthDepartment.value||searchInput.birthCountry.value) {
+        birth = [`n${e}`];
+        if (searchInput.birthDate.value) {
+            if (searchInput.birthDate.value.length === 4) {
+                birth.push(`en ${searchInput.birthDate.value}`)
+            } else if (searchInput.birthDate.value.length === 10) {
+                birth.push(`le ${searchInput.birthDate.value}`)
+            } else if (searchInput.birthDate.value.length === 9) {
+                birth.push(`entre ${searchInput.birthDate.value.split('-')[0]} et ${searchInput.birthDate.value.split('-')[1]}`)
+            } else {
+                birth.push(`entre le ${searchInput.birthDate.value.split('-')[0]} et le ${searchInput.birthDate.value.split('-')[1]}`)
+            }
+        }
+        if (searchInput.birthCity.value) {
+            birth.push(`à ${capitalize(searchInput.birthCity.value)}`)
+            if (searchInput.birthDepartment.value) {
+                birth.push(`(${searchInput.birthDepartment.value})`)
+            }
+            if (searchInput.birthCountry.value) {
+                birth.push(`${capitalize(searchInput.birthCountry.value)}`)
+            }
+        } else {
+            if (searchInput.birthDepartment.value) {
+                birth.push(`dans le ${searchInput.birthDepartment.value}`)
+                    if (searchInput.birthCountry.value) {
+                        birth.push(`${capitalize(searchInput.birthCountry.value)}`)
+                    }
+                } else {
+                    if (searchInput.birthCountry.value) {
+                        birth.push(`en ${capitalize(searchInput.birthCountry.value)}`)
+                    }
+                }
+            }
+        birth = birth.join(' ');
+    }
+    let death='';
+    if (searchInput.deathDate.value||searchInput.deathAge.value||searchInput.deathCity.value||searchInput.deathDepartment.value||searchInput.deathCountry.value) {
+        death = [`décéd${e}`];
+        if (searchInput.deathAge.value) {
+            death.push(`à l'âge de ${searchInput.deathAge.value} ans`)
+        }
+        if (searchInput.deathDate.value) {
+            if (searchInput.deathDate.value.length === 4) {
+                death.push(`en ${searchInput.deathDate.value}`)
+            } else if (searchInput.deathDate.value.length === 10) {
+                death.push(`le ${searchInput.deathDate.value}`)
+            } else if (searchInput.deathDate.value.length === 9) {
+                death.push(`entre ${searchInput.deathDate.value.split('-')[0]} et ${searchInput.deathDate.value.split('-')[1]}`)
+            } else {
+                death.push(`entre le ${searchInput.deathDate.value.split('-')[0]} et le ${searchInput.deathDate.value.split('-')[1]}`)
+            }
+        }
+        if (searchInput.deathCity.value) {
+            death.push(`à ${capitalize(searchInput.deathCity.value)}`)
+            if (searchInput.deathDepartment.value) {
+                death.push(`(${searchInput.deathDepartment.value})`)
+            }
+            if (searchInput.deathCountry.value) {
+                death.push(`${capitalize(searchInput.deathCountry.value)}`)
+            }
+        } else {
+            if (searchInput.deathDepartment.value) {
+                death.push(`dans le ${searchInput.deathDepartment.value}`)
+                    if (searchInput.deathCountry.value) {
+                        death.push(`${capitalize(searchInput.deathCountry.value)}`)
+                    }
+                } else {
+                    if (searchInput.deathCountry.value) {
+                        death.push(`en ${capitalize(searchInput.deathCountry.value)}`)
+                    }
+                }
+            }
+        death = death.join(' ');
+    }
+    return [name,sex,birth,death].filter(x => x).join(' ');
 };
 
 export const getById = async ({id: id}) => {

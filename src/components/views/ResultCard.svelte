@@ -295,7 +295,14 @@
                                             </p>
                                             <p>
                                                 Pour renforcer la confiance dans votre proposition, un acte de décès est demandé, ou à défaut, un acte de naissance avec mention marginale du décès,
-                                                est nécessaire. Nous acceptons également un lien vers un document public d'un site d'archive départementale.
+                                                est nécessaire,
+                                                {#if editFile && !editFileValidate}
+                                                    <span class="rf-color--rm">
+                                                    <strong>au format PDF</strong></span>.
+                                                {:else}
+                                                    au format PDF.
+                                                {/if}
+                                                Nous acceptons également un lien vers un document public d'un site d'archive départementale.
                                             </p>
                                             {#if !$accessToken}
                                                 <p>
@@ -416,11 +423,14 @@
                                                 class="rf-btn rf-btn--secondary rf-padding-right-2N rf-inactive"
                                                 style="width: 100%; justify-content: center; max-width: 240px;"
                                                 class:rf-inactive={editUrlValidate}
-                                                title="Charger un fichier"
+                                                class:rf-color--rm={editFile && !editFileValidate}
+                                                title="Charger un fichier au format PDF"
                                                 on:click|preventDefault={chooseFile}
                                                 disabled={editUrlValidate || editSuccess}
                                             >
-                                                    { editFile ? ellipsis(editFile.name) : 'Charger un fichier'}
+                                                    { editFile ?
+                                                        ( editFileValidate ? ellipsis(editFile.name) : 'PDF uniquement' )
+                                                        : 'Charger un fichier'}
                                                     &nbsp;
                                                     <Icon
                                                         icon={
@@ -538,6 +548,8 @@
                                                             editMail = ''
                                                             editMailSent = undefined;
                                                         }
+                                                        editValue = {};
+                                                        editDisplayChange = {};
                                                     }
                                                 }}
                                                 disabled={editSuccess}
