@@ -32,7 +32,7 @@ http {
     add_header X-XSS-Protection "1; mode=block";
     add_header Content-Security-Policy "<NGINX_CSP>";
     add_header Referrer-Policy "same-origin";
-    add_header Feature-Policy "geolocation none;midi none;notifications none;push none;sync-xhr none;microphone none;camera none;magnetometer none;gyroscope self;speaker self;vibrate none;fullscreen self;payment none;";
+    add_header Feature-Policy "geolocation 'none';midi 'none';sync-xhr 'none';microphone 'none';camera 'none';magnetometer 'none';gyroscope 'self';accelerometer 'self';fullscreen 'self';payment 'none';";
 
     client_max_body_size 2k;
 

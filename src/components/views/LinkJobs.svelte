@@ -6,26 +6,28 @@
                 </strong>
             </p>
             {#if jobs.length}
-                <table class="rf-table rf-table--narrow rf-table--striped">
-                    <thead>
-                        <tr>
-                            <th>id</th>
-                            <th>date</th>
-                            <th>lignes</th>
-                            <th>statut</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {#each jobs as job}
+                <div style="overflow-x: auto;">
+                    <table class="rf-table rf-table--narrow rf-table--striped">
+                        <thead>
                             <tr>
-                                <td>{job.id.substring(0,20) + '...'}</td>
-                                <td>{job.date.toISOString()}</td>
-                                <td>{job.rows}</td>
-                                <td>{job.status}</td>
+                                <th>id</th>
+                                <th>date</th>
+                                <th>lignes</th>
+                                <th>statut</th>
                             </tr>
-                        {/each}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            {#each jobs as job}
+                                <tr>
+                                    <td>{job.id.substring(0,20) + '...'}</td>
+                                    <td>{job.date.toISOString()}</td>
+                                    <td>{job.rows}</td>
+                                    <td>{job.status}</td>
+                                </tr>
+                            {/each}
+                        </tbody>
+                    </table>
+                </div>
             {:else}
                 Aucun job
             {/if}

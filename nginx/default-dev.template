@@ -23,7 +23,7 @@ server {
   location / {
     limit_req zone=app burst=30 nodelay;
     limit_req_status 429;
-    rewrite "^/[a-zA-Z0-9\/]+$" / break;
+    rewrite "^/[a-zA-Z0-9\-_\/]+$" / break;
     proxy_pass http://frontend-dev;
     # Allow protocol upgrade to websocket
     proxy_http_version 1.1;
@@ -116,7 +116,7 @@ server {
     proxy_set_header Connection "upgrade";
   }
 
-  location ~ "^<BACKEND_PROXY_PATH>/(version|search/(csv|json)/.*|updates(/.*)?|id/.*|docs(/.*)?|auth(/confirm)?|register|healthcheck|queue(/.*)?)$" {
+  location ~ "^<BACKEND_PROXY_PATH>/(version|search/(csv|json)/.*|updates(/.*)?|updated|id/.*|docs(/.*)?|auth(/confirm)?|register|healthcheck|queue(/.*)?)$" {
     add_header Access-Control-Allow-Origin '$http_origin';
     limit_req zone=api_misc burst=<API_MISC_USER_BURST>;
     limit_req zone=api_misc_global burst=<API_MISC_GLOBAL_BURST>;
