@@ -401,7 +401,7 @@ border-radius: 0 .25rem 0 0;
 .rf-table td {
 	border: 0;
 	padding: .5em .75em;
-	vertical-align: top;
+	vertical-align: middle;
 }
 
 
@@ -430,7 +430,7 @@ table.rf-table thead tr:last-child th {
 	width: 100%;
 }
 
-.rf-table.rf-table--narrow td {
+.rf-table.rf-table--narrow td, .rf-table.rf-table--narrow th{
 	padding: .25em .5em;
 	text-align: left;
 }
