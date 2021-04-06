@@ -555,15 +555,22 @@ ${PROOFS}:
 	@mkdir -p ${PROOFS}
 
 proofs-restore: ${PROOFS}
-	@${MAKE} -C ${APP_PATH}/${GIT_TOOLS} storage-sync-pull STORAGE_BUCKET=${PROOFS_BUCKET}/${GIT_BACKEND_BRANCH} DATA_DIR=${PROOFS} \
-			STORAGE_ACCESS_KEY=${TOOLS_STORAGE_ACCESS_KEY} STORAGE_SECRET_KEY=${TOOLS_STORAGE_SECRET_KEY};
+	@if [ -n "${PROOFS_BUCKET}" ];then\
+		echo restoring proofs data;\
+		${MAKE} -C ${APP_PATH}/${GIT_TOOLS} storage-sync-pull STORAGE_BUCKET=${PROOFS_BUCKET}/${GIT_BACKEND_BRANCH} DATA_DIR=${PROOFS} \
+			STORAGE_ACCESS_KEY=${TOOLS_STORAGE_ACCESS_KEY} STORAGE_SECRET_KEY=${TOOLS_STORAGE_SECRET_KEY};\
+	fi
 
 proofs-backup: ${PROOFS}
-	@${MAKE} -C ${APP_PATH}/${GIT_TOOLS} storage-sync-push STORAGE_BUCKET=${PROOFS_BUCKET}/${GIT_BACKEND_BRANCH} DATA_DIR=${PROOFS} \
-			STORAGE_ACCESS_KEY=${TOOLS_STORAGE_ACCESS_KEY} STORAGE_SECRET_KEY=${TOOLS_STORAGE_SECRET_KEY};
+	@if [ -n "${PROOFS_BUCKET}" ];then\
+		${MAKE} -C ${APP_PATH}/${GIT_TOOLS} storage-sync-push STORAGE_BUCKET=${PROOFS_BUCKET}/${GIT_BACKEND_BRANCH} DATA_DIR=${PROOFS} \
+			STORAGE_ACCESS_KEY=${TOOLS_STORAGE_ACCESS_KEY} STORAGE_SECRET_KEY=${TOOLS_STORAGE_SECRET_KEY};\
+	fi;
 
 proofs-mount: proofs-restore
-	@(while (true); do  make proofs-backup;sleep 30;done) > .proofs-backup 2>&1 &
+	@if [ -n "${PROOFS_BUCKET}" ];then\
+		((while (true); do  make proofs-backup;sleep 30;done) > .proofs-backup 2>&1 &);\
+	fi;
 
 proofs-umount:
-	@ps -elf | grep "make proofs-backup" | awk '{print $$4}'  | xargs kill || echo -n
+	@ps -elf | grep "make proofs-backup" | awk '{print $$4}'  | head -1 | xargs kill || echo -n
