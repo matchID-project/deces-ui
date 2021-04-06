@@ -548,6 +548,8 @@
                                                             editMail = ''
                                                             editMailSent = undefined;
                                                         }
+                                                        editValue = {};
+                                                        editDisplayChange = {};
                                                     }
                                                 }}
                                                 disabled={editSuccess}
