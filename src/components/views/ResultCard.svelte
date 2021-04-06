@@ -113,8 +113,8 @@
                             </span>
                             <div class="rf-container-fluid">
                                 <div class="rf-grid-row">
-                                    {#if result.modifications}
-                                        {#if ($alphaFeatures && (!admin && (modificationsValidated || modificationsWaiting)))}
+                                    {#if $alphaFeatures && result.modifications}
+                                        {#if (!admin && (modificationsValidated || modificationsWaiting))}
                                             <div class="rf-col-12 rf-text--center rf-margin-top-0">
                                                 <p>
                                                     <strong>
@@ -253,8 +253,8 @@
                                                                                             .join(' ')}`}
                                                                                 </span>
                                                                             {:else}
-                                                                                {#if (modifications && modifications[modificationsCurrent] && field.update && field.update
-                                                                                    .some(updateField => modifications[modificationsCurrent].fields[updateField]))}
+                                                                                {#if ($alphaFeatures && (modifications && modifications[modificationsCurrent] && field.update && field.update
+                                                                                    .some(updateField => modifications[modificationsCurrent].fields[updateField])))}
                                                                                     <span class="rf-color--rm">
                                                                                         {@html `<strike>${field.cb ? field.cb(field.value) : field.value}</strike> ${field.update.map(updateField => modifications[modificationsCurrent].fields[updateField]).join()}`}
                                                                                     </span>
