@@ -1,20 +1,34 @@
 <div class="rf-container rf-padding-top-2N ">
-    <div class="rf-grid-row rf-grid-row--gutters">
+    <div class="rf-grid-row">
         <div class="rf-col-xl-2 rf-col-lg-2 rf-col-md-12 rf-col-sm-12 rf-col-xs-12">
         </div>
-        <div class="rf-col-xl-4 rf-col-lg-4 rf-col-md-6 rf-col-sm-6 rf-col-xs-6 rf-text--center">
-            <div class="rf-tile">
-                <div class="rf-tile__body">
-                    <h4 class="rf-tile__title">{Object.keys(edits).length}</h4>
-                    <p class="rf-tile__desc">Contributions usagers</p>
-                </div>
-            </div>
-        </div>
-        <div class="rf-col-xl-4 rf-col-lg-4 rf-col-md-6 rf-col-sm-6 rf-col-xs-6 rf-text--center">
-            <div class="rf-tile">
-                <div class="rf-tile__body">
-                    <h4 class="rf-tile__title">{Object.keys(edits).filter(id => edits[id].some(m => m.auth > 0)).length}</h4>
-                    <p class="rf-tile__desc">Contributions validées</p>
+        <div class="rf-col-xl-8 rf-col-lg-8 rf-col-md-12 rf-col-sm-12 rf-col-xs-12">
+            <div class="rf-container-fluid">
+                <div class="rf-grid-row rf-grid-row--gutters">
+                    <div class="rf-col-4 rf-text--center">
+                        <div class="rf-tile">
+                            <div class="rf-tile__body">
+                                <h4 class="rf-tile__title">{Object.keys(edits).length}</h4>
+                                <p class="rf-tile__desc">Contributions usagers</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="rf-col-4 rf-text--center">
+                        <div class="rf-tile">
+                            <div class="rf-tile__body">
+                                <h4 class="rf-tile__title">{Object.keys(edits).filter(id => edits[id].some(m => m.auth === 0)).length}</h4>
+                                <p class="rf-tile__desc">Contributions en attente</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="rf-col-4 rf-text--center">
+                        <div class="rf-tile">
+                            <div class="rf-tile__body">
+                                <h4 class="rf-tile__title">{Object.keys(edits).filter(id => edits[id].some(m => m.auth > 0)).length}</h4>
+                                <p class="rf-tile__desc">Contributions validées</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -69,7 +83,7 @@
                     </tbody>
                 </table>
             {:else}
-                Aucun job
+                Aucune donnée
             {/if}
         </div>
         <div class="rf-col-xl-2 rf-col-lg-2 rf-col-md-12 rf-col-sm-12 rf-col-xs-12">
