@@ -1,7 +1,7 @@
 {#if show}
     <div class="modal" transition:fade>
         <div class="modal-container">
-            <div class="rf-container">
+            <div class="rf-container-fluid">
                 <div class="rf-grid-row">
                     <div class="rf-col-xs-0 rf-col-sm-1 rf-col-md-2 rf-col-lg-3 rf-col-xl-3"></div>
                     <div class="rf-col-xs-12 rf-col-sm-10 rf-col-md-8 rf-col-lg-6 rf-col-xl-6">
@@ -27,9 +27,8 @@
                                                 class="rf-fi--lg"
                                             />
                                         </div>
-                                        <div class="rf-card__body rf-text--center" style="margin-left: -80px!important; padding-top: 14px!important;">
+                                        <div class="rf-card__body rf-text--center" style="margin-left: -80px!important; padding-top: 26px!important;">
                                             <h4 class="rf-card_lead rf-margin-0">Connexion</h4>
-                                            <p class="rf-card__desc rf-margin-0"> Accès aux fonctions personnalisées</p>
                                         </div>
                                     </div>
                                 </div>
