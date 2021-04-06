@@ -454,6 +454,19 @@ viewBox="0 0 24 24">
 <path d="M4 8h16V5H4v3zm10 11v-9h-4v9h4zm2 0h4v-9h-4v9zm-8 0v-9H4v9h4zM3 3h18a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z" fill="currentColor"/>
 <rect x="0" y="0" width="24" height="24" fill="rgba(0, 0, 0, 0)" />
 </svg>`,
+    "ri:time-line": `<svg
+width="100%" 
+xmlns="http://www.w3.org/2000/svg"
+xmlns:xlink="http://www.w3.org/1999/xlink"
+aria-hidden="true"
+focusable="false"
+style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg);
+transform: rotate(360deg);"
+preserveAspectRatio="xMidYMid meet"
+viewBox="0 0 24 24">
+<path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10s-4.477 10-10 10zm0-2a8 8 0 1 0 0-16a8 8 0 0 0 0 16zm1-8h4v2h-6V7h2v5z" fill="currentColor"/>
+<rect x="0" y="0" width="24" height="24" fill="rgba(0, 0, 0, 0)" />
+</svg>`,
     "ri:upload-cloud-line": `<svg
 width="100%" 
 xmlns="http://www.w3.org/2000/svg"
