@@ -23,7 +23,7 @@ server {
   location / {
     limit_req zone=app burst=30 nodelay;
     limit_req_status 429;
-    rewrite "^/[a-zA-Z0-9\/]+$" / break;
+    rewrite "^/[a-zA-Z0-9\-_\/]+$" / break;
     proxy_pass http://frontend-dev;
     # Allow protocol upgrade to websocket
     proxy_http_version 1.1;
