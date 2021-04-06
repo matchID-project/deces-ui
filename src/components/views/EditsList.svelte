@@ -42,46 +42,48 @@
                 </strong>
             </p>
             {#if Object.keys(edits).length}
-                <table class="rf-table rf-table--narrow rf-table--striped">
-                    <thead>
-                        <tr>
-                            <th>id</th>
-                            <th>auteur</th>
-                            <th>date</th>
-                            <th>statut</th>
-                            <th>nb éditions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {#each Object.keys(edits) as id}
+                <div style="overflow-x: auto;">
+                    <table class="rf-table rf-table--narrow rf-table--striped">
+                        <thead>
                             <tr>
-                                <td>
-                                    <a
-                                        href="/id/{id}"
-                                        target="_self"
-                                        class="rf-link"
-                                    >
-                                        {id}
-                                    </a>
-                                </td>
-                                <td>{edits[id][edits[id].length - 1].author}</td>
-                                <td>{edits[id][edits[id].length - 1].date.substring(0,10)}</td>
-                                <td>
-                                    {#if (edits[id].filter(m => m.auth === 0).length)}
-                                        <Icon icon="ri:time-line" class="rf-color--rm"/>
-                                    {/if}
-                                    {#if (edits[id].filter(m => m.auth > 0).length)}
-                                        <Icon icon="ri:check-line" class="rf-color--bf"/>
-                                    {/if}
-                                    {#if (edits[id].filter(m => m.auth < 0).length)}
-                                        <Icon icon="ri:close-line" class="rf-color--rm"/>
-                                    {/if}
-                                </td>
-                                <td>{edits[id].length}</td>
+                                <th>id</th>
+                                <th>auteur</th>
+                                <th>date</th>
+                                <th>statut</th>
+                                <th>nb éditions</th>
                             </tr>
-                        {/each}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            {#each Object.keys(edits) as id}
+                                <tr>
+                                    <td>
+                                        <a
+                                            href="/id/{id.replace(/_/g,'%5F')}"
+                                            target="_self"
+                                            class="rf-link"
+                                        >
+                                            {id}
+                                        </a>
+                                    </td>
+                                    <td>{edits[id][edits[id].length - 1].author}</td>
+                                    <td>{edits[id][edits[id].length - 1].date.substring(0,10)}</td>
+                                    <td>
+                                        {#if (edits[id].filter(m => m.auth === 0).length)}
+                                            <Icon icon="ri:time-line" class="rf-color--rm"/>
+                                        {/if}
+                                        {#if (edits[id].filter(m => m.auth > 0).length)}
+                                            <Icon icon="ri:check-line" class="rf-color--bf"/>
+                                        {/if}
+                                        {#if (edits[id].filter(m => m.auth < 0).length)}
+                                            <Icon icon="ri:close-line" class="rf-color--rm"/>
+                                        {/if}
+                                    </td>
+                                    <td>{edits[id].length}</td>
+                                </tr>
+                            {/each}
+                        </tbody>
+                    </table>
+                </div>
             {:else}
                 Aucune donnée
             {/if}
