@@ -69,6 +69,7 @@
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
+        margin-bottom: -6px;
     }
     .expand-on-hover:hover {
         z-index: 1;

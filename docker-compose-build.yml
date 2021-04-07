@@ -11,6 +11,7 @@ services:
         https_proxy: ${https_proxy}
         no_proxy: ${no_proxy}
         npm_registry: ${NPM_REGISTRY}
+        npm_ssl: ${NPM_SSL}
         sass_registry: ${SASS_REGISTRY}
         MIRROR_DEBIAN: ${MIRROR_DEBIAN}
         app_path: /${APP}
@@ -21,9 +22,11 @@ services:
         NPM_GIT: ${NPM_GIT}
         NPM_VERBOSE: ${NPM_VERBOSE}
         AB_THRESHOLD: ${AB_THRESHOLD}
+        API_EMAIL: ${API_EMAIL}
         API_MAX_BODY: ${API_MAX_BODY}
         ES_PROXY_PATH: ${ES_PROXY_PATH}
         ES_MAX_RESULTS: ${ES_MAX_RESULTS}
+        BACKEND_TOKEN_USER: ${BACKEND_TOKEN_USER}
         BACKEND_PROXY_PATH: ${BACKEND_PROXY_PATH}
         DATAGOUV_PROXY_PATH: ${DATAGOUV_PROXY_PATH}
         DATAGOUV_CATALOG_URL: ${DATAGOUV_CATALOG_URL}

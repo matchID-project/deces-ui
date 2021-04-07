@@ -502,3 +502,11 @@ document.addEventListener('focus', updateActiveElement, true);
 document.addEventListener('blur', updateActiveElement, true);
 
 export const firstSearch = writable(true);
+
+export const alphaFeatures = writable(false);
+
+export const accessToken = writable('');
+
+export const user = writable('');
+
+export const showProof = writable(undefined);

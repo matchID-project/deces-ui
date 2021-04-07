@@ -7,6 +7,7 @@ ARG https_proxy
 ARG no_proxy
 ARG npm_registry
 ARG sass_registry
+ARG npm_ssl
 ARG MIRROR_DEBIAN
 ARG NPM_GIT
 ARG NPM_FIX
@@ -38,6 +39,7 @@ RUN if [ ! -z "$http_proxy" ] ; then \
         npm config set no-proxy $no_proxy; \
    fi ; \
    [ -z "${npm_registry}" ] || npm config set registry=$npm_registry; \
+   [ -z "$npm_ssl" ] || npm config set strict-ssl false ; \
    [ -z "${sass_registry}" ] || npm config set sass_binary_site=$sass_registry;
 
 RUN [ -z "${NPM_LATEST}" ] || npm i npm@latest -g
@@ -90,9 +92,11 @@ ARG npm_registry
 ARG sass_registry
 ARG MIRROR_DEBIAN
 ARG AB_THRESHOLD
+ARG API_EMAIL
 ARG API_MAX_BODY
 ARG ES_PROXY_PATH
 ARG ES_MAX_RESULTS
+ARG BACKEND_TOKEN_USER
 ARG BACKEND_PROXY_PATH
 ARG DATAGOUV_PROXY_PATH
 ARG DATAGOUV_CATALOG_URL
@@ -106,10 +110,12 @@ ARG app_ver
 ENV APP ${app_name}
 ENV APP_VERSION ${app_ver}
 ENV AB_THRESHOLD ${AB_THRESHOLD}
+ENV API_EMAIL ${API_EMAIL}
 ENV API_MAX_BODY ${API_MAX_BODY}
 ENV ES_PROXY_PATH ${ES_PROXY_PATH}
 ENV ES_MAX_RESULTS ${ES_MAX_RESULTS}
 ENV BACKEND_PROXY_PATH ${BACKEND_PROXY_PATH}
+ENV BACKEND_TOKEN_USER ${BACKEND_TOKEN_USER}
 ENV DATAGOUV_PROXY_PATH ${DATAGOUV_PROXY_PATH}
 ENV DATAGOUV_CATALOG_URL ${DATAGOUV_CATALOG_URL}
 ENV DATAGOUV_RESOURCES_URL ${DATAGOUV_RESOURCES_URL}

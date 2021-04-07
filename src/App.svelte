@@ -9,14 +9,18 @@
 <script>
 	import { onMount } from 'svelte';
 	import MatchIDHeader from './components/views/MatchIDHeader.svelte';
-	import { version, route, searchInput, searchCanvas, current, resultsPerPage,
+	import { user, accessToken, alphaFeatures, version, route, searchInput, searchCanvas, current, resultsPerPage,
 		updateURL, advancedSearch, fuzzySearch, displayMode, themeDnum, wasSearched
 	} from './components/tools/stores.js';
 	import { URLSearchSubmit } from './components/tools/search.js';
 	import { routes } from './components/tools/routes.js';
 	import { register } from 'register-service-worker';
+	import { useLocalSync } from './components/tools/useLocalStorage.js';
+	import Shake from 'shake.js';
 
 	onMount(async () => {
+		await useLocalSync(user, 'user');
+		await useLocalSync(accessToken, 'accessToken');
 		if ($version && !$version.api) {
 			try {
 				const r = await fetch('__BACKEND_PROXY_PATH__/version');
@@ -52,6 +56,9 @@
 				}
 			});
 		}
+		const myShakeEvent = new Shake({});
+		myShakeEvent.start();
+		window.addEventListener('shake', handleShake, false);
 	});
 
 	$: if ($route.path === '/search') { URLSearchSubmit(new URLSearchParams(location.search)) };
@@ -64,7 +71,7 @@
 	}
 
 	$: if ($wasSearched && ['/search','/id'].includes($route.path)) {
-			document.title = `matchID - ${$route.path === '/search' ? 'résultats pour ' : ''}${$wasSearched}`;
+			document.title = `matchID - ${$route.path === '/search' ? 'recherche ' : ''}${$wasSearched}`;
 			document.querySelector('meta[name="description"]').setAttribute("content", `résultats de la recherche pour ${$wasSearched}`);
 			setCanonical(window.location.href);
 		} else {
@@ -81,6 +88,15 @@
 			await themeDnum.update(v => v === 0 ? 1 : 0);
 			console.log(`switch theme to ${$themeDnum ? 'DNUM' : 'public site'}`);
 		}
+		if (event.ctrlKey && event.altKey && event.key === 'a') {
+			$alphaFeatures = !$alphaFeatures;
+			console.log($alphaFeatures ? 'alpha features enabled':'alpha features disabled');
+		}
+	}
+
+	const handleShake = () => {
+		$alphaFeatures = !$alphaFeatures;
+		console.log($alphaFeatures ? 'alpha features enabled':'alpha features disabled');
 	}
 
 </script>

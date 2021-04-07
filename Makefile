@@ -9,9 +9,6 @@ SHELL=/bin/bash
 
 export USE_TTY := $(shell test -t 1 && USE_TTY="-t")
 
-#npm fix while minimist failure not updated in rollup-plugin-livereload
-export NPM_FIX=true
-
 #search-ui
 export PORT=8083
 
@@ -31,12 +28,14 @@ export DATASET=fichier-des-personnes-decedees
 export APP_GROUP = matchID
 export APP_PATH := $(shell pwd)
 export APP_DNS=deces.matchid.io
+export API_EMAIL?=matchid.project@gmail.com
 export FRONTEND := ${APP_PATH}
 export FRONTEND_DEV_HOST = frontend-development
 export FRONTEND_DEV_PORT = ${PORT}
 # export LOG_BUCKET = s3bucket/override/me
 # export STATS_BUCKET = s3bucket/override/me
 # export LOG_DB_BUCKET = s3bucket/override/me
+# export PROOFS_BUCKET = s3bucket/override/me
 export LOG_DIR = ${FRONTEND}/log/mirror
 export LOG_DB_DIR = ${FRONTEND}/log/db
 export STATS_SCRIPTS = ${FRONTEND}/stats/src
@@ -45,10 +44,18 @@ export BACKEND_PORT=8080
 export BACKEND_HOST=backend
 export BACKEND_JOB_CONCURRENCY=2
 export BACKEND_CHUNK_CONCURRENCY=4
+export BACKEND_TOKEN_USER?=${API_EMAIL}
+export BACKEND_TOKEN_KEY?=$(shell openssl rand -base64 16)
+export BACKEND_TOKEN_PASSWORD?=$(shell openssl rand -base64 16)
+export SMTP_HOST=smtp
+export SMTP_PORT=25
+export SMTP_USER?=${API_EMAIL}
+export SMTP_PWD?=$(shell echo $$RANDOM )
 export API_PATH = deces
 export BACKEND_PROXY_PATH=/${API_PATH}/api/v1
 export NGINX = ${APP_PATH}/nginx
 export NGINX_TIMEOUT = 30
+export API_TIMEOUT = 30
 export NGINX_CSP=default-src https: 'self' 'unsafe-inline' 'unsafe-eval';font-src 'self' data:;img-src 'self' data: https://*.cartocdn.com http://*.wikimedia.org;
 #export NGINX_CSP=default-src https: 'self' 'unsafe-inline' 'unsafe-eval';font-src 'self' data:;img-src 'self' data: https://*.cartocdn.com http://*.wikimedia.org https://www.google-analytics.com https://www.googletagmanager.com https://*.doubleclick.net;
 export API_SEARCH_LIMIT_RATE=1r/s
@@ -57,10 +64,10 @@ export API_SEARCH_GLOBAL_LIMIT_RATE=20r/s
 export API_SEARCH_GLOBAL_BURST=400 nodelay
 export API_BULK_SUBMIT_LIMIT_RATE=4r/m
 export API_BULK_SUBMIT_BURST=4 nodelay
-export API_BULK_RESULT_LIMIT_RATE=1r/s
-export API_BULK_RESULT_USER_BURST=3 nodelay
-export API_BULK_RESULT_GLOBAL_LIMIT_RATE=3r/s
-export API_BULK_RESULT_GLOBAL_BURST=10 nodelay
+export API_MISC_LIMIT_RATE=2r/s
+export API_MISC_USER_BURST=7 nodelay
+export API_MISC_GLOBAL_LIMIT_RATE=5r/s
+export API_MISC_GLOBAL_BURST=40 nodelay
 export API_AGG_LIMIT_RATE=30r/m
 export API_AGG_USER_BURST=15 nodelay
 export API_AGG_GLOBAL_LIMIT_RATE=1r/s
@@ -93,8 +100,9 @@ export GIT_BACKEND_BRANCH = dev
 export GIT_ROOT = https://github.com/matchid-project
 export GIT_TOOLS = tools
 export API_URL?=${APP_DNS}
-export API_EMAIL?=matchid.project@gmail.com
 export API_SSL?=1
+
+export PROOFS=${FRONTEND}/${GIT_BACKEND}/backend/data/proofs
 
 # backup dir
 export BACKUP_DIR = ${APP_PATH}/backup
@@ -152,15 +160,14 @@ export BUILD_DIR=${APP_PATH}/${APP}-build
 include /etc/os-release
 
 config:
-	# this proc relies on matchid/tools and works both local and remote
-	which make || sudo apt-get install make
-	if [ -z "${TOOLS_PATH}" ];then\
+	@which make || sudo apt-get install make
+	@if [ -z "${TOOLS_PATH}" ];then\
 		git clone ${GIT_ROOT}/${GIT_TOOLS};\
 		${MAKE} -C ${APP_PATH}/${GIT_TOOLS} config ${MAKEOVERRIDES};\
 	else\
 		ln -s ${TOOLS_PATH} ${APP_PATH}/${GIT_TOOLS};\
 	fi
-	cp artifacts ${APP_PATH}/${GIT_TOOLS}/
+	@cp artifacts ${APP_PATH}/${GIT_TOOLS}/
 	@touch config
 
 
@@ -218,12 +225,12 @@ backend-config:
 
 backend-dev: backend-config
 	@echo docker-compose up backend dev
-	@${MAKE} -C ${APP_PATH}/${GIT_BACKEND} backend-dev DC_NETWORK=${DC_NETWORK} GIT_BRANCH=${GIT_BACKEND_BRANCH}\
+	@${MAKE} -C ${APP_PATH}/${GIT_BACKEND} dev DC_NETWORK=${DC_NETWORK} GIT_BRANCH=${GIT_BACKEND_BRANCH}\
 		API_URL=${API_URL} API_EMAIL=${API_EMAIL} API_SSL=${API_SSL}\
-		BACKEND_JOB_CONCURRENCY=${BACKEND_JOB_CONCURRENCY} BACKEND_CHUNK_CONCURRENCY=${BACKEND_CHUNK_CONCURRENCY}
+		BACKEND_JOB_CONCURRENCY=${BACKEND_JOB_CONCURRENCY} BACKEND_CHUNK_CONCURRENCY=${BACKEND_CHUNK_CONCURRENCY} BACKEND_TOKEN_USER=${BACKEND_TOKEN_USER} BACKEND_TOKEN_KEY=${BACKEND_TOKEN_KEY} BACKEND_TOKEN_PASSWORD=${BACKEND_TOKEN_PASSWORD}
 
 backend-dev-stop:
-	@${MAKE} -C ${APP_PATH}/${GIT_BACKEND} backend-dev-stop DC_NETWORK=${DC_NETWORK} GIT_BRANCH=${GIT_BACKEND_BRANCH} API_URL=${API_URL} API_EMAIL=${API_EMAIL} API_SSL=${API_SSL}
+	@${MAKE} -C ${APP_PATH}/${GIT_BACKEND} dev-stop DC_NETWORK=${DC_NETWORK} GIT_BRANCH=${GIT_BACKEND_BRANCH} API_URL=${API_URL} API_EMAIL=${API_EMAIL} API_SSL=${API_SSL}
 
 backend-clean-version:
 	rm backend-version
@@ -232,15 +239,16 @@ backend-docker-check: backend-config
 	@BACKEND_APP_VERSION=$(shell cd ${APP_PATH}/${GIT_BACKEND} && git describe --tags);\
 	${MAKE} docker-check DC_IMAGE_NAME=deces-backend APP_VERSION=$$BACKEND_APP_VERSION GIT_BRANCH=${GIT_BACKEND_BRANCH}
 
-backend: backend-config backend-docker-check
+backend: backend-config backend-docker-check proofs-mount
 	@BACKEND_APP_VERSION=$(shell cd ${APP_PATH}/${GIT_BACKEND} && git describe --tags);\
 	${MAKE} -C ${APP_PATH}/${GIT_BACKEND} backend-start APP=deces-backend DC_NETWORK=${DC_NETWORK} APP_VERSION=$$BACKEND_APP_VERSION GIT_BRANCH=${GIT_BACKEND_BRANCH}\
 		API_URL=${API_URL} API_EMAIL=${API_EMAIL} API_SSL=${API_SSL}\
-		BACKEND_JOB_CONCURRENCY=${BACKEND_JOB_CONCURRENCY} BACKEND_CHUNK_CONCURRENCY=${BACKEND_CHUNK_CONCURRENCY}
+		BACKEND_JOB_CONCURRENCY=${BACKEND_JOB_CONCURRENCY} BACKEND_CHUNK_CONCURRENCY=${BACKEND_CHUNK_CONCURRENCY} BACKEND_TOKEN_USER=${BACKEND_TOKEN_USER} BACKEND_TOKEN_KEY=${BACKEND_TOKEN_KEY} BACKEND_TOKEN_PASSWORD=${BACKEND_TOKEN_PASSWORD}
 
 backend-stop:
 	@BACKEND_APP_VERSION=$(shell cd ${APP_PATH}/${GIT_BACKEND} && git describe --tags);\
 	${MAKE} -C ${APP_PATH}/${GIT_BACKEND} backend-stop DC_NETWORK=${DC_NETWORK} APP_VERSION=$$BACKEND_APP_VERSION GIT_BRANCH=${GIT_BACKEND_BRANCH}
+	@make proofs-umount
 
 backend-clean-dir:
 	@sudo rm -rf ${APP_PATH}/${GIT_BACKEND}
@@ -423,10 +431,18 @@ backend-test:
 	@${MAKE} -C ${APP_PATH}/${GIT_BACKEND} backend-test
 
 local-test-api:
-	@${MAKE} -C ${APP_PATH}/${GIT_TOOLS} local-test-api \
-		PORT=${PORT} \
-		API_TEST_PATH=${API_TEST_PATH} API_TEST_JSON_PATH=${API_TEST_JSON_PATH} API_TEST_DATA='${API_TEST_REQUEST}'\
-		${MAKEOVERRIDES}
+	@timeout=${API_TIMEOUT} ;\
+	ret=1 ; until [ "$$timeout" -le 0 -o "$$ret" -eq "0"  ] ; do \
+		(${MAKE} -C ${APP_PATH}/${GIT_TOOLS} local-test-api \
+			PORT=${PORT} \
+			API_TEST_PATH=${API_TEST_PATH} API_TEST_JSON_PATH=${API_TEST_JSON_PATH} API_TEST_DATA='${API_TEST_REQUEST}'\
+			${MAKEOVERRIDES} 2>&1 | grep ': ok' ); \
+		ret=$$? ;\
+		if [ "$$ret" -ne "0" ] ; then echo "waiting for API to start $$timeout" ; fi ;\
+		((timeout--)); sleep 1 ; \
+	done ; \
+	exit $$ret
+
 
 deploy-remote-instance: config backend-config
 	@BACKEND_APP_VERSION=$(shell cd ${APP_PATH}/${GIT_BACKEND} && git describe --tags);\
@@ -440,7 +456,8 @@ deploy-remote-services:
 		ACTIONS=deploy-local GIT_BRANCH=${GIT_BRANCH}\
 		TOOLS_STORAGE_ACCESS_KEY=${TOOLS_STORAGE_ACCESS_KEY}\
 		TOOLS_STORAGE_SECRET_KEY=${TOOLS_STORAGE_SECRET_KEY}\
-		LOG_BUCKET=${LOG_BUCKET} LOG_DB_BUCKET=${LOG_DB_BUCKET} STATS_BUCKET=${STATS_BUCKET}\
+		LOG_BUCKET=${LOG_BUCKET} LOG_DB_BUCKET=${LOG_DB_BUCKET} STATS_BUCKET=${STATS_BUCKET} PROOFS_BUCKET=${PROOFS_BUCKET}\
+		BACKEND_TOKEN_PASSWORD=${BACKEND_TOKEN_PASSWORD}
 		${MAKEOVERRIDES}
 
 deploy-remote-publish:
@@ -533,3 +550,27 @@ stats-background:
 	make stats-restore || true;
 	(while (true); do make stats-update;sleep 3600;done) > .stats-update 2>&1 &
 	(while (true); do make stats-live;sleep 120;done) > .stats-live 2>&1 &
+
+${PROOFS}:
+	@mkdir -p ${PROOFS}
+
+proofs-restore: ${PROOFS}
+	@if [ -n "${PROOFS_BUCKET}" ];then\
+		echo restoring proofs data;\
+		${MAKE} -C ${APP_PATH}/${GIT_TOOLS} storage-sync-pull STORAGE_BUCKET=${PROOFS_BUCKET}/${GIT_BACKEND_BRANCH} DATA_DIR=${PROOFS} \
+			STORAGE_ACCESS_KEY=${TOOLS_STORAGE_ACCESS_KEY} STORAGE_SECRET_KEY=${TOOLS_STORAGE_SECRET_KEY};\
+	fi
+
+proofs-backup: ${PROOFS}
+	@if [ -n "${PROOFS_BUCKET}" ];then\
+		${MAKE} -C ${APP_PATH}/${GIT_TOOLS} storage-sync-push STORAGE_BUCKET=${PROOFS_BUCKET}/${GIT_BACKEND_BRANCH} DATA_DIR=${PROOFS} \
+			STORAGE_ACCESS_KEY=${TOOLS_STORAGE_ACCESS_KEY} STORAGE_SECRET_KEY=${TOOLS_STORAGE_SECRET_KEY};\
+	fi;
+
+proofs-mount: proofs-restore
+	@if [ -n "${PROOFS_BUCKET}" ];then\
+		((while (true); do  make proofs-backup;sleep 30;done) > .proofs-backup 2>&1 &);\
+	fi;
+
+proofs-umount:
+	@ps -elf | grep "make proofs-backup" | awk '{print $$4}'  | head -1 | xargs kill || echo -n

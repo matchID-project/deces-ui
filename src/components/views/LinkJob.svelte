@@ -74,7 +74,7 @@
 
     $: mailTo = $themeDnum ?
     `<a href="mailto:datalab@interieur.gouv.fr">datalab@interieur.gouv.fr</a>`
-    : `<a href="mailto:matchid.project@gmail.com">matchid.project@gmail.com</a>`;
+    : `<a href="mailto:__API_EMAIL__">__API_EMAIL__</a>`;
 
 
     const progressBarUpload = tweened(0, {

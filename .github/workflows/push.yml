@@ -34,10 +34,13 @@ jobs:
           LOG_BUCKET: ${{ secrets.LOG_BUCKET }}
           LOG_DB_BUCKET: ${{ secrets.LOG_DB_BUCKET }}
           STATS_BUCKET: ${{ secrets.STATS_BUCKET }}
+          PROOFS_BUCKET: ${{ secrets.PROOFS_BUCKET }}
+          BACKEND_TOKEN_KEY: ${{ secrets.BACKEND_TOKEN_KEY }}
+          BACKEND_TOKEN_PASSWORD: ${{ secrets.BACKEND_TOKEN_PASSWORD }}
       - name: publish (if dev or master)
         if: success()
         run: |
-          if [[ ( "$GIT_BRANCH" == "dev" ) || ( "$GIT_BRANCH" == "master" ) || ( "$GIT_BRANCH" == "bulk" ) ]]; then
+          if [[ ( "$GIT_BRANCH" == "dev" ) || ( "$GIT_BRANCH" == "master" ) ]]; then
             make docker-push GIT_BRANCH=$GIT_BRANCH;
           fi
         env:
@@ -46,7 +49,7 @@ jobs:
       - name: deploy-key (if dev or master)
         if: success()
         run: |
-          if [[ ( "$GIT_BRANCH" == "dev" ) || ( "$GIT_BRANCH" == "master" ) || ( "$GIT_BRANCH" == "bulk" ) ]]; then
+          if [[ ( "$GIT_BRANCH" == "dev" ) || ( "$GIT_BRANCH" == "master" ) ]]; then
             mkdir -p ~/.ssh/;
             ssh-agent -a $SSH_AUTH_SOCK > /dev/null;
             echo "$SSHENC" | base64 -d | gpg -d --passphrase $SSHPWD --batch > /tmp/id_rsa_matchID;
@@ -69,15 +72,11 @@ jobs:
         if: success()
         run: |
           if [[ ( "$GIT_BRANCH" == "dev" ) ]]; then
-            make deploy-remote FILES_TO_PROCESS=$FILES_TO_PROCESS_DEV GIT_BRANCH=$GIT_BRANCH NGINX_USER=$NGINX_USER NGINX_HOST=$NGINX_HOST remote_http_proxy=$remote_http_proxy remote_https_proxy=$remote_https_proxy remote_no_proxy=$remote_no_proxy NQ_TOKEN=$NQ_TOKEN_DEV GOOGLE_ANALYTICS_ID=$GOOGLE_ANALYTICS_ID;
+            make deploy-remote FILES_TO_PROCESS=$FILES_TO_PROCESS_DEV GIT_BRANCH=$GIT_BRANCH NGINX_USER=$NGINX_USER NGINX_HOST=$NGINX_HOST SMTP_HOST=$SMTP_HOST SMTP_PORT=$SMTP_PORT remote_http_proxy=$remote_http_proxy remote_https_proxy=$remote_https_proxy remote_no_proxy=$remote_no_proxy NQ_TOKEN=$NQ_TOKEN_DEV GOOGLE_ANALYTICS_ID=$GOOGLE_ANALYTICS_ID;
           fi;
           if [[ ( "$GIT_BRANCH" == "master" ) ]]; then
-            make deploy-remote BACKEND_CONCURRENCY=$BACKEND_CONCURRENCY_MASTER ES_MEM=$ES_MEM_MASTER SCW_FLAVOR=$SCW_FLAVOR_MASTER GIT_BACKEND_BRANCH=master GIT_BRANCH=$GIT_BRANCH NGINX_USER=$NGINX_USER NGINX_HOST=$NGINX_HOST remote_http_proxy=$remote_http_proxy remote_https_proxy=$remote_https_proxy remote_no_proxy=$remote_no_proxy NQ_TOKEN=$NQ_TOKEN_MASTER GOOGLE_ANALYTICS_ID=$GOOGLE_ANALYTICS_ID;
+            make deploy-remote BACKEND_CONCURRENCY=$BACKEND_CONCURRENCY_MASTER ES_MEM=$ES_MEM_MASTER SCW_FLAVOR=$SCW_FLAVOR_MASTER GIT_BACKEND_BRANCH=master GIT_BRANCH=$GIT_BRANCH NGINX_USER=$NGINX_USER NGINX_HOST=$NGINX_HOST SMTP_HOST=$SMTP_HOST remote_http_proxy=$remote_http_proxy remote_https_proxy=$remote_https_proxy remote_no_proxy=$remote_no_proxy NQ_TOKEN=$NQ_TOKEN_MASTER GOOGLE_ANALYTICS_ID=$GOOGLE_ANALYTICS_ID;
           fi;
-          if [[ ( "$GIT_BRANCH" == "bulk" ) ]]; then
-            make deploy-remote ES_MEM=$ES_MEM_BULK SCW_FLAVOR=$SCW_FLAVOR_BULK GIT_BACKEND_BRANCH=master GIT_BRANCH=$GIT_BRANCH NGINX_USER=$NGINX_USER NGINX_HOST=$NGINX_HOST remote_http_proxy=$remote_http_proxy remote_https_proxy=$remote_https_proxy remote_no_proxy=$remote_no_proxy NQ_TOKEN=$NQ_TOKEN_BULK GOOGLE_ANALYTICS_ID=$GOOGLE_ANALYTICS_ID;
-          fi;
-
         env:
           FILES_TO_PROCESS_DEV: deces-2020-m[0-1][0-9].txt.gz
           BACKEND_CONCURRENCY_MASTER: ${{ secrets.BACKEND_CONCURRENCY_MASTER }}
@@ -106,7 +105,10 @@ jobs:
           LOG_BUCKET: ${{ secrets.LOG_BUCKET }}
           LOG_DB_BUCKET: ${{ secrets.LOG_DB_BUCKET }}
           STATS_BUCKET: ${{ secrets.STATS_BUCKET }}
+          PROOFS_BUCKET: ${{ secrets.PROOFS_BUCKET }}
           BLOCK_DEPLOY: ${{ secrets.BLOCK_DEPLOY }}
           SSH_AUTH_SOCK: /tmp/ssh_agent.sock
-
-
+          BACKEND_TOKEN_KEY: ${{ secrets.BACKEND_TOKEN_KEY }}
+          BACKEND_TOKEN_PASSWORD: ${{ secrets.BACKEND_TOKEN_PASSWORD }}
+          SMTP_HOST: ${{ secrets.SMTP_HOST }}
+          SMTP_PORT: ${{ secrets.SMTP_PORT }}
