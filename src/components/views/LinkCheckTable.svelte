@@ -10,7 +10,7 @@
                         class="rf-table rf-table--narrow rf-text--sm"
                         style="border-right: .25em solid;"
                     >
-                        <tr>
+                        <tr style="height: {theadHeight}px">
                             <th class="is-active">
                                 score
                             </th>
@@ -93,7 +93,7 @@
                 <div class="rf-col-10 rf-padding-left-1N">
                     <div style="overflow-x: auto">
                         <table class="rf-table rf-table--narrow rf-text--sm">
-                            <tr>
+                            <tr id="table-content">
                                 {#each header.filter(x => (x!=='score') && (x!=='check')) as col, index}
                                     {#if $linkOptions.check.displayUnmappedColumns || (index < mappedColumns)}
                                         <th class:is-active={!($linkMapping.direct[col])}>
@@ -148,6 +148,7 @@
     </div>
 {/if}
 <script>
+    import { onMount } from 'svelte';
     import { linkResults, resultsPerPage, linkStep,
         linkSourceHeader, linkMapping, linkValidations,
         linkOptions
@@ -167,12 +168,20 @@
     let wait = false;
     let showToolTip;
 
+    onMount(() => {
+        setTimeout(() => {
+            theadHeight = document.getElementById('table-content').offsetHeight;
+            console.log(theadHeight);
+        }, 500);
+    })
+
     const sorts = {
         scoreDesc: (a, b) => get(a[0],'score') > get(b[0],'score') ? -1 : ( get(a[0],'score') < get(b[0],'score') ? 1 : 0 ),
         scoreAsc: (a, b) => get(a[0],'score') > get(b[0],'score') ? 1 : ( get(a[0],'score') < get(b[0],'score') ? -1 : 0 )
     }
     let filteredRows;
     let subFilteredRows;
+    let theadHeight=28;
     export let selectedRow;
     const headerMapping = {
         firstName: 'name.first',
