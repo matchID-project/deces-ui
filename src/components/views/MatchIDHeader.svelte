@@ -174,6 +174,7 @@
                                     <div
                                         class="rf-menu"
                                         class:rf-menu--expanded={expandMenu.admin}
+                                        style="width: 10rem;right:0px;"
                                         id="rf-admin"
                                     >
                                         <ul class="rf-menu__list">
