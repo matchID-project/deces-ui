@@ -42,7 +42,7 @@
                                                     && ((autoCheckSimilarPreview !== false)
                                                     || (!similarScores(selectedScores, JSON.parse(get(row,'scores')))))
                                                 }
-                                                on:click={() => {row[row.length - 2].valid = autoCheckSimilarRows(row, candidateNumber, false);}}
+                                                on:click={async () => {row[row.length - 2].valid = await autoCheckSimilarRows(row, candidateNumber, false);}}
                                                 on:mouseenter={() => {
                                                     selectedScores = JSON.parse(get(row,'scores'));
                                                     autoCheckSimilarPreview = $linkOptions.check.autoCheckSimilar ? false : undefined;
@@ -63,7 +63,7 @@
                                                     && ((autoCheckSimilarPreview !== true)
                                                     || (!similarScores(selectedScores, JSON.parse(get(row,'scores')))))
                                                 }
-                                                on:click={() => {row[row.length -2].valid = autoCheckSimilarRows(row, candidateNumber, true);}}
+                                                on:click={async () => {row[row.length -2].valid = await autoCheckSimilarRows(row, candidateNumber, true);}}
                                                 on:mouseenter={() => {
                                                     selectedScores = JSON.parse(get(row,'scores'));
                                                     autoCheckSimilarPreview = $linkOptions.check.autoCheckSimilar ? true : undefined
@@ -203,6 +203,15 @@
                 .filter(x => x)
         ];
         mappedColumns = $linkSourceHeader.filter(h => ($linkMapping.direct && $linkMapping.direct[h])).length;
+        computeFilteredRows();
+    }
+
+    $: if (header && mappedColumns && $linkValidations) {
+        computeFilteredRows();
+        size = filteredRows && filteredRows.length || 0;
+    }
+
+    const computeFilteredRows = () => {
         filteredRows = $linkResults.rows.map((r, i) => {
                 return r.map((rr, j) => {
                     const rrr = rr.slice(0);
@@ -212,8 +221,9 @@
                 });
             })
             .filter(row => applyFilter(row, filter))
-            .sort(sorts[sort])
+            .sort(sorts[sort]);
     }
+
 
     $: if (filteredRows) {
         if (master) {
@@ -245,8 +255,6 @@
     }
 
     $: subFilteredRows = filteredRows.filter(row => (new RegExp($linkOptions.check.filter,'i')).test(JSON.stringify(row)));
-
-    $: size = filteredRows && filteredRows.length || 0;
 
     const get = (row, col) => {
         if (col === 'check') {
@@ -284,7 +292,7 @@
             });
             return v;
         });
-        return row[row.length - 2].valid;
+        return await row[row.length - 2].valid;
     }
 
     const formatField = (colA, colB, row) => {
@@ -371,7 +379,7 @@
             })));
             return c;
         } else {
-            return check(row, candidateNumber, status, 'manual');
+            return await check(row, candidateNumber, status, 'manual');
         }
     };
 
