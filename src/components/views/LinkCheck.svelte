@@ -1,6 +1,6 @@
 {#if !$linkWaiter}
     {#if $linkResults}
-        <div class="rf-container-fluid rf-text--center">
+        <div class="rf-container-fluid rf-text--center rf-padding-bottom-4N">
             {#if (unCheckedLinks === 0) && (checkedLinks === 0)}
                 <p>
                     <strong>
