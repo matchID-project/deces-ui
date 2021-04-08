@@ -10,7 +10,7 @@
                         class="rf-table rf-table--narrow rf-text--sm"
                         style="border-right: .25em solid;"
                     >
-                        <tr>
+                        <tr style="height: {theadHeight}px">
                             <th class="is-active">
                                 score
                             </th>
@@ -59,7 +59,7 @@
                                                 class="rf-fi-checkbox-line rf-fi--lg {(row[row.length - 2].valid === true) ? "rf-color--bf" : "rf-color-hover--bf rf-inactive"}"
                                                 class:is-hidden={
                                                     (row[$linkResults.header.indexOf('sourceLineNumber')] !== selectedRow)
-                                                    && (row[row.length - 2].valid !== false)
+                                                    && (row[row.length - 2].valid !== true)
                                                     && ((autoCheckSimilarPreview !== true)
                                                     || (!similarScores(selectedScores, JSON.parse(get(row,'scores')))))
                                                 }
@@ -93,7 +93,7 @@
                 <div class="rf-col-10 rf-padding-left-1N">
                     <div style="overflow-x: auto">
                         <table class="rf-table rf-table--narrow rf-text--sm">
-                            <tr>
+                            <tr id="table-content">
                                 {#each header.filter(x => (x!=='score') && (x!=='check')) as col, index}
                                     {#if $linkOptions.check.displayUnmappedColumns || (index < mappedColumns)}
                                         <th class:is-active={!($linkMapping.direct[col])}>
@@ -148,6 +148,7 @@
     </div>
 {/if}
 <script>
+    import { onMount } from 'svelte';
     import { linkResults, resultsPerPage, linkStep,
         linkSourceHeader, linkMapping, linkValidations,
         linkOptions
@@ -167,12 +168,19 @@
     let wait = false;
     let showToolTip;
 
+    onMount(() => {
+        setTimeout(() => {
+            theadHeight = document.getElementById('table-content').offsetHeight;
+        }, 500);
+    })
+
     const sorts = {
         scoreDesc: (a, b) => get(a[0],'score') > get(b[0],'score') ? -1 : ( get(a[0],'score') < get(b[0],'score') ? 1 : 0 ),
         scoreAsc: (a, b) => get(a[0],'score') > get(b[0],'score') ? 1 : ( get(a[0],'score') < get(b[0],'score') ? -1 : 0 )
     }
     let filteredRows;
     let subFilteredRows;
+    let theadHeight=28;
     export let selectedRow;
     const headerMapping = {
         firstName: 'name.first',
@@ -259,16 +267,16 @@
         });
     }
 
-    const check = (row, candidateNumber, status, checkType = 'manual') => {
+    const check = async (row, candidateNumber, status, checkType = 'manual') => {
         if (row[row.length - 2].valid === status) {
-            row[row.length - 2].valid = undefined
             row[row.length - 2].checked = false
+            row[row.length - 2].valid = undefined
         } else {
-            row[row.length - 2].valid = status
             row[row.length - 2].checked = `${Date.now()} - ${checkType}`
+            row[row.length - 2].valid = await status
         }
         const sourceLineNumber = row[$linkResults.header.indexOf('sourceLineNumber')];
-        linkValidations.update(v => {
+        await linkValidations.update(v => {
             v.forEach(r => {
                 if (r[candidateNumber] && r[candidateNumber][$linkResults.header.indexOf('sourceLineNumber')] === sourceLineNumber) {
                     r[candidateNumber] = row[row.length - 2];
@@ -352,15 +360,15 @@
     const autoCheckSimilarRows = async (row, candidateNumber, status) => {
         if ($linkOptions.check.autoCheckSimilar) {
             const scores = JSON.parse(get(row,'scores'));
-            const c = check(row, candidateNumber, status, 'manual');
-            filteredRows.forEach(rg => rg.forEach(r => {
+            const c = await check(row, candidateNumber, status, 'manual');
+            await Promise.all(filteredRows.map(async (rg) => rg.map(async (r) => {
                 if (r !== row) {
                     const s = JSON.parse(get(r, 'scores'));
                     if (similarScores(scores, s)) {
-                        check(r, candidateNumber, status, 'similar group');
+                        await check(r, candidateNumber, status, 'similar group');
                     }
                 }
-            }));
+            })));
             return c;
         } else {
             return check(row, candidateNumber, status, 'manual');
