@@ -362,7 +362,7 @@
             const scores = JSON.parse(get(row,'scores'));
             const c = await check(row, candidateNumber, status, 'manual');
             await Promise.all(filteredRows.map(async (rg) => rg.map(async (r) => {
-                if (r !== row) {
+                if (JSON.stringify(r) !== JSON.stringify(row)) {
                     const s = JSON.parse(get(r, 'scores'));
                     if (similarScores(scores, s)) {
                         await check(r, candidateNumber, status, 'similar group');
