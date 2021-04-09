@@ -2,7 +2,7 @@
     <div class="rf-grid-row rf-text--center">
         {#if $linkOptions.csv}
             <div class="rf-col-12 rf-margin-top-2N">
-                <LinkConfigureOptions csv api/>
+                <IconMenuCallout menu={iconMenuCallout}/>
             </div>
         {/if}
         <div class="rf-col-6">
@@ -80,9 +80,14 @@
     import Icon from './Icon.svelte';
     import LinkFields from './LinkFields.svelte';
     import LinkSampleTable from './LinkSampleTable.svelte';
+    import IconMenuCallout from './IconMenuCallout.svelte';
     import LinkConfigureOptions from './LinkConfigureOptions.svelte';
     import GedcomTree from './GedcomTree.svelte';
     let mapping = {};
+
+    const iconMenuCallout = {
+        Options: { icon: "ri:settings-5-line", component: LinkConfigureOptions, props: {csv: true, api: true}}
+    };
 
     let fields = [
         { group: '', size: 6, label: "Nom", field: "lastName", mapTo: undefined, type: "lastName"},
