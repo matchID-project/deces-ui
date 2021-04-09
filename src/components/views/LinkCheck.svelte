@@ -72,6 +72,7 @@
         linkCompleted, linkValidations
     } from '../tools/stores.js';
     import LinkCheckTable from './LinkCheckTable.svelte';
+    import LinkCheckStats from './LinkCheckStats.svelte';
     import LinkConfigureOptions from './LinkConfigureOptions.svelte';
     import IconMenuCallout from './IconMenuCallout.svelte';
     import GedcomTree from './GedcomTree.svelte';
@@ -82,6 +83,7 @@
 
     const iconMenuCallout = {
         Options: { icon: "ri:settings-5-line", component: LinkConfigureOptions, props: {check: true}},
+        Statistiques: { icon: "ri:bar-chart-box-line", component: LinkCheckStats, props: {check: true}}
     };
 
     let selectedRow;
