@@ -551,14 +551,14 @@ stats-update: stats-full-update stats-catalog
 
 stats-background:
 	@if [ "${GIT_BRANCH}" = "${GIT_BRANCH_MASTER}" ]; then\
-		(make stats-restore || true);\
-		((make stats-full-init) > .stats-full 2>&1 &);\
+		((make stats-restore) > .stats-restore 2>&1 &);\
+		((sleep 200;make stats-full-init) > .stats-full 2>&1 &);\
 		((sleep 4800;while (true); do make stats-update;sleep 3600;done) > .stats-update 2>&1 &);\
 		((sleep 4800;while (true); do make stats-live;sleep 120;done) > .stats-live 2>&1 &);\
 	else\
-		(make stats-restore || true);\
-		((while (true); do make stats-update;sleep 3600;done) > .stats-update 2>&1 &);\
-		((while (true); do make stats-live;sleep 120;done) > .stats-live 2>&1 &);\
+		((make stats-restore) > .stats-restore 2>&1 &);\
+		((sleep 200;while (true); do make stats-update;sleep 3600;done) > .stats-update 2>&1 &);\
+		((sleep 200;while (true); do make stats-live;sleep 120;done) > .stats-live 2>&1 &);\
 	fi
 
 ${PROOFS}:
