@@ -529,8 +529,11 @@ stats-full: ${STATS} logs-restore stats-db-restore
 	@zcat -f `ls -tr ${LOG_DIR}/access*gz` ${LOG_DIR}/access.log | ${STATS_SCRIPTS}/parseLogs.pl
 
 stats-full-init: ${STATS} logs-restore
-	@rm -rf ${LOG_DB_DIR} && mkdir -p ${LOG_DB_DIR}
-	@zcat -f `ls -tr ${LOG_DIR}/access*gz` ${LOG_DIR}/access.log | ${STATS_SCRIPTS}/parseLogs.pl
+	@if [ "${GIT_BRANCH}" = "${GIT_BRANCH_MASTER}" ]; then\
+		rm -rf ${LOG_DB_DIR} && mkdir -p ${LOG_DB_DIR};\
+		(zcat -f `ls -tr ${LOG_DIR}/access*gz` ${LOG_DIR}/access.log | ${STATS_SCRIPTS}/parseLogs.pl);\
+		make stats-catalog stats-db-backup stats-backup;\
+	fi;
 
 stats-full-update: ${STATS} logs-restore stats-db-restore stats-restore
 	@\
@@ -547,9 +550,15 @@ stats-catalog: ${STATS}
 stats-update: stats-full-update stats-catalog
 
 stats-background:
-	make stats-restore || true;
-	(while (true); do make stats-update;sleep 3600;done) > .stats-update 2>&1 &
-	(while (true); do make stats-live;sleep 120;done) > .stats-live 2>&1 &
+	@if [ "${GIT_BRANCH}" = "${GIT_BRANCH_MASTER}" ]; then\
+		((make stats-full-init) > .stats-full 2>&1 &);\
+		((sleep 3600;while (true); do make stats-update;sleep 3600;done) > .stats-update 2>&1 &);\
+		((sleep 3600;while (true); do make stats-live;sleep 120;done) > .stats-live 2>&1 &);\
+	else\
+		(make stats-restore || true);\
+		((while (true); do make stats-update;sleep 3600;done) > .stats-update 2>&1 &);\
+		((while (true); do make stats-live;sleep 120;done) > .stats-live 2>&1 &);\
+	fi
 
 ${PROOFS}:
 	@mkdir -p ${PROOFS}
