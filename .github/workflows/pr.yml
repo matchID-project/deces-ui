@@ -1,9 +1,9 @@
-name: PR build and test
+name: pull request
 
 on: pull_request
 
 jobs:
-  build:
+  test:
     name: PR build and test
     runs-on: ubuntu-latest
     steps:
