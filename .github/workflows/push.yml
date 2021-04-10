@@ -1,14 +1,18 @@
-name: build and deploy
+name: Push
 
-on: push
+on:
+  push:
+    branches:
+      - dev
+      - master
 
 jobs:
   build:
-    name: build and deploy
+    name: 🐳 Build docker image
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
-      - name: Extract branch name
+      - name: extract branch name
         shell: bash
         run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
         id: extract_branch
@@ -37,29 +41,34 @@ jobs:
           PROOFS_BUCKET: ${{ secrets.PROOFS_BUCKET }}
           BACKEND_TOKEN_KEY: ${{ secrets.BACKEND_TOKEN_KEY }}
           BACKEND_TOKEN_PASSWORD: ${{ secrets.BACKEND_TOKEN_PASSWORD }}
-      - name: publish (if dev or master)
+      - name: publish
         if: success()
-        run: |
-          if [[ ( "$GIT_BRANCH" == "dev" ) || ( "$GIT_BRANCH" == "master" ) ]]; then
-            make docker-push GIT_BRANCH=$GIT_BRANCH;
-          fi
+        run: make docker-push GIT_BRANCH=$GIT_BRANCH;
         env:
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
           GIT_BRANCH: ${{ steps.extract_branch.outputs.branch }}
-      - name: deploy-key (if dev or master)
+  deploy:
+    name: 🚀 Deploy
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: extract branch name
+        shell: bash
+        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+        id: extract_branch
+      - name: deploy-key
         if: success()
         run: |
-          if [[ ( "$GIT_BRANCH" == "dev" ) || ( "$GIT_BRANCH" == "master" ) ]]; then
-            mkdir -p ~/.ssh/;
-            ssh-agent -a $SSH_AUTH_SOCK > /dev/null;
-            echo "$SSHENC" | base64 -d | gpg -d --passphrase $SSHPWD --batch > /tmp/id_rsa_matchID;
-            chmod 600 /tmp/id_rsa_matchID;
-            ssh-add /tmp/id_rsa_matchID;
-            echo "$SSHPUB" > ~/.ssh/id_rsa_matchID.pub;
-            echo "Host * !""$BASTION_HOST" > ~/.ssh/config;
-            echo "   ProxyCommand ssh -o StrictHostKeyChecking=no $BASTION_USER@$BASTION_HOST nc %h %p" >> ~/.ssh/config;
-            cat ~/.ssh/config;
-          fi
+          mkdir -p ~/.ssh/;
+          ssh-agent -a $SSH_AUTH_SOCK > /dev/null;
+          echo "$SSHENC" | base64 -d | gpg -d --passphrase $SSHPWD --batch > /tmp/id_rsa_matchID;
+          chmod 600 /tmp/id_rsa_matchID;
+          ssh-add /tmp/id_rsa_matchID;
+          echo "$SSHPUB" > ~/.ssh/id_rsa_matchID.pub;
+          echo "Host * !""$BASTION_HOST" > ~/.ssh/config;
+          echo "   ProxyCommand ssh -o StrictHostKeyChecking=no $BASTION_USER@$BASTION_HOST nc %h %p" >> ~/.ssh/config;
+          cat ~/.ssh/config;
         env:
           GIT_BRANCH: ${{ steps.extract_branch.outputs.branch }}
           BASTION_HOST: ${{ secrets.BASTION_HOST }}

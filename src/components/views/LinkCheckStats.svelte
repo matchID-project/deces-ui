@@ -5,29 +5,14 @@
     <div class="rf-col-12">
         <div class="rf-container-fluid">
             <div class="rf-grid-row rf-grid-row--gutters">
-                <div class="rf-col-4 rf-text--center">
-                    <div class="rf-tile">
-                        <div class="rf-tile__body">
-                            <h4 class="rf-tile__title">{rawMatchingRate} %</h4>
-                            <p class="rf-tile__desc">Taux d'appariement brut</p>
-                        </div>
-                    </div>
+                <div class="rf-col-4">
+                    <StatsTile number="{rawMatchingRate} %" label="Taux d'appariement brut"/>
                 </div>
-                <div class="rf-col-4 rf-text--center">
-                    <div class="rf-tile">
-                        <div class="rf-tile__body">
-                            <h4 class="rf-tile__title">{checkRate} %</h4>
-                            <p class="rf-tile__desc">Validation manuelle</p>
-                        </div>
-                    </div>
+                <div class="rf-col-4">
+                    <StatsTile number="{checkRate} %" label="Validation manuelle"/>
                 </div>
-                <div class="rf-col-4 rf-text--center">
-                    <div class="rf-tile">
-                        <div class="rf-tile__body">
-                            <h4 class="rf-tile__title">{multiMatchingRate} %</h4>
-                            <p class="rf-tile__desc">Appariements multiples</p>
-                        </div>
-                    </div>
+                <div class="rf-col-4">
+                    <StatsTile number="{multiMatchingRate} %" label="Appariements multiples"/>
                 </div>
             </div>
         </div>
@@ -66,29 +51,14 @@
     <div class="rf-col-12">
         <div class="rf-container-fluid">
             <div class="rf-grid-row rf-grid-row--gutters">
-                <div class="rf-col-4 rf-text--center">
-                    <div class="rf-tile">
-                        <div class="rf-tile__body">
-                            <h4 class="rf-tile__title">{recallRate} %</h4>
-                            <p class="rf-tile__desc">Rappel (seuil {(100 * $linkOptions.check.autoCheckThreshold).toFixed(0)} %)</p>
-                        </div>
-                    </div>
+                <div class="rf-col-4">
+                    <StatsTile number="{recallRate} %" label="Rappel (seuil {(100 * $linkOptions.check.autoCheckThreshold).toFixed(0)} %)"/>
                 </div>
-                <div class="rf-col-4 rf-text--center">
-                    <div class="rf-tile">
-                        <div class="rf-tile__body">
-                            <h4 class="rf-tile__title">{precisionRate} %</h4>
-                            <p class="rf-tile__desc">Précision</p>
-                        </div>
-                    </div>
+                <div class="rf-col-4">
+                    <StatsTile number="{precisionRate} %" label="Précision"/>
                 </div>
-                <div class="rf-col-4 rf-text--center">
-                    <div class="rf-tile">
-                        <div class="rf-tile__body">
-                            <h4 class="rf-tile__title">{fScore} %</h4>
-                            <p class="rf-tile__desc">F1-score</p>
-                        </div>
-                    </div>
+                <div class="rf-col-4">
+                    <StatsTile number="{fScore} %" label="F1-score"/>
                 </div>
             </div>
         </div>
@@ -100,26 +70,11 @@
     import('svelte-chartjs/src/Bar.svelte').then(module => {
         Bar = module.default;
     });
+    import StatsTile from './StatsTile.svelte';
     import { linkResults, linkCompleteResults, linkValidations, linkOptions } from '../tools/stores.js';
+    import { smartNumber } from '../tools/stats.js';
 
     let threshold = $linkOptions.check.autoCheckThreshold;
-
-    const smartNumber = (n, digits) => {
-      if (typeof n !== 'number') {
-          return n;
-      };
-      const d = digits ? digits : 0;
-      if (n < 1000) {
-          return `${n.toFixed(d).replace(/.0$/,'')}`;
-      }
-      if (n < 1000000) {
-          return `${(n/1000).toFixed(d).replace(/.0$/,'')}k`;
-      }
-      if (n < 1000000000) {
-        return `${(n/1000000).toFixed(d).replace(/.0$/,'')}M`;
-      }
-      return `${(n/1000000000).toFixed(d).replace(/.0$/,'')}G`;
-    }
 
     const fontFamily = '"Marianne",arial,sans-serif';
     const ticks = {

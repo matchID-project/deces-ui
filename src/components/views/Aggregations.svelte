@@ -73,6 +73,7 @@
     totalBuckets,
     actualBuckets
   } from "../tools/stores.js";
+  import { smartNumber } from '../tools/stats.js';
   import { searchTrigger } from '../tools/search.js';
   import buildRequest from '../tools/buildRequest.js';
   import { runAggregationRequest } from '../tools/runRequest.js';
@@ -374,23 +375,6 @@
   const sleep = (ms) => {
       return new Promise(resolve => setTimeout(resolve, ms));
   }
-
-  const smartNumber = (n) => {
-    if (typeof n !== 'number') {
-      return n;
-    };
-    if (n < 1000) {
-      return n;
-    }
-    if (n < 1000000) {
-      return `${(n/1000).toFixed(1).replace(/.0$/,'')}k`;
-    }
-    if (n < 1000000000) {
-      return `${(n/1000000).toFixed(1).replace(/.0$/,'')}M`;
-    }
-    return `${(n/1000000000).toFixed(1).replace(/.0$/,'')}G`;
-  }
-
 
   const ticks = {
     autoSkip: true,
