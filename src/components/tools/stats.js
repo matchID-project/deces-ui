@@ -4,13 +4,14 @@ export const smartNumber = (n, digits) => {
     };
     const d = digits ? digits : 0;
     if (n < 1000) {
-        return `${n.toFixed(d).replace(/.0$/,'')}`;
+        return `${n.toFixed(d).replace(/\.0+$/,'')}`;
     }
     if (n < 1000000) {
-        return `${(n/1000).toFixed(d).replace(/.0$/,'')}k`;
+        return `${(n/1000).toFixed(d).replace(/\.0+$/,'')}k`;
     }
     if (n < 1000000000) {
-      return `${(n/1000000).toFixed(d).replace(/.0$/,'')}M`;
+      return `${(n/1000000).toFixed(d).replace(/\.0+$/,'')}M`;
     }
-    return `${(n/1000000000).toFixed(d).replace(/.0$/,'')}G`;
+    return `${(n/1000000000).toFixed(d).replace(/\.0+$/,'')}G`;
 };
+
