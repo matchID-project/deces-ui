@@ -95,7 +95,6 @@ const capitalize = (s) => {
 
 export const searchString = (searchInput) => {
     if (searchInput.fullText.value) return searchInput.fullText.value.split(/\s+/).map(capitalize).join(' ');
-    console.log(searchInput);
     let e = 'é.e';
     if (searchInput.sex.value === 'F') {
         e = 'ée';

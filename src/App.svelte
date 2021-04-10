@@ -21,6 +21,10 @@
 	onMount(async () => {
 		await useLocalSync(user, 'user');
 		await useLocalSync(accessToken, 'accessToken');
+		await useLocalSync(alphaFeatures, 'alphaFeatures');
+		if (!$alphaFeatures) {
+			$alphaFeatures = Math.random() < 0.03;
+		}
 		if ($version && !$version.api) {
 			try {
 				const r = await fetch('__BACKEND_PROXY_PATH__/version');
