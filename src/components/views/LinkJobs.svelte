@@ -1,6 +1,28 @@
-<div class="rf-container">
+<div class="rf-container rf-padding-top-2N">
     <div class="rf-grid-row">
-        <div class="rf-col-12 rf-padding-2N rf-text--center">
+        <div class="rf-col-xl-2 rf-col-lg-2 rf-col-md-12 rf-col-sm-12 rf-col-xs-12">
+        </div>
+        <div class="rf-col-xl-8 rf-col-lg-8 rf-col-md-12 rf-col-sm-12 rf-col-xs-12">
+            <div class="rf-container-fluid">
+                <div class="rf-grid-row rf-grid-row--gutters">
+                    <div class="rf-col-4">
+                        <StatsTile number={jobs.filter(j => j.status === 'succeeded').length} label="Nombre de traitements"/>
+                    </div>
+                    <div class="rf-col-4">
+                        <StatsTile number={jobs.filter(j => j.status === 'succeeded').length
+                            && jobs.filter(j => j.status === 'succeeded').map(j =>j.rows).reduce((a,b) => a+b)} label="Appariements"/>
+                    </div>
+                    <div class="rf-col-4">
+                        <StatsTile number={jobs.filter(j => j.status === 'failed').length} label="Traitements en échec"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="rf-col-xl-2 rf-col-lg-2 rf-col-md-12 rf-col-sm-12 rf-col-xs-12">
+        </div>
+        <div class="rf-col-xl-2 rf-col-lg-2 rf-col-md-12 rf-col-sm-12 rf-col-xs-12">
+        </div>
+        <div class="rf-col-xl-8 rf-col-lg-8 rf-col-md-12 rf-col-sm-12 rf-col-xs-12 rf-padding-top-2N rf-text--center">
             <p>
                 <strong> Liste des traitements
                 </strong>
@@ -32,12 +54,15 @@
                 Aucun job
             {/if}
         </div>
+        <div class="rf-col-xl-2 rf-col-lg-2 rf-col-md-12 rf-col-sm-12 rf-col-xs-12">
+        </div>
     </div>
 </div>
 <script>
     import { onMount } from 'svelte';
     import { tweened } from 'svelte/motion';
-	import { sineInOut } from 'svelte/easing';
+    import { sineInOut } from 'svelte/easing';
+    import StatsTile from './StatsTile.svelte';
     import axios from 'axios';
 
     import { accessToken } from '../tools/stores.js';
