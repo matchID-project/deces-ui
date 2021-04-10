@@ -26,17 +26,11 @@
                 </div>
                 {#each stats.filter(x => rawData.general[x]) as key}
                     <div class="rf-col-xl-3 rf-col-lg-3 rf-col-md-3 rf-col-sm-3 rf-col-xs-6">
-                        <div class="rf-tile">
-                            <div class="rf-tile__body rf-text--center">
-                                <strong class="rf-text--lg">
-                                    {smartNumber(rawData.general[key], 1)}
-                                </strong>
-                                <br>
-                                <span class="rf-text--xs">
-                                    {labels[key] || key}
-                                </span>
-                            </div>
-                        </div>
+                        <StatsTile
+                            number={rawData.general[key]}
+                            precision={1}
+                            label={labels[key] || key}
+                        />
                     </div>
                 {/each}
             {/if}
@@ -86,6 +80,7 @@
   });
   import Icon from './Icon.svelte';
   import WorldChoropleth from './WorldChoropleth.svelte';
+  import StatsTile from './StatsTile.svelte';
   import Heatmap from './Heatmap.svelte';
   import { smartNumber } from '../tools/stats.js';
   import { route, updateURL } from '../tools/stores.js';
