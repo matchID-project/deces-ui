@@ -195,6 +195,19 @@
                                             </li>
                                             <li
                                                 class="rf-menu__item rf-href"
+                                                class:rf-menu__item--active={!modal && ($route.path === '/stats')}
+                                                on:click|preventDefault={() => goToPage('stats')}
+                                            >
+                                                <a
+                                                    href="/stats"
+                                                    title="Statistiques"
+                                                    class="rf-link rf-href rf-fi-question-line rf-link--icon-left"
+                                                >
+                                                    Statistiques
+                                                </a>
+                                            </li>
+                                            <li
+                                                class="rf-menu__item rf-href"
                                                 class:rf-menu__item--active={!modal && ($route.path === '/edits')}
                                                 on:click|preventDefault={() => goToPage('edits')}
                                             >
@@ -390,6 +403,19 @@
                                                     class="rf-link rf-href rf-fi-question-line rf-link--icon-left"
                                                 >
                                                     Se déconnecter
+                                                </a>
+                                            </li>
+                                            <li
+                                                class="rf-menu__item rf-href"
+                                                class:rf-menu__item--active={!modal && ($route.path === '/stats')}
+                                                on:click|preventDefault={() => goToPage('stats')}
+                                            >
+                                                <a
+                                                    href="/edits"
+                                                    title="Statistiques"
+                                                    class="rf-link rf-href rf-fi-question-line rf-link--icon-left"
+                                                >
+                                                    Statistiques
                                                 </a>
                                             </li>
                                             <li
