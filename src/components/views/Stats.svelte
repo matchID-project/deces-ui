@@ -87,6 +87,7 @@
   import Icon from './Icon.svelte';
   import WorldChoropleth from './WorldChoropleth.svelte';
   import Heatmap from './Heatmap.svelte';
+  import { smartNumber } from '../tools/stats.js';
   import { route, updateURL } from '../tools/stores.js';
   import { iso2to3 } from '../tools/countries.js';
 
@@ -316,23 +317,6 @@
         });
         return dataAgg;
     }
-
-    const smartNumber = (n, digits) => {
-      if (typeof n !== 'number') {
-          return n;
-      };
-      const d = digits ? digits : 0;
-      if (n < 1000) {
-          return n;
-      }
-      if (n < 1000000) {
-          return `${(n/1000).toFixed(1).replace(/.0$/,'')}k`;
-      }
-    if (n < 1000000000) {
-          return `${(n/1000000).toFixed(1).replace(/.0$/,'')}M`;
-    }
-    return `${(n/1000000000).toFixed(1).replace(/.0$/,'')}G`;
-  }
 
   const fontFamily = '"Marianne",arial,sans-serif';
   const ticks = {
