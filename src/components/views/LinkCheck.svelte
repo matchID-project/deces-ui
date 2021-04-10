@@ -55,7 +55,7 @@
                         </button>
                     </span>
                 </p>
-                <LinkConfigureOptions check/>
+                <IconMenuCallout menu={iconMenuCallout}/>
                 <LinkCheckTable filter={filterUnchecked} bind:selectedRow={selectedRow} sort={'scoreDesc'} master=true actionTitle={"à valider"} bind:size={unCheckedLinks}/>
                 <LinkCheckTable filter={ filterChecked } bind:selectedRow={selectedRow} sort={'scoreAsc'} actionTitle={"validées"} bind:size={checkedLinks}/>
             {/if}
@@ -72,12 +72,19 @@
         linkCompleted, linkValidations
     } from '../tools/stores.js';
     import LinkCheckTable from './LinkCheckTable.svelte';
+    import LinkCheckStats from './LinkCheckStats.svelte';
     import LinkConfigureOptions from './LinkConfigureOptions.svelte';
+    import IconMenuCallout from './IconMenuCallout.svelte';
     import GedcomTree from './GedcomTree.svelte';
     import Icon from './Icon.svelte';
     import yaml from 'yamljs';
 
     let isDownloading = false;
+
+    const iconMenuCallout = {
+        Options: { icon: "ri:settings-5-line", component: LinkConfigureOptions, props: {check: true}},
+        Statistiques: { icon: "ri:bar-chart-box-line", component: LinkCheckStats, props: {check: true}}
+    };
 
     let selectedRow;
     let autoCheckSimilar;
