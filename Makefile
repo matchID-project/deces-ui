@@ -159,6 +159,9 @@ export BUILD_DIR=${APP_PATH}/${APP}-build
 
 include /etc/os-release
 
+version:
+	@echo ${APP_VERSION}
+
 config:
 	@which make || sudo apt-get install make
 	@if [ -z "${TOOLS_PATH}" ];then\
