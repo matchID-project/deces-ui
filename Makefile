@@ -136,7 +136,7 @@ vm_max_count            := $(shell cat /etc/sysctl.conf | egrep vm.max_map_count
 
 export STORAGE_BUCKET=${DATASET}
 #prebuild image with docker and nginx-node-elasticsearch docker images
-export SCW_IMAGE_ID=e3c5fcde-0e06-4510-9286-f498447152b7
+export SCW_IMAGE_ID=af490a22-e729-4ab3-b9e4-bfa3848c5180
 
 dummy		    := $(shell touch artifacts)
 include ./artifacts
@@ -507,6 +507,26 @@ deploy-monitor:
 
 deploy-remote: config-minimal deploy-remote-instance deploy-remote-services deploy-remote-publish deploy-delete-old deploy-monitor
 
+deploy-docker-pull-base: deploy-remote-instance
+	@${MAKE} -C ${APP_PATH}/${GIT_TOOLS} remote-docker-pull DOCKER_IMAGE=node:12.14.0-slim
+	@${MAKE} -C ${APP_PATH}/${GIT_TOOLS} remote-docker-pull DOCKER_IMAGE=nginx:alpine
+	@${MAKE} -C ${APP_PATH}/${GIT_TOOLS} remote-docker-pull DOCKER_IMAGE=docker.elastic.co/elasticsearch/elasticsearch-oss:${ES_VERSION}
+	@${MAKE} -C ${APP_PATH}/${GIT_TOOLS} remote-docker-pull DOCKER_IMAGE=redis:alpine
+
+update-base-image: deploy-remote-instance deploy-docker-pull-base
+	@BACKEND_APP_VERSION=$(shell cd ${APP_PATH}/${GIT_BACKEND} && git describe --tags); \
+	${MAKE} -C ${APP_PATH}/${GIT_TOOLS} remote-cmd REMOTE_CMD="sync"; \
+	${MAKE} -C ${APP_PATH}/${GIT_TOOLS} remote-cmd REMOTE_CMD="rm -rf ${APP_GROUP}"; \
+	sleep 5;\
+	${MAKE} -C ${APP_PATH}/${GIT_TOOLS} SCW-instance-snapshot \
+		GIT_BRANCH=${GIT_BRANCH} APP=${APP} APP_VERSION=${APP_VERSION} CLOUD_TAG=ui:${APP_VERSION}-backend:$$BACKEND_APP_VERSION DC_IMAGE_NAME=${DC_PREFIX};
+	${MAKE} -C ${APP_PATH}/${GIT_TOOLS} SCW-instance-image \
+		CLOUD_APP=nner;\
+	SCW_IMAGE_ID=$$(cat ${APP_PATH}/${GIT_TOOLS}/cloud/SCW.image.id)/;\
+	cat ${APP_PATH}/Makefile | sed "s/^export SCW_IMAGE_ID=.*/export SCW_IMAGE_ID=$${SCW_IMAGE_ID}" \
+		> ${APP_PATH}/Makefile.tmp && mv ${APP_PATH}/Makefile.tmp ${APP_PATH}/Makefile;\
+	${MAKE} -C ${APP_PATH}/${GIT_TOOLS} remote-clean;\
+	git add Makefile && git commit -m '⬆️  update SCW_IMAGE_ID'
 
 ${LOG_DIR}:
 	@mkdir -p ${LOG_DIR};
