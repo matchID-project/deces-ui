@@ -472,7 +472,7 @@ deploy-remote-instance: config-minimal backend-config
 	@BACKEND_APP_VERSION=$(shell cd ${APP_PATH}/${GIT_BACKEND} && git describe --tags);\
 	${MAKE} -C ${APP_PATH}/${GIT_TOOLS} remote-config\
 			APP=${APP} APP_VERSION=${APP_VERSION} CLOUD_TAG=ui:${APP_VERSION}-backend:$$BACKEND_APP_VERSION DC_IMAGE_NAME=${DC_PREFIX}\
-			GIT_BRANCH=${GIT_BRANCH} ${MAKEOVERRIDES}
+			SCW_IMAGE_ID=${SCW_IMAGE_ID} GIT_BRANCH=${GIT_BRANCH} ${MAKEOVERRIDES}
 
 deploy-remote-services:
 	@${MAKE} -C ${APP_PATH}/${GIT_TOOLS} remote-deploy remote-actions\
