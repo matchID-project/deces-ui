@@ -164,8 +164,27 @@ include /etc/os-release
 version:
 	@echo ${APP_VERSION}
 
+config-minimal:
+	@if [ -z "${TOOLS_PATH}" ];then\
+		git clone ${GIT_ROOT}/${GIT_TOOLS};\
+		${MAKE} -C ${APP_PATH}/${GIT_TOOLS} tools-install ${MAKEOVERRIDES};\
+	else\
+		ln -s ${TOOLS_PATH} ${APP_PATH}/${GIT_TOOLS};\
+	fi
+
+config-stats:
+	@if [ -z "$(wildcard /usr/lib/*/perl*/*/Date/Pcalc)" ] || \
+		[ -z "$(wildcard /usr/lib/*/perl*/*/JSON/XS)" ] || \
+		[ -z "$(wildcard /usr/lib/*/perl*/*/Geo/IP)" ]; then\
+		if [ "${OS_TYPE}" = "DEB" ]; then\
+			sudo apt-get install -yqq libdate-calc-perl libjson-xs-perl libgeo-ip-perl; true;\
+		fi;\
+		if [ "${OS_TYPE}" = "RPM" ]; then\
+			sudo yum install -y perl-Date-Calc perl-Geo-IP perl-JSON-XS perl-Digest-SHA; true;\
+		fi;\
+	fi
+
 config:
-	@which make || sudo apt-get install make
 	@if [ -z "${TOOLS_PATH}" ];then\
 		git clone ${GIT_ROOT}/${GIT_TOOLS};\
 		${MAKE} -C ${APP_PATH}/${GIT_TOOLS} config ${MAKEOVERRIDES};\
@@ -449,7 +468,7 @@ local-test-api:
 	exit $$ret
 
 
-deploy-remote-instance: config backend-config
+deploy-remote-instance: config-minimal backend-config
 	@BACKEND_APP_VERSION=$(shell cd ${APP_PATH}/${GIT_BACKEND} && git describe --tags);\
 	${MAKE} -C ${APP_PATH}/${GIT_TOOLS} remote-config\
 			APP=${APP} APP_VERSION=${APP_VERSION} CLOUD_TAG=ui:${APP_VERSION}-backend:$$BACKEND_APP_VERSION DC_IMAGE_NAME=${DC_PREFIX}\
@@ -486,7 +505,7 @@ deploy-delete-old:
 deploy-monitor:
 	@${MAKE} -C ${APP_PATH}/${GIT_TOOLS} remote-install-monitor-nq NQ_TOKEN=${NQ_TOKEN} ${MAKEOVERRIDES}
 
-deploy-remote: config deploy-remote-instance deploy-remote-services deploy-remote-publish deploy-delete-old deploy-monitor
+deploy-remote: config-minimal deploy-remote-instance deploy-remote-services deploy-remote-publish deploy-delete-old deploy-monitor
 
 
 ${LOG_DIR}:
@@ -530,23 +549,23 @@ stats-restore: ${STATS}
 		STORAGE_BUCKET=${STATS_BUCKET} DATA_DIR=${STATS}\
 		STORAGE_ACCESS_KEY=${TOOLS_STORAGE_ACCESS_KEY} STORAGE_SECRET_KEY=${TOOLS_STORAGE_SECRET_KEY};
 
-stats-full: ${STATS} logs-restore stats-db-restore
+stats-full: config-stats ${STATS} logs-restore stats-db-restore
 	@zcat -f `ls -tr ${LOG_DIR}/access*gz` ${LOG_DIR}/access.log | ${STATS_SCRIPTS}/parseLogs.pl
 
-stats-full-init: ${STATS} logs-restore
+stats-full-init: config-stats ${STATS} logs-restore
 	@if [ "${GIT_BRANCH}" = "${GIT_BRANCH_MASTER}" ]; then\
 		rm -rf ${LOG_DB_DIR} && mkdir -p ${LOG_DB_DIR};\
 		(zcat -f `ls -tr ${LOG_DIR}/access*gz` ${LOG_DIR}/access.log | ${STATS_SCRIPTS}/parseLogs.pl);\
 		make stats-catalog stats-db-backup stats-backup;\
 	fi;
 
-stats-full-update: ${STATS} logs-restore stats-db-restore stats-restore
+stats-full-update: config-stats ${STATS} logs-restore stats-db-restore stats-restore
 	@\
 	if [ "${GIT_BRANCH}" = "${GIT_BRANCH_MASTER}" ]; then\
 		zcat -f `ls -tr ${LOG_DIR}/access.log.*gz | tail -2` ${LOG_DIR}/access.log | ${STATS_SCRIPTS}/parseLogs.pl;\
 	fi
 
-stats-live: ${STATS} logs-restore
+stats-live: config-stats ${STATS} logs-restore
 	@cat ${LOG_DIR}/access.log | ${STATS_SCRIPTS}/parseLogs.pl day
 
 stats-catalog: ${STATS}
