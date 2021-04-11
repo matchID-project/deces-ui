@@ -135,6 +135,8 @@ vm_max_count            := $(shell cat /etc/sysctl.conf | egrep vm.max_map_count
 
 
 export STORAGE_BUCKET=${DATASET}
+#prebuild image with docker and nginx-node-elasticsearch docker images
+export SCW_IMAGE_ID=82121e74-eb9e-464f-acc5-211398b96843
 
 dummy		    := $(shell touch artifacts)
 include ./artifacts
@@ -159,8 +161,30 @@ export BUILD_DIR=${APP_PATH}/${APP}-build
 
 include /etc/os-release
 
+version:
+	@echo ${APP_VERSION}
+
+config-minimal:
+	@if [ -z "${TOOLS_PATH}" ];then\
+		git clone ${GIT_ROOT}/${GIT_TOOLS};\
+		${MAKE} -C ${APP_PATH}/${GIT_TOOLS} tools-install ${MAKEOVERRIDES};\
+	else\
+		ln -s ${TOOLS_PATH} ${APP_PATH}/${GIT_TOOLS};\
+	fi
+
+config-stats:
+	@if [ -z "$(wildcard /usr/lib/*/perl*/*/Date/Pcalc)" ] || \
+		[ -z "$(wildcard /usr/lib/*/perl*/*/JSON/XS)" ] || \
+		[ -z "$(wildcard /usr/lib/*/perl*/*/Geo/IP)" ]; then\
+		if [ "${OS_TYPE}" = "DEB" ]; then\
+			sudo apt-get install -yqq libdate-calc-perl libjson-xs-perl libgeo-ip-perl; true;\
+		fi;\
+		if [ "${OS_TYPE}" = "RPM" ]; then\
+			sudo yum install -y perl-Date-Calc perl-Geo-IP perl-JSON-XS perl-Digest-SHA; true;\
+		fi;\
+	fi
+
 config:
-	@which make || sudo apt-get install make
 	@if [ -z "${TOOLS_PATH}" ];then\
 		git clone ${GIT_ROOT}/${GIT_TOOLS};\
 		${MAKE} -C ${APP_PATH}/${GIT_TOOLS} config ${MAKEOVERRIDES};\
@@ -444,11 +468,11 @@ local-test-api:
 	exit $$ret
 
 
-deploy-remote-instance: config backend-config
+deploy-remote-instance: config-minimal backend-config
 	@BACKEND_APP_VERSION=$(shell cd ${APP_PATH}/${GIT_BACKEND} && git describe --tags);\
 	${MAKE} -C ${APP_PATH}/${GIT_TOOLS} remote-config\
 			APP=${APP} APP_VERSION=${APP_VERSION} CLOUD_TAG=ui:${APP_VERSION}-backend:$$BACKEND_APP_VERSION DC_IMAGE_NAME=${DC_PREFIX}\
-			GIT_BRANCH=${GIT_BRANCH} ${MAKEOVERRIDES}
+			SCW_IMAGE_ID=${SCW_IMAGE_ID} GIT_BRANCH=${GIT_BRANCH} ${MAKEOVERRIDES}
 
 deploy-remote-services:
 	@${MAKE} -C ${APP_PATH}/${GIT_TOOLS} remote-deploy remote-actions\
@@ -481,8 +505,28 @@ deploy-delete-old:
 deploy-monitor:
 	@${MAKE} -C ${APP_PATH}/${GIT_TOOLS} remote-install-monitor-nq NQ_TOKEN=${NQ_TOKEN} ${MAKEOVERRIDES}
 
-deploy-remote: config deploy-remote-instance deploy-remote-services deploy-remote-publish deploy-delete-old deploy-monitor
+deploy-remote: config-minimal deploy-remote-instance deploy-remote-services deploy-remote-publish deploy-delete-old deploy-monitor
 
+deploy-docker-pull-base: deploy-remote-instance
+	@${MAKE} -C ${APP_PATH}/${GIT_TOOLS} remote-docker-pull DOCKER_IMAGE=node:12.14.0-slim
+	@${MAKE} -C ${APP_PATH}/${GIT_TOOLS} remote-docker-pull DOCKER_IMAGE=nginx:alpine
+	@${MAKE} -C ${APP_PATH}/${GIT_TOOLS} remote-docker-pull DOCKER_IMAGE=docker.elastic.co/elasticsearch/elasticsearch-oss:${ES_VERSION}
+	@${MAKE} -C ${APP_PATH}/${GIT_TOOLS} remote-docker-pull DOCKER_IMAGE=redis:alpine
+
+update-base-image: deploy-remote-instance deploy-docker-pull-base
+	@BACKEND_APP_VERSION=$(shell cd ${APP_PATH}/${GIT_BACKEND} && git describe --tags); \
+	${MAKE} -C ${APP_PATH}/${GIT_TOOLS} remote-cmd REMOTE_CMD="sync"; \
+	${MAKE} -C ${APP_PATH}/${GIT_TOOLS} remote-cmd REMOTE_CMD="rm -rf ${APP_GROUP}"; \
+	sleep 5;\
+	${MAKE} -C ${APP_PATH}/${GIT_TOOLS} SCW-instance-snapshot \
+		GIT_BRANCH=${GIT_BRANCH} APP=${APP} APP_VERSION=${APP_VERSION} CLOUD_TAG=ui:${APP_VERSION}-backend:$$BACKEND_APP_VERSION DC_IMAGE_NAME=${DC_PREFIX};
+	${MAKE} -C ${APP_PATH}/${GIT_TOOLS} SCW-instance-image \
+		CLOUD_APP=nner;\
+	SCW_IMAGE_ID=$$(cat ${APP_PATH}/${GIT_TOOLS}/cloud/SCW.image.id)/;\
+	cat ${APP_PATH}/Makefile | sed "s/^export SCW_IMAGE_ID=.*/export SCW_IMAGE_ID=$${SCW_IMAGE_ID}" \
+		> ${APP_PATH}/Makefile.tmp && mv ${APP_PATH}/Makefile.tmp ${APP_PATH}/Makefile;\
+	${MAKE} -C ${APP_PATH}/${GIT_TOOLS} remote-clean;\
+	git add Makefile && git commit -m '⬆️  update SCW_IMAGE_ID'
 
 ${LOG_DIR}:
 	@mkdir -p ${LOG_DIR};
@@ -525,23 +569,23 @@ stats-restore: ${STATS}
 		STORAGE_BUCKET=${STATS_BUCKET} DATA_DIR=${STATS}\
 		STORAGE_ACCESS_KEY=${TOOLS_STORAGE_ACCESS_KEY} STORAGE_SECRET_KEY=${TOOLS_STORAGE_SECRET_KEY};
 
-stats-full: ${STATS} logs-restore stats-db-restore
+stats-full: config-stats ${STATS} logs-restore stats-db-restore
 	@zcat -f `ls -tr ${LOG_DIR}/access*gz` ${LOG_DIR}/access.log | ${STATS_SCRIPTS}/parseLogs.pl
 
-stats-full-init: ${STATS} logs-restore
+stats-full-init: config-stats ${STATS} logs-restore
 	@if [ "${GIT_BRANCH}" = "${GIT_BRANCH_MASTER}" ]; then\
 		rm -rf ${LOG_DB_DIR} && mkdir -p ${LOG_DB_DIR};\
 		(zcat -f `ls -tr ${LOG_DIR}/access*gz` ${LOG_DIR}/access.log | ${STATS_SCRIPTS}/parseLogs.pl);\
 		make stats-catalog stats-db-backup stats-backup;\
 	fi;
 
-stats-full-update: ${STATS} logs-restore stats-db-restore stats-restore
+stats-full-update: config-stats ${STATS} logs-restore stats-db-restore stats-restore
 	@\
 	if [ "${GIT_BRANCH}" = "${GIT_BRANCH_MASTER}" ]; then\
 		zcat -f `ls -tr ${LOG_DIR}/access.log.*gz | tail -2` ${LOG_DIR}/access.log | ${STATS_SCRIPTS}/parseLogs.pl;\
 	fi
 
-stats-live: ${STATS} logs-restore
+stats-live: config-stats ${STATS} logs-restore
 	@cat ${LOG_DIR}/access.log | ${STATS_SCRIPTS}/parseLogs.pl day
 
 stats-catalog: ${STATS}
@@ -551,14 +595,14 @@ stats-update: stats-full-update stats-catalog
 
 stats-background:
 	@if [ "${GIT_BRANCH}" = "${GIT_BRANCH_MASTER}" ]; then\
-		(make stats-restore || true);\
-		((make stats-full-init) > .stats-full 2>&1 &);\
+		((make stats-restore) > .stats-restore 2>&1 &);\
+		((sleep 200;make stats-full-init) > .stats-full 2>&1 &);\
 		((sleep 4800;while (true); do make stats-update;sleep 3600;done) > .stats-update 2>&1 &);\
 		((sleep 4800;while (true); do make stats-live;sleep 120;done) > .stats-live 2>&1 &);\
 	else\
-		(make stats-restore || true);\
-		((while (true); do make stats-update;sleep 3600;done) > .stats-update 2>&1 &);\
-		((while (true); do make stats-live;sleep 120;done) > .stats-live 2>&1 &);\
+		((make stats-restore) > .stats-restore 2>&1 &);\
+		((sleep 200;while (true); do make stats-update;sleep 3600;done) > .stats-update 2>&1 &);\
+		((sleep 200;while (true); do make stats-live;sleep 120;done) > .stats-live 2>&1 &);\
 	fi
 
 ${PROOFS}:

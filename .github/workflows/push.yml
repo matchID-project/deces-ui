@@ -17,7 +17,7 @@ jobs:
         run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
         id: extract_branch
       - name: config
-        run: make config
+        run: make version config
         env:
           GIT_BRANCH: ${{ steps.extract_branch.outputs.branch }}
       - name: build
