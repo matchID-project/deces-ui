@@ -16,6 +16,5 @@
     export let number = 0;
     export let precision = 0;
     export let label = '';
-    export let xsLabel = false;
 
 </script>
