@@ -42,7 +42,7 @@
                             {#each jobs as job}
                                 <tr>
                                     <td>{job.id.substring(0,20) + '...'}</td>
-                                    <td>{job.date.toISOString()}</td>
+                                    <td>{job.date}</td>
                                     <td>{job.rows}</td>
                                     <td>{job.status}</td>
                                 </tr>
@@ -70,14 +70,13 @@
 
     const getJobsData = async () => {
         let response = await fetch('__BACKEND_PROXY_PATH__/queue/jobs', {headers: {Authorization: `Bearer ${$accessToken}`}});
-        const types = Object.keys(await response.json());
         const tmpJobs = [];
-        await Promise.all(types.map(async (type) => {
-            response = await fetch(`__BACKEND_PROXY_PATH__/queue/jobs/${type}`, {headers: {Authorization: `Bearer ${$accessToken}`}});
-            const list = (await response.json()).jobs || [];
-            list.forEach(j => {tmpJobs.push({rows: j.data.totalRows, id: j.data.randomKey, date: new Date(j.options.timestamp), status: j.status})});
-        }));
-        jobs = tmpJobs.sort((a,b) => (a.date >= b.date));
+        const list = (await response.json()).jobs || [];
+        list.forEach(j => {tmpJobs.push({rows: j.data.totalRows, id: j.data.randomKey, date: j.options.timestamp, status: j.status})});
+        jobs = tmpJobs.sort((a,b) => (b.date - a.date)).map(j => {
+            j.date=new Date(j.date).toISOString();
+            return j;
+        });
     }
 
     $: if ($accessToken) {
