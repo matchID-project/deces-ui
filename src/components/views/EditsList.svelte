@@ -39,7 +39,9 @@
                             </tr>
                         </thead>
                         <tbody>
-                            {#each Object.keys(edits) as id}
+                            {#each Object.keys(edits).sort((b,a) =>
+                                edits[a][edits[a].length - 1].date.localeCompare(edits[b][edits[b].length - 1].date)
+                            ) as id}
                                 <tr>
                                     <td>
                                         <a
