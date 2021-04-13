@@ -23,7 +23,7 @@
 		await useLocalSync(accessToken, 'accessToken');
 		await useLocalSync(alphaFeatures, 'alphaFeatures');
 		if (!$alphaFeatures) {
-			$alphaFeatures = Math.random() < 0.03;
+			$alphaFeatures = Math.random() < 0.1;
 		}
 		if ($version && !$version.api) {
 			try {

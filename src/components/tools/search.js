@@ -2,6 +2,8 @@ import sum from 'hash-sum';
 
 import { dataCorrections } from './dataCorrections.js';
 
+import { capitalize } from './masks.js';
+
 import {
     searchInput,
     searchCanvas,
@@ -88,10 +90,6 @@ export const searchTrigger = (searchInput) => {
             : true
            )
 };
-
-const capitalize = (s) => {
-    return s.charAt(0).toUpperCase() + s.slice(1).toLowerCase();
-}
 
 export const searchString = (searchInput) => {
     if (searchInput.fullText.value) return searchInput.fullText.value.split(/\s+/).map(capitalize).join(' ');

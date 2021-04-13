@@ -83,3 +83,78 @@ export const sexValidationMask = (sex) => {
 export const sexTransformMask = (sex) => {
     return sex.replace(/^(F|M|H).*$/,'$1');
 }
+
+export const capitalize = (s) => {
+    return s.charAt(0).toUpperCase() + s.slice(1).toLowerCase();
+}
+
+
+// edit specific procs
+
+export const removeDiacritics = (s) => s.normalize('NFKD').replace(/[\u0300-\u036f]/g, "");
+
+export const lastNameEditMask = (newValue, oldValue) => removeDiacritics(newValue).replace(/[^a-zA-Z\- ]/, '').split(/[\s,;]+/).map(capitalize).join(' ');
+
+export const lastNameStringify = (s) => removeDiacritics(capitalize(s));
+
+export const lastNameParse = (s) => removeDiacritics(capitalize(s));
+
+export const firstNameEditMask = (newValue, oldValue) => {
+    return firstNameParse(newValue).join(' ').replace(/[^a-zA-Z\- ]/, '');
+}
+
+export const firstNameStringify = (p) => {
+    if (Array.isArray(p)) {
+        return p.map(removeDiacritics).join(' ');
+    } else {
+        return p ? firstNameParse(p).join(' ') : '(sans prénom)';
+    }
+}
+
+export const firstNameParse = (p) => removeDiacritics(p).split(/[\s,;]+/).map(capitalize)
+
+export const sexEditMask = (newValue, oldValue) => {
+    return /^(m|h)$/i.test(newValue) ? 'Masculin' : (/^f$/i.test(newValue) ? 'Féminin' : '');
+}
+
+export const sexStringify = s => s === 'M' ? 'Masculin' : 'Féminin';
+
+export const sexParse = s => (/^m/.test(s)) ? 'M' : 'F';
+
+export const dateEditMask = (newValue, oldValue) => {
+    if (dateTypingMask(newValue)) {
+        return newValue;
+    }
+    return oldValue;
+}
+
+export const dateStringify = (dateString, short=false) => {
+    if (typeof(dateString) === 'number') {
+        dateString = `${dateSring}`;
+    }
+    if (short) {
+        return dateString.replace(/(\d{4})(\d{2})(\d{2})/,"$1");
+    } else {
+        return dateString.replace(/(\d{4})(\d{2})(\d{2})/,"$3/$2/$1");
+    }
+};
+
+export const dateParse = (dateString) => {
+    return dateString.replace(/(\d{2})\/(\d{2})\/(\d{4})/,"$3$2$1");
+};
+
+export const cityEditMask = (city) => city.replace(/\s+/,' ').replace(/[^A-Za-zÀ-ÖØ-öø-ÿ\'\- ]/,'');
+
+export const countryEditMask = cityEditMask;
+
+export const countryCodeEditMask = (newValue, oldValue) => {
+    return /^([a-z]([a-z][a-z]?)?)?$/i.test(newValue) ? newValue.toUpperCase() : oldValue;
+};
+
+export const locationCodeEditMask = (newValue, oldValue) => {
+    return /^(\d([\dABab](\d{1,3})?)?)?$/.test(newValue) ? newValue.toUpperCase() : oldValue;
+};
+
+export const departmentCodeEditMask = (newValue, oldValue) => {
+    return /^(\d[\dABab]?|97\d?)?$/.test(newValue) ? newValue.toUpperCase() : oldValue;
+};
