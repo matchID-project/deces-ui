@@ -61,7 +61,7 @@
                                                 { cityString(result.birth.location.city, false) }
                                             </span>
                                         {/if}
-                                        { dateFormat(result.birth.date, !expand) }
+                                        { dateStringify(result.birth.date, !expand) }
                                         {#if result.death}
                                             -
                                             {#if (expand || !(result.links && result.links.label))}
@@ -69,7 +69,7 @@
                                                     { cityString(result.death.location.city, false) }
                                                 </span>
                                             {/if}
-                                            { dateFormat(result.death.date, !expand) }
+                                            { dateStringify(result.death.date, !expand) }
                                         {/if}
                                     </span>
                                 </p>
@@ -220,7 +220,7 @@
                                                                         if (field.update) {
                                                                             editInput[field.update.join()]  = edit;
                                                                         }
-                                                                        if (edit) { setInputValue(field) };
+                                                                        if (edit) { setEditInputValue(field) };
                                                                     }}
                                                                     on:mouseleave={() => {
                                                                         if (edit) {
@@ -237,10 +237,10 @@
                                                                             {#each field.update as updateField,i}
                                                                                 <input
                                                                                     class="rf-input"
-                                                                                    list={updateField}
+                                                                                    id={updateField}
                                                                                     style="height:100%;width:{field.update.length>1 ? '50%':'100%'};outline:none;font-size:inherit;padding: .13em .5em;"
-                                                                                    bind:value={editTmpValue[updateField]}
-                                                                                    on:input={field.handleInput}
+                                                                                    value={editTmpValue[updateField] || ''}
+                                                                                    on:input={handleInput}
                                                                                     use:focus
                                                                                 >
                                                                             {/each}
@@ -249,14 +249,15 @@
                                                                                 <span class="rf-color--rm">
                                                                                     {@html `<strike>${field.cb ? field.cb(field.value) : field.value}</strike>
                                                                                         ${field.update
-                                                                                            .map((updateField,i) => getFieldValue(field,i))
+                                                                                            .map((updateField,i) => getEditValue(field,i))
                                                                                             .join(' ')}`}
                                                                                 </span>
                                                                             {:else}
                                                                                 {#if ($alphaFeatures && (modifications && modifications[modificationsCurrent] && field.update && field.update
                                                                                     .some(updateField => modifications[modificationsCurrent].fields[updateField])))}
                                                                                     <span class="rf-color--rm">
-                                                                                        {@html `<strike>${field.cb ? field.cb(field.value) : field.value}</strike> ${field.update.map(updateField => modifications[modificationsCurrent].fields[updateField]).join()}`}
+                                                                                        {@html `<strike>${field.cb ? field.cb(field.value) : field.value}</strike>`}
+                                                                                        { modificationStringify(field) }
                                                                                     </span>
                                                                                 {:else}
                                                                                     {@html field.cb ? field.cb(field.value) : field.value }
@@ -594,6 +595,14 @@
     import { fade, slide } from 'svelte/transition';
     import { showProof, user, accessToken, alphaFeatures, route, dataGouvCatalog, displayMode, searchInput, activeElement } from '../tools/stores.js';
     import Icon from './Icon.svelte';
+    import { capitalize,
+        lastNameEditMask, lastNameStringify, lastNameParse,
+        firstNameEditMask, firstNameStringify, firstNameParse,
+        sexEditMask, sexStringify, sexParse,
+        dateEditMask, dateStringify, dateParse,
+        cityEditMask, countryEditMask, locationCodeEditMask,
+        departmentCodeEditMask, countryCodeEditMask
+    } from '../tools/masks.js';
     import md5 from 'md5';
     import axios from 'axios';
 
@@ -636,6 +645,33 @@
             return undefined;
         });
     }
+
+    const masks = {
+        sex: sexEditMask,
+        firstName: firstNameEditMask,
+        lastName: lastNameEditMask,
+        birthDate: dateEditMask,
+        birthCity: cityEditMask,
+        birthCountry: countryEditMask,
+        birthLocationCode: locationCodeEditMask,
+        birthDepartment: departmentCodeEditMask,
+        birthCountryCode: countryCodeEditMask,
+        deathDate: dateEditMask,
+        deathCity: cityEditMask,
+        deathCountry: countryEditMask,
+        deathLocationCode: locationCodeEditMask,
+        deathDepartment: departmentCodeEditMask,
+        deathCountryCode: countryCodeEditMask,
+    }
+
+    const handleInput = (e) => {
+        if (masks[e.target.id]) {
+            e.target.value = masks[e.target.id](e.target.value, editTmpValue[e.target.id]);
+            editTmpValue[e.target.id] = e.target.value;
+        } else {
+            editTmpValue[e.target.id] = e.target.value;
+        }
+    };
 
     const validateFileType = () => {
         if (editFile) {
@@ -774,16 +810,16 @@
 
     $: editValidate = ((editFileValidate || editUrlValidate) && (Object.keys(editValue).length));
 
-    const getFieldValue = (field, i) => {
+    const getEditValue = (field, i) => {
         const edited = editValue[field.update[i]];
         if (edited) {
             return field.updateCb ? field.updateCb[i].in(edited) : edited;
         } else {
-            return defaultFieldValue(field, i);
+            return defaultEditValue(field, i);
         }
     };
 
-    const defaultFieldValue = (field, i) => {
+    const defaultEditValue = (field, i) => {
         if (field.update.length>1) {
             return field.updateCb ? field.updateCb[i].in(field.value[i]) : field.value[i];
         } else {
@@ -791,15 +827,15 @@
         }
     };
 
-    const setInputValue = (field) => {
+    const setEditInputValue = (field) => {
         field.update.forEach((updateField,i) => {
-            editTmpValue[updateField] = getFieldValue(field,i);
+            editTmpValue[updateField] = getEditValue(field,i);
         });
     }
 
     const updateEditValue = (field) => {
         field.update.forEach((updateField,i) => {
-            if (editTmpValue[updateField] === defaultFieldValue(field,i)) {
+            if (editTmpValue[updateField] === defaultEditValue(field,i)) {
                 delete editValue[updateField];
             } else {
                 editValue[updateField] = field.updateCb ? field.updateCb[i].out(editTmpValue[updateField]) : editTmpValue[updateField];
@@ -808,7 +844,7 @@
         editDisplayChange[field.update.join()] = (field.update && field.update
             .some((updateField,i) =>
                     editValue[updateField] &&
-                    (editValue[updateField] !== defaultFieldValue(field, i))
+                    (editValue[updateField] !== defaultEditValue(field, i))
                 ));
     }
 
@@ -833,6 +869,17 @@
             editUpdating = false;
             editSuccess = false;
         }
+    }
+
+    const modificationStringify = (field) => {
+        let value = field.update.map((updateField,i) =>
+            modifications[modificationsCurrent].fields[updateField] ?
+                modifications[modificationsCurrent].fields[updateField] : field.value[i]
+        );
+        if (field.update.length === 1) {
+            value = value[0];
+        }
+        return field.cb ? field.cb(value) : value;
     }
 
     const testEditUrl = async () => {
@@ -888,17 +935,12 @@
     }
 
     let conf = {};
+
     $: conf.Naissance = [
             { label: 'Nom', value: result.name.last, update: ['lastName'] },
-            { label: 'Prénom(s)', value: result.name.first, cb: (p) => p ? p.join(' ') : '(sans prénom)', update: ['firstName'], updateCb: [{in: (s) => s.join(' '), out: (a) => a.split(/\s+/)}] },
-            { label: 'Sexe', value: result.sex, cb: (s) => s === 'M' ? 'masculin' : 'féminin' , update: ['sex'],
-                updateCb: [{in: s => s === 'M' ? 'masculin' : 'féminin', out: s => (/^m/.test(s)) ? 'M' : 'F'}],
-                handleInput: (e) => {
-                    if (/^m$/i.test(e.target.value)) {editTmpValue['sex'] = 'masculin'}
-                    else if (/^f$/i.test(e.target.value)) {editTmpValue['sex'] = 'féminin'}
-                    else {e.target.value = ''}
-                }},
-            { label: 'Date',  value: result.birth.date, cb: dateFormat, update: ['birthDate'], updateCb: [{in: dateFormat, out: dateFormatReverse}]},
+            { label: 'Prénom(s)', value: result.name.first, cb: firstNameStringify, update: ['firstName'], updateCb: [{in: firstNameStringify, out: firstNameParse}] },
+            { label: 'Sexe', value: result.sex, cb: sexStringify, update: ['sex'], updateCb: [{in: sexStringify, out: sexParse}] },
+            { label: 'Date', value: result.birth.date, cb: dateStringify, update: ['birthDate'], updateCb: [{in: dateStringify, out: dateParse}]},
             { label: 'Commune',  value: [result.birth.location.city, result.birth.location.code], cb: (c) => `${cityString(c[0],true)} (${c[1]})`, update: ['birthCity','birthLocationCode'],
                 updateCb: [{in: c => Array.isArray(c) ? c[0] : c, out: c => c},{in: c => c, out: c => c}]},
             { label: 'Département',  value: result.birth.location.departmentCode, update: ['birthDepartment'] },
@@ -906,7 +948,7 @@
         ];
     $: if (result.death) {
         conf['Décès'] = [
-            { label: 'Date',  value: result.death.date, cb: dateFormat, update: ['deathDate'], updateCb: [{in: dateFormat, out: dateFormatReverse}]},
+            { label: 'Date',  value: result.death.date, cb: dateStringify, update: ['deathDate'], updateCb: [{in: dateStringify, out: dateParse}]},
             { label: 'Age',  editable: false, value: result.death.age, cb: (a) => `${a} ans`},
             { label: 'Commune',  value: [result.death.location.city, result.death.location.code], cb: (c) => `${cityString(c[0],true)} (${c[1]})`, update: ['deathCity','deathLocationCode'],
                 updateCb: [{in: c => Array.isArray(c) ? c[0] : c, out: c => c},{in: c => c, out: c => c}]},
@@ -939,18 +981,6 @@
         blur();
         setTimeout(() => linkCopied = false, 5000)
     }
-
-    const dateFormat = (dateString, short=false) => {
-        if (short) {
-            return dateString.replace(/(\d{4})(\d{2})(\d{2})/,"$1");
-        } else {
-            return dateString.replace(/(\d{4})(\d{2})(\d{2})/,"$3/$2/$1");
-        }
-    };
-
-    const dateFormatReverse = (dateString) => {
-        return dateString.replace(/(\d{2})\/(\d{2})\/(\d{4})/,"$3$2$1");
-    };
 
     const toDate = (dateString) => {
         return new Date(
