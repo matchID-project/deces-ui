@@ -9,6 +9,8 @@ SHELL=/bin/bash
 
 export USE_TTY := $(shell test -t 1 && USE_TTY="-t")
 
+export OS_TYPE := $(shell cat /etc/os-release | grep -E '^NAME=' | sed 's/^.*debian.*$$/DEB/I;s/^.*ubuntu.*$$/DEB/I;s/^.*fedora.*$$/RPM/I;s/.*centos.*$$/RPM/I;')
+
 #search-ui
 export PORT=8083
 
