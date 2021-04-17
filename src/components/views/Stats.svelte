@@ -80,6 +80,7 @@
   });
   import Icon from './Icon.svelte';
   import WorldChoropleth from './WorldChoropleth.svelte';
+  import FranceChoropleth from './FranceChoropleth.svelte';
   import StatsTile from './StatsTile.svelte';
   import Heatmap from './Heatmap.svelte';
   import { smartNumber } from '../tools/stats.js';
@@ -199,7 +200,8 @@
       'date_time': 'Mise à jour',
       'static_requests': 'Contenu statique',
       requests: 'Requêtes',
-      geolocation: 'Statistiques géographiques',
+      country: 'Statistiques par pays',
+      depcode: 'Statistiques par département',
       not_found: 'Non trouvé',
       hosts: 'Clients',
       os: 'Système d\'exploitation',
@@ -371,7 +373,7 @@
   };
 
   const stats = ['total_requests', 'failed_requests', 'unique_visitors', 'bandwidth']
-  const views = ['visitors', 'hour_of_day_of_week', 'geolocation',  'referring_sites', 'requests', 'browsers'];
+  const views = ['visitors', 'hour_of_day_of_week', 'depcode', 'referring_sites', 'requests', 'browsers', 'country'];
 
   const expanded = {}
   views.forEach(view => expanded[view] = false);
@@ -425,7 +427,7 @@
             - dayOrder[b.data.replace(/-.*/,'')]*100 + parseInt(b.data.replace(/.*-(.*)h/,'$1'))
         )
     },
-    'geolocation': {
+    'country': {
         type: WorldChoropleth,
         yLog: true,
         dataCB: (data) => {
@@ -443,6 +445,29 @@
                     tmp = d.data.replace(/\s.*$/,'');
                     d.data = iso2to3[tmp] || d.data;
                     expandedData.push(d);
+                }
+            });
+            return expandedData;
+        }
+    },
+    'depcode': {
+        type: FranceChoropleth,
+        yLog: true,
+        dataCB: (data) => {
+            let expandedData = [];
+            data.forEach(d => {
+                if (d.items) {
+                    d.items.forEach(dd => {
+                        d.data = d.data.replace(/\s.*$/,'');
+                        if (/[0-9][0-9ab]/i.test(d.data)) {
+                            expandedData.push(dd);
+                        }
+                    });
+                } else {
+                    d.data = d.data.replace(/\s.*$/,'');
+                    if (/[0-9][0-9ab]/i.test(d.data)) {
+                        expandedData.push(d);
+                    }
                 }
             });
             return expandedData;
