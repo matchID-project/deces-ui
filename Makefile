@@ -177,9 +177,9 @@ config-minimal:
 config-stats:
 	@if [ -z "$(wildcard /usr/lib/*/perl*/*/Date/Pcalc)" ] || \
 		[ -z "$(wildcard /usr/lib/*/perl*/*/JSON/XS)" ] || \
-		[ -z "$(wildcard /usr/lib/*/perl*/*/Geo/IP)" ]; then\
+		[ -z "$(wildcard /usr/lib/*/perl*/*/MaxMind/DB)" ]; then\
 		if [ "${OS_TYPE}" = "DEB" ]; then\
-			sudo apt-get install -yqq libdate-calc-perl libjson-xs-perl libgeo-ip-perl; true;\
+			sudo apt-get install -yqq libdate-calc-perl libjson-xs-perl libmaxmind-db-reader-perl libmaxmind-db-reader-xs-perl libgeoip2-perl; true;\
 		fi;\
 		if [ "${OS_TYPE}" = "RPM" ]; then\
 			sudo yum install -y perl-Date-Calc perl-Geo-IP perl-JSON-XS perl-Digest-SHA; true;\
@@ -541,6 +541,10 @@ logs-restore: ${LOG_DIR}
 
 ${LOG_DB_DIR}:
 	@mkdir -p ${LOG_DB_DIR};
+
+geolite-city:
+	curl -s "https://download.maxmind.com/app/geoip_download?edition_id=GeoLite2-City&license_key=${MMDB_TOKEN}&suffix=tar.gz" > data/geolite.tar.gz
+
 
 stats-db-restore: ${LOG_DB_DIR}
 	@mkdir -p ${LOG_DB_DIR};\

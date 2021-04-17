@@ -4,13 +4,12 @@
 
 use Date::Calc qw(Day_of_Week Week_of_Year);
 use JSON::XS;
-use Geo::IP;
 use Digest::SHA qw(hmac_sha256_base64);
 use Storable;
 
+use GeoIP2::Database::Reader;
 
-$gi4 = Geo::IP->open("/usr/share/GeoIP/GeoIP.dat", GEOIP_MEMORY_CACHE);
-$gi6 = Geo::IP->open("/usr/share/GeoIP/GeoIPv6.dat", GEOIP_MEMORY_CACHE);
+$geoip = GeoIP2::Database::Reader->new( file => '/usr/local/share/GeoLite2/GeoLite2-City.mmdb');
 
 $json_coder = JSON::XS->new->utf8(1)->pretty(1);
 
@@ -57,9 +56,8 @@ $reportName = @ARGV[0] || full;
     'browsers' => 'browser',
     'requests' => 'requestCategory',
     'referring_sites' => 'from',
-    # 'visit_time' => 'hh',
-    'geolocation' => 'geolocation',
-    # 'day_of_week' => 'dow',
+    'country' => 'country',
+    'depcode' => 'depcode',
     'hour_of_day_of_week' => 'dowh'
 );
 
@@ -210,7 +208,7 @@ sub flushResults {
             }
         }
         # monthly aggregate lowcounts of previous month in general counts, not keeping all uniq ipfw
-        foreach $var (qw/general browser requestCategory dowh geolocation from/) {
+        foreach $var (qw/general browser requestCategory dowh country depcode from/) {
             foreach $val (keys(%{$c{$var}})) {
                 foreach $ipfw (keys(%{$c{$var}{$val}{'visitors'}})) {
                     if ($ipfw ne 'prune_count') {
@@ -246,6 +244,9 @@ $match = qr/\[..\/...\/202[0-9]:/;
 $parse = qr/^(\S+) - (\S+) \[([^\]]*)\] "([^"]*)" (\d+) (\d+) "([^"]*)" "([^"]*)"( "([^"]*)")?( ([0-9\.-]+) ([0-9\.-]+|[0-9\.-]+, [0-9\.-]+) \.)?$/;
 $parseDate = qr|^(\d{2})/(\S{3})/(\d{4}):(\d{2}):(\d{2})|;
 $ip4 = qr/^\d+\./;
+$multiIp = qr/,/;
+$multiIpReplace= s/.*,//;
+
 # 07/Feb/2018:22:28:10 +0000
 
 $general = 'general';
@@ -282,6 +283,8 @@ while(<STDIN>){
                 $month = sprintf("%02d", $month);
                 $ym="$year$month";
                 $ymd="$ym$day";
+                $country = "";
+                $decode = "";
                 if ($c{'save_date'} < $ymd) {
                     # print "not skipping $date $c{'restore'} $ymd\n";
                     $dow=@days[Day_of_Week($year,$tmp,$day) - 1];
@@ -326,11 +329,24 @@ while(<STDIN>){
 
                     $from=replaceRegexp($from,'referrer', @referrerUrlRegexp);
                     $requestCategory=replaceRegexp($request, 'request', @requestRegexp);
-                    if ($ipfw =~ /$ip4/) {
-                        $geolocation=$gi4->country_code_by_addr($ipfw);
-                    } else {
-                        $geolocation=$gi6->country_code_by_addr_v6($ipfw);
-                    }
+                    $geo = "";
+                    eval {
+                        if ($ipfw =~ $multiIp) {
+                            $tmpip = $ipfw;
+                            $tmpip =~ s/.*,//;
+                            $geo=$geoip->city(ip => $tmpip);
+                        } else {
+                            $geo=$geoip->city(ip => $ipfw);
+                        }
+                        if ($geo ne "") {
+                            $country = $geo->country->iso_code;
+                            if ($country eq "FR") {
+                                $depcode = $geo->most_specific_subdivision->iso_code;
+                            }
+                        }
+                    } or do {
+                    };
+
                     $ipfw = substr(hmac_sha256_base64("$ipfw$browser"),0,8);
 
                     $browser=replaceRegexp($browser, 'browser', @browserRegexp);
@@ -338,17 +354,20 @@ while(<STDIN>){
                     $ymd_from="$ymd: $from";
                     $ymd_requestCategory="$ymd: $requestCategory";
                     $ymd_browser="$ymd: $browser";
-                    $ymd_geolocation="$ymd: $geolocation";
+                    $ymd_country="$ymd: $country";
+                    $ymd_depcode="$ymd: $depcode";
 
                     $yw_from="$yw: $from";
                     $yw_requestCategory="$yw: $requestCategory";
                     $yw_browser="$yw: $browser";
-                    $yw_geolocation="$yw: $geolocation";
+                    $yw_country="$yw: $country";
+                    $yw_depcode="$yw: $depcode";
 
                     $ym_from="$ym: $from";
                     $ym_requestCategory="$ym: $requestCategory";
                     $ym_browser="$ym: $browser";
-                    $ym_geolocation="$ym: $geolocation";
+                    $ym_country="$ym: $country";
+                    $ym_depcode="$ym: $depcode";
 
                     # $ym_dow="$ym: $dow";
                     $ym_dowh="$ym: $dowh";
@@ -357,7 +376,7 @@ while(<STDIN>){
                     $yw_dowh="$yw: $dowh";
                     # $yw_hh="$yw: $hh";
 
-                    foreach $var (qw/general browser ym_browser yw_browser ymd_browser requestCategory ym_requestCategory ymd_requestCategory yw_requestCategory from ym_from ymd_from yw_from geolocation ymd_geolocation yw_geolocation ym_geolocation dowh ym_dowh yw_dowh yw ywd ywdh ym ymd ymdh ymdhm/) {
+                    foreach $var (qw/general browser ym_browser yw_browser ymd_browser requestCategory ym_requestCategory ymd_requestCategory yw_requestCategory from ym_from ymd_from yw_from country ymd_country yw_country ym_country depcode ymd_depcode yw_depcode ym_depcode dowh ym_dowh yw_dowh yw ywd ywdh ym ymd ymdh ymdhm/) {
                         $c{$var}{$$var}{'hits'}++;
                         $c{$var}{$$var}{'bytes'}+=int($size);
                         if ($duration) {
@@ -395,7 +414,7 @@ while(<STDIN>){
         $status.=sprintf("%s %s %s - total:%d matching:%d rate:%.0f/s mem: %d failed:%d",$c{'current'}{'ym'},$c{'current'}{'yw'}, $c{'current'}{'ymd'},$i,$m,$delay && $m/$delay || 0,$mem, ($m-$v));
         if ($debug) {
             $status.=sprintf("hash: %d, cache: %d %d %d\n", total_size($report), total_size($cache{'browser'}), total_size($cache{'request'}), total_size($cache{'referrer'}));
-            foreach $scope (qw/yw ym ymd dowh|requestCategory|browser|general|geolocation|from/) {
+            foreach $scope (qw/yw ym ymd dowh|requestCategory|browser|general|country|depcode|from/) {
                 $scopemem = 0;
                 $scopekeys = 0;
                 if ($scope =~ /general/) {
