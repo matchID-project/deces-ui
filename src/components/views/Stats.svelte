@@ -1,7 +1,7 @@
 <div class="rf-container">
     <div class="rf-grid-row rf-grid-row--gutters">
         {#if (!unavailable) && rawData}
-            {#if rawData.general}
+            {#if kpi}
                 <div class="rf-col-6">
                     <label class="rf-label" for="select">Cycle</label>
                     <select class="rf-select" id="select" name="select" bind:value={sourceScope}>
@@ -24,10 +24,10 @@
                         {/if}
                     </select>
                 </div>
-                {#each stats.filter(x => rawData.general[x]) as key}
+                {#each stats as key}
                     <div class="rf-col-xl-3 rf-col-lg-3 rf-col-md-3 rf-col-sm-3 rf-col-xs-6">
                         <StatsTile
-                            number={rawData.general[key]}
+                            number={kpi[key]}
                             precision={1}
                             label={labels[key] || key}
                         />
@@ -89,7 +89,7 @@
 
 
   let style = getComputedStyle(document.body);
-  let rawData;
+  let rawData, kpi;
   let unavailable = false;
   let sourceScopes = {
       'full': {
@@ -155,12 +155,46 @@
   $: borderWidth = /full|detailed/.test(sourceScope) ? 1 : 2;
 
   const displayRange =  (range) => {
-      return range.replace(/(....)(..)(..)-/,"$3/$2/$1").replace("detailed", " (détaillé)");
+      return range.replace(/(....)(...)(..)-/,"$3/$2/$1").replace("detailed", " (détaillé)");
   }
 
     const sleep = (ms) => {
         return new Promise(resolve => setTimeout(resolve, ms));
     }
+
+    $: if (rawData && rawData.general) {
+        const tmp = rawData.general;
+        tmp['api_search_requests']=countSum(
+            rawData.requests.data.filter(k => /^api: search .*/.test(k.data)),
+            'hits');
+        tmp['api_link_rows']=smartNumber(
+            countSum(
+                rawData.requests.data.filter(k => /^api: search\/csv GET/.test(k.data)),
+                'bytes')
+            / 750,0);
+        tmp['api_update']=countSum(
+            rawData.requests.data.filter(k => /^api: id.* POST/.test(k.data)),
+            'hits');
+        kpi = tmp;
+    }
+
+  const countSum = (values, key) => {
+      if (values.length > 0) {
+          if (values.length === 1) {
+              return values[0][key].count
+          } else {
+          const v = values.reduce((a,b) => {
+                return typeof(a) === 'number' ?
+                    a+b[key].count :
+                        (typeof(b) === undefined ? a[key].count:a[key].count+b[key].count)
+                }
+            );
+            return v;
+          }
+      } else {
+          return 0;
+      }
+  }
 
   const getData = async (s) => {
     try {
@@ -215,7 +249,10 @@
       'start_date': 'Début',
       'end_date': 'Fin',
       'total_requests': 'Requêtes au total',
-      'valid_requests': 'Requêtes valides',
+      'api_search_requests': 'Appels API décès',
+      'api_link_rows': 'Appariements',
+      'api_update': 'Corrections usager',
+      'valid_requests': 'Reqnsuêtes valides',
       'failed_requests': 'Requêtes en erreur',
       'unique_visitors': 'Visiteurs',
       'unique_files': 'Requêtes uniques',
@@ -372,7 +409,7 @@
     return o;
   };
 
-  const stats = ['total_requests', 'failed_requests', 'unique_visitors', 'bandwidth']
+  const stats = ['unique_visitors', 'api_search_requests', 'api_link_rows', 'api_update']
   const views = ['visitors', 'hour_of_day_of_week', 'depcode', 'referring_sites', 'requests', 'browsers', 'country'];
 
   const expanded = {}

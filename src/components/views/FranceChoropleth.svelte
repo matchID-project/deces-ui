@@ -104,7 +104,7 @@
       index[id] = i;
       views.push(id);
       const sorted = ds.data.slice(0).sort((a, b) => +b.y - +a.y);
-      max[id] = sorted[0].y;
+      max[id] = sorted.length ? sorted[0].y : 0;
       const secMax = sorted.length > 1 ? sorted[1].y : max[id];
       yLog[id] = (secMax < (max[id]/5)) ? true : false;
     });
