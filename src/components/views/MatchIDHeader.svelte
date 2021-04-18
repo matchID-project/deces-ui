@@ -155,42 +155,68 @@
                             </a>
                         </li>
                         {#if $alphaFeatures}
-                            {#if admin}
-                                <li
-                                    class="rf-nav__item rf-nav__item--hoverable rf-nav__item--shadow"
-                                    class:rf-nav__item--active={!modal && (['/jobs','/edits'].includes($route.path) )}
-                                    on:mouseenter={() => {expandMenu.admin = true}}
-                                    on:mouseleave={() => {expandMenu.admin = false}}
-                                    bind:this={adminMenu}
+                            <li
+                                class="rf-nav__item rf-nav__item--hoverable rf-nav__item--shadow"
+                                class:rf-nav__item--active={!modal && (['/jobs','/edits'].includes($route.path) )}
+                                on:mouseenter={() => {expandMenu.admin = true}}
+                                on:mouseleave={() => {expandMenu.admin = false}}
+                                bind:this={adminMenu}
+                            >
+                                <button
+                                    class="rf-btn"
+                                    aria-controls="rf-admin"
+                                    aria-expanded={expandMenu.admin}
+                                    on:click={() => {expandMenu.admin = !expandMenu.admin}}
                                 >
-                                    <button
-                                        class="rf-btn"
-                                        aria-controls="rf-admin"
-                                        aria-expanded={expandMenu.admin}
-                                        on:click={() => {expandMenu.admin = !expandMenu.admin}}
-                                    >
-                                        <Icon icon={$accessToken ? 'ri:user-follow-line' : 'ri:user-line'} circleText={admin}/>
-                                    </button>
-                                    <div
-                                        class="rf-menu"
-                                        class:rf-menu--expanded={expandMenu.admin}
-                                        style="width: 10rem;right:0px;"
-                                        id="rf-admin"
-                                    >
-                                        <ul class="rf-menu__list">
+                                    <Icon icon={$accessToken ? 'ri:user-follow-line' : 'ri:user-line'} circleText={admin}/>
+                                </button>
+                                <div
+                                    class="rf-menu"
+                                    class:rf-menu--expanded={expandMenu.admin}
+                                    style="width: 10rem;right:0px;"
+                                    id="rf-admin"
+                                >
+                                    <ul class="rf-menu__list">
+                                        <li
+                                            class="rf-menu__item rf-href"
+                                            on:click|preventDefault={() => showLogin = !showLogin}
+                                            class:rf-nav__item--active={showLogin}
+                                            on:mouseenter={() => {zoom = true}}
+                                            on:mouseleave={() => {zoom = false}}
+                                        >
+                                            <a
+                                                href="/logout"
+                                                title="Se déconnecter"
+                                                class="rf-link rf-href rf-fi-question-line rf-link--icon-left"
+                                            >
+                                                Se déconnecter
+                                            </a>
+                                        </li>
+                                        <li
+                                            class="rf-menu__item rf-href"
+                                            class:rf-menu__item--active={!modal && ($route.path === '/edits')}
+                                            on:click|preventDefault={() => goToPage('edits')}
+                                        >
+                                            <a
+                                                href="/edits"
+                                                title="Corrections"
+                                                class="rf-link rf-href rf-fi-question-line rf-link--icon-left"
+                                            >
+                                                Corrections
+                                            </a>
+                                        </li>
+                                        {#if admin}
                                             <li
                                                 class="rf-menu__item rf-href"
-                                                on:click|preventDefault={() => showLogin = !showLogin}
-                                                class:rf-nav__item--active={showLogin}
-                                                on:mouseenter={() => {zoom = true}}
-                                                on:mouseleave={() => {zoom = false}}
+                                                class:rf-menu__item--active={!modal && ($route.path === '/jobs')}
+                                                on:click|preventDefault={() => goToPage('jobs')}
                                             >
                                                 <a
-                                                    href="/logout"
-                                                    title="Se déconnecter"
+                                                    href="/jobs"
+                                                    title="Appariements"
                                                     class="rf-link rf-href rf-fi-question-line rf-link--icon-left"
                                                 >
-                                                    Se déconnecter
+                                                    Appariements
                                                 </a>
                                             </li>
                                             <li
@@ -206,52 +232,10 @@
                                                     Statistiques
                                                 </a>
                                             </li>
-                                            <li
-                                                class="rf-menu__item rf-href"
-                                                class:rf-menu__item--active={!modal && ($route.path === '/edits')}
-                                                on:click|preventDefault={() => goToPage('edits')}
-                                            >
-                                                <a
-                                                    href="/edits"
-                                                    title="Modifications"
-                                                    class="rf-link rf-href rf-fi-question-line rf-link--icon-left"
-                                                >
-                                                    Modifications
-                                                </a>
-                                            </li>
-                                            <li
-                                                class="rf-menu__item rf-href"
-                                                class:rf-menu__item--active={!modal && ($route.path === '/jobs')}
-                                                on:click|preventDefault={() => goToPage('jobs')}
-                                            >
-                                                <a
-                                                    href="/jobs"
-                                                    title="Appariements"
-                                                    class="rf-link rf-href rf-fi-question-line rf-link--icon-left"
-                                                >
-                                                    Appariements
-                                                </a>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </li>
-                            {:else}
-                                <li
-                                    class="rf-nav__item"
-                                    on:click|preventDefault={() => showLogin = !showLogin}
-                                    class:rf-nav__item--active={showLogin}
-                                    on:mouseenter={() => {zoom = true}}
-                                    on:mouseleave={() => {zoom = false}}
-                                >
-                                    <a
-                                        href="/login"
-                                        title="S'identifier"
-                                        class="rf-link rf-href rf-fi-question-line rf-link--icon-left"
-                                    >
-                                        <Icon icon={$accessToken ? 'ri:user-follow-line' : 'ri:user-line'}/>
-                                    </a>
-                                </li>
-                            {/if}
+                                        {/if}
+                                    </ul>
+                                </div>
+                            </li>
                         {/if}
                     </ul>
                 </div>
@@ -370,39 +354,65 @@
                             </span>
                         </li>
                         {#if $alphaFeatures}
-                            {#if admin}
-                                <li
-                                    class="rf-nav__item"
-                                    class:rf-nav__item--active={!modal && (['/jobs','/edits'].includes($route.path) )}
+                            <li
+                                class="rf-nav__item"
+                                class:rf-nav__item--active={!modal && (['/jobs','/edits'].includes($route.path) )}
+                                aria-expanded={expandMenu.admin}
+                                aria-controls="rf-admin-popin"
+                            >
+                                <button
+                                    class="rf-btn rf-padding-left-1N"
                                     aria-expanded={expandMenu.admin}
-                                    aria-controls="rf-admin-popin"
+                                    on:click={() => {expandMenu.admin = !expandMenu.admin}}
                                 >
-                                    <button
-                                        class="rf-btn rf-padding-left-1N"
-                                        aria-expanded={expandMenu.admin}
-                                        on:click={() => {expandMenu.admin = !expandMenu.admin}}
-                                    >
-                                        <Icon icon={$accessToken ? 'ri:user-follow-line' : 'ri:user-line'} circleText={admin}/>
-                                    </button>
-                                    <div
-                                        class="rf-menu"
-                                        class:rf-menu--expanded={expandMenu.admin}
-                                        id="rf-admin-popin"
-                                    >
-                                        <ul class="rf-menu__list">
+                                    <Icon icon={$accessToken ? 'ri:user-follow-line' : 'ri:user-line'} circleText={admin}/>
+                                </button>
+                                <div
+                                    class="rf-menu"
+                                    class:rf-menu--expanded={expandMenu.admin}
+                                    id="rf-admin-popin"
+                                >
+                                    <ul class="rf-menu__list">
+                                        <li
+                                            class="rf-menu__item rf-href"
+                                            on:click|preventDefault={() => showLogin = !showLogin}
+                                            class:rf-nav__item--active={showLogin}
+                                            on:mouseenter={() => {zoom = true}}
+                                            on:mouseleave={() => {zoom = false}}
+                                        >
+                                            <a
+                                                href="/logout"
+                                                title="Se déconnecter"
+                                                class="rf-link rf-href rf-fi-question-line rf-link--icon-left"
+                                            >
+                                                Se déconnecter
+                                            </a>
+                                        </li>
+                                        <li
+                                            class="rf-menu__item rf-href"
+                                            class:rf-menu__item--active={!modal && ($route.path === '/edits')}
+                                            on:click|preventDefault={() => goToPage('edits')}
+                                        >
+                                            <a
+                                                href="/edits"
+                                                title="Corrections"
+                                                class="rf-link rf-href rf-fi-question-line rf-link--icon-left"
+                                            >
+                                                Corrections
+                                            </a>
+                                        </li>
+                                        {#if admin}
                                             <li
                                                 class="rf-menu__item rf-href"
-                                                on:click|preventDefault={() => showLogin = !showLogin}
-                                                class:rf-nav__item--active={showLogin}
-                                                on:mouseenter={() => {zoom = true}}
-                                                on:mouseleave={() => {zoom = false}}
+                                                class:rf-menu__item--active={!modal && ($route.path === '/jobs')}
+                                                on:click|preventDefault={() => goToPage('jobs')}
                                             >
                                                 <a
-                                                    href="/logout"
-                                                    title="Se déconnecter"
+                                                    href="/jobs"
+                                                    title="Appariements"
                                                     class="rf-link rf-href rf-fi-question-line rf-link--icon-left"
                                                 >
-                                                    Se déconnecter
+                                                    Appariements
                                                 </a>
                                             </li>
                                             <li
@@ -418,52 +428,10 @@
                                                     Statistiques
                                                 </a>
                                             </li>
-                                            <li
-                                                class="rf-menu__item rf-href"
-                                                class:rf-menu__item--active={!modal && ($route.path === '/edits')}
-                                                on:click|preventDefault={() => goToPage('edits')}
-                                            >
-                                                <a
-                                                    href="/edits"
-                                                    title="Modifications"
-                                                    class="rf-link rf-href rf-fi-question-line rf-link--icon-left"
-                                                >
-                                                    Modifications
-                                                </a>
-                                            </li>
-                                            <li
-                                                class="rf-menu__item rf-href"
-                                                class:rf-menu__item--active={!modal && ($route.path === '/jobs')}
-                                                on:click|preventDefault={() => goToPage('jobs')}
-                                            >
-                                                <a
-                                                    href="/jobs"
-                                                    title="Appariements"
-                                                    class="rf-link rf-href rf-fi-question-line rf-link--icon-left"
-                                                >
-                                                    Appariements
-                                                </a>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </li>
-                            {:else}
-                                <li
-                                    class="rf-nav__item"
-                                    on:click|preventDefault={() => showLogin = !showLogin}
-                                    class:rf-nav__item--active={showLogin}
-                                    on:mouseenter={() => {zoom = true}}
-                                    on:mouseleave={() => {zoom = false}}
-                                >
-                                    <a
-                                        href="/login"
-                                        title="S'identifier"
-                                        class="rf-link rf-href rf-fi-question-line rf-link--icon-left"
-                                    >
-                                        <Icon icon={$accessToken ? 'ri:user-follow-line' : 'ri:user-line'}/>
-                                    </a>
-                                </li>
-                            {/if}
+                                        {/if}
+                                    </ul>
+                                </div>
+                            </li>
                         {/if}
                     </ul>
                 </nav>
