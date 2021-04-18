@@ -251,6 +251,20 @@ $general = 'general';
 
 $db_dir=$ENV{'LOG_DB_DIR'} || './';
 $stats_dir=$ENV{'STATS'} || './';
+if ($ENV{'LOG_BAN_IP'}) {
+    $banIp=qr/.*$ENV{'LOG_BAN_IP'}.*/;
+}
+if ($ENV{'LOG_BAN_REF'}) {
+    $banRef=qr/.*$ENV{'LOG_BAN_REF'}.*/;
+} else {
+    $banRef=qr/dev-deces|tuto/;
+}
+if ($ENV{'LOG_BAN_BOTS'}) {
+    $banBrowser=qr/$ENV{'LOG_BAN_BOTS'}/;
+} else {
+    $banBrowser=qr/Bots?\W/i;
+}
+
 
 if ((-e "$db_dir/full.db") && ($reportName eq 'full')) {
     $h = retrieve("$db_dir/full.db");
@@ -262,8 +276,7 @@ if ((-e "$db_dir/full.db") && ($reportName eq 'full')) {
     $c{'save_date'} = 0;
 }
 
-
-while(<STDIN>){
+LINE: while(<STDIN>){
     $i++;
     if (/$match/) {
         if (not defined($sttime)) {
@@ -274,6 +287,10 @@ while(<STDIN>){
         if (/$parse/) {
             $v++;
             ($ip,$user,$date,$request,$status,$size,$from,$browser,$ipfw,$duration,$remote_duration)=($1,$2,$3,$4,$5,$6,$7,$8,$10,$12,$13);
+            if (($browser =~ /$banBrowser/)  || ($ipfw =~ /$banIp/) || ($from =~ /$banRef/)) {
+                $banned++;
+                next LINE;
+            }
             if ($date =~ /$parseDate/) {
                 ($day,$month,$year,$hh,$mm)=($1,$2,$3,$4,$5);
                 $month = $months{$month};
@@ -324,12 +341,11 @@ while(<STDIN>){
                     if ("$ipfw" eq "-" || "$ipfw" eq "") {
                         $ipfw = $ip;
                     }
-
                     $from=replaceRegexp($from,'referrer', @referrerUrlRegexp);
                     $requestCategory=replaceRegexp($request, 'request', @requestRegexp);
                     $geo = "";
                     eval {
-                        if ($ipfw =~ $multiIp) {
+                        if ($ipfw =~ /$multiIp/) {
                             $tmpip = $ipfw;
                             $tmpip =~ s/.*,//;
                             $geo=$geoip->city(ip => $tmpip);
@@ -375,25 +391,32 @@ while(<STDIN>){
                     # $yw_hh="$yw: $hh";
 
                     foreach $var (qw/general browser ym_browser yw_browser ymd_browser requestCategory ym_requestCategory ymd_requestCategory yw_requestCategory from ym_from ymd_from yw_from country ymd_country yw_country ym_country depcode ymd_depcode yw_depcode ym_depcode dowh ym_dowh yw_dowh yw ywd ywdh ym ymd ymdh ymdhm/) {
-                        $c{$var}{$$var}{'hits'}++;
-                        $c{$var}{$$var}{'bytes'}+=int($size);
-                        if ($duration) {
-                            $c{$var}{$$var}{'hits_duration'}++;
-                            $c{$var}{$$var}{'duration'}=$c{$var}{$$var}{'duration'}+$duration;
-                        }
                         if ($status eq "404") {
                             $c{$var}{$$var}{'not_found'}++;
+                        } else {
+                            $s = substr($status,0,1);
+                            if ($s eq "4") {
+                                $c{$var}{$$var}{'auth_failed'}++;
+                            } elsif ($s eq "5") {
+                                $c{$var}{$$var}{'failed'}++;
+                            } elsif ($s eq "3") {
+                                $c{$var}{$$var}{'redirect'}++;
+                            } else {
+                                $c{$var}{$$var}{'hits'}++;
+                                $c{$var}{$$var}{'bytes'}+=int($size);
+                                if ($duration) {
+                                    $c{$var}{$$var}{'hits_duration'}++;
+                                    $c{$var}{$$var}{'duration'}=$c{$var}{$$var}{'duration'}+$duration;
+                                }
+                                $c{$var}{$$var}{'visitors'}{$ipfw}++;
+                            }
                         }
-                        if ($status =~ /^50./) {
-                            $c{$var}{$$var}{'failed'}++;
-                        }
-                        $c{$var}{$$var}{'visitors'}{$ipfw}++;
                     }
                 } else {
                     # print "skipping $date $c{'restore'} $ymd\n";
                 }
             } else {
-                print "$date $dateParse failed\n";
+                print "$date $parseDate failed\n";
             }
         }
     }
@@ -409,7 +432,7 @@ while(<STDIN>){
         }
         $mem = `ps -q $$ -o drs `;
         $mem =~ s/.*//;
-        $status.=sprintf("%s %s %s - total:%d matching:%d rate:%.0f/s mem: %d failed:%d",$c{'current'}{'ym'},$c{'current'}{'yw'}, $c{'current'}{'ymd'},$i,$m,$delay && $m/$delay || 0,$mem, ($m-$v));
+        $status.=sprintf("%s %s %s - total:%d matching:%d rate:%.0f/s mem: %d skipped: %d failed:%d",$c{'current'}{'ym'},$c{'current'}{'yw'}, $c{'current'}{'ymd'},$i,$m,$delay && $m/$delay || 0,$mem, $banned, ($m-$v));
         if ($debug) {
             $status.=sprintf("hash: %d, cache: %d %d %d\n", total_size($report), total_size($cache{'browser'}), total_size($cache{'request'}), total_size($cache{'referrer'}));
             foreach $scope (qw/yw ym ymd dowh|requestCategory|browser|general|country|depcode|from/) {
