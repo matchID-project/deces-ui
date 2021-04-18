@@ -16,13 +16,11 @@ $json_coder = JSON::XS->new->utf8(1)->pretty(1);
 $reportName = @ARGV[0] || full;
 
 @referrerUrlRegexp = (
-        [qr|^(https?://)?(www\.)?|,'""'],
-        [qr/^(fr|fr\.m|m)\./,'""'],
+        [qr/^(https?:\/\/)?((www|fr|de|en)\.)?(m\.)?/,'""'],
         [qr|/.*$|,'""'],
         [qr|\d+.\d+.\d+.\d+(:\d+)?$|,'"internal"'],
-        [qr|^(https?://)?[a-z].*matchid.io?$|,'"matchid.io"'],
+        [qr|^[a-z].*matchid.io?$|,'"matchid.io"'],
         [qr/^(.*\.)?google(usercontent)?\.(com|fr)(\/.*)?$/, '"google.com"'],
-        [qr/^(.*\.)?facebook\.com(\/.*)?$/, '"facebook.com"']
 );
 
 @requestRegexp = (
@@ -32,7 +30,7 @@ $reportName = @ARGV[0] || full;
         [qr/^(GET|OPTIONS) \/.*\.(js|json|js.map)$/, '"static: javascript"'],
         [qr/^(GET|OPTIONS)\s*\/.*(png|svg|woff2|favicon)$/, '"static: images"'],
         [qr|^(\S+) /matchID.*/api/v(\d)/((\w+)+(/\w+)?)(/\S+)?$|, '"api: matchID"'],
-        [qr|^(\S+) /[^/]*/api/v(\d)/((\w+)+(/\w+)?)(/\S+)?$|, '"api: $3 $1 $2"'],
+        [qr|^(\S+) /[^/]*/api/v(\d)/(([a-z]+)(/[a-z]+)?)(/\S+)?$|, '"api: $3 $1 $2"'],
         [qr/^(GET|OPTIONS|HEAD|CONNECT) \/(\?.*)?$/, '"page: /search ($1)"'],
         [qr/^(GET|HEAD|OPTIONS|POST|CONNECT)\s*\/(atom|feed|.*edit.*|rss|login|cgi|authorize|clientaccesspolicy|browserconfig|solr|weaver|view|secure|servlet|manager).*$/, '"hacking"'],
         [qr/^(GET|HEAD|OPTIONS|POST|CONNECT) (\/\w+)?(\W\S+)?$/, '"page: $2 ($1)"'],
