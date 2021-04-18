@@ -6,7 +6,7 @@
             <div class="rf-container-fluid">
                 <div class="rf-grid-row rf-grid-row--gutters">
                     <div class="rf-col-4">
-                        <StatsTile number={Object.keys(edits).length} label="Contributions usagers"/>
+                        <StatsTile number={Object.keys(edits).length} label="Contributions{admin ? ' usagers' : ''}"/>
                     </div>
                     <div class="rf-col-4">
                         <StatsTile number={Object.keys(edits).filter(id => edits[id].some(m => m.auth === 0)).length} label="Contributions en attente"/>
@@ -32,7 +32,9 @@
                         <thead>
                             <tr>
                                 <th>id</th>
-                                <th>auteur</th>
+                                {#if admin}
+                                    <th>auteur</th>
+                                {/if}
                                 <th>date</th>
                                 <th>statut</th>
                                 <th>nb éditions</th>
@@ -52,7 +54,9 @@
                                             {id}
                                         </a>
                                     </td>
-                                    <td>{edits[id][edits[id].length - 1].author}</td>
+                                    {#if admin}
+                                        <td>{edits[id][edits[id].length - 1].author}</td>
+                                    {/if}
                                     <td>{edits[id][edits[id].length - 1].date.substring(0,10)}</td>
                                     <td>
                                         {#if (edits[id].filter(m => m.auth === 0).length)}
@@ -89,6 +93,8 @@
     import StatsTile from './StatsTile.svelte';
     import axios from 'axios';
 
+    let admin = false;
+
     import { user, accessToken } from '../tools/stores.js';
     let edits = {};
 
@@ -97,7 +103,9 @@
         edits = await response.json();
     }
 
-    $: if (($user === '__BACKEND_TOKEN_USER__') && $accessToken) {
+    $: admin = ($user === '__BACKEND_TOKEN_USER__');
+
+    $: if ($user && $accessToken) {
         getEditsData();
     };
 
