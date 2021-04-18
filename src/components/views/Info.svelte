@@ -112,7 +112,7 @@
             matchID.
         </p>
         <p>
-          Le projet a été libéré et mis en opensource. L'équipe est maintenant composée de développeurs
+          Le projet a été libéré et mis en open source. L'équipe est maintenant composée de développeurs
           du ministère de la Justice et du ministère de l'Intérieur, contribuant bénévolement au service sur leur temps libre.
         </p>
         <p>
@@ -137,7 +137,7 @@
       icon: 'ri:database-2-line',
       content: `
           <p>
-              Le site exploite les fichiers des personnes décédées, disponibles en opendata sur
+              Le site exploite les fichiers des personnes décédées, disponibles en open data sur
               <a href="https://www.data.gouv.fr/fr/datasets/fichier-des-personnes-decedees/" target="_blank">data.gouv.fr</a> et
               recueillies par l'<a href="https://www.insee.fr/fr/information/4190491" target="_blank">INSEE</a>.
           </p>
@@ -160,7 +160,7 @@
             </ul>
           </p>
           <p>
-            Quelques liens utiles:
+            Quelques liens utiles :
             <ul class="rf-margin-0 rf-padding-0 rf-padding-left-4N">
               <li class="rf-margin-0">
                 <a href="https://www.cnil.fr/fr/rnipp-repertoire-national-didentification-des-personnes-physiques-0" target="_blank">le RNIPP vu par la CNIL</a>
@@ -181,7 +181,7 @@
       icon: 'ri:shield-star-line',
       content: `
         <p>
-            Le fichier de personnes décédées est un document administratif. Les données sont publiées en application des dispositions des articles L311-9 et L312-1-1 du code des relations entre le public et l’administration, et  réutilisables dans les conditions prévues par le titre II de ce livre.
+            Le fichier de personnes décédées est un document administratif. Les données sont publiées en application des dispositions des articles L311-9 et L312-1-1 du code des relations entre le public et l’administration, et réutilisables dans les conditions prévues par le titre II de ce livre.
         </p>
         <p>
             Les données INSEE sont sous <a href="https://www.etalab.gouv.fr/licence-ouverte-open-licence" target="_blank">Licence Ouverte / Open Licence version 2.0</a>.
@@ -200,7 +200,7 @@
       icon: 'ri:file-search-line',
       content: `
         <p>
-          Les données sont traitées avec l'outil opensource <a href="https://www.matchid.io" target="_blank">matchID</a> (Python/Pandas). Les traitements, disponibles
+          Les données sont traitées avec l'outil open source <a href="https://www.matchid.io" target="_blank">matchID</a> (Python/Pandas). Les traitements,
           disponibles <a href="https://github.com/matchid-project/deces-dataprep" target="_blank">ici</a>,
           consistent en une mise en forme (capitalisation, réconciliation avec les noms de pays et commune
           selon les référentiels INSEE) puis une indexation. Les données sont actualisées chaque mois, après chaque diffusion sur le
@@ -208,7 +208,7 @@
       </p>
       <p>
           La recherche et l'indexation reposent sur <a href="https://elastic.co" target="_blank">Elasticsearch</a>
-          qui repose sur le moteur de recherche Lucène, qui apporte le bénéfice
+          qui repose sur le moteur de recherche Lucène, apportant le bénéfice
           des <a href="https://wikipedia.org/wiki/Recherche_approximative" target="_blank">recherches floues</a> à
           large échelle. Le code source du présent site est accessible sur <a href="https://github.com/matchid-project/deces-ui" target="_blank">Github</a>.
       </p>
@@ -229,7 +229,7 @@
                 </li>
                 <li>
                     Les données sont parfois erronées dans le fichier INSEE. Il arrive par exemple, que le nom d'épouse soit enregistré
-                    a lieu du nom de naissance. Supprimez alors le nom en conservant les autres informations. Essayez des recherches alternatives:
+                    au lieu du nom de naissance. Supprimez alors le nom en conservant les autres informations. Essayez des recherches alternatives :
                     année de naissance ou de décès (plutôt que la date exacte), département plutôt que commune,
                     etc.
                 </li>
@@ -238,14 +238,14 @@
                     par formulaire papier semble avoir généré des problèmes d'exhaustivité.
                 </li>
                 <li>
-                    Seuls les personnes ayant eu un numéro INSEE sont inscrites au fichier. Un
-                    parcours de vie (e.g. naissance / décès à l'étranger)
+                    Seules les personnes ayant eu un numéro INSEE sont inscrites au fichier. Un
+                    parcours de vie (e.g. naissance/décès à l'étranger)
                     peut expliquer l'absence du fichier.
                 </li>
             </ul>
             <p>
                 Si vous avez l'assurance que la personne concernée disposait d'un numéro INSEE, il est important
-                de savoir que celle-ci figure peut être toujours au fichier RNIPP. Il est peut être
+                de savoir que celle-ci figure peut être toujours au fichier RNIPP. Il est peut-être
                 alors nécessaire de contacter la mairie ou le consultat de décès pour vous assurer
                 de la bonne transmission à l'INSEE.
             </p>
@@ -255,8 +255,8 @@
                 pour confirmer l'absence du fichier d'origine.
             </p>
             <p>
-                Nous ne pourrons vous accompagner plus loin dans la démarche administrative à ce stade, il n'existe pas de processus simplifié
-                pour les demande d'ajout et de correction. Mais nous répondrons toujours à vos sollicitations.
+                Nous ne pourrons vous accompagner plus loin dans la démarche administrative. À ce stade, il n'existe pas de processus simplifié
+                pour les demandes d'ajout et de correction. Mais nous répondrons toujours à vos sollicitations.
             </p>
       `,
       tags: "Trouver personne proche absent"},
@@ -270,7 +270,7 @@
             </p>
             <p>
                 En cas d'erreur (e.g enregistrement du nom d'époux au lieu du nom de naissance), seule
-                la mairie (ou le consultat) de décès est habilitées à transmettre
+                la mairie (ou le consultat) de décès est habilité à transmettre
                 un correctif à l'INSEE. Nous vous invitons donc à prendre contact avec le service
                 d'État civil de la mairie ou du consulat du décès.
             </p>
@@ -286,10 +286,10 @@
       content: `
           <p>
             Le service a bientôt un an, mais des bugs peuvent subsister. Commencez par actualiser l'application (touche Ctrl + F5),
-            certaines mises à jours du service nécessitent un rechargement.
+            certaines mises à jour du service nécessitent un rechargement.
           </p>
           <p>
-            En cas de doute sollicitez nous à ${mailTo}, en mentionnant la référence de version ci-dessous:
+            En cas de doute, sollicitez-nous à ${mailTo}, en mentionnant la référence de version ci-dessous :
           </p>
           <p>
             <strong>${$version && `${$version.ui}-api/${$version.api}`}</strong>
@@ -330,7 +330,7 @@
       icon: 'ri:github-line',
       content: `
         <p>
-          Le code source de ce site est opensource et disponible sur <a href="https://github.com/matchid-project/deces-ui" target="_blank">GitHub</a>,
+          Le code source de ce site est open source et disponible sur <a href="https://github.com/matchid-project/deces-ui" target="_blank">GitHub</a>,
           ainsi que celui de l'<a href="https://github.com/matchid-project/deces-backend" target="_blank">API</a>.
         </p>
         <p>

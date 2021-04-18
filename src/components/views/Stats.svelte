@@ -1,7 +1,7 @@
 <div class="rf-container">
     <div class="rf-grid-row rf-grid-row--gutters">
         {#if (!unavailable) && rawData}
-            {#if rawData.general}
+            {#if kpi}
                 <div class="rf-col-6">
                     <label class="rf-label" for="select">Cycle</label>
                     <select class="rf-select" id="select" name="select" bind:value={sourceScope}>
@@ -24,10 +24,10 @@
                         {/if}
                     </select>
                 </div>
-                {#each stats.filter(x => rawData.general[x]) as key}
+                {#each stats as key}
                     <div class="rf-col-xl-3 rf-col-lg-3 rf-col-md-3 rf-col-sm-3 rf-col-xs-6">
                         <StatsTile
-                            number={rawData.general[key]}
+                            number={kpi[key]}
                             precision={1}
                             label={labels[key] || key}
                         />
@@ -80,6 +80,7 @@
   });
   import Icon from './Icon.svelte';
   import WorldChoropleth from './WorldChoropleth.svelte';
+  import FranceChoropleth from './FranceChoropleth.svelte';
   import StatsTile from './StatsTile.svelte';
   import Heatmap from './Heatmap.svelte';
   import { smartNumber } from '../tools/stats.js';
@@ -88,7 +89,7 @@
 
 
   let style = getComputedStyle(document.body);
-  let rawData;
+  let rawData, kpi;
   let unavailable = false;
   let sourceScopes = {
       'full': {
@@ -154,12 +155,46 @@
   $: borderWidth = /full|detailed/.test(sourceScope) ? 1 : 2;
 
   const displayRange =  (range) => {
-      return range.replace(/(....)(..)(..)-/,"$3/$2/$1").replace("detailed", " (détaillé)");
+      return range.replace(/(....)(...)(..)-/,"$3/$2/$1").replace("detailed", " (détaillé)");
   }
 
     const sleep = (ms) => {
         return new Promise(resolve => setTimeout(resolve, ms));
     }
+
+    $: if (rawData && rawData.general) {
+        const tmp = rawData.general;
+        tmp['api_search_requests']=countSum(
+            rawData.requests.data.filter(k => /^api: search .*/.test(k.data)),
+            'hits');
+        tmp['api_link_rows']=smartNumber(
+            countSum(
+                rawData.requests.data.filter(k => /^api: search\/csv GET/.test(k.data)),
+                'bytes')
+            / 750,0);
+        tmp['api_update']=countSum(
+            rawData.requests.data.filter(k => /^api: id.* POST/.test(k.data)),
+            'hits');
+        kpi = tmp;
+    }
+
+  const countSum = (values, key) => {
+      if (values.length > 0) {
+          if (values.length === 1) {
+              return values[0][key].count
+          } else {
+          const v = values.reduce((a,b) => {
+                return typeof(a) === 'number' ?
+                    a+b[key].count :
+                        (typeof(b) === undefined ? a[key].count:a[key].count+b[key].count)
+                }
+            );
+            return v;
+          }
+      } else {
+          return 0;
+      }
+  }
 
   const getData = async (s) => {
     try {
@@ -199,7 +234,8 @@
       'date_time': 'Mise à jour',
       'static_requests': 'Contenu statique',
       requests: 'Requêtes',
-      geolocation: 'Statistiques géographiques',
+      country: 'Par pays',
+      depcode: 'Par département',
       not_found: 'Non trouvé',
       hosts: 'Clients',
       os: 'Système d\'exploitation',
@@ -213,7 +249,10 @@
       'start_date': 'Début',
       'end_date': 'Fin',
       'total_requests': 'Requêtes au total',
-      'valid_requests': 'Requêtes valides',
+      'api_search_requests': 'Appels API décès',
+      'api_link_rows': 'Appariements',
+      'api_update': 'Corrections usager',
+      'valid_requests': 'Reqnsuêtes valides',
       'failed_requests': 'Requêtes en erreur',
       'unique_visitors': 'Visiteurs',
       'unique_files': 'Requêtes uniques',
@@ -370,8 +409,8 @@
     return o;
   };
 
-  const stats = ['total_requests', 'failed_requests', 'unique_visitors', 'bandwidth']
-  const views = ['visitors', 'hour_of_day_of_week', 'geolocation',  'referring_sites', 'requests', 'browsers'];
+  const stats = ['unique_visitors', 'api_search_requests', 'api_link_rows', 'api_update']
+  const views = ['visitors', 'referring_sites', 'depcode', 'hour_of_day_of_week','requests', 'browsers', 'country'];
 
   const expanded = {}
   views.forEach(view => expanded[view] = false);
@@ -425,7 +464,7 @@
             - dayOrder[b.data.replace(/-.*/,'')]*100 + parseInt(b.data.replace(/.*-(.*)h/,'$1'))
         )
     },
-    'geolocation': {
+    'country': {
         type: WorldChoropleth,
         yLog: true,
         dataCB: (data) => {
@@ -443,6 +482,29 @@
                     tmp = d.data.replace(/\s.*$/,'');
                     d.data = iso2to3[tmp] || d.data;
                     expandedData.push(d);
+                }
+            });
+            return expandedData;
+        }
+    },
+    'depcode': {
+        type: FranceChoropleth,
+        yLog: true,
+        dataCB: (data) => {
+            let expandedData = [];
+            data.forEach(d => {
+                if (d.items) {
+                    d.items.forEach(dd => {
+                        d.data = d.data.replace(/\s.*$/,'');
+                        if (/[0-9][0-9ab]/i.test(d.data)) {
+                            expandedData.push(dd);
+                        }
+                    });
+                } else {
+                    d.data = d.data.replace(/\s.*$/,'');
+                    if (/[0-9][0-9ab]/i.test(d.data)) {
+                        expandedData.push(d);
+                    }
                 }
             });
             return expandedData;

@@ -174,12 +174,12 @@ config-minimal:
 		ln -s ${TOOLS_PATH} ${APP_PATH}/${GIT_TOOLS};\
 	fi
 
-config-stats:
+config-stats: geolite-city
 	@if [ -z "$(wildcard /usr/lib/*/perl*/*/Date/Pcalc)" ] || \
 		[ -z "$(wildcard /usr/lib/*/perl*/*/JSON/XS)" ] || \
-		[ -z "$(wildcard /usr/lib/*/perl*/*/Geo/IP)" ]; then\
+		[ -z "$(wildcard /usr/lib/*/perl*/*/MaxMind/DB)" ]; then\
 		if [ "${OS_TYPE}" = "DEB" ]; then\
-			sudo apt-get install -yqq libdate-calc-perl libjson-xs-perl libgeo-ip-perl; true;\
+			sudo apt-get install -yqq libdate-calc-perl libjson-xs-perl libmaxmind-db-reader-perl libmaxmind-db-reader-xs-perl libgeoip2-perl; true;\
 		fi;\
 		if [ "${OS_TYPE}" = "RPM" ]; then\
 			sudo yum install -y perl-Date-Calc perl-Geo-IP perl-JSON-XS perl-Digest-SHA; true;\
@@ -542,6 +542,15 @@ logs-restore: ${LOG_DIR}
 ${LOG_DB_DIR}:
 	@mkdir -p ${LOG_DB_DIR};
 
+/usr/local/share/GeoLite2/GeoLite2-City.mmdb:
+	@echo downloading and installing GeoLite2-City.mmdb
+	@mkdir -p ${APP_PATH}/data
+	@sudo mkdir -p /usr/local/share/GeoLite2/
+	@curl -s "https://download.maxmind.com/app/geoip_download?edition_id=GeoLite2-City&license_key=${MMDB_TOKEN}&suffix=tar.gz" > ${APP_PATH}/data/geolite.tar.gz
+	@sudo tar xzf ${APP_PATH}/data/geolite.tar.gz -C /usr/local/share/GeoLite2/ --strip-components=1
+
+geolite-city: /usr/local/share/GeoLite2/GeoLite2-City.mmdb
+
 stats-db-restore: ${LOG_DB_DIR}
 	@mkdir -p ${LOG_DB_DIR};\
 	echo sync ${LOG_DB_BUCKET} to ${LOG_DB_DIR};\
@@ -598,12 +607,12 @@ stats-update: stats-full-update stats-catalog
 stats-background:
 	@if [ "${GIT_BRANCH}" = "${GIT_BRANCH_MASTER}" ]; then\
 		((make stats-restore) > .stats-restore 2>&1 &);\
-		((sleep 200;make stats-full-init) > .stats-full 2>&1 &);\
-		((sleep 4800;while (true); do make stats-update;sleep 3600;done) > .stats-update 2>&1 &);\
-		((sleep 4800;while (true); do make stats-live;sleep 120;done) > .stats-live 2>&1 &);\
+		((sleep 60;make stats-full stats-catalog) > .stats-full 2>&1 &);\
+		((sleep 1200;while (true); do make stats-update;sleep 3600;done) > .stats-update 2>&1 &);\
+		((sleep 1350;while (true); do make stats-live;sleep 120;done) > .stats-live 2>&1 &);\
 	else\
-		((make stats-restore) > .stats-restore 2>&1 &);\
-		((sleep 200;while (true); do make stats-update;sleep 3600;done) > .stats-update 2>&1 &);\
+		((make stats-restore stats-db-restore) > .stats-restore 2>&1 &);\
+		((sleep 60;while (true); do make stats-update;sleep 3600;done) > .stats-update 2>&1 &);\
 		((sleep 200;while (true); do make stats-live;sleep 120;done) > .stats-live 2>&1 &);\
 	fi
 

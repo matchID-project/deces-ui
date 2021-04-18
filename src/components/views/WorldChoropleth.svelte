@@ -1,50 +1,65 @@
-<svg {width} {height} viewBox="0 0 260 130">
-    {#if countries.length && data && Object.keys(index).length}
-        <g>
-        {#each countries as country}
-            <path
-                class="hoverable"
-                d={country.path}
-                id={country.id}
-                z-index=0
-                stroke="var(--bf500)"
-                stroke-width="0.1px"
-                fill="var(--bf500)"
-                on:mouseenter={()=> toggle(country.id)}
-                on:mouseleave={() => toggle(country.id)}
-                fill-opacity={scale(value(view, country.id), view)}
-            />
-        {/each}
-        {#each countries as country}
-            <g
-                class="tooltip"
-                opacity={selected === country.id ? 0.9 : 0}
-            >
-                <rect
-                    x={(country.centroid[0] < 120) ? country.centroid[0] : country.centroid[0] - 100}
-                    y={(country.centroid[1] < 80) ? country.centroid[1] : country.centroid[1] - 50}
-                    width="100"
-                    height="50"
+<div style="position:relative">
+    <svg {width} {height} viewBox="0 0 260 130">
+        {#if view && countries.length && data && Object.keys(index).length}
+            <g>
+            {#each countries as country}
+                <path
+                    class="hoverable"
+                    d={country.path}
+                    id={country.id}
+                    z-index=0
+                    stroke="var(--bf500)"
+                    stroke-width="0.1px"
+                    fill="var(--bf500)"
+                    on:mouseenter={()=> toggle(country.id)}
+                    on:mouseleave={() => toggle(country.id)}
+                    fill-opacity={scale(value(view, country.id), view)}
                 />
-                <text
-                    class="text"
-                    text-anchor={(country.centroid[0] < 120) ? 'start' : 'end'}
-                    y={(country.centroid[1] < 80) ? 10 + country.centroid[1] : country.centroid[1] - 40}
+            {/each}
+            {#each countries as country}
+                <g
+                    class="tooltip"
+                    opacity={selected === country.id ? 0.9 : 0}
                 >
-                        <tspan x={(country.centroid[0] < 120) ? 5 + country.centroid[0] : country.centroid[0] - 5}>{country.id}</tspan>
-                        <tspan x={(country.centroid[0] < 120) ? 5 + country.centroid[0] : country.centroid[0] - 5} dy=10>{labels['visitors']}:{value('visitors', country.id)}</tspan>
-                        <tspan x={(country.centroid[0] < 120) ? 5 + country.centroid[0] : country.centroid[0] - 5} dy=10>{labels['hits']}:{value('hits', country.id)}</tspan>
-                        <tspan x={(country.centroid[0] < 120) ? 5 + country.centroid[0] : country.centroid[0] - 5} dy=10>{labels['bytes']}:{value('bytes', country.id)}</tspan>
-                </text>
+                    <rect
+                        x={(country.centroid[0] < 120) ? country.centroid[0] : country.centroid[0] - 100}
+                        y={(country.centroid[1] < 80) ? country.centroid[1] : country.centroid[1] - 50}
+                        width="100"
+                        height="50"
+                    />
+                    <text
+                        class="text"
+                        text-anchor={(country.centroid[0] < 120) ? 'start' : 'end'}
+                        y={(country.centroid[1] < 80) ? 10 + country.centroid[1] : country.centroid[1] - 40}
+                    >
+                            <tspan x={(country.centroid[0] < 120) ? 5 + country.centroid[0] : country.centroid[0] - 5}>{country.id}</tspan>
+                            <tspan x={(country.centroid[0] < 120) ? 5 + country.centroid[0] : country.centroid[0] - 5} dy=10>{labels['visitors']}:{value('visitors', country.id)}</tspan>
+                            <tspan x={(country.centroid[0] < 120) ? 5 + country.centroid[0] : country.centroid[0] - 5} dy=10>{labels['hits']}:{value('hits', country.id)}</tspan>
+                            <tspan x={(country.centroid[0] < 120) ? 5 + country.centroid[0] : country.centroid[0] - 5} dy=10>{labels['bytes']}:{value('bytes', country.id)}</tspan>
+                    </text>
+                </g>
+            {/each}
             </g>
-        {/each}
-        </g>
+        {/if}
+    </svg>
+    {#if views.length}
+        <select
+            class="rf-select rf-text--xs"
+            style="position:absolute;bottom:60px;left:0;width:120px;"
+            bind:value={view}
+            id="view"
+        >
+            {#each views as v}
+                <option>{v}</option>
+            {/each}
+        </select>
     {/if}
-</svg>
+</div>
 
 <script>
   import { onMount } from 'svelte';
   import geojson2svg from 'geojson2svg';
+  import { activeElement } from '../tools/stores.js';
 
   export let width = "100%";
   export let height = undefined;
@@ -58,7 +73,19 @@
   let countries = [];
   let index = {};
   let scale =  (x, view) => x;
-  let view = 'visitors';
+  let views = [];
+  let view;
+
+  const deactivateElement = () => {
+      activeElement.update(v => {
+          v && v.blur();
+          return undefined;
+      });
+  }
+
+  $: if (view) {
+      deactivateElement();
+  }
 
   const toggle = (id) => {
       if (id !== selected) {
@@ -76,15 +103,20 @@
   };
 
   $: if (data && data.datasets) {
+      views = [];
       data.datasets.forEach((ds, i) => {
           const id = ds.yAxisID;
           labels[id] = ds.label;
           index[id] = i;
+          views.push(id);
           max[id] = 0;
           ds.data.forEach(d => {
               max[id] = Math.max(max[id], d.y)
           });
       });
+      if (!view) {
+        view = views[0];
+      }
   }
 
   $: if (Object.keys(max).length) {
@@ -121,11 +153,10 @@
             ];
             return country;
         });
-    //   console.log(countries);
   }
 
   const value = (view, id) => {
-      const v = index[id] && data.datasets[index[view]].data[index[id]];
+      const v = (index[id] !== undefined) ? data.datasets[index[view] || 0].data[index[id]] : 0;
       return v && v.y || 0;
   }
 
