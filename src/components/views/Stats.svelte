@@ -234,8 +234,8 @@
       'date_time': 'Mise à jour',
       'static_requests': 'Contenu statique',
       requests: 'Requêtes',
-      country: 'Statistiques par pays',
-      depcode: 'Statistiques par département',
+      country: 'Par pays',
+      depcode: 'Par département',
       not_found: 'Non trouvé',
       hosts: 'Clients',
       os: 'Système d\'exploitation',
@@ -410,7 +410,7 @@
   };
 
   const stats = ['unique_visitors', 'api_search_requests', 'api_link_rows', 'api_update']
-  const views = ['visitors', 'hour_of_day_of_week', 'depcode', 'referring_sites', 'requests', 'browsers', 'country'];
+  const views = ['visitors', 'referring_sites', 'depcode', 'hour_of_day_of_week','requests', 'browsers', 'country'];
 
   const expanded = {}
   views.forEach(view => expanded[view] = false);
