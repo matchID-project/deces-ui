@@ -186,25 +186,27 @@
                                         >
                                             <a
                                                 href="/logout"
-                                                title="Se déconnecter"
+                                                title={loggedIn ? "Se déconnecter" : "S'identifier"}
                                                 class="rf-link rf-href rf-fi-question-line rf-link--icon-left"
                                             >
-                                                Se déconnecter
+                                                {loggedIn ? "Se déconnecter" : "S'identifier"}
                                             </a>
                                         </li>
-                                        <li
-                                            class="rf-menu__item rf-href"
-                                            class:rf-menu__item--active={!modal && ($route.path === '/edits')}
-                                            on:click|preventDefault={() => goToPage('edits')}
-                                        >
-                                            <a
-                                                href="/edits"
-                                                title="Corrections"
-                                                class="rf-link rf-href rf-fi-question-line rf-link--icon-left"
+                                        {#if loggedIn}
+                                            <li
+                                                class="rf-menu__item rf-href"
+                                                class:rf-menu__item--active={!modal && ($route.path === '/edits')}
+                                                on:click|preventDefault={() => goToPage('edits')}
                                             >
-                                                Corrections
-                                            </a>
-                                        </li>
+                                                <a
+                                                    href="/edits"
+                                                    title="Corrections"
+                                                    class="rf-link rf-href rf-fi-question-line rf-link--icon-left"
+                                                >
+                                                    Corrections
+                                                </a>
+                                            </li>
+                                        {/if}
                                         {#if admin}
                                             <li
                                                 class="rf-menu__item rf-href"
@@ -382,25 +384,27 @@
                                         >
                                             <a
                                                 href="/logout"
-                                                title="Se déconnecter"
+                                                title={loggedIn ? "Se déconnecter" : "S'identifier"}
                                                 class="rf-link rf-href rf-fi-question-line rf-link--icon-left"
                                             >
-                                                Se déconnecter
+                                                {loggedIn ? "Se déconnecter" : "S'identifier"}
                                             </a>
                                         </li>
-                                        <li
-                                            class="rf-menu__item rf-href"
-                                            class:rf-menu__item--active={!modal && ($route.path === '/edits')}
-                                            on:click|preventDefault={() => goToPage('edits')}
-                                        >
-                                            <a
-                                                href="/edits"
-                                                title="Corrections"
-                                                class="rf-link rf-href rf-fi-question-line rf-link--icon-left"
+                                        {#if loggedIn}
+                                            <li
+                                                class="rf-menu__item rf-href"
+                                                class:rf-menu__item--active={!modal && ($route.path === '/edits')}
+                                                on:click|preventDefault={() => goToPage('edits')}
                                             >
-                                                Corrections
-                                            </a>
-                                        </li>
+                                                <a
+                                                    href="/edits"
+                                                    title="Corrections"
+                                                    class="rf-link rf-href rf-fi-question-line rf-link--icon-left"
+                                                >
+                                                    Corrections
+                                                </a>
+                                            </li>
+                                        {/if}
                                         {#if admin}
                                             <li
                                                 class="rf-menu__item rf-href"
@@ -467,9 +471,11 @@
     let searchMenu;
     let adminMenu;
     let zoom;
-    let admin
+    let admin, loggedIn;
 
     $: modal = showLogin;
+
+    $: loggedIn = $accessToken && $user;
 
     $: admin = $accessToken && ($user === '__BACKEND_TOKEN_USER__') && $user;
 
