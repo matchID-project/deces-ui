@@ -1,5 +1,5 @@
 {#if (result) && !(result.error) }
-    <div class="{expand ? "rf-col-12" : "rf-col-xs-12 rf-col-sm-12 rf-col-md-12 rf-col-lg-6 rf-col-xl-6"} rf-padding-1N rf-padding-left-2N rf-padding-right-2N">
+    <div class="{(expand || fullwidth) ? "rf-col-12" : "rf-col-xs-12 rf-col-sm-12 rf-col-md-12 rf-col-lg-6 rf-col-xl-6"} {nomargin ? "" : "rf-padding-1N rf-padding-left-2N rf-padding-right-2N"}">
         <div class="rf-container-fluid">
             <div class="rf-grid-row">
                 <div class="rf-col-12">
@@ -605,6 +605,9 @@
     } from '../tools/masks.js';
     import md5 from 'md5';
     import axios from 'axios';
+    export let fullwidth = false;
+    export let nomargin = false;
+    export let onclick = () => {};
 
     export let result  = undefined;
     export let index = undefined;
@@ -968,6 +971,7 @@
 
     const toggleExpand = () => {
         expand = !expand;
+        onclick();
         blur();
     }
 
