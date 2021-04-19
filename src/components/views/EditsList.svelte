@@ -7,13 +7,13 @@
                 <div class="rf-container-fluid">
                     <div class="rf-grid-row rf-grid-row--gutters">
                         <div class="rf-col-4">
-                            <StatsTile number={Object.keys(edits).length} label="Contributions{$admin ? ' usagers' : ''}"/>
+                            <StatsTile number={edits.length} label="Contributions{$admin ? ' usagers' : ''}"/>
                         </div>
                         <div class="rf-col-4">
-                            <StatsTile number={Object.keys(edits).filter(id => edits[id].some(m => m.auth === 0)).length} label="Contributions en attente"/>
+                            <StatsTile number={edits.filter(e => e.modifications.some(m => m.auth === 0)).length} label="Contributions en attente"/>
                         </div>
                         <div class="rf-col-4">
-                            <StatsTile number={Object.keys(edits).filter(id => edits[id].some(m => m.auth > 0)).length} label="Contributions validées"/>
+                            <StatsTile number={edits.filter(e => e.modifications.some(m => m.auth > 0)).length} label="Contributions validées"/>
                         </div>
                     </div>
                 </div>
@@ -27,12 +27,12 @@
                     <strong> Liste des éditions
                     </strong>
                 </p>
-                {#if Object.keys(edits).length}
+                {#if edits.length}
                     <div style="overflow-x: auto;">
                         <table class="rf-table rf-table--narrow rf-table--striped">
                             <thead>
                                 <tr>
-                                    <th>id</th>
+                                    <th>enregistrement</th>
                                     {#if $admin}
                                         <th>auteur</th>
                                     {/if}
@@ -42,35 +42,36 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                {#each Object.keys(edits).sort((b,a) =>
-                                    edits[a][edits[a].length - 1].date.localeCompare(edits[b][edits[b].length - 1].date)
-                                ) as id}
+                                {#each edits.sort((b,a) =>
+                                    a.modifications[a.modifications.length - 1].date.localeCompare(
+                                        b.modifications[b.modifications.length - 1].date)
+                                ) as edit}
                                     <tr>
                                         <td>
                                             <a
-                                                href="/id/{id.replace(/_/g,'%5F')}"
+                                                href="/id/{edit.id}"
                                                 target="_self"
                                                 class="rf-link"
                                             >
-                                                {id}
+                                                {edit.name.last.toUpperCase()} { edit.name.first ? edit.name.first[0] : '' }
                                             </a>
                                         </td>
                                         {#if $admin}
-                                            <td>{edits[id][edits[id].length - 1].author}</td>
+                                            <td>{edit.modifications[edit.modifications.length - 1].author}</td>
                                         {/if}
-                                        <td>{edits[id][edits[id].length - 1].date.substring(0,10)}</td>
+                                        <td>{edit.modifications[edit.modifications.length - 1].date.substring(0,10)}</td>
                                         <td>
-                                            {#if (edits[id].filter(m => m.auth === 0).length)}
+                                            {#if (edit.modifications.filter(m => m.auth === 0).length)}
                                                 <Icon icon="ri:time-line" class="rf-color--rm"/>
                                             {/if}
-                                            {#if (edits[id].filter(m => m.auth > 0).length)}
+                                            {#if (edit.modifications.filter(m => m.auth > 0).length)}
                                                 <Icon icon="ri:check-line" class="rf-color--bf"/>
                                             {/if}
-                                            {#if (edits[id].filter(m => m.auth < 0).length)}
+                                            {#if (edit.modifications.filter(m => m.auth < 0).length)}
                                                 <Icon icon="ri:close-line" class="rf-color--rm"/>
                                             {/if}
                                         </td>
-                                        <td>{edits[id].length}</td>
+                                        <td>{edit.modifications.length}</td>
                                     </tr>
                                 {/each}
                             </tbody>
