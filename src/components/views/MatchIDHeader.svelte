@@ -168,7 +168,7 @@
                                     aria-expanded={expandMenu.admin}
                                     on:click={() => {expandMenu.admin = !expandMenu.admin}}
                                 >
-                                    <Icon icon={$accessToken ? 'ri:user-follow-line' : 'ri:user-line'} circleText={admin}/>
+                                    <Icon icon={$user ? 'ri:user-follow-line' : 'ri:user-line'} circleText={$admin}/>
                                 </button>
                                 <div
                                     class="rf-menu"
@@ -179,20 +179,20 @@
                                     <ul class="rf-menu__list">
                                         <li
                                             class="rf-menu__item rf-href"
-                                            on:click|preventDefault={() => showLogin = !showLogin}
-                                            class:rf-nav__item--active={showLogin}
+                                            on:click|preventDefault={() => $showLogin = !$showLogin}
+                                            class:rf-nav__item--active={$showLogin}
                                             on:mouseenter={() => {zoom = true}}
                                             on:mouseleave={() => {zoom = false}}
                                         >
                                             <a
                                                 href="/logout"
-                                                title={loggedIn ? "Se déconnecter" : "S'identifier"}
+                                                title={$user ? "Se déconnecter" : "S'identifier"}
                                                 class="rf-link rf-href rf-fi-question-line rf-link--icon-left"
                                             >
-                                                {loggedIn ? "Se déconnecter" : "S'identifier"}
+                                                {$user ? "Se déconnecter" : "S'identifier"}
                                             </a>
                                         </li>
-                                        {#if loggedIn}
+                                        {#if $user}
                                             <li
                                                 class="rf-menu__item rf-href"
                                                 class:rf-menu__item--active={!modal && ($route.path === '/edits')}
@@ -207,7 +207,7 @@
                                                 </a>
                                             </li>
                                         {/if}
-                                        {#if admin}
+                                        {#if $admin}
                                             <li
                                                 class="rf-menu__item rf-href"
                                                 class:rf-menu__item--active={!modal && ($route.path === '/jobs')}
@@ -367,7 +367,7 @@
                                     aria-expanded={expandMenu.admin}
                                     on:click={() => {expandMenu.admin = !expandMenu.admin}}
                                 >
-                                    <Icon icon={$accessToken ? 'ri:user-follow-line' : 'ri:user-line'} circleText={admin}/>
+                                    <Icon icon={$user ? 'ri:user-follow-line' : 'ri:user-line'} circleText={$admin}/>
                                 </button>
                                 <div
                                     class="rf-menu"
@@ -377,20 +377,20 @@
                                     <ul class="rf-menu__list">
                                         <li
                                             class="rf-menu__item rf-href"
-                                            on:click|preventDefault={() => showLogin = !showLogin}
-                                            class:rf-nav__item--active={showLogin}
+                                            on:click|preventDefault={() => $showLogin = !$showLogin}
+                                            class:rf-nav__item--active={$showLogin}
                                             on:mouseenter={() => {zoom = true}}
                                             on:mouseleave={() => {zoom = false}}
                                         >
                                             <a
                                                 href="/logout"
-                                                title={loggedIn ? "Se déconnecter" : "S'identifier"}
+                                                title={$user ? "Se déconnecter" : "S'identifier"}
                                                 class="rf-link rf-href rf-fi-question-line rf-link--icon-left"
                                             >
-                                                {loggedIn ? "Se déconnecter" : "S'identifier"}
+                                                {$user ? "Se déconnecter" : "S'identifier"}
                                             </a>
                                         </li>
-                                        {#if loggedIn}
+                                        {#if $user}
                                             <li
                                                 class="rf-menu__item rf-href"
                                                 class:rf-menu__item--active={!modal && ($route.path === '/edits')}
@@ -405,7 +405,7 @@
                                                 </a>
                                             </li>
                                         {/if}
-                                        {#if admin}
+                                        {#if $admin}
                                             <li
                                                 class="rf-menu__item rf-href"
                                                 class:rf-menu__item--active={!modal && ($route.path === '/jobs')}
@@ -443,11 +443,11 @@
         </div>
     </div>
 </header>
-<Login bind:show={showLogin}/>
+<Login/>
 <ProofViewer/>
 
 <script>
-    import { showProof, user, accessToken, alphaFeatures, firstSearch, themeDnum, advancedSearch, displayMode, wasSearched, activeElement } from '../tools/stores.js';
+    import { showLogin, showProof, admin, user, alphaFeatures, firstSearch, themeDnum, advancedSearch, displayMode, wasSearched, activeElement } from '../tools/stores.js';
     import Icon from './Icon.svelte';
     import SearchBox from './SearchBox.svelte';
     import Login from './Login.svelte';
@@ -462,7 +462,6 @@
 
     let burgerState = false;
     let expandMenu = { search: false, admin: false };
-    let showLogin = false;
     let modal = false;
     let organization;
     let searchOptions;
@@ -471,13 +470,8 @@
     let searchMenu;
     let adminMenu;
     let zoom;
-    let admin, loggedIn;
 
-    $: modal = showLogin;
-
-    $: loggedIn = $accessToken && $user;
-
-    $: admin = $accessToken && ($user === '__BACKEND_TOKEN_USER__') && $user;
+    $: modal = $showLogin;
 
     $: searchOptions = [
         { title: 'Simple',
