@@ -29,21 +29,22 @@
                 </p>
                 {#if edits.length}
                     <div style="overflow-x: auto;">
-                        <table class="rf-table" style="text-align:left;">
-                            <col style="width:30px"/>
-                            <col style="width:120px"/>
+                        <table class="rf-table rf-table--narrow rf-text--sm" style="text-align:left;table-layout:fixed;">
+                            <col style="width:40px"/>
+                            <col style="width:75px"/>
                             {#if $admin}
-                                <col style="width:80px"/>
-                                <col style="width:80px"/>
+                                <col style="width:120px"/>
+                                <col style="width:50px"/>
                             {/if}
+                            <col style="width:300px"/>
 
                             <thead>
                                 <tr>
                                     <th>statut</th>
                                     <th>date</th>
                                     {#if $admin}
-                                        <th>auteur</th>""
-                                        <th>nb éditions</th>
+                                        <th>auteur</th>
+                                        <th>éditions</th>
                                     {/if}
                                     <th>enregistrement</th>
                                 </tr>
@@ -55,7 +56,7 @@
                                 ) as edit, i}
                                     <tr>
                                         {#if (currentEdit !== edit.id)}
-                                            <td in:fly="{{ x: -200, delay: 400 }}">
+                                            <td>
                                                 {#if (edit.modifications.filter(m => m.auth === 0).length)}
                                                     <Icon icon="ri:time-line" class="rf-color--rm"/>
                                                 {/if}
@@ -66,20 +67,20 @@
                                                     <Icon icon="ri:close-line" class="rf-color--rm"/>
                                                 {/if}
                                             </td>
-                                            <td in:fly="{{ x: -200, delay: 400 }}">
+                                            <td>
                                                 {edit.modifications[edit.modifications.length - 1].date.substring(0,10)}
                                             </td>
                                             {#if $admin}
-                                                <td in:fly="{{ x: -200, delay: 400 }}">
+                                                <td style="overflow: hidden;text-overflow:ellipsis">
                                                     {edit.modifications[edit.modifications.length - 1].author}
                                                 </td>
-                                                <td in:fly="{{ x: -200, delay: 400 }}">
+                                                <td>
                                                     {edit.modifications.length}
                                                 </td>
                                             {/if}
                                         {/if}
                                         <td colspan={(currentEdit === edit.id) ? ($admin ? "5" : "4") : "1"}>
-                                            <div class="rf-container-fluid">
+                                            <div class="rf-container-fluid rf-padding-4px">
                                                 <div
                                                     class="rf-grid-row"
                                                     id={edit.id}
@@ -112,7 +113,6 @@
 
 <script>
     import { onMount } from 'svelte';
-    import { fly } from 'svelte/transition';
     import * as animateScroll from 'svelte-scrollto';
     import ResultCard from './ResultCard.svelte';
     import Icon from './Icon.svelte';
