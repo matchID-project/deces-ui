@@ -39,12 +39,21 @@
                             </tr>
                         </thead>
                         <tbody>
-                            {#each jobs as job}
+                            {#each jobs as job, idx}
                                 <tr>
                                     <td>{job.id.substring(0,20) + '...'}</td>
                                     <td>{job.date}</td>
                                     <td>{job.rows}</td>
-                                    <td>{job.status}</td>
+                                    <td>{job.status}
+                                      {#if job.status == 'created'} 
+                                        <span
+                                          on:click|preventDefault={() => deleteJob(job, idx)}
+                                        >
+                                          - arrêter 
+                                          <Icon icon="ri:close-line" class="rf-color--rm"/>
+                                        </span>
+                                      {/if}
+                                    </td>
                                 </tr>
                             {/each}
                         </tbody>
@@ -64,6 +73,7 @@
     import { sineInOut } from 'svelte/easing';
     import StatsTile from './StatsTile.svelte';
     import axios from 'axios';
+    import Icon from './Icon.svelte';
 
     import { accessToken } from '../tools/stores.js';
     let jobs = [];
@@ -77,6 +87,13 @@
             j.date=new Date(j.date).toISOString();
             return j;
         });
+    }
+
+    const deleteJob = async (job, idx) => {
+      const res = await axios.delete(`__BACKEND_PROXY_PATH__/search/csv/${job.id}`)
+      if (res.data && res.data.msg.includes('cancelled')) {
+        jobs[idx].status = 'arrêté'
+      }
     }
 
     $: if ($accessToken) {
