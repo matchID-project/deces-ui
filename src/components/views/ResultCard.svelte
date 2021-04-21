@@ -291,6 +291,14 @@
                                         {#if edit && (Object.keys(editValue).length)}
                                             <p>
                                                 <strong>
+                                                Transmettre un message
+                                                </strong> (optionnel)
+                                            </p>
+                                            <p>
+                                                <textarea class="rf-input" maxlength=200 bind:value={editMessage}/>
+                                            </p>
+                                            <p>
+                                                <strong>
                                                     Fournir une pièce justificative
                                                 </strong>
                                             </p>
@@ -620,6 +628,7 @@
     let edit = false;
     let editInput = {};
     let editTmpValue = {};
+    let editMessage = '';
     let editValue = {};
     let editDisplayChange = {};
     let editFile;
