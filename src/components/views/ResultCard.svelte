@@ -137,59 +137,6 @@
                                                     {/if}
                                                 </p>
                                             </div>
-                                        {:else if admin}
-                                            <div class="rf-col-12 rf-text--center rf-margin-top-0">
-                                                <p>
-                                                    <strong>
-                                                        Cette fiche a fait l'objet de {modificationsNumber} demande de modifications.
-                                                        {modificationsValidated} ont déjà été accetpées, {modificationsWaiting} en attente, {modificationsRejected} rejetées.
-                                                    </strong>
-                                                <br>
-                                                    proposition courrante de {modifications[modificationsCurrent].author} à {modifications[modificationsCurrent].date}
-                                                    <a
-                                                        href={modifications[modificationsCurrent].proof}
-                                                        target="_blank"
-                                                        class="rf-link"
-                                                        on:click|preventDefault={() => $showProof = modifications[modificationsCurrent].proof}
-                                                    >
-                                                        Preuve associée
-                                                    </a>
-                                                <br>
-                                                <button
-                                                    class="rf-btn rf-padding-right-2N"
-                                                    class:rf-btn--reject={modifications[modificationsCurrent].auth === -1}
-                                                    class:rf-btn--secondary={modifications[modificationsCurrent].auth !== -1}
-                                                    title="Rejeter"
-                                                    on:click|preventDefault={() => {
-                                                        modifications[modificationsCurrent].auth = -1;
-                                                        blur();
-                                                    }}
-                                                >
-                                                        Rejeter
-                                                        &nbsp;
-                                                        <Icon
-                                                            icon='ri:close-line'
-                                                            class="rf-fi--md"
-                                                        />
-                                                </button>
-                                                <button
-                                                    class="rf-btn rf-padding-right-2N"
-                                                    class:rf-btn--valid={modifications[modificationsCurrent].auth === 1}
-                                                    class:rf-btn--secondary={modifications[modificationsCurrent].auth !== 1}
-                                                    on:click|preventDefault={() => {
-                                                        modifications[modificationsCurrent].auth = 1;
-                                                        blur();
-                                                    }}
-                                                >
-                                                        Valider
-                                                        &nbsp;
-                                                        <Icon
-                                                            icon='ri:check-line'
-                                                            class="rf-fi--md"
-                                                        />
-                                                </button>
-                                                </p>
-                                            </div>
                                         {/if}
                                     {/if}
                                     {#if edit}
@@ -353,6 +300,140 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        <div class="rf-col-12 rf-text--center rf-margin-top-0" transition:fade>
+                                            <p>
+                                                <strong>
+                                                    Cette fiche a fait l'objet de {modificationsNumber} demande de modifications.
+                                                    {modificationsValidated} ont déjà été accetpées, {modificationsWaiting} en attente, {modificationsRejected} rejetées.
+                                                </strong>
+                                            </p>
+                                            <p>
+                                                <a
+                                                    href={modifications[modificationsCurrent].proof}
+                                                    target="_blank"
+                                                    class="rf-link"
+                                                    on:click|preventDefault={() => $showProof = modifications[modificationsCurrent].proof}
+                                                >
+                                                    Preuve associée
+                                                </a>
+                                            </p>
+                                            <div class="rf-container-fluid">
+                                                <div class="rf-grid-row">
+                                                    <div class="rf-col-3">
+                                                        <RadioButtons
+                                                            title="Type de document"
+                                                            labels={["Acte de décès","Acte de naissance","Autre document français"]}
+                                                            values={["french death certificate","french birth certificate","other french document"]}
+                                                            bind:value={modifications[modificationsCurrent].review.proofType}
+                                                        />
+                                                    </div>
+                                                    <div class="rf-col-3">
+                                                        <RadioButtons
+                                                            title=""
+                                                            labels={["Acte étranger","Pierre tombale","Autre"]}
+                                                            values={["foreign document","grave","other"]}
+                                                            bind:value={modifications[modificationsCurrent].review.proofType}
+                                                        />
+                                                    </div>
+                                                    <div class="rf-col-3">
+                                                        <RadioButtons
+                                                            title="Qualité du scan"
+                                                            labels={["Mauvaise","Bonne"]}
+                                                            values={["poor", "good"]}
+                                                            bind:value={modifications[modificationsCurrent].review.proofQuality}
+                                                        />
+                                                    </div>
+                                                    <div class="rf-col-3">
+                                                        <RadioButtons
+                                                            title="Typographie"
+                                                            labels={["Manuscrit","Dactylographié","Numérique"]}
+                                                            values={["manuscript", "typed","numerical"]}
+                                                            bind:value={modifications[modificationsCurrent].review.proofScript}
+                                                        />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="rf-col-12 rf-text--center rf-margin-top-0" transition:fade>
+                                            <button
+                                                class="rf-btn rf-padding-right-2N"
+                                                class:rf-btn--valid={modifications[modificationsCurrent].auth === 1}
+                                                class:rf-btn--secondary={modifications[modificationsCurrent].auth !== 1}
+                                                on:click|preventDefault={() => {
+                                                    modifications[modificationsCurrent].auth = 1;
+                                                    blur();
+                                                }}
+                                            >
+                                                    Valider
+                                                    &nbsp;
+                                                    <Icon
+                                                        icon='ri:check-line'
+                                                        class="rf-fi--md"
+                                                    />
+                                            </button>
+                                            <button
+                                                class="rf-btn rf-padding-right-2N"
+                                                class:rf-btn--reject={modifications[modificationsCurrent].auth === -1}
+                                                class:rf-btn--secondary={modifications[modificationsCurrent].auth !== -1}
+                                                title="Rejeter"
+                                                on:click|preventDefault={() => {
+                                                    modifications[modificationsCurrent].auth = -1;
+                                                    blur();
+                                                }}
+                                            >
+                                                    Rejeter
+                                                    &nbsp;
+                                                    <Icon
+                                                        icon='ri:refresh-line'
+                                                        class="rf-fi--md"
+                                                    />
+                                            </button>
+                                            <button
+                                                class="rf-btn rf-padding-right-2N"
+                                                class:rf-btn--reject={modifications[modificationsCurrent].auth === -2}
+                                                class:rf-btn--secondary={modifications[modificationsCurrent].auth !== -2}
+                                                title="Clore"
+                                                on:click|preventDefault={() => {
+                                                    modifications[modificationsCurrent].auth = -2;
+                                                    blur();
+                                                }}
+                                            >
+                                                    Clore
+                                                    &nbsp;
+                                                    <Icon
+                                                        icon='ri:close-line'
+                                                        class="rf-fi--md"
+                                                    />
+                                            </button>
+                                        </div>
+                                        <div class="rf-col-12 rf-text--center" transition:fade>
+                                            <p>
+                                                <strong>{modifications[modificationsCurrent].author}</strong> &nbsp;
+                                                ({modifications[modificationsCurrent].date.replace(/T(..).*/,' $1h')})
+                                                {#if modifications[modificationsCurrent].message}
+                                                    <br>
+                                                    <i>
+                                                        {modifications[modificationsCurrent].message}
+                                                    </i>
+                                                {/if}
+                                            </p>
+                                            {#if (modifications[modificationsCurrent].auth === -1) &&
+                                                !modifications[modificationsCurrent].review.silent
+                                            }
+                                                <p>
+                                                    <strong>
+                                                    Transmettre un message
+                                                    </strong> (sera inclus dans l'email)
+                                                </p>
+                                                <textarea class="rf-input" maxlength=200 bind:value={modifications[modificationsCurrent].review.message}/>
+                                            {/if}
+                                            <div class="rf-checkbox-group">
+                                                <input class="rf-input" type="checkbox" bind:checked={modifications[modificationsCurrent].review.silent} id="silent" name="silent"/>
+                                                <label class="rf-label" for="silent">
+                                                    Ne pas envoyer de mail
+                                                </label>
+                                            </div>
+                                        </div>
                                         <div class="rf-col-12 rf-text--center" transition:fade>
                                             <button
                                                 class="rf-btn rf-padding-right-2N"
@@ -360,8 +441,21 @@
                                                 on:click|preventDefault={() => {
                                                     const updates = {}
                                                     modifications.forEach(m => {
+                                                        const review = {};
                                                         if (m.auth) {
-                                                            updates[m.id] = (m.auth > 0)
+                                                            review.status = (m.auth > 0) ? "validated" :
+                                                                    ((m.auth === -1) ? "rejected" : "closed");
+                                                        }
+                                                        ['proofQuality','proofScript','proofType','silent','message'].forEach(k => {
+                                                            if (m.review[k]) {
+                                                                review[k] = m.review[k];
+                                                            }
+                                                        });
+                                                        if ((m.auth !== -1) || review.silent) {
+                                                            delete review.message;
+                                                        }
+                                                        if (Object.keys(review).length) {
+                                                            updates[m.id] = JSON.stringify(review);
                                                         }
                                                     })
                                                     updateRecord(updates);
@@ -603,6 +697,7 @@
     import { fade, slide } from 'svelte/transition';
     import { showProof, admin, user, accessToken, alphaFeatures, route, dataGouvCatalog, displayMode, searchInput, activeElement } from '../tools/stores.js';
     import Icon from './Icon.svelte';
+    import RadioButtons from './RadioButtons.svelte';
     import { capitalize,
         lastNameEditMask, lastNameStringify, lastNameParse,
         firstNameEditMask, firstNameStringify, firstNameParse,
@@ -721,6 +816,12 @@
                 modifications = result.modifications.slice().map(m => {
                     if (!/https?:/.test(m.proof)) {
                         m.proof = `__BACKEND_PROXY_PATH__/updates/proof/${result.id}-${m.id}`;
+                    }
+                    if (!m.review) {
+                        m.review = {};
+                    }
+                    if (!m.review.message) {
+                        m.review.message = '';
                     }
                     return m;
                 });
