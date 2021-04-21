@@ -114,7 +114,7 @@
                             <div class="rf-container-fluid">
                                 <div class="rf-grid-row">
                                     {#if $alphaFeatures && result.modifications}
-                                        {#if (!admin && (modificationsValidated || modificationsWaiting))}
+                                        {#if (!$admin && (modificationsValidated || modificationsWaiting))}
                                             <div class="rf-col-12 rf-text--center rf-margin-top-0">
                                                 <p>
                                                     <strong>
@@ -305,7 +305,7 @@
                                                 {/if}
                                                 Nous acceptons également un lien vers un document public d'un site d'archive départementale.
                                             </p>
-                                            {#if !$accessToken}
+                                            {#if !$user}
                                                 <p>
                                                     Un courriel est demandé pour enregistrer votre demande. Un mail vous sera envoyé pour
                                                     confirmer votre identité. Il n'en sera fait aucun autre usage.
@@ -313,8 +313,8 @@
                                             {/if}
                                         {/if}
                                     </div>
-                                    {#if ($alphaFeatures && admin && result.modifications)}
-                                        <div class="rf-col-12 rf-text--center rf-margin-top-0">
+                                    {#if ($alphaFeatures && $admin && result.modifications)}
+                                        <div class="rf-col-12 rf-text--center rf-margin-top-0" transition:fade>
                                             <div class="rf-grid-row" style="justify-content: center;">
                                                 <div class="rf-pagination">
                                                     <ul class="rf-pagination__list rf-text--xs">
@@ -448,7 +448,7 @@
                                         <div class="rf-col-xs-12 rf-col-sm-12 rf-col-md-12 rf-col-lg-12 rf-col-xl-2" transition:fade></div>
                                         <div class="rf-col-xs-6 rf-col-sm-6 rf-col-md-6 rf-col-lg-6 rf-col-xl-4" transition:fade>
                                             <div style="padding-left:8px;padding-right:8px;margin-top:-3px;">
-                                                {#if (!editMailSent || $accessToken)}
+                                                {#if (!editMailSent || $user)}
                                                     <div
                                                         class="rf-input-group"
                                                         class:rf-input-group--valid={editMail && editMailSent}
@@ -474,9 +474,9 @@
                                                                 editMailSent = undefined;
                                                             }}
                                                             on:blur={register}
-                                                            disabled={$accessToken}
+                                                            disabled={$user}
                                                         >
-                                                        {#if ($accessToken)}
+                                                        {#if ($user)}
                                                             <p class="rf-valid-text">
                                                                 Vous êtes identifié(e)<br>
                                                             </p>
@@ -545,7 +545,7 @@
                                                     }
                                                     else {
                                                         toggleEdit();
-                                                        if (!$accessToken) {
+                                                        if (!$user) {
                                                             editMail = ''
                                                             editMailSent = undefined;
                                                         }
@@ -567,7 +567,7 @@
                                             </button>
                                         </div>
                                     {/if}
-                                    {#if editSuccess && !admin}
+                                    {#if editSuccess && !$admin}
                                         <div class="rf-col-12 rf-text--center" transition:fade>
                                             <p>
                                                 <strong>
@@ -593,7 +593,7 @@
 
 <script>
     import { fade, slide } from 'svelte/transition';
-    import { showProof, user, accessToken, alphaFeatures, route, dataGouvCatalog, displayMode, searchInput, activeElement } from '../tools/stores.js';
+    import { showProof, admin, user, accessToken, alphaFeatures, route, dataGouvCatalog, displayMode, searchInput, activeElement } from '../tools/stores.js';
     import Icon from './Icon.svelte';
     import { capitalize,
         lastNameEditMask, lastNameStringify, lastNameParse,
@@ -640,7 +640,6 @@
     let modificationsWaiting;
     let modificationsNumber;
     let expand = forceExpand || ($displayMode === 'card-expand');
-    let admin = false;
 
     const blur = () => {
         activeElement.update(v => {
@@ -709,7 +708,7 @@
             modificationsValidated = result.modifications.filter(m => m.auth > 0).length;
             modificationsRejected = result.modifications.filter(m => m.auth < 0).length;
             modificationsWaiting = result.modifications.filter(m => m.auth === 0).length;
-            if (admin) {
+            if ($admin) {
                 modifications = result.modifications.slice().map(m => {
                     if (!/https?:/.test(m.proof)) {
                         m.proof = `__BACKEND_PROXY_PATH__/updates/proof/${result.id}-${m.id}`;
@@ -746,11 +745,9 @@
 
     $: if ($user) { editMail = $user;}
 
-    $: admin = ($user === '__BACKEND_TOKEN_USER__') && $accessToken
-
     const register = () => {
         if (/^\S+\@\S+\.\S+$/.test(editMail)) {
-            if (!$accessToken) {
+            if (!$user) {
                 fetch('__BACKEND_PROXY_PATH__/register', {
                     method: 'POST',
                     headers: {
@@ -777,7 +774,7 @@
 
     const login = () => {
         if (/^\d{6}$/.test(`${editMailOTP}`)) {
-            if (!$accessToken) {
+            if (!$user) {
                 fetch('__BACKEND_PROXY_PATH__/auth', {
                     method: 'POST',
                     headers: {
@@ -788,8 +785,8 @@
                 }).then((response) => {
                     if (response.status === 401) {
                         editMailValidate = false
-                        $accessToken = '';
-                        $user = '';
+                        $user = undefined;
+                        $accessToken = undefined;
                         return;
                     }
                     return response.json().then((json) => {
@@ -809,7 +806,7 @@
 
     $: expand = forceExpand || ($displayMode === 'card-expand');
 
-    $: if ($accessToken === '') { editMailValidate = undefined; };
+    $: editMailValidate = $user;
 
     $: editValidate = ((editFileValidate || editUrlValidate) && (Object.keys(editValue).length));
 
@@ -856,10 +853,15 @@
         Object.keys(inputValues).forEach(field => {
             formData.append(field, inputValues[field])
         });
-        if (editFile) {
-            formData.append('proof', editFile);
-        } else {
-            formData.append('proof', editUrl);
+        if (!$admin) {
+            if (editMessage) {
+                formData.append('message', editMessage);
+            }
+            if (editFile) {
+                formData.append('proof', editFile);
+            } else {
+                formData.append('proof', editUrl);
+            }
         }
         editUpdating = true;
         try {
