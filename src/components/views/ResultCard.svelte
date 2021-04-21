@@ -22,9 +22,9 @@
                                 alt={ result.sex }
                                 src={ result.sex === 'M' ? '/male.svg' : '/female.svg' }
                             />
-                            {#if result.correction}
+                            {#if result.correction || ($alphaFeatures && result.modifications)}
                                 <div
-                                    style="position:absolute;top:6px;left:6px"
+                                    style="position:absolute;top:{expand ? '14' : '6'}px;left:{expand ? '14' : '6'}px"
                                     title="erreur de donnée signalée"
                                 >
                                     <Icon icon='ri:alert-line' class="rf-color--rm rf-fi--{expand ? "xxl" : "xl"} rf-margin-left-4px"/>
