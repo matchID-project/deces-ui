@@ -30,8 +30,8 @@
                 {#if edits.length}
                     <div style="overflow-x: auto;">
                         <table class="rf-table rf-table--narrow rf-text--sm" style="text-align:left;table-layout:fixed;">
-                            <col style="width:40px"/>
-                            <col style="width:75px"/>
+                            <col style="width:30px"/>
+                            <col style="width:60px"/>
                             {#if $admin}
                                 <col style="width:120px"/>
                                 <col style="width:50px"/>
