@@ -22,7 +22,7 @@
                                 alt={ result.sex }
                                 src={ result.sex === 'M' ? '/male.svg' : '/female.svg' }
                             />
-                            {#if result.correction || ($alphaFeatures && result.modifications)}
+                            {#if result.correction || ($alphaFeatures && result.modifications && modificationsValidated && !editListMode)}
                                 <div
                                     style="position:absolute;top:{expand ? '14' : '6'}px;left:{expand ? '14' : '6'}px"
                                     title="erreur de donnée signalée"
@@ -114,7 +114,7 @@
                             <div class="rf-container-fluid">
                                 <div class="rf-grid-row">
                                     {#if $alphaFeatures && result.modifications}
-                                        {#if (!$admin && (modificationsValidated || modificationsWaiting))}
+                                        {#if (!$admin && !editListMode && (modificationsValidated || modificationsWaiting))}
                                             <div class="rf-col-12 rf-text--center rf-margin-top-0">
                                                 <p>
                                                     <strong>
@@ -150,7 +150,7 @@
                                     {/if}
                                     {#each Object.keys(conf) as column}
                                         <div class="rf-col-xs-12 rf-col-sm-12 rf-col-md-6 rf-col-lg-6 rf-col-xl-6">
-                                            <table class="rf-table rf-table--narrow rf-table--striped rf">
+                                            <table class="rf-table rf-table--narrow rf-table--striped">
                                                 <thead>
                                                     <tr>
                                                         <th colspan="2" scope="colgroup">{column}</th>
@@ -268,6 +268,80 @@
                                             {/if}
                                         {/if}
                                     </div>
+                                    {#if $alphaFeatures && modificationsHistory}
+                                        <p class="rf-text--center">
+                                            <strong>
+                                                Nous vous remercions pour votre contribution. Vous trouverez ci-dessous
+                                                l'historique des événements:
+                                            </strong>
+                                        </p>
+                                        <table class="rf-table rf-table--narrow rf-table--striped">
+                                            <col style="width:50%"/>
+                                            <col style="width:50%"/>
+                                            <thead>
+                                                <tr>
+                                                    <th>Modification</th>
+                                                    <th>Validation</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {#each modificationsHistory as m}
+                                                    <tr>
+                                                        <td>
+                                                            <div style="display:flex">
+                                                                <a
+                                                                    href={m.proof}
+                                                                    class="rf-link rf-href rf-fi-db-line rf-link--icon-left"
+                                                                    on:click|preventDefault={() => $showProof = m.proof}
+                                                                >
+                                                                    <Icon icon="ri:file-line"/>
+                                                                </a>
+                                                                <div style="display:block">
+                                                                    <strong>
+                                                                        {#each Object.keys(m.fields) as k}
+                                                                            {displayField[k] || k}: {m.fields[k]} <br>
+                                                                        {/each}
+                                                                    </strong>
+                                                                    {m.date.replace(/T.*/,'')}
+                                                                    {#if m.author !== $user}
+                                                                        (autre utilisateur)
+                                                                    {/if}
+                                                                    <br>
+                                                                    {#if m.message}
+                                                                        message: {m.message}
+                                                                    {/if}
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <div style="display:flex;align-items:center;">
+                                                                {#if m.auth === 0}
+                                                                    <Icon icon="ri:time-line" class="rf-color--rm rf-margin-right-1N"/>
+                                                                    en attente
+                                                                {:else if m.auth > 0}
+                                                                    <Icon icon="ri:check-line" class="rf-color--bf rf-margin-right-1N"/>
+                                                                    validé
+                                                                {:else if m.auth === -1}
+                                                                    <Icon icon="ri:refresh-line" class="rf-color--rm rf-margin-right-1N"/>
+                                                                    complément demandé
+                                                                {:else if m.auth === -2}
+                                                                    <Icon icon="ri:close-line" class="rf-color--rm rf-margin-right-1N"/>
+                                                                    rejeté
+                                                                {/if}
+                                                                {#if m.review}
+                                                                    <br>
+                                                                    {m.review.date.replace(/T.*/,'')}
+                                                                    {#if m.review.message}
+                                                                    : {m.review.message}
+                                                                    {/if}
+                                                                {/if}
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                {/each}
+                                            </tbody>
+                                        </table>
+                                    {/if}
                                     {#if ($alphaFeatures && $admin && result.modifications)}
                                         <div class="rf-col-12 rf-text--center rf-margin-top-0" transition:fade>
                                             <div class="rf-grid-row" style="justify-content: center;">
@@ -475,13 +549,13 @@
                                         <div class="rf-col-12 rf-text--center" transition:fade>
                                             <button
                                                 class="rf-btn rf-btn--secondary rf-padding-right-2N"
-                                                title={modificationsWaiting ? "Une modification est déjà en attende de validation" : "Proposer une correction"}
+                                                title={modificationsWaiting ? "Une modification est déjà en attende de validation" : `Proposer une ${editListMode ? 'nouvelle correction' : 'correction'}`}
                                                 on:click|preventDefault={toggleEdit}
                                                 disabled={modificationsWaiting}
                                             >
                                                     { modificationsWaiting ?
                                                         'Correction en cours de validation' :
-                                                        'Proposer une correction'
+                                                        `Proposer une ${editListMode ? 'nouvelle correction' : 'correction'}`
                                                     }
                                                     &nbsp;<Icon icon='ri:edit-line' class="rf-fi--md"/>
                                             </button>
@@ -720,6 +794,7 @@
     let wikimediaImgSrc;
     let wikimediaImg;
     let wikimediaImgLoaded;
+    export let editListMode = false;
     let edit = false;
     let editInput = {};
     let editTmpValue = {};
@@ -743,6 +818,7 @@
     let modificationsValidated;
     let modificationsWaiting;
     let modificationsNumber;
+    let modificationsHistory;
     let expand = forceExpand || ($displayMode === 'card-expand');
 
     const blur = () => {
@@ -833,6 +909,10 @@
                 // for enduser consolidate sum of every validated modif
                 const fields = {};
                 let proof;
+                let history
+                if (result.modifications.some(m => m.author === $user)) {
+                    history = [];
+                }
                 result.modifications
                     .forEach(m => {
                         if (m.auth>0) {
@@ -843,8 +923,23 @@
                                 proof = `__BACKEND_PROXY_PATH__/updates/proof/${result.id}-${m.id}`;
                             }
                         }
+                        if (history) {
+                            if (!/https?:/.test(m.proof)) {
+                                m.proof = `__BACKEND_PROXY_PATH__/updates/proof/${result.id}-${m.id}`;
+                            }
+                            if (m.author !== $user) {
+                                delete m.message;
+                                if (m.review) {
+                                    delete m.review.message;
+                                }
+                            }
+                            history.push(m);
+                        }
                     });
                 modifications = [{fields: fields, proof: proof}];
+                if (history) {
+                    modificationsHistory = history;
+                }
                 modificationsCurrent = 0;
             }
         } else {
@@ -1050,6 +1145,20 @@
     }
 
     let conf = {};
+
+    const displayField = {
+        lastName: 'Nom',
+        firstName: 'Prénom(s)',
+        sex: 'Sexe',
+        birthDate: 'Date de naissance',
+        birthCity: 'Commune de naissance',
+        birthCountry: 'Pays de naissance',
+        birthLocationCode: 'Code lieu de naissance',
+        deathDate: 'Date de naissance',
+        deathCity: 'Commune de naissance',
+        deathCountry: 'Pays de naissance',
+        deathLocationCode: 'Code lieu de naissance',
+    }
 
     $: conf.Naissance = [
             { label: 'Nom', value: result.name.last, update: ['lastName'] },
