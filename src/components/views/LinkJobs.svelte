@@ -44,15 +44,19 @@
                                     <td>{job.id.substring(0,20) + '...'}</td>
                                     <td>{job.date}</td>
                                     <td>{job.rows}</td>
-                                    <td>{job.status}
-                                      {#if job.status == 'created'} 
-                                        <span
-                                          on:click|preventDefault={() => deleteJob(job, idx)}
-                                        >
-                                          - arrêter 
-                                          <Icon icon="ri:close-line" class="rf-color--rm"/>
-                                        </span>
-                                      {/if}
+                                    <td>
+                                        <div style="display:flex;align-items:center">
+                                        {statusLabel[job.status] || job.status}
+                                        {#if job.status == 'created'}
+                                            <span
+                                                title="arrêter"
+                                                class="rf-margin-left-4px"
+                                                on:click|preventDefault={() => deleteJob(job, idx)}
+                                            >
+                                            <Icon icon="ri:delete-bin-line" class="rf-color--rm"/>
+                                            </span>
+                                        {/if}
+                                      </div>
                                     </td>
                                 </tr>
                             {/each}
@@ -77,6 +81,13 @@
 
     import { accessToken } from '../tools/stores.js';
     let jobs = [];
+
+    const statusLabel = {
+        succeeded: 'succès',
+        failed: 'échec',
+        cancelled: 'interrompu',
+        created: 'en cours'
+    }
 
     const getJobsData = async () => {
         let response = await fetch('__BACKEND_PROXY_PATH__/queue/jobs', {headers: {Authorization: `Bearer ${$accessToken}`}});
