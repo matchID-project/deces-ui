@@ -40,23 +40,25 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                {#each jobs as job}
+                                {#each jobs as job, idx}
                                     <tr>
                                         <td>{job.id.substring(0,20) + '...'}</td>
                                         <td>{job.date}</td>
                                         <td>{job.rows}</td>
-                                        <div style="display:flex;align-items:center">
-                                        {statusLabel[job.status] || job.status}
-                                        {#if job.status == 'created'}
-                                            <span
-                                                title="arrêter"
-                                                class="rf-margin-left-4px"
-                                                on:click|preventDefault={() => deleteJob(job, idx)}
-                                            >
-                                            <Icon icon="ri:delete-bin-line" class="rf-color--rm"/>
-                                            </span>
-                                        {/if}
-                                      </div>
+                                        <td>
+                                            <div style="display:flex;align-items:center">
+                                                {statusLabel[job.status] || job.status}
+                                                {#if job.status == 'created'}
+                                                    <span
+                                                        title="arrêter"
+                                                        class="rf-margin-left-4px"
+                                                        on:click|preventDefault={() => deleteJob(job, idx)}
+                                                    >
+                                                    <Icon icon="ri:delete-bin-line" class="rf-color--rm"/>
+                                                    </span>
+                                                {/if}
+                                            </div>
+                                        </td>
                                     </tr>
                                 {/each}
                             </tbody>
