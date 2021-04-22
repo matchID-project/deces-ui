@@ -39,12 +39,25 @@
                             </tr>
                         </thead>
                         <tbody>
-                            {#each jobs as job}
+                            {#each jobs as job, idx}
                                 <tr>
                                     <td>{job.id.substring(0,20) + '...'}</td>
                                     <td>{job.date}</td>
                                     <td>{job.rows}</td>
-                                    <td>{job.status}</td>
+                                    <td>
+                                        <div style="display:flex;align-items:center">
+                                        {statusLabel[job.status] || job.status}
+                                        {#if job.status == 'created'}
+                                            <span
+                                                title="arrêter"
+                                                class="rf-margin-left-4px"
+                                                on:click|preventDefault={() => deleteJob(job, idx)}
+                                            >
+                                            <Icon icon="ri:delete-bin-line" class="rf-color--rm"/>
+                                            </span>
+                                        {/if}
+                                      </div>
+                                    </td>
                                 </tr>
                             {/each}
                         </tbody>
@@ -64,9 +77,17 @@
     import { sineInOut } from 'svelte/easing';
     import StatsTile from './StatsTile.svelte';
     import axios from 'axios';
+    import Icon from './Icon.svelte';
 
     import { accessToken } from '../tools/stores.js';
     let jobs = [];
+
+    const statusLabel = {
+        succeeded: 'succès',
+        failed: 'échec',
+        cancelled: 'interrompu',
+        created: 'en cours'
+    }
 
     const getJobsData = async () => {
         let response = await fetch('__BACKEND_PROXY_PATH__/queue/jobs', {headers: {Authorization: `Bearer ${$accessToken}`}});
@@ -77,6 +98,13 @@
             j.date=new Date(j.date).toISOString();
             return j;
         });
+    }
+
+    const deleteJob = async (job, idx) => {
+      const res = await axios.delete(`__BACKEND_PROXY_PATH__/search/csv/${job.id}`)
+      if (res.data && res.data.msg.includes('cancelled')) {
+        jobs[idx].status = 'arrêté'
+      }
     }
 
     $: if ($accessToken) {
