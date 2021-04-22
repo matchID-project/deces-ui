@@ -63,7 +63,10 @@
                                                 {#if (edit.modifications.filter(m => m.auth > 0).length)}
                                                     <Icon icon="ri:check-line" class="rf-color--bf"/>
                                                 {/if}
-                                                {#if (edit.modifications.filter(m => m.auth < 0).length)}
+                                                {#if (edit.modifications.filter(m => m.auth === -1).length)}
+                                                    <Icon icon="ri:refresh-line" class="rf-color--rm"/>
+                                                {/if}
+                                                {#if (edit.modifications.filter(m => m.auth === -2).length)}
                                                     <Icon icon="ri:close-line" class="rf-color--rm"/>
                                                 {/if}
                                             </td>
@@ -79,7 +82,7 @@
                                                 </td>
                                             {/if}
                                         {/if}
-                                        <td colspan={(currentEdit === edit.id) ? ($admin ? "5" : "4") : "1"}>
+                                        <td colspan={(currentEdit === edit.id) ? ($admin ? "5" : "3") : "1"}>
                                             <div class="rf-container-fluid rf-padding-4px">
                                                 <div
                                                     class="rf-grid-row"
@@ -92,6 +95,7 @@
                                                         forceExpand={currentEdit === edit.id}
                                                         nomargin
                                                         fullwidth
+                                                        editListMode
                                                     />
                                                 </div>
                                             </div>
