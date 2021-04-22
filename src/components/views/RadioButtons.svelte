@@ -6,8 +6,8 @@
         <div class="rf-fieldset__content">
             {#each values as v,i}
                 <div class="rf-radio-group">
-                    <input type="radio" bind:group={value} value={v} id={id(i)} name={id(i)}>
-                    <label class="rf-label" for={id(i)}>
+                    <input type="radio" bind:group={value} value={v} id={formId(i)} name={formId(i)}>
+                    <label class="rf-label" for={formId(i)}>
                         {labels[i]}
                     </label>
                 </div>
@@ -21,6 +21,7 @@
     export let values = [];
     export let labels = [];
     export let value = undefined;
+    export let id = undefined;
 
     const slugify = (str) => {
         try {
@@ -30,8 +31,8 @@
         }
     }
 
-    const id = (i) => {
-        return `${slugify(title)}-${i}`;
+    const formId = (i) => {
+        return id ? `${slugify(id)}-${i}` : `${slugify(title)}-${i}`;
     }
 
 </script>

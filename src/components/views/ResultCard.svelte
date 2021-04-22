@@ -127,10 +127,10 @@
                                                     </strong>
                                                     {#if modificationsValidated}
                                                         <a
-                                                            href={modifications[modificationsCurrent].proof}
+                                                            href={modifications[modificationsCurrent || 0].proof}
                                                             target="_blank"
                                                             class="rf-link"
-                                                            on:click|preventDefault={() => $showProof = modifications[modificationsCurrent].proof}
+                                                            on:click|preventDefault={() => $showProof = modifications[modificationsCurrent || 0].proof}
                                                         >
                                                             Preuve associée
                                                         </a>
@@ -200,8 +200,8 @@
                                                                                             .join(' ')}`}
                                                                                 </span>
                                                                             {:else}
-                                                                                {#if ($alphaFeatures && (modifications && modifications[modificationsCurrent] && field.update && field.update
-                                                                                    .some(updateField => modifications[modificationsCurrent].fields[updateField])))}
+                                                                                {#if ($alphaFeatures && (modifications && modifications[modificationsCurrent || 0] && field.update && field.update
+                                                                                    .some(updateField => modifications[modificationsCurrent || 0].fields[updateField])))}
                                                                                     <span class="rf-color--rm">
                                                                                         {@html `<strike>${field.cb ? field.cb(field.value) : field.value}</strike>`}
                                                                                         { modificationStringify(field) }
@@ -383,10 +383,10 @@
                                             </p>
                                             <p>
                                                 <a
-                                                    href={modifications[modificationsCurrent].proof}
+                                                    href={modifications[modificationsCurrent || 0].proof}
                                                     target="_blank"
                                                     class="rf-link"
-                                                    on:click|preventDefault={() => $showProof = modifications[modificationsCurrent].proof}
+                                                    on:click|preventDefault={() => $showProof = modifications[modificationsCurrent || 0].proof}
                                                 >
                                                     Preuve associée
                                                 </a>
@@ -395,34 +395,38 @@
                                                 <div class="rf-grid-row">
                                                     <div class="rf-col-3">
                                                         <RadioButtons
+                                                            id={`type-${modificationsCurrent}`}
                                                             title="Type de document"
                                                             labels={["Acte de décès","Acte de naissance","Autre document français"]}
                                                             values={["french death certificate","french birth certificate","other french document"]}
-                                                            bind:value={modifications[modificationsCurrent].review.proofType}
+                                                            bind:value={modifications[modificationsCurrent || 0].review.proofType}
                                                         />
                                                     </div>
                                                     <div class="rf-col-3">
                                                         <RadioButtons
+                                                            id={`type-2-${modificationsCurrent}`}
                                                             title=""
                                                             labels={["Acte étranger","Pierre tombale","Autre"]}
                                                             values={["foreign document","grave","other"]}
-                                                            bind:value={modifications[modificationsCurrent].review.proofType}
+                                                            bind:value={modifications[modificationsCurrent || 0].review.proofType}
                                                         />
                                                     </div>
                                                     <div class="rf-col-3">
                                                         <RadioButtons
+                                                            id={`quality-${modificationsCurrent}`}
                                                             title="Qualité du scan"
                                                             labels={["Mauvaise","Bonne"]}
                                                             values={["poor", "good"]}
-                                                            bind:value={modifications[modificationsCurrent].review.proofQuality}
+                                                            bind:value={modifications[modificationsCurrent || 0].review.proofQuality}
                                                         />
                                                     </div>
                                                     <div class="rf-col-3">
                                                         <RadioButtons
+                                                            id={`typography-${modificationsCurrent}`}
                                                             title="Typographie"
                                                             labels={["Manuscrit","Dactylographié","Numérique"]}
                                                             values={["manuscript", "typed","numerical"]}
-                                                            bind:value={modifications[modificationsCurrent].review.proofScript}
+                                                            bind:value={modifications[modificationsCurrent || 0].review.proofScript}
                                                         />
                                                     </div>
                                                 </div>
@@ -431,10 +435,10 @@
                                         <div class="rf-col-12 rf-text--center rf-margin-top-0" transition:fade>
                                             <button
                                                 class="rf-btn rf-padding-right-2N"
-                                                class:rf-btn--valid={modifications[modificationsCurrent].auth === 1}
-                                                class:rf-btn--secondary={modifications[modificationsCurrent].auth !== 1}
+                                                class:rf-btn--valid={modifications[modificationsCurrent || 0].auth === 1}
+                                                class:rf-btn--secondary={modifications[modificationsCurrent || 0].auth !== 1}
                                                 on:click|preventDefault={() => {
-                                                    modifications[modificationsCurrent].auth = 1;
+                                                    modifications[modificationsCurrent || 0].auth = 1;
                                                     blur();
                                                 }}
                                             >
@@ -447,11 +451,11 @@
                                             </button>
                                             <button
                                                 class="rf-btn rf-padding-right-2N"
-                                                class:rf-btn--reject={modifications[modificationsCurrent].auth === -1}
-                                                class:rf-btn--secondary={modifications[modificationsCurrent].auth !== -1}
+                                                class:rf-btn--reject={modifications[modificationsCurrent || 0].auth === -1}
+                                                class:rf-btn--secondary={modifications[modificationsCurrent || 0].auth !== -1}
                                                 title="Rejeter"
                                                 on:click|preventDefault={() => {
-                                                    modifications[modificationsCurrent].auth = -1;
+                                                    modifications[modificationsCurrent || 0].auth = -1;
                                                     blur();
                                                 }}
                                             >
@@ -464,11 +468,11 @@
                                             </button>
                                             <button
                                                 class="rf-btn rf-padding-right-2N"
-                                                class:rf-btn--reject={modifications[modificationsCurrent].auth === -2}
-                                                class:rf-btn--secondary={modifications[modificationsCurrent].auth !== -2}
+                                                class:rf-btn--reject={modifications[modificationsCurrent || 0].auth === -2}
+                                                class:rf-btn--secondary={modifications[modificationsCurrent || 0].auth !== -2}
                                                 title="Clore"
                                                 on:click|preventDefault={() => {
-                                                    modifications[modificationsCurrent].auth = -2;
+                                                    modifications[modificationsCurrent || 0].auth = -2;
                                                     blur();
                                                 }}
                                             >
@@ -482,28 +486,39 @@
                                         </div>
                                         <div class="rf-col-12 rf-text--center" transition:fade>
                                             <p>
-                                                <strong>{modifications[modificationsCurrent].author}</strong> &nbsp;
-                                                ({modifications[modificationsCurrent].date.replace(/T(..).*/,' $1h')})
-                                                {#if modifications[modificationsCurrent].message}
+                                                <strong>{modifications[modificationsCurrent || 0].author}</strong> &nbsp;
+                                                ({modifications[modificationsCurrent || 0].date.replace(/T(..).*/,' $1h')})
+                                                {#if modifications[modificationsCurrent || 0].message}
                                                     <br>
                                                     <i>
-                                                        {modifications[modificationsCurrent].message}
+                                                        {modifications[modificationsCurrent || 0].message}
                                                     </i>
                                                 {/if}
                                             </p>
-                                            {#if (modifications[modificationsCurrent].auth === -1) &&
-                                                !modifications[modificationsCurrent].review.silent
+                                            {#if (modifications[modificationsCurrent || 0].auth === -1) &&
+                                                !modifications[modificationsCurrent || 0].review.silent
                                             }
                                                 <p>
                                                     <strong>
                                                     Transmettre un message
                                                     </strong> (sera inclus dans l'email)
                                                 </p>
-                                                <textarea class="rf-input" maxlength=200 bind:value={modifications[modificationsCurrent].review.message}/>
+                                                <textarea
+                                                    id={`admin-message-${modificationsCurrent}`}
+                                                    name={`admin-message-${modificationsCurrent}`}
+                                                    class="rf-input"
+                                                    maxlength=200
+                                                    bind:value={modifications[modificationsCurrent || 0].review.message
+                                                }/>
                                             {/if}
                                             <div class="rf-checkbox-group">
-                                                <input class="rf-input" type="checkbox" bind:checked={modifications[modificationsCurrent].review.silent} id="silent" name="silent"/>
-                                                <label class="rf-label" for="silent">
+                                                <input
+                                                    class="rf-input"
+                                                    type="checkbox"
+                                                    bind:checked={modifications[modificationsCurrent || 0].review.silent}
+                                                    id={`silent-${modificationsCurrent}`}
+                                                    name={`silent-${modificationsCurrent}`}/>
+                                                <label class="rf-label" for={`silent-${modificationsCurrent}`}>
                                                     Ne pas envoyer de mail
                                                 </label>
                                             </div>
@@ -813,7 +828,7 @@
     let editUpdating;
     let editSuccess;
     let modifications = [];
-    let modificationsCurrent = 0;
+    let modificationsCurrent;
     let modificationsRejected;
     let modificationsValidated;
     let modificationsWaiting;
@@ -899,12 +914,16 @@
                     if (!m.review.message) {
                         m.review.message = '';
                     }
-                    return m;
+                    m.review = {...m.review};
+                    return {...m};
                 });
-                modificationsCurrent = modificationsNumber - 1;
+                let modificationsLast;
                 result.modifications.slice().reverse().forEach((m, i) => {
-                    if (m.auth === 0) { modificationsCurrent = modificationsNumber - i - 1; }
+                    if (m.auth === 0) { modificationsLast = modificationsNumber - i - 1; }
                 });
+                if (modificationsCurrent === undefined) {
+                    modificationsCurrent = modificationsLast || modificationsNumber - 1;
+                }
             } else {
                 // for enduser consolidate sum of every validated modif
                 const fields = {};
@@ -1083,8 +1102,8 @@
 
     const modificationStringify = (field) => {
         let value = field.update.map((updateField,i) =>
-            modifications[modificationsCurrent].fields[updateField] ?
-                modifications[modificationsCurrent].fields[updateField] : field.value[i]
+            modifications[modificationsCurrent || 0].fields[updateField] ?
+                modifications[modificationsCurrent || 0].fields[updateField] : field.value[i]
         );
         if (field.update.length === 1) {
             value = value[0];
