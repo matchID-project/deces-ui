@@ -179,8 +179,8 @@
                                                                     }}
                                                                     style={((field.editable!==false)&&editInput[field.update.join()] ) ? 'padding:0;' : ''}
                                                                 >
-                                                                    <div style="display: inline-flex;width:100%;">
-                                                                        {#if ((field.editable!==false)&&editInput[field.update.join()] )}
+                                                                    {#if ((field.editable!==false)&&editInput[field.update.join()] )}
+                                                                        <div style="display: inline-flex;width:100%;">
                                                                             {#each field.update as updateField,i}
                                                                                 <input
                                                                                     class="rf-input"
@@ -191,27 +191,27 @@
                                                                                     use:focus
                                                                                 >
                                                                             {/each}
+                                                                        </div>
+                                                                    {:else}
+                                                                        {#if editDisplayChange[field.update && field.update.join()]}
+                                                                            <span class="rf-color--rm">
+                                                                                {@html `<strike>${field.cb ? field.cb(field.value) : field.value}</strike>
+                                                                                    ${field.update
+                                                                                        .map((updateField,i) => getEditValue(field,i))
+                                                                                        .join(' ')}`}
+                                                                            </span>
                                                                         {:else}
-                                                                            {#if editDisplayChange[field.update && field.update.join()]}
+                                                                            {#if ($alphaFeatures && (modifications && modifications[modificationsCurrent || 0] && field.update && field.update
+                                                                                .some(updateField => modifications[modificationsCurrent || 0].fields[updateField])))}
                                                                                 <span class="rf-color--rm">
-                                                                                    {@html `<strike>${field.cb ? field.cb(field.value) : field.value}</strike>
-                                                                                        ${field.update
-                                                                                            .map((updateField,i) => getEditValue(field,i))
-                                                                                            .join(' ')}`}
+                                                                                    {@html `<strike>${field.cb ? field.cb(field.value) : field.value}</strike>`}
+                                                                                    { modificationStringify(field) }
                                                                                 </span>
                                                                             {:else}
-                                                                                {#if ($alphaFeatures && (modifications && modifications[modificationsCurrent || 0] && field.update && field.update
-                                                                                    .some(updateField => modifications[modificationsCurrent || 0].fields[updateField])))}
-                                                                                    <span class="rf-color--rm">
-                                                                                        {@html `<strike>${field.cb ? field.cb(field.value) : field.value}</strike>`}
-                                                                                        { modificationStringify(field) }
-                                                                                    </span>
-                                                                                {:else}
-                                                                                    {@html field.cb ? field.cb(field.value) : field.value }
-                                                                                {/if}
+                                                                                {@html field.cb ? field.cb(field.value) : field.value }
                                                                             {/if}
                                                                         {/if}
-                                                                    </div>
+                                                                    {/if}
                                                                 </td>
                                                             </tr>
                                                         {/if}
@@ -783,6 +783,8 @@
 
 
 <script>
+    import { onMount } from 'svelte';
+    import getDataGouvCatalog from '../tools/getDataGouvCatalog.js';
     import { fade, slide } from 'svelte/transition';
     import { showProof, admin, user, accessToken, alphaFeatures, route, dataGouvCatalog, displayMode, searchInput, activeElement } from '../tools/stores.js';
     import Icon from './Icon.svelte';
@@ -795,6 +797,9 @@
         cityEditMask, countryEditMask, locationCodeEditMask,
         departmentCodeEditMask, countryCodeEditMask
     } from '../tools/masks.js';
+
+    onMount(async () => { getDataGouvCatalog() });
+
     import md5 from 'md5';
     import axios from 'axios';
     export let fullwidth = false;
