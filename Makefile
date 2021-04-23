@@ -138,7 +138,7 @@ vm_max_count            := $(shell cat /etc/sysctl.conf | egrep vm.max_map_count
 
 export STORAGE_BUCKET=${DATASET}
 #prebuild image with docker and nginx-node-elasticsearch docker images
-export SCW_IMAGE_ID=14fa7954-141d-4e4a-8ea6-bedd1fb1ace8
+export SCW_IMAGE_ID=e7477d7a-97b3-4477-b001-2d033103214f
 
 dummy		    := $(shell touch artifacts)
 include ./artifacts
