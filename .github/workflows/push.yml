@@ -124,4 +124,4 @@ jobs:
           LOG_BAN_IP: ${{ secrets.LOG_BAN_IP }}
           MMDB_TOKEN: ${{ secret.MMDB_TOKEN }}
           CDN_ZONE_ID: ${{ secret.CDN_ZONE_ID }}
-          CDN_TOKEN: { secret.CDN_TOKEN }}
+          CDN_TOKEN: ${{ secret.CDN_TOKEN }}
