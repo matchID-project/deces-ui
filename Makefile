@@ -138,7 +138,7 @@ vm_max_count            := $(shell cat /etc/sysctl.conf | egrep vm.max_map_count
 
 export STORAGE_BUCKET=${DATASET}
 #prebuild image with docker and nginx-node-elasticsearch docker images
-export SCW_IMAGE_ID=82121e74-eb9e-464f-acc5-211398b96843
+export SCW_IMAGE_ID=e7477d7a-97b3-4477-b001-2d033103214f
 
 dummy		    := $(shell touch artifacts)
 include ./artifacts
@@ -507,7 +507,10 @@ deploy-delete-old:
 deploy-monitor:
 	@${MAKE} -C ${APP_PATH}/${GIT_TOOLS} remote-install-monitor-nq NQ_TOKEN=${NQ_TOKEN} ${MAKEOVERRIDES}
 
-deploy-remote: config-minimal deploy-remote-instance deploy-remote-services deploy-remote-publish deploy-delete-old deploy-monitor
+deploy-cdn-purge-cache:
+	@${MAKE} -C ${APP_PATH}/${GIT_TOOLS} cdn-cache-purge
+
+deploy-remote: config-minimal deploy-remote-instance deploy-remote-services deploy-remote-publish deploy-cdn-purge-cache deploy-delete-old deploy-monitor
 
 deploy-docker-pull-base: deploy-remote-instance
 	@${MAKE} -C ${APP_PATH}/${GIT_TOOLS} remote-docker-pull DOCKER_IMAGE=node:12.14.0-slim
