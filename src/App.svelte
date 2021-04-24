@@ -19,10 +19,6 @@
 	import Shake from 'shake.js';
 
 	onMount(async () => {
-		await useLocalSync(alphaFeatures, 'alphaFeatures');
-		if (!$alphaFeatures) {
-			$alphaFeatures = Math.random() < 0.1;
-		}
 		if ($version && !$version.api) {
 			try {
 				const r = await fetch('__BACKEND_PROXY_PATH__/version');
