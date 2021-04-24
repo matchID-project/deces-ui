@@ -9,7 +9,7 @@
 <script>
 	import { onMount } from 'svelte';
 	import MatchIDHeader from './components/views/MatchIDHeader.svelte';
-	import { user, accessToken, alphaFeatures, version, route, searchInput, searchCanvas, current, resultsPerPage,
+	import { admin, user, alphaFeatures, version, route, searchInput, searchCanvas, current, resultsPerPage,
 		updateURL, advancedSearch, fuzzySearch, displayMode, themeDnum, wasSearched
 	} from './components/tools/stores.js';
 	import { URLSearchSubmit } from './components/tools/search.js';
@@ -19,12 +19,6 @@
 	import Shake from 'shake.js';
 
 	onMount(async () => {
-		await useLocalSync(user, 'user');
-		await useLocalSync(accessToken, 'accessToken');
-		await useLocalSync(alphaFeatures, 'alphaFeatures');
-		if (!$alphaFeatures) {
-			$alphaFeatures = Math.random() < 0.1;
-		}
 		if ($version && !$version.api) {
 			try {
 				const r = await fetch('__BACKEND_PROXY_PATH__/version');

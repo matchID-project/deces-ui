@@ -2,6 +2,8 @@ import { dataGouvCatalog } from './stores.js';
 
 let myDataGouvCatalog;
 
+let loading = false;
+
 let c = dataGouvCatalog.subscribe((value) => { myDataGouvCatalog = value });
 
 const dataGouvCatalogURL = '__DATAGOUV_CATALOG_URL__';
@@ -15,6 +17,8 @@ export default async function getDataGouvCatalog() {
     if (myDataGouvCatalog) {
       return myDataGouvCatalog;
     }
+    if (loading) { return };
+    loading = true;
     const response = await fetch(dataGouvCatalogURL, {
       method: "GET"
     });
@@ -36,4 +40,5 @@ export default async function getDataGouvCatalog() {
             return null;
         }
     }
+    loading = false;
 };

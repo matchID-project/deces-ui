@@ -1,4 +1,4 @@
-{#if show}
+{#if $showLogin}
     <div class="modal" transition:fade>
         <div class="modal-container">
             <div class="rf-container-fluid">
@@ -20,7 +20,7 @@
                                         </div>
                                         <div
                                             style="position:absolute;top:26px;right:26px"
-                                            on:click={() => show = false}
+                                            on:click={closeLogin}
                                         >
                                             <Icon
                                                 icon='ri:close-line'
@@ -122,9 +122,9 @@
                                                         authError = false;
                                                         id = '';
                                                         validId = undefined;
+                                                        codeSent = '';
                                                         $accessToken = '';
                                                         $user = '';
-                                                        codeSent = '';
                                                     }}
                                                 >
                                                     Se déconnecter
@@ -151,20 +151,41 @@
 <script>
 import { onMount } from 'svelte';
 import { fade, slide } from 'svelte/transition';
-import { user, accessToken } from '../tools/stores.js';
-import Icon from './Icon.svelte'
+import { route, showLogin, user, accessToken, admin } from '../tools/stores.js';
+import { routes, goTo, defaultRoute } from '../tools/routes.js';
+import { useLocalSync } from '../tools/useLocalStorage.js';
+import Icon from './Icon.svelte';
 
 let authPassword = '';
 let authError = false;
-export let show;
 let id;
 let codeSent;
 let validId;
-$: id = $user;
+let mounting = true;
+
 $: isAdmin = (id === '__BACKEND_TOKEN_USER__')
 
-
 $: if ($accessToken) { checkJwt() };
+
+$: $admin = $accessToken && ($user === '__BACKEND_TOKEN_USER__') && $user;
+
+$: if (!mounting && !$user && $route && $route.path && routes[$route.path].auth) {
+    $showLogin = true;
+}
+
+const closeLogin = () =>  {
+    if (!mounting && !$user && $route && $route.path && routes[$route.path].auth) {
+        goTo({path: defaultRoute});
+    }
+    $showLogin = false;
+}
+
+onMount(async () => {
+    await useLocalSync(accessToken, 'accessToken');
+    await useLocalSync(user, 'user');
+    id = $user || '';
+    mounting = false;
+});
 
 const checkJwt = async () => {
     while($accessToken) {
@@ -176,9 +197,11 @@ const checkJwt = async () => {
                 });
             if (response.status === 422) {
                 $accessToken = '';
+                $user = '';
             }
             await sleep(60000);
         } catch(e) {
+            $user = '';
             $accessToken = '';
         }
     }
@@ -187,7 +210,6 @@ const checkJwt = async () => {
 const sleep = (ms) => {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
-
 
 const register = () => {
     if (id === '__BACKEND_TOKEN_USER__') {
@@ -227,8 +249,8 @@ const login = () => {
     }).then((response) => {
         if (response.status === 401) {
             authError = true;
-            $accessToken = '';
             $user = '';
+            $accessToken = '';
             return;
         }
         return response.json().then((json) => {
