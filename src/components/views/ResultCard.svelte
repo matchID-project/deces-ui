@@ -549,6 +549,7 @@
                                                     })
                                                     updateRecord(updates);
                                                 }}
+                                                disabled={modificationsLastUpdate === JSON.stringify(modifications)}
                                             >
                                                     Transmettre les validations
                                                     &nbsp;
@@ -839,6 +840,7 @@
     let modificationsWaiting;
     let modificationsNumber;
     let modificationsHistory;
+    let modificationsLastUpdate;
     let expand = forceExpand || ($displayMode === 'card-expand');
 
     const blur = () => {
@@ -902,7 +904,7 @@
 
     $: editFile && validateFileType();
 
-    $: if (result) {
+    const setModificationStates = () =>  {
         if (result.modifications) {
             modificationsNumber = result.modifications.length;
             modificationsValidated = result.modifications.filter(m => m.auth > 0).length;
@@ -922,12 +924,12 @@
                     m.review = {...m.review};
                     return {...m};
                 });
-                let modificationsLast;
+                let modificationsNumberLastUpdated;
                 result.modifications.slice().reverse().forEach((m, i) => {
-                    if (m.auth === 0) { modificationsLast = modificationsNumber - i - 1; }
+                    if (m.auth === 0) { modificationsNumberLastUpdated = modificationsNumber - i - 1; }
                 });
                 if (modificationsCurrent === undefined) {
-                    modificationsCurrent = modificationsLast || modificationsNumber - 1;
+                    modificationsCurrent = modificationsNumberLastUpdated || modificationsNumber - 1;
                 }
             } else {
                 // for enduser consolidate sum of every validated modif
@@ -970,7 +972,10 @@
             modificationsWaiting = undefined;
             modifications = undefined;
         }
-    };
+        modificationsLastUpdate = JSON.stringify(modifications);
+    }
+
+    $: if (result) { setModificationStates() };
 
     $: if ($user) { editMail = $user;}
 
@@ -1099,6 +1104,7 @@
                 {headers: {Authorization: `Bearer ${$accessToken}`}});
             editUpdating = false;
             editSuccess = true;
+            modificationsLastUpdate = JSON.stringify(modifications);
         } catch(e) {
             editUpdating = false;
             editSuccess = false;
