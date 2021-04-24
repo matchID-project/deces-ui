@@ -89,8 +89,6 @@
 {/if}
 
 <script>
-  import { onMount } from 'svelte';
-  import getDataGouvCatalog from '../tools/getDataGouvCatalog.js';
   import { searchResults, searchInput, totalResults, current, resultsPerPage,
     sortInput, displayMode, wasSearched } from '../tools/stores.js';
   import { searchTrigger } from '../tools/search.js';
@@ -104,8 +102,6 @@
   import ResultRow from "./ResultRow.svelte";
   import ResultsHeader from './ResultsHeader.svelte';
   import Info from './Info.svelte';
-
-  onMount(async () => { getDataGouvCatalog() });
 
   let from;
   let columns = [
