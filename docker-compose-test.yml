@@ -1,0 +1,18 @@
+version: '3.4'
+
+services:
+  ui-test:
+    image: mcr.microsoft.com/playwright:focal
+    container_name: ${DC_PREFIX}
+    ipc: host
+    user: pwuser
+    working_dir: /ui-test
+    volumes:
+      - ${FRONTEND}/ui-test/:/ui-test
+
+networks:
+  default:
+    external:
+      name: ${DC_NETWORK}
+
+
