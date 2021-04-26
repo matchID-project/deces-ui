@@ -381,7 +381,7 @@
                                                     {modificationsValidated} ont déjà été accetpées, {modificationsWaiting} en attente, {modificationsRejected} rejetées.
                                                 </strong>
                                             </p>
-                                            <p>
+                                            <p class="rf-margin-bottom-0">
                                                 <a
                                                     href={modifications[modificationsCurrent || 0].proof}
                                                     target="_blank"
@@ -393,7 +393,7 @@
                                             </p>
                                             <div class="rf-container-fluid">
                                                 <div class="rf-grid-row">
-                                                    <div class="rf-col-3">
+                                                    <div class="rf-col-xs-6 rf-col-sm-6 rf-col-md-3 rf-col-lg-3 rf-col-xl-3 rf-margin-top-2N">
                                                         <RadioButtons
                                                             id={`type-${modificationsCurrent}`}
                                                             title="Type de document"
@@ -402,7 +402,7 @@
                                                             bind:value={modifications[modificationsCurrent || 0].review.proofType}
                                                         />
                                                     </div>
-                                                    <div class="rf-col-3">
+                                                    <div class="rf-col-xs-6 rf-col-sm-6 rf-col-md-3 rf-col-lg-3 rf-col-xl-3 rf-margin-top-2N">
                                                         <RadioButtons
                                                             id={`type-2-${modificationsCurrent}`}
                                                             title=""
@@ -411,7 +411,7 @@
                                                             bind:value={modifications[modificationsCurrent || 0].review.proofType}
                                                         />
                                                     </div>
-                                                    <div class="rf-col-3">
+                                                    <div class="rf-col-xs-6 rf-col-sm-6 rf-col-md-3 rf-col-lg-3 rf-col-xl-3 rf-margin-top-2N">
                                                         <RadioButtons
                                                             id={`quality-${modificationsCurrent}`}
                                                             title="Qualité du scan"
@@ -420,7 +420,7 @@
                                                             bind:value={modifications[modificationsCurrent || 0].review.proofQuality}
                                                         />
                                                     </div>
-                                                    <div class="rf-col-3">
+                                                    <div class="rf-col-xs-6 rf-col-sm-6 rf-col-md-3 rf-col-lg-3 rf-col-xl-3 rf-margin-top-2N">
                                                         <RadioButtons
                                                             id={`typography-${modificationsCurrent}`}
                                                             title="Typographie"
