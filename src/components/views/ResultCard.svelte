@@ -912,17 +912,23 @@
             modificationsWaiting = result.modifications.filter(m => m.auth === 0).length;
             if ($admin) {
                 modifications = result.modifications.slice().map(m => {
+                    const mm = {};
+                    Object.keys(m).forEach(k => mm[k] = m[k]);
                     if (!/https?:/.test(m.proof)) {
-                        m.proof = `__BACKEND_PROXY_PATH__/updates/proof/${result.id}-${m.id}`;
+                        mm.proof = `__BACKEND_PROXY_PATH__/updates/proof/${result.id}-${m.id}`;
                     }
-                    if (!m.review) {
-                        m.review = {};
+                    mm.review = {};
+                    if (m.review) {
+                        Object.keys(m.review).forEach(k => mm.review[k] = m.review[k]);
+                        if (!mm.review.message) {
+                            mm.review.message = '';
+                        }
                     }
-                    if (!m.review.message) {
-                        m.review.message = '';
+                    mm.fields = {};
+                    if (m.fields) {
+                        Object.keys(m.fields).forEach(k => mm.fields[k] = m.fields[k]);
                     }
-                    m.review = {...m.review};
-                    return {...m};
+                    return mm;
                 });
                 let modificationsNumberLastUpdated;
                 result.modifications.slice().reverse().forEach((m, i) => {
