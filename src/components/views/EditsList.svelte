@@ -29,22 +29,14 @@
                 </p>
                 {#if edits.length}
                     <div style="overflow-x: auto;">
-                        <table class="rf-table rf-table--narrow rf-text--sm" style="text-align:left;table-layout:fixed;">
-                            <col style="width:30px"/>
-                            <col style="width:60px"/>
-                            {#if $admin}
-                                <col style="width:120px"/>
-                                <col style="width:50px"/>
-                            {/if}
-                            <col style="width:300px"/>
-
+                        <table class="rf-table rf-table--narrow rf-text--sm" style="text-align:left;">
                             <thead>
                                 <tr>
-                                    <th>statut</th>
-                                    <th>date</th>
+                                    <th style="width:30px;">statut</th>
+                                    <th class="rf-hide--mobile" style="width:90px;">date</th>
                                     {#if $admin}
-                                        <th>auteur</th>
-                                        <th>éditions</th>
+                                        <th class="rf-hide--mobile">auteur</th>
+                                        <th class="rf-hide--mobile">éditions</th>
                                     {/if}
                                     <th>enregistrement</th>
                                 </tr>
@@ -70,14 +62,17 @@
                                                     <Icon icon="ri:close-line" class="rf-color--rm"/>
                                                 {/if}
                                             </td>
-                                            <td>
+                                            <td class="rf-hide--mobile">
                                                 {edit.modifications[edit.modifications.length - 1].date.substring(0,10)}
                                             </td>
                                             {#if $admin}
-                                                <td style="overflow: hidden;text-overflow:ellipsis">
+                                                <td
+                                                    class="rf-hide--mobile"
+                                                    style="overflow-wrap: break-word;max-width:120px;"
+                                                >
                                                     {edit.modifications[edit.modifications.length - 1].author}
                                                 </td>
-                                                <td>
+                                                <td class="rf-hide--mobile">
                                                     {edit.modifications.length}
                                                 </td>
                                             {/if}
