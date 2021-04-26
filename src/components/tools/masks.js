@@ -119,7 +119,7 @@ export const sexEditMask = (newValue, oldValue) => {
 
 export const sexStringify = s => s === 'M' ? 'Masculin' : 'Féminin';
 
-export const sexParse = s => (/^m/.test(s)) ? 'M' : 'F';
+export const sexParse = s =>  /^(m|h).*/i.test(s) ? 'M' : 'F';
 
 export const dateEditMask = (newValue, oldValue) => {
     if (dateTypingMask(newValue)) {
