@@ -28,7 +28,7 @@ build:
       echo "export USER=root" >> artifacts
       mkdir -p /etc/systemd/system/docker.service.d
       touch /etc/systemd/system/docker.service.d/http-proxy.conf
-      make config build DOCKER_USERNAME=${DOCKER_USERNAME} DOCKER_REGISTRY=${DOCKER_REGISTRY}
+      make config build DOCKER_USERNAME=${DOCKER_USERNAME} DOCKER_REGISTRY=${DOCKER_REGISTRY} NPM_REGISTRY=${NPM_REGISTRY} NPM_SSL=false SASS_REGISTRY=${SASS_REGISTRY} MIRROR_DEBIAN=${MIRROR_DEBIAN}
 #git -C deces-ui/tools checkout feat/docker-custom-registry
 #make -C deces-ui/tools docker-login DOCKER_PASSWORD=${DOCKER_PASSWORD} DOCKER_REGISTRY=${DOCKER_REGISTRY} DOCKER_USERNAME=${DOCKER_USERNAME}
 #make -C deces-ui docker-push GIT_BRANCH=master DOCKER_REGISTRY=${DOCKER_REGISTRY}
