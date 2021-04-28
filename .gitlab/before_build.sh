@@ -11,13 +11,14 @@ docker_version="docker-ce=5:19.03.11~3-0~debian-stretch"
 docker_compose_version="1.21.2"
 
 # core packages
-PACKAGE_CUSTOM="make git unzip python-pip python-dev \
-     apt-transport-https \
-     ca-certificates \
-     curl \
-     gnupg2 \
-     software-properties-common \
-     jq"
+PACKAGE_CUSTOM="sudo make git unzip python-pip python-dev \
+    python-openstackclient python-heatclient python-wheel \
+    apt-transport-https \
+    ca-certificates \
+    curl \
+    gnupg2 \
+    software-properties-common \
+    jq"
 
 # conf apt / proxy (use http_proxy_common instead of http_proxy_shared, due to latency)
 if [ -n "$http_proxy_common" ] ; then
