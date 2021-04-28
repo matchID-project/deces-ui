@@ -8,7 +8,7 @@ mirror_docker_key="${MIRROR_DOCKER_KEY:-https://download.docker.com/linux/debian
 
 # docker version, docker-compose
 docker_version="docker-ce=5:19.03.11~3-0~debian-stretch"
-docker_compose_version="1.21.2"
+docker_compose_version="1.26.2"
 
 # core packages
 PACKAGE_CUSTOM="make git unzip python-pip python-dev \
