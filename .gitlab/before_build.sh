@@ -8,7 +8,7 @@ mirror_docker_key="${MIRROR_DOCKER_KEY:-https://download.docker.com/linux/debian
 
 # docker version, docker-compose
 docker_version="docker-ce=5:19.03.11~3-0~debian-stretch"
-docker_compose_version="1.26.2"
+docker_compose_version="1.21.2"
 
 # core packages
 PACKAGE_CUSTOM="make git unzip python-pip python-dev \
@@ -36,19 +36,19 @@ deb $MIRROR_DEBIAN/debian9 stretch-updates main contrib non-free
 deb $MIRROR_DEBIAN/debian9-security stretch/updates main contrib non-free
 EOF
 fi
-#
+
 ## install core packages
 apt_args="-o=Dpkg::Use-Pty=0"
 apt-get -qq $apt_args update -qy
 apt-get -qq $apt_args install -qy $PACKAGE_CUSTOM
-#
+
 # install docker
 curl -fsSL $mirror_docker_key | apt-key add -
 add-apt-repository \
      "deb [arch=amd64] $mirror_docker $(lsb_release -cs) stable"
 apt-get -qq $apt_args update -qy
 apt-get -qq $apt_args install -qy --allow-unauthenticated docker-ce
-#
+
 # install docker-compose
 [ -z "$PYPI_URL" ] || pip_args=" --index-url $PYPI_URL "
 [ -z "$PYPI_HOST" ] || pip_args="$pip_args --trusted-host $PYPI_HOST "
