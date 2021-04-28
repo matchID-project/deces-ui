@@ -1,0 +1,39 @@
+image: debian:stretch
+variables:
+## Enable under shared runner
+## In gitlab/variables : declare Variable File Variable named http_proxy_shared, and no_proxy_shared
+  http_proxy: $http_proxy_shared
+  https_proxy: $http_proxy_shared
+  no_proxy: $no_proxy_shared
+  HTTP_PROXY: $http_proxy_shared
+  HTTPS_PROXY: $http_proxy_shared
+  NO_PROXY: $no_proxy_shared
+
+## In gitlab/variables : declare Variable File Type named BUILD_CONFIG
+##  containing internal NPM_REGISTRY, SASS_REGISTRY, PYPI_URL, PYPI_HOST, RUBY_URL, MIRROR_DEBIAN
+##   MIRROR_DOCKER, MIRROR_DOCKER_KEY
+  BUILD_CONFIG_FILE: $BUILD_CONFIG
+
+default:
+  tags:
+    - shared
+  before_script:
+    - echo "# Before script"
+    - echo "$BUILD_CONFIG_FILE" > .build_config
+    - source .build_config
+    - time ./.gitlab/before_build.sh
+build:
+  script:
+    - echo "# start build"
+    - |
+      echo "export export API_SSL=" >> artifacts
+      echo "export RCLONE_OPTS=--no-check-certificate" >> artifacts
+      echo "export USER=root" >> artifacts
+      mkdir -p /etc/systemd/system/docker.service.d
+      touch /etc/systemd/system/docker.service.d/http-proxy.conf
+      make config build DOCKER_USERNAME=${DOCKER_USERNAME} DOCKER_REGISTRY=${DOCKER_REGISTRY}
+#git -C deces-ui/tools checkout feat/docker-custom-registry
+#make -C deces-ui/tools docker-login DOCKER_PASSWORD=${DOCKER_PASSWORD} DOCKER_REGISTRY=${DOCKER_REGISTRY} DOCKER_USERNAME=${DOCKER_USERNAME}
+#make -C deces-ui docker-push GIT_BRANCH=master DOCKER_REGISTRY=${DOCKER_REGISTRY}
+  except:
+     - tags
