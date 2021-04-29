@@ -28,7 +28,7 @@ build:
       echo "export USER=root" >> artifacts
       mkdir -p /etc/systemd/system/docker.service.d
       touch /etc/systemd/system/docker.service.d/http-proxy.conf
-      make config build DOCKER_USERNAME=${DOCKER_USERNAME} DOCKER_REGISTRY=${DOCKER_REGISTRY} NPM_REGISTRY=${NPM_REGISTRY} NPM_SSL=false SASS_REGISTRY=${SASS_REGISTRY} MIRROR_DEBIAN=${MIRROR_DEBIAN} GIT_BRANCH=master 
+      make config build DOCKER_USERNAME=${DOCKER_USERNAME} DOCKER_REGISTRY=${DOCKER_REGISTRY} NPM_REGISTRY=${NPM_REGISTRY} NPM_SSL=false SASS_REGISTRY=${SASS_REGISTRY} MIRROR_DEBIAN=${MIRROR_DEBIAN} THEME_DNUM=${THEME_DNUM} API_URL=${API_URL} API_EMAIL=${API_EMAIL} GIT_BRANCH=master
       git -C tools checkout feat/docker-custom-registry
       make docker-push DOCKER_REGISTRY=${DOCKER_REGISTRY} DOCKER_PASSWORD=${DOCKER_PASSWORD} DOCKER_USERNAME=${DOCKER_USERNAME} GIT_BRANCH=master 
       # TODO: remove git branch overwrite
