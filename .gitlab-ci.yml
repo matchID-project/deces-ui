@@ -1,0 +1,38 @@
+image: debian:stretch
+variables:
+## Enable under shared runner
+## In gitlab/variables : declare Variable File Variable named http_proxy_shared, and no_proxy_shared
+  http_proxy: $http_proxy_shared
+  https_proxy: $http_proxy_shared
+  no_proxy: $no_proxy_shared
+  HTTP_PROXY: $http_proxy_shared
+  HTTPS_PROXY: $http_proxy_shared
+  NO_PROXY: $no_proxy_shared
+
+## In gitlab/variables :
+## NPM_REGISTRY, SASS_REGISTRY, PYPI_URL, PYPI_HOST, RUBY_URL, MIRROR_DEBIAN
+## MIRROR_DOCKER, MIRROR_DOCKER_KEY
+
+default:
+  tags:
+    - shared
+  before_script:
+    - echo "# Before script"
+    - time ./.gitlab/before_build.sh
+build:
+  only:
+      - dev
+      - master
+  script:
+    - echo "# start build"
+    - |
+      echo "export export API_SSL=" >> artifacts
+      echo "export RCLONE_OPTS=--no-check-certificate" >> artifacts
+      echo "export USER=root" >> artifacts
+      mkdir -p /etc/systemd/system/docker.service.d
+      touch /etc/systemd/system/docker.service.d/http-proxy.conf
+      make config build DOCKER_USERNAME=${DOCKER_USERNAME} DOCKER_REGISTRY=${DOCKER_REGISTRY} NPM_REGISTRY=${NPM_REGISTRY} NPM_SSL=false SASS_REGISTRY=${SASS_REGISTRY} MIRROR_DEBIAN=${MIRROR_DEBIAN} THEME_DNUM=${THEME_DNUM} API_URL=${API_URL} API_EMAIL=${API_EMAIL} GIT_BRANCH=${CI_COMMIT_BRANCH}
+      git -C tools checkout feat/docker-custom-registry
+      make docker-push DOCKER_REGISTRY=${DOCKER_REGISTRY} DOCKER_PASSWORD=${DOCKER_PASSWORD} DOCKER_USERNAME=${DOCKER_USERNAME} GIT_BRANCH=${CI_COMMIT_BRANCH}
+  except:
+     - tags
