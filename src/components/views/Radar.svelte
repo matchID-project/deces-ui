@@ -95,7 +95,11 @@
     data.datasets.forEach(ds => {
       renderData = ds.data.reduce((total, s) => {
         maxVal = Math.max(maxVal, s.y || 0)
-        const [ , year, month] = s.x.match(/(\d{4})(\d{2})\d{2}/)
+        const decomposedDate = s.x.match(/(\d{4})(\d{2})\d{2}/)
+        if (!decomposedDate) {
+          return total
+        }
+        const [ , year, month] = decomposedDate
         if (year in total) {
           if (month in total[year]) {
             total[year][month] += s.y
