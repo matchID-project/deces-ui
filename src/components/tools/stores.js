@@ -503,7 +503,7 @@ document.addEventListener('blur', updateActiveElement, true);
 
 export const firstSearch = writable(true);
 
-export const alphaFeatures = writable(true);
+export const alphaFeatures = writable(parseInt('__THEME_DNUM__') === 0);
 
 export const accessToken = writable('');
 
