@@ -16,12 +16,12 @@ variables:
 default:
   tags:
     - shared
+    - region1
   before_script:
     - echo "# Before script"
     - time ./.gitlab/before_build.sh
 build:
   only:
-      - dev
       - master
   script:
     - echo "# start build"
