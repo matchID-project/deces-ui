@@ -2,7 +2,7 @@
     <div class="rf-grid-row rf-grid-row--gutters">
         {#if (!unavailable) && rawData}
             {#if kpi}
-                <div class="rf-col-6">
+                <div class="rf-col-4">
                     <label class="rf-label" for="select">Cycle</label>
                     <select class="rf-select" id="select" name="select" bind:value={sourceScope}>
                         <option value="" selected disabled hidden>- Choisir -</option>
@@ -11,7 +11,7 @@
                         {/each}
                     </select>
                 </div>
-                <div class="rf-col-6">
+                <div class="rf-col-4">
                     <label class="rf-label" for="select">Période</label>
                     <select class="rf-select" id="select" name="select" bind:value={source} disabled={/today|full/.test(sourceScope)}>
                         <option value="" selected disabled hidden>- Choisir -</option>
@@ -19,6 +19,20 @@
                             {#each filteredCatalog as range}
                                 <option value={range}>
                                     {range.replace(sourceScopes[sourceScope].select,sourceScopes[sourceScope].replace)}
+                                </option>
+                            {/each}
+                        {/if}
+                    </select>
+                </div>
+                <div class="rf-col-4">
+                    <label class="rf-label" for="select">Filtre URL</label>
+                    <select class="rf-select" id="select" name="select" bind:value={urlScope}>
+                        <option value="" selected disabled hidden>Aucun</option>
+                        {#if (urlScopes && (urlScopes.length >= 0))}
+                            <option value="">Aucun</option>
+                            {#each urlScopes as url}
+                                <option value={url}>
+                                    {url}
                                 </option>
                             {/each}
                         {/if}
@@ -89,8 +103,9 @@
 
 
   let style = getComputedStyle(document.body);
-  let rawData, kpi;
+  let rawDataSource, rawData, kpi;
   let unavailable = false;
+  let urlScope, urlScopes
   let sourceScopes = {
       'full': {
           label: 'Complet',
@@ -196,10 +211,16 @@
       }
   }
 
+  $: rawData = urlScope ? rawDataSource[urlScope] : rawDataSource;
+
+  $: urlScopes = rawDataSource && Object.keys(rawDataSource).filter(k => /api:/.test(k));
+
+  $: console.log(urlScopes);
+
   const getData = async (s) => {
     try {
         const response = await fetch(`/stats/${s}.json`);
-        rawData = await response.json();
+        rawDataSource = await response.json();
     } catch(e) {
         unavailable = true
     }
@@ -286,8 +307,11 @@
   };
 
     const siteUrlRegexp = [
-        // [/^page: \/favicon \(GET\)$/, 'static: images'],
-        // [/^\/(.*)\.(css|css.map)$/, 'static: css'],
+        [/^page: \/(favicon|fonts) \(GET\)$/, 'static: images'],
+        [/^page: \/index \(GET\)$/, 'page: search'],
+        [/^page: \/(search|link|about|id|stats) \(GET\)$/, 'page: $1'],
+        [/^page: \/css \(GET\)$/, 'static: /css'],
+        [/^page: \/.* \(GET\)$/, 'page: WRONG'],
         // [/^\/(.*)\.(js|json|js.map)$/, 'static: javascript'],
         // [/^\/(.*)\.(png|svg|woff2?)$/, 'static: images'],
         // [/^GET \/$/, 'page: /search (GET)'],
@@ -537,10 +561,10 @@
         yLog: true,
         dataCB: (data) =>
             aggregate(data, (d) => urlAgg(d.data, siteUrlRegexp))
-                .filter(x => x.visitors.count > 10)
                 .filter(x => !/OPTIONS|HEAD/.test(x.data))
+                .filter(x => /^(page: \/(search|link|id|about|stats)|(static|api):)/.test(x.data))
                 .sort((a,b) => b.visitors.count - a.visitors.count)
-                .slice(0,15)
+                .slice(0,20)
     }
   };
 
