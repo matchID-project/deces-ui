@@ -26,14 +26,11 @@ $reportName = @ARGV[0] || full;
 @requestRegexp = (
         [qr/\s+\S+\s*$/, '""'],
         [qr/^(GET|POST) \/.*php.*$/i, '"hacking"'],
-        [qr/^(GET|OPTIONS) \/.*\.(css|css.map)$/, '"static: css"'],
-        [qr/^(GET|OPTIONS) \/.*\.(js|json|js.map)$/, '"static: javascript"'],
-        [qr/^(GET|OPTIONS)\s*\/.*(png|svg|woff2|favicon)$/, '"static: images"'],
+        [qr/^(GET|OPTIONS) \/?.*(js|json|js.map|css|css.map|png|svg|woff2|favicon?)$/, '"static"'],
         [qr|^(\S+) /matchID.*/api/v(\d)/((\w+)+(/\w+)?)(/\S+)?$|, '"api: matchID"'],
         [qr|^(\S+) /[^/]*/api/v(\d)/(([a-z]+)(/[a-z]+)?)(/\S+)?$|, '"api: $3 $1 $2"'],
         [qr/^(GET|OPTIONS|HEAD|CONNECT) \/(\?.*)?$/, '"page: /search ($1)"'],
-        [qr/^(GET|HEAD|OPTIONS|POST|CONNECT)\s*\/(atom|feed|.*edit.*|rss|login|cgi|authorize|clientaccesspolicy|browserconfig|solr|weaver|view|secure|servlet|manager).*$/, '"hacking"'],
-        [qr/^(GET|HEAD|OPTIONS|POST|CONNECT) (\/\w+)?(\W\S+)?$/, '"page: $2 ($1)"'],
+        [qr/^(GET|HEAD|OPTIONS|POST|CONNECT) (\/(search|id|about|stats|link|edits|notFound)).*$/, '"page: $2 ($1)"'],
         [qr/^(GET|HEAD|OPTIONS|POST|CONNECT) .*$/i, '"hacking"'],
         [qr/^\S+$/i, '"hacking"'],
 );
