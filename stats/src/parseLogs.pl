@@ -7,9 +7,9 @@ use JSON::XS;
 use Digest::SHA qw(hmac_sha256_base64);
 use Storable;
 
-use GeoIP2::Database::Reader;
+use MaxMind::DB::Reader;
 
-$geoip = GeoIP2::Database::Reader->new( file => '/usr/local/share/GeoLite2/GeoLite2-City.mmdb');
+$geoip = MaxMind::DB::Reader->new( file => '/usr/local/share/GeoLite2/GeoLite2-City.mmdb');
 
 $json_coder = JSON::XS->new->utf8(1)->pretty(1);
 
@@ -241,9 +241,6 @@ sub flushResults {
 $match = qr/\[..\/...\/202[0-9]:/;
 $parse = qr/^(\S+) - (\S+) \[([^\]]*)\] "([^"]*)" (\d+) (\d+) "([^"]*)" "([^"]*)"( "([^"]*)")?( ([0-9\.-]+) ([0-9\.-]+|[0-9\.-]+, [0-9\.-]+) \.)?$/;
 $parseDate = qr|^(\d{2})/(\S{3})/(\d{4}):(\d{2}):(\d{2})|;
-$ip4 = qr/^\d+\./;
-$multiIp = qr/,/;
-$multiIpReplace= s/.*,//;
 
 # 07/Feb/2018:22:28:10 +0000
 
@@ -345,17 +342,19 @@ LINE: while(<STDIN>){
                     $requestCategory=replaceRegexp($request, 'request', @requestRegexp);
                     $geo = "";
                     eval {
-                        if ($ipfw =~ /$multiIp/) {
-                            $tmpip = $ipfw;
-                            $tmpip =~ s/.*,//;
-                            $geo=$geoip->city(ip => $tmpip);
+                        $multiIp = index($ipfw,',');
+                        if ($multiIp != -1) {
+                            $tmpip = substr $ipfw, $multiIp+1;
+                            $geo=$geoip->record_for_address($tmpip);
+                            # $geo=$geoip->city(ip => $tmpip);
                         } else {
-                            $geo=$geoip->city(ip => $ipfw);
+                            $geo=$geoip->record_for_address($ipfw);
+                            # $geo=$geoip->city(ip => $ipfw);
                         }
                         if ($geo ne "") {
-                            $country = $geo->country->iso_code;
+                            $country = $geo->{country}{iso_code};
                             if ($country eq "FR") {
-                                $depcode = $geo->most_specific_subdivision->iso_code;
+                                $depcode = @{$geo->{subdivisions}}[-1]->{iso_code};
                             }
                         }
                     } or do {
