@@ -92,15 +92,17 @@ sub addReportItem {
     push(@{$report{$key}{'data'}}, \%item);
     # monitored request categories
     foreach $monitor (keys %{$c{"monitor"}}) {
-        my %item=();
-        $item{'data'} = $dval;
-        $item{"hits"}{'count'} = $c{"monitor"}{$monitor}{$var}{$val}{'hits'};
-        $item{"bytes"}{'count'} = $c{"monitor"}{$monitor}{$var}{$val}{'bytes'};
-        if ($c{"monitor"}{$monitor}{$var}{$val}{'duration'} && $c{"monitor"}{$monitor}{$var}{$val}{'hits_duration'}) {
-            $item{"duration"}{'mean'} = $c{"monitor"}{$monitor}{$var}{$val}{'duration'}/$c{"monitor"}{$monitor}{$var}{$val}{'hits_duration'};
+        if ($c{"monitor"}{$monitor}{$var}{$val}) {
+            my %item=();
+            $item{'data'} = $dval;
+            $item{"hits"}{'count'} = $c{"monitor"}{$monitor}{$var}{$val}{'hits'};
+            $item{"bytes"}{'count'} = $c{"monitor"}{$monitor}{$var}{$val}{'bytes'};
+            if ($c{"monitor"}{$monitor}{$var}{$val}{'duration'} && $c{"monitor"}{$monitor}{$var}{$val}{'hits_duration'}) {
+                $item{"duration"}{'mean'} = $c{"monitor"}{$monitor}{$var}{$val}{'duration'}/$c{"monitor"}{$monitor}{$var}{$val}{'hits_duration'};
+            }
+            $item{"visitors"}{'count'} = scalar keys(%{$c{"monitor"}{$monitor}{$var}{$val}{'visitors'}});
+            push(@{$report{$monitor}{$key}{'data'}}, \%item);
         }
-        $item{"visitors"}{'count'} = scalar keys(%{$c{"monitor"}{$monitor}{$var}{$val}{'visitors'}});
-        push(@{$report{$monitor}{$key}{'data'}}, \%item);
     }
 }
 
@@ -118,9 +120,14 @@ sub buildKeyReport {
                 # print "delete $var $val\n";
                 delete($c{$var}{$val});
                 foreach $monitor (keys %{$c{"monitor"}}) {
-                    delete($c{"monitor"}{$monitor}{$var}{$val})
+                    delete($c{"monitor"}{$monitor}{$var}{$val});
                 }
             }
+        }
+    }
+    foreach $monitor (keys %{$c{"monitor"}}) {
+        if ($#{$report{$monitor}{$key}{'data'}} < 0) {
+            delete($report{$monitor}{$key})
         }
     }
 }
@@ -182,6 +189,12 @@ sub flushResults {
         $var =~ s/y(m|w)$/y$1dh/;
         $var =~ s/^$/ymdhm/;
         &buildKeyReport;
+
+        foreach $monitor (keys %{$c{"monitor"}}) {
+            if ((scalar keys(%{$report{$monitor}})) == 0) {
+                delete($report{$monitor});
+            }
+        }
 
         open(F, '>', sprintf("$stats_dir/%s-detailed.json", $c{'current'}{$range} || $reportName));
         print F $json_coder->encode({%report});
