@@ -171,7 +171,7 @@
             countSum(
                 rawData.requests.data.filter(k => /^api: search\/csv GET/.test(k.data)),
                 'bytes')
-            / 750,0);
+            / 400,1);
         tmp['api_update']=countSum(
             rawData.requests.data.filter(k => /^api: id.* POST/.test(k.data)),
             'hits');
