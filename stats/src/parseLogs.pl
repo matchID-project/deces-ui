@@ -90,10 +90,25 @@ sub addReportItem {
         }
     }
     push(@{$report{$key}{'data'}}, \%item);
+    # monitored request categories
+    foreach $monitor (keys %{$c{"monitor"}}) {
+        my %item=();
+        $item{'data'} = $dval;
+        $item{"hits"}{'count'} = $c{"monitor"}{$monitor}{$var}{$val}{'hits'};
+        $item{"bytes"}{'count'} = $c{"monitor"}{$monitor}{$var}{$val}{'bytes'};
+        if ($c{"monitor"}{$monitor}{$var}{$val}{'duration'} && $c{"monitor"}{$monitor}{$var}{$val}{'hits_duration'}) {
+            $item{"duration"}{'mean'} = $c{"monitor"}{$monitor}{$var}{$val}{'duration'}/$c{"monitor"}{$monitor}{$var}{$val}{'hits_duration'};
+        }
+        $item{"visitors"}{'count'} = scalar keys(%{$c{"monitor"}{$monitor}{$var}{$val}{'visitors'}});
+        push(@{$report{$monitor}{$key}{'data'}}, \%item);
+    }
 }
 
 sub buildKeyReport {
     $report{$key}{'data'}=[];
+    foreach $monitor (keys %{$c{"monitor"}}) {
+        $report{$monitor}{$key}{'data'}=[];
+    }
     foreach $val (sort(keys(%{$c{$var}}))) {
         $dval = $val;
         $dval =~ s/^$c{'current'}{$range}:\s*//;
@@ -102,8 +117,9 @@ sub buildKeyReport {
             if (!($reportName eq 'day') && (!($var =~ /${range}d?$/)) || ($range eq 'yw')) {
                 # print "delete $var $val\n";
                 delete($c{$var}{$val});
-            } else {
-                # print "not deleted $key $range $c{'current'}{$range} $var $val\n";
+                foreach $monitor (keys %{$c{"monitor"}}) {
+                    delete($c{"monitor"}{$monitor}{$var}{$val})
+                }
             }
         }
     }
@@ -142,6 +158,7 @@ sub flushResults {
         &buildKeyReport;
     }
 
+
     $key = 'visitors';
     $var = $range;
     $var =~ s/d$/dh/;
@@ -175,42 +192,48 @@ sub flushResults {
 
     # memory spare hacks
     undef(%cache);
-    if ($range eq 'ymd') {
+    if (($range eq 'ymd')||($range eq 'yw')||($range eq 'ym')) {
         # uniq visitors for past days do not need to be fully kept
-        foreach $key (keys(%{$c{'ymd'}})) {
-            if ($key le $c{'current'}{'ymd'}) {
-                if (keys(%{$c{'ymd'}{$key}{'visitors'}})) {
-                    $c{'ymd'}{$key}{'visitors'} = scalar keys(%{$c{'ymd'}{$key}{'visitors'}});
+        foreach $key (keys(%{$c{$range}})) {
+            if ($key le $c{'current'}{$range}) {
+                if (keys(%{$c{$range}{$key}{'visitors'}})) {
+                    $c{$range}{$key}{'visitors'} = scalar keys(%{$c{$range}{$key}{'visitors'}});
                 }
-            }
-        }
-    }
-    if ($range eq 'yw') {
-        foreach $key (keys(%{$c{'yw'}})) {
-            if ($key le $c{'current'}{'yw'}) {
-                if (keys(%{$c{'yw'}{$key}{'visitors'}})) {
-                    $c{'yw'}{$key}{'visitors'} = scalar keys(%{$c{'yw'}{$key}{'visitors'}});
+                foreach $monitor (keys %{$c{"monitor"}}) {
+                    if (keys(%{$c{"monitor"}{$monitor}{$range}{$key}{'visitors'}})) {
+                        $c{"monitor"}{$monitor}{$range}{$key}{'visitors'} = scalar keys(%{$c{"monitor"}{$monitor}{$range}{$key}{'visitors'}});
+                    }
                 }
             }
         }
     }
     if ($range eq 'ym') {
-        foreach $key (keys(%{$c{'ym'}})) {
-            if ($key le $c{'current'}{'ym'}) {
-                if (keys(%{$c{'ym'}{$key}{'visitors'}})) {
-                    $c{'ym'}{$key}{'visitors'} = scalar keys(%{$c{'ym'}{$key}{'visitors'}});
-                }
-            }
-        }
         # monthly aggregate lowcounts of previous month in general counts, not keeping all uniq ipfw
         foreach $var (qw/general browser requestCategory dowh country depcode from/) {
             foreach $val (keys(%{$c{$var}})) {
-                foreach $ipfw (keys(%{$c{$var}{$val}{'visitors'}})) {
-                    if ($ipfw ne 'prune_count') {
-                        if ($c{$var}{$val}{'visitors'}{$ipfw} < 1000) {
-                            # keep only regular visitors
-                            $c{$var}{$val}{'visitors'}{'prune_count'}++;
-                            delete($c{$var}{$val}{'visitors'}{$ipfw});
+                if (scalar keys(%{$c{$var}{$val}{'visitors'}}) > 10000) {
+                    # prune big counts
+                    foreach $ipfw (keys(%{$c{$var}{$val}{'visitors'}})) {
+                        if ($ipfw ne 'prune_count') {
+                            if ($c{$var}{$val}{'visitors'}{$ipfw} < 1000) {
+                                # keep only regular visitors
+                                $c{$var}{$val}{'visitors'}{'prune_count'}++;
+                                delete($c{$var}{$val}{'visitors'}{$ipfw});
+                            }
+                        }
+                    }
+                }
+                foreach $monitor (keys %{$c{"monitor"}}) {
+                    if (scalar keys(%{$c{"monitor"}{$monitor}{$var}{$val}{'visitors'}}) > 10000) {
+                        # prune big counts
+                        foreach $ipfw (keys(%{$c{"monitor"}{$monitor}{$var}{$val}{'visitors'}})) {
+                            if ($ipfw ne 'prune_count') {
+                                if ($c{"monitor"}{$monitor}{$var}{$val}{'visitors'}{$ipfw} < 1000) {
+                                    # keep only regular visitors
+                                    $c{"monitor"}{$monitor}{$var}{$val}{'visitors'}{'prune_count'}++;
+                                    delete($c{"monitor"}{$monitor}{$var}{$val}{'visitors'}{$ipfw});
+                                }
+                            }
                         }
                     }
                 }
@@ -405,6 +428,16 @@ LINE: while(<STDIN>){
                                     $c{$var}{$$var}{'duration'}=$c{$var}{$$var}{'duration'}+$duration;
                                 }
                                 $c{$var}{$$var}{'visitors'}{$ipfw}++;
+                                # monitored request categories
+                                if (index($requestCategory, 'api: ') != -1) {
+                                    $c{"monitor"}{$requestCategory}{$var}{$$var}{"visitors"}{$ipfw}++;
+                                    $c{"monitor"}{"$requestCategory"}{$var}{$$var}{"hits"}++;
+                                    $c{"monitor"}{"$requestCategory"}{$var}{$$var}{"bytes"}+=int($size);
+                                    if ($duration) {
+                                        $c{"monitor"}{"$requestCategory"}{$var}{$$var}{'hits_duration'}++;
+                                        $c{"monitor"}{"$requestCategory"}{$var}{$$var}{'duration'}+=$duration;
+                                    }
+                                }
                             }
                         }
                     }
@@ -477,5 +510,3 @@ LINE: while(<STDIN>){
 }
 
 flushResults();
-
-
