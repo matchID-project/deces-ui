@@ -2,7 +2,19 @@
     <div class="rf-grid-row rf-grid-row--gutters">
         {#if (!unavailable) && rawData}
             {#if kpi}
-                <div class="rf-col-6">
+                <div class="rf-col-12 rf-text--center">
+                    <h4 class="rf-margin-bottom-0"> Statistiques de consultation </h4>
+                </div>
+                {#each stats as key}
+                    <div class="rf-col-xl-3 rf-col-lg-3 rf-col-md-3 rf-col-sm-3 rf-col-xs-6">
+                        <StatsTile
+                            number={kpi[key]}
+                            precision={1}
+                            label={labels[key] || key}
+                        />
+                    </div>
+                {/each}
+                <div class="rf-col-4">
                     <label class="rf-label" for="select">Cycle</label>
                     <select class="rf-select" id="select" name="select" bind:value={sourceScope}>
                         <option value="" selected disabled hidden>- Choisir -</option>
@@ -11,7 +23,7 @@
                         {/each}
                     </select>
                 </div>
-                <div class="rf-col-6">
+                <div class="rf-col-4">
                     <label class="rf-label" for="select">Période</label>
                     <select class="rf-select" id="select" name="select" bind:value={source} disabled={/today|full/.test(sourceScope)}>
                         <option value="" selected disabled hidden>- Choisir -</option>
@@ -24,17 +36,27 @@
                         {/if}
                     </select>
                 </div>
-                {#each stats as key}
-                    <div class="rf-col-xl-3 rf-col-lg-3 rf-col-md-3 rf-col-sm-3 rf-col-xs-6">
-                        <StatsTile
-                            number={kpi[key]}
-                            precision={1}
-                            label={labels[key] || key}
-                        />
-                    </div>
-                {/each}
+                <div class="rf-col-4">
+                    <label class="rf-label" for="select">Filtre URL</label>
+                    <select class="rf-select" id="select" name="select" bind:value={urlScope}>
+                        <option value="" selected disabled hidden>Aucun</option>
+                        {#if (urlScopes && (urlScopes.length >= 0))}
+                            <option value="">Aucun</option>
+                            {#each urlScopes as url}
+                                <option value={url}>
+                                    {url}
+                                </option>
+                            {/each}
+                        {/if}
+                    </select>
+                </div>
             {/if}
-            {#each views.filter(x => !day || !(x === 'hour_of_day_of_week')) as view}
+            {#each
+                views.filter(x => !day || !(x === 'hour_of_day_of_week'))
+                    .filter(x => !urlScope || !(['referring_sites'].includes(x)) )
+                    .filter(x => rawData[x] && rawData[x].data && rawData[x].data.length)
+                as view
+            }
                 <div class="rf-col-xl-{expanded[view] ? '12' : '6'} rf-col-lg-{expanded[view] ? '12' : '6'} rf-col-md-12 rf-col-sm-12 rf-col-xs-12">
                     <div class="rf-tile">
                         <div
@@ -84,13 +106,14 @@
   import StatsTile from './StatsTile.svelte';
   import Heatmap from './Heatmap.svelte';
   import { smartNumber } from '../tools/stats.js';
-  import { route, updateURL } from '../tools/stores.js';
+  import { route } from '../tools/stores.js';
   import { iso2to3 } from '../tools/countries.js';
 
 
   let style = getComputedStyle(document.body);
-  let rawData, kpi;
+  let rawDataSource, rawData, kpi;
   let unavailable = false;
+  let urlScope, urlScopes
   let sourceScopes = {
       'full': {
           label: 'Complet',
@@ -171,7 +194,7 @@
             countSum(
                 rawData.requests.data.filter(k => /^api: search\/csv GET/.test(k.data)),
                 'bytes')
-            / 750,0);
+            / 400,1);
         tmp['api_update']=countSum(
             rawData.requests.data.filter(k => /^api: id.* POST/.test(k.data)),
             'hits');
@@ -196,10 +219,16 @@
       }
   }
 
+  $: rawData = urlScope ? rawDataSource[urlScope] : rawDataSource;
+
+  $: urlScopes = rawDataSource && Object.keys(rawDataSource)
+    .filter(k => /api: (search(\/(csv|json))?|id|updates\/proof|updated|auth|agg|docs|version|healthcheck|queue(\jobs)?|register) (GET|POST)/.test(k)
+        && (Object.keys(rawDataSource[k]).length > 0));
+
   const getData = async (s) => {
     try {
         const response = await fetch(`/stats/${s}.json`);
-        rawData = await response.json();
+        rawDataSource = await response.json();
     } catch(e) {
         unavailable = true
     }
@@ -286,8 +315,11 @@
   };
 
     const siteUrlRegexp = [
-        // [/^page: \/favicon \(GET\)$/, 'static: images'],
-        // [/^\/(.*)\.(css|css.map)$/, 'static: css'],
+        [/^page: \/(favicon|fonts) \(GET\)$/, 'static: images'],
+        [/^page: \/index \(GET\)$/, 'page: search'],
+        [/^page: \/(search|link|about|id|stats) \(GET\)$/, 'page: $1'],
+        [/^page: \/css \(GET\)$/, 'static: /css'],
+        [/^page: \/.* \(GET\)$/, 'page: WRONG'],
         // [/^\/(.*)\.(js|json|js.map)$/, 'static: javascript'],
         // [/^\/(.*)\.(png|svg|woff2?)$/, 'static: images'],
         // [/^GET \/$/, 'page: /search (GET)'],
@@ -537,10 +569,10 @@
         yLog: true,
         dataCB: (data) =>
             aggregate(data, (d) => urlAgg(d.data, siteUrlRegexp))
-                .filter(x => x.visitors.count > 10)
                 .filter(x => !/OPTIONS|HEAD/.test(x.data))
+                .filter(x => /^(page: \/(search|link|id|about|stats)|(static|api):)/.test(x.data))
                 .sort((a,b) => b.visitors.count - a.visitors.count)
-                .slice(0,15)
+                .slice(0,20)
     }
   };
 
