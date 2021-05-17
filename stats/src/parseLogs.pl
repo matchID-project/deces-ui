@@ -191,7 +191,7 @@ sub flushResults {
         &buildKeyReport;
 
         foreach $monitor (keys %{$c{"monitor"}}) {
-            if ((scalar keys(%{$report{$monitor}})) == 0) {
+            if ((scalar keys(%{$report{$monitor}})) < 1) {
                 delete($report{$monitor});
             }
         }

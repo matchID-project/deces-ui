@@ -2,6 +2,18 @@
     <div class="rf-grid-row rf-grid-row--gutters">
         {#if (!unavailable) && rawData}
             {#if kpi}
+                <div class="rf-col-12 rf-text--center">
+                    <h4 class="rf-margin-bottom-0"> Statistiques de consultation </h4>
+                </div>
+                {#each stats as key}
+                    <div class="rf-col-xl-3 rf-col-lg-3 rf-col-md-3 rf-col-sm-3 rf-col-xs-6">
+                        <StatsTile
+                            number={kpi[key]}
+                            precision={1}
+                            label={labels[key] || key}
+                        />
+                    </div>
+                {/each}
                 <div class="rf-col-4">
                     <label class="rf-label" for="select">Cycle</label>
                     <select class="rf-select" id="select" name="select" bind:value={sourceScope}>
@@ -38,17 +50,13 @@
                         {/if}
                     </select>
                 </div>
-                {#each stats as key}
-                    <div class="rf-col-xl-3 rf-col-lg-3 rf-col-md-3 rf-col-sm-3 rf-col-xs-6">
-                        <StatsTile
-                            number={kpi[key]}
-                            precision={1}
-                            label={labels[key] || key}
-                        />
-                    </div>
-                {/each}
             {/if}
-            {#each views.filter(x => !day || !(x === 'hour_of_day_of_week')) as view}
+            {#each
+                views.filter(x => !day || !(x === 'hour_of_day_of_week'))
+                    .filter(x => !urlScope || !(['referring_sites'].includes(x)) )
+                    .filter(x => rawData[x] && rawData[x].data && rawData[x].data.length)
+                as view
+            }
                 <div class="rf-col-xl-{expanded[view] ? '12' : '6'} rf-col-lg-{expanded[view] ? '12' : '6'} rf-col-md-12 rf-col-sm-12 rf-col-xs-12">
                     <div class="rf-tile">
                         <div
@@ -98,7 +106,7 @@
   import StatsTile from './StatsTile.svelte';
   import Heatmap from './Heatmap.svelte';
   import { smartNumber } from '../tools/stats.js';
-  import { route, updateURL } from '../tools/stores.js';
+  import { route } from '../tools/stores.js';
   import { iso2to3 } from '../tools/countries.js';
 
 
@@ -213,9 +221,9 @@
 
   $: rawData = urlScope ? rawDataSource[urlScope] : rawDataSource;
 
-  $: urlScopes = rawDataSource && Object.keys(rawDataSource).filter(k => /api:/.test(k));
-
-  $: console.log(urlScopes);
+  $: urlScopes = rawDataSource && Object.keys(rawDataSource)
+    .filter(k => /api: (search(\/(csv|json))?|id|updates\/proof|updated|auth|agg|docs|version|healthcheck|queue(\jobs)?|register) (GET|POST)/.test(k)
+        && (Object.keys(rawDataSource[k]).length > 0));
 
   const getData = async (s) => {
     try {
