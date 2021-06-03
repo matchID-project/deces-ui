@@ -95,7 +95,7 @@
                 sep: {label: "Séparateur", options:[["Point-virgule (;)",";"],["Virgule (,)",","],["Tabulation","\t","Barre verticale (|)",'|'],["Espace"," "]]},
                 quote: {size:3,label: "Délimiteur", options:[['aucun', undefined],['guillemets doubles (")','"'],["guillemets simples (')","'"]]},
                 skipLines: {label: "Lignes sautées:", options: [['aucune',0],[1,1],[2,2],[3,3],[4,4],[5,5]]},
-                dateFormat: {size: 3,label: "Format des dates", options:[['DD/MM/YYYY','DD/MM/YYYY'],['YYYY-MM-DD','YYYY-MM-DD'],['YYYYMMDD','YYYYMMDD'],['DDMMYYYY','DDMMYYYY'],['DD-MM-YYYY','DD-MM-YYYY'],['YYYY/MM/DD']]},
+                dateFormat: {size: 3,label: "Format des dates", options:[['dd/MM/yyyy','dd/MM/yyyy'],['yyyy-MM-dd','yyyy-MM-dd'],['yyyyMMdd','yyyyMMdd'],['ddMMyyyy','ddMMyyyy'],['dd-MM-yyyy','dd-MM-yyyy'],['yyyy/MM/dd']]},
             }
         },
         api: {
