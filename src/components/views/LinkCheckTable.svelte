@@ -170,7 +170,9 @@
 
     onMount(() => {
         setTimeout(() => {
+          if (subFilteredRows.length) {
             theadHeight = document.getElementById('table-content').offsetHeight;
+          }
         }, 500);
     })
 
