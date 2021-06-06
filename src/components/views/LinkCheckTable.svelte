@@ -170,7 +170,9 @@
 
     onMount(() => {
         setTimeout(() => {
+          if (subFilteredRows.length) {
             theadHeight = document.getElementById('table-content').offsetHeight;
+          }
         }, 500);
     })
 
@@ -346,10 +348,10 @@
     };
 
     const dateFormat = (dateString) => {
-        const format = ($linkOptions.csv.dateFormat || 'DD/MM/YYYY')
-            .replace('DD','$3')
+        const format = ($linkOptions.csv.dateFormat || 'dd/MM/yyyy')
+            .replace('dd','$3')
             .replace('MM','$2')
-            .replace('YYYY','$1');
+            .replace('yyyy','$1');
         return dateString.replace(/(\d{4})(\d{2})(\d{2})/, format);
     };
 
