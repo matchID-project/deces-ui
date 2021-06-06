@@ -7,9 +7,9 @@ use JSON::XS;
 use Digest::SHA qw(hmac_sha256_base64);
 use Storable;
 
-use GeoIP2::Database::Reader;
+use MaxMind::DB::Reader;
 
-$geoip = GeoIP2::Database::Reader->new( file => '/usr/local/share/GeoLite2/GeoLite2-City.mmdb');
+$geoip = MaxMind::DB::Reader->new( file => '/usr/local/share/GeoLite2/GeoLite2-City.mmdb');
 
 $json_coder = JSON::XS->new->utf8(1)->pretty(1);
 
@@ -26,14 +26,11 @@ $reportName = @ARGV[0] || full;
 @requestRegexp = (
         [qr/\s+\S+\s*$/, '""'],
         [qr/^(GET|POST) \/.*php.*$/i, '"hacking"'],
-        [qr/^(GET|OPTIONS) \/.*\.(css|css.map)$/, '"static: css"'],
-        [qr/^(GET|OPTIONS) \/.*\.(js|json|js.map)$/, '"static: javascript"'],
-        [qr/^(GET|OPTIONS)\s*\/.*(png|svg|woff2|favicon)$/, '"static: images"'],
+        [qr/^(GET|OPTIONS) \/?.*(js|json|js.map|css|css.map|png|svg|woff2|favicon?)$/, '"static"'],
         [qr|^(\S+) /matchID.*/api/v(\d)/((\w+)+(/\w+)?)(/\S+)?$|, '"api: matchID"'],
         [qr|^(\S+) /[^/]*/api/v(\d)/(([a-z]+)(/[a-z]+)?)(/\S+)?$|, '"api: $3 $1 $2"'],
         [qr/^(GET|OPTIONS|HEAD|CONNECT) \/(\?.*)?$/, '"page: /search ($1)"'],
-        [qr/^(GET|HEAD|OPTIONS|POST|CONNECT)\s*\/(atom|feed|.*edit.*|rss|login|cgi|authorize|clientaccesspolicy|browserconfig|solr|weaver|view|secure|servlet|manager).*$/, '"hacking"'],
-        [qr/^(GET|HEAD|OPTIONS|POST|CONNECT) (\/\w+)?(\W\S+)?$/, '"page: $2 ($1)"'],
+        [qr/^(GET|HEAD|OPTIONS|POST|CONNECT) (\/(search|id|about|stats|link|edits|notFound)).*$/, '"page: $2 ($1)"'],
         [qr/^(GET|HEAD|OPTIONS|POST|CONNECT) .*$/i, '"hacking"'],
         [qr/^\S+$/i, '"hacking"'],
 );
@@ -93,10 +90,27 @@ sub addReportItem {
         }
     }
     push(@{$report{$key}{'data'}}, \%item);
+    # monitored request categories
+    foreach $monitor (keys %{$c{"monitor"}}) {
+        if ($c{"monitor"}{$monitor}{$var}{$val}) {
+            my %item=();
+            $item{'data'} = $dval;
+            $item{"hits"}{'count'} = $c{"monitor"}{$monitor}{$var}{$val}{'hits'};
+            $item{"bytes"}{'count'} = $c{"monitor"}{$monitor}{$var}{$val}{'bytes'};
+            if ($c{"monitor"}{$monitor}{$var}{$val}{'duration'} && $c{"monitor"}{$monitor}{$var}{$val}{'hits_duration'}) {
+                $item{"duration"}{'mean'} = $c{"monitor"}{$monitor}{$var}{$val}{'duration'}/$c{"monitor"}{$monitor}{$var}{$val}{'hits_duration'};
+            }
+            $item{"visitors"}{'count'} = scalar keys(%{$c{"monitor"}{$monitor}{$var}{$val}{'visitors'}});
+            push(@{$report{$monitor}{$key}{'data'}}, \%item);
+        }
+    }
 }
 
 sub buildKeyReport {
     $report{$key}{'data'}=[];
+    foreach $monitor (keys %{$c{"monitor"}}) {
+        $report{$monitor}{$key}{'data'}=[];
+    }
     foreach $val (sort(keys(%{$c{$var}}))) {
         $dval = $val;
         $dval =~ s/^$c{'current'}{$range}:\s*//;
@@ -105,9 +119,15 @@ sub buildKeyReport {
             if (!($reportName eq 'day') && (!($var =~ /${range}d?$/)) || ($range eq 'yw')) {
                 # print "delete $var $val\n";
                 delete($c{$var}{$val});
-            } else {
-                # print "not deleted $key $range $c{'current'}{$range} $var $val\n";
+                foreach $monitor (keys %{$c{"monitor"}}) {
+                    delete($c{"monitor"}{$monitor}{$var}{$val});
+                }
             }
+        }
+    }
+    foreach $monitor (keys %{$c{"monitor"}}) {
+        if ($#{$report{$monitor}{$key}{'data'}} < 0) {
+            delete($report{$monitor}{$key})
         }
     }
 }
@@ -145,6 +165,7 @@ sub flushResults {
         &buildKeyReport;
     }
 
+
     $key = 'visitors';
     $var = $range;
     $var =~ s/d$/dh/;
@@ -169,6 +190,12 @@ sub flushResults {
         $var =~ s/^$/ymdhm/;
         &buildKeyReport;
 
+        foreach $monitor (keys %{$c{"monitor"}}) {
+            if ((scalar keys(%{$report{$monitor}})) < 1) {
+                delete($report{$monitor});
+            }
+        }
+
         open(F, '>', sprintf("$stats_dir/%s-detailed.json", $c{'current'}{$range} || $reportName));
         print F $json_coder->encode({%report});
         close(F);
@@ -178,42 +205,48 @@ sub flushResults {
 
     # memory spare hacks
     undef(%cache);
-    if ($range eq 'ymd') {
+    if (($range eq 'ymd')||($range eq 'yw')||($range eq 'ym')) {
         # uniq visitors for past days do not need to be fully kept
-        foreach $key (keys(%{$c{'ymd'}})) {
-            if ($key le $c{'current'}{'ymd'}) {
-                if (keys(%{$c{'ymd'}{$key}{'visitors'}})) {
-                    $c{'ymd'}{$key}{'visitors'} = scalar keys(%{$c{'ymd'}{$key}{'visitors'}});
+        foreach $key (keys(%{$c{$range}})) {
+            if ($key le $c{'current'}{$range}) {
+                if (keys(%{$c{$range}{$key}{'visitors'}})) {
+                    $c{$range}{$key}{'visitors'} = scalar keys(%{$c{$range}{$key}{'visitors'}});
                 }
-            }
-        }
-    }
-    if ($range eq 'yw') {
-        foreach $key (keys(%{$c{'yw'}})) {
-            if ($key le $c{'current'}{'yw'}) {
-                if (keys(%{$c{'yw'}{$key}{'visitors'}})) {
-                    $c{'yw'}{$key}{'visitors'} = scalar keys(%{$c{'yw'}{$key}{'visitors'}});
+                foreach $monitor (keys %{$c{"monitor"}}) {
+                    if (keys(%{$c{"monitor"}{$monitor}{$range}{$key}{'visitors'}})) {
+                        $c{"monitor"}{$monitor}{$range}{$key}{'visitors'} = scalar keys(%{$c{"monitor"}{$monitor}{$range}{$key}{'visitors'}});
+                    }
                 }
             }
         }
     }
     if ($range eq 'ym') {
-        foreach $key (keys(%{$c{'ym'}})) {
-            if ($key le $c{'current'}{'ym'}) {
-                if (keys(%{$c{'ym'}{$key}{'visitors'}})) {
-                    $c{'ym'}{$key}{'visitors'} = scalar keys(%{$c{'ym'}{$key}{'visitors'}});
-                }
-            }
-        }
         # monthly aggregate lowcounts of previous month in general counts, not keeping all uniq ipfw
         foreach $var (qw/general browser requestCategory dowh country depcode from/) {
             foreach $val (keys(%{$c{$var}})) {
-                foreach $ipfw (keys(%{$c{$var}{$val}{'visitors'}})) {
-                    if ($ipfw ne 'prune_count') {
-                        if ($c{$var}{$val}{'visitors'}{$ipfw} < 1000) {
-                            # keep only regular visitors
-                            $c{$var}{$val}{'visitors'}{'prune_count'}++;
-                            delete($c{$var}{$val}{'visitors'}{$ipfw});
+                if (scalar keys(%{$c{$var}{$val}{'visitors'}}) > 10000) {
+                    # prune big counts
+                    foreach $ipfw (keys(%{$c{$var}{$val}{'visitors'}})) {
+                        if ($ipfw ne 'prune_count') {
+                            if ($c{$var}{$val}{'visitors'}{$ipfw} < 1000) {
+                                # keep only regular visitors
+                                $c{$var}{$val}{'visitors'}{'prune_count'}++;
+                                delete($c{$var}{$val}{'visitors'}{$ipfw});
+                            }
+                        }
+                    }
+                }
+                foreach $monitor (keys %{$c{"monitor"}}) {
+                    if (scalar keys(%{$c{"monitor"}{$monitor}{$var}{$val}{'visitors'}}) > 10000) {
+                        # prune big counts
+                        foreach $ipfw (keys(%{$c{"monitor"}{$monitor}{$var}{$val}{'visitors'}})) {
+                            if ($ipfw ne 'prune_count') {
+                                if ($c{"monitor"}{$monitor}{$var}{$val}{'visitors'}{$ipfw} < 1000) {
+                                    # keep only regular visitors
+                                    $c{"monitor"}{$monitor}{$var}{$val}{'visitors'}{'prune_count'}++;
+                                    delete($c{"monitor"}{$monitor}{$var}{$val}{'visitors'}{$ipfw});
+                                }
+                            }
                         }
                     }
                 }
@@ -241,9 +274,6 @@ sub flushResults {
 $match = qr/\[..\/...\/202[0-9]:/;
 $parse = qr/^(\S+) - (\S+) \[([^\]]*)\] "([^"]*)" (\d+) (\d+) "([^"]*)" "([^"]*)"( "([^"]*)")?( ([0-9\.-]+) ([0-9\.-]+|[0-9\.-]+, [0-9\.-]+) \.)?$/;
 $parseDate = qr|^(\d{2})/(\S{3})/(\d{4}):(\d{2}):(\d{2})|;
-$ip4 = qr/^\d+\./;
-$multiIp = qr/,/;
-$multiIpReplace= s/.*,//;
 
 # 07/Feb/2018:22:28:10 +0000
 
@@ -345,17 +375,19 @@ LINE: while(<STDIN>){
                     $requestCategory=replaceRegexp($request, 'request', @requestRegexp);
                     $geo = "";
                     eval {
-                        if ($ipfw =~ /$multiIp/) {
-                            $tmpip = $ipfw;
-                            $tmpip =~ s/.*,//;
-                            $geo=$geoip->city(ip => $tmpip);
+                        $multiIp = index($ipfw,',');
+                        if ($multiIp != -1) {
+                            $tmpip = substr $ipfw, $multiIp+1;
+                            $geo=$geoip->record_for_address($tmpip);
+                            # $geo=$geoip->city(ip => $tmpip);
                         } else {
-                            $geo=$geoip->city(ip => $ipfw);
+                            $geo=$geoip->record_for_address($ipfw);
+                            # $geo=$geoip->city(ip => $ipfw);
                         }
                         if ($geo ne "") {
-                            $country = $geo->country->iso_code;
+                            $country = $geo->{country}{iso_code};
                             if ($country eq "FR") {
-                                $depcode = $geo->most_specific_subdivision->iso_code;
+                                $depcode = @{$geo->{subdivisions}}[-1]->{iso_code};
                             }
                         }
                     } or do {
@@ -409,6 +441,16 @@ LINE: while(<STDIN>){
                                     $c{$var}{$$var}{'duration'}=$c{$var}{$$var}{'duration'}+$duration;
                                 }
                                 $c{$var}{$$var}{'visitors'}{$ipfw}++;
+                                # monitored request categories
+                                if (index($requestCategory, 'api: ') != -1) {
+                                    $c{"monitor"}{$requestCategory}{$var}{$$var}{"visitors"}{$ipfw}++;
+                                    $c{"monitor"}{"$requestCategory"}{$var}{$$var}{"hits"}++;
+                                    $c{"monitor"}{"$requestCategory"}{$var}{$$var}{"bytes"}+=int($size);
+                                    if ($duration) {
+                                        $c{"monitor"}{"$requestCategory"}{$var}{$$var}{'hits_duration'}++;
+                                        $c{"monitor"}{"$requestCategory"}{$var}{$$var}{'duration'}+=$duration;
+                                    }
+                                }
                             }
                         }
                     }
@@ -481,5 +523,3 @@ LINE: while(<STDIN>){
 }
 
 flushResults();
-
-

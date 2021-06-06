@@ -1,0 +1,11 @@
+{
+  "name": "my-package",
+  "scripts": {
+    "simpleSearch": "node simpleSearch.js",
+    "advancedSearch": "node advancedSearch.js",
+    "linkage": "node linkWikidata.js"
+  },
+  "dependencies": {
+    "playwright": "^1.10.0"
+  }
+}

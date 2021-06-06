@@ -16,22 +16,25 @@ variables:
 default:
   tags:
     - shared
+    - region1
   before_script:
     - echo "# Before script"
     - time ./.gitlab/before_build.sh
 build:
   only:
-      - dev
       - master
   script:
-    - echo "# start build"
     - |
       echo "export export API_SSL=" >> artifacts
       echo "export RCLONE_OPTS=--no-check-certificate" >> artifacts
       echo "export USER=root" >> artifacts
       mkdir -p /etc/systemd/system/docker.service.d
       touch /etc/systemd/system/docker.service.d/http-proxy.conf
+    - |
+      echo "# start build"
+      echo "${DOCKER_PASSWORD_DOCKERIO}" | docker login --username ${DOCKER_USERNAME_DOCKERIO} --password-stdin
       make config build DOCKER_USERNAME=${DOCKER_USERNAME} DOCKER_REGISTRY=${DOCKER_REGISTRY} NPM_REGISTRY=${NPM_REGISTRY} NPM_SSL=false SASS_REGISTRY=${SASS_REGISTRY} MIRROR_DEBIAN=${MIRROR_DEBIAN} THEME_DNUM=${THEME_DNUM} API_URL=${API_URL} API_EMAIL=${API_EMAIL} GIT_BRANCH=${CI_COMMIT_BRANCH}
-      make docker-push DOCKER_REGISTRY=${DOCKER_REGISTRY} DOCKER_PASSWORD=${DOCKER_PASSWORD} DOCKER_USERNAME=${DOCKER_USERNAME} GIT_BRANCH=${CI_COMMIT_BRANCH}
+      docker logout
+    - make docker-push DOCKER_REGISTRY=${DOCKER_REGISTRY} DOCKER_PASSWORD=${DOCKER_PASSWORD} DOCKER_USERNAME=${DOCKER_USERNAME} GIT_BRANCH=${CI_COMMIT_BRANCH}
   except:
      - tags
