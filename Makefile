@@ -453,6 +453,12 @@ show-env:
 
 deploy-local: config show-env stats-background elasticsearch-storage-pull elasticsearch-restore elasticsearch docker-check up backup-dir-clean local-test-api
 
+frontend-test:
+	${DC} -f ${DC_FILE}-test.yml run ui-test yarn install
+	${DC} -f ${DC_FILE}-test.yml run ui-test yarn run simpleSearch
+	${DC} -f ${DC_FILE}-test.yml run ui-test yarn run advancedSearch
+	${DC} -f ${DC_FILE}-test.yml run ui-test yarn run linkage
+
 backend-test:
 	@${MAKE} -C ${APP_PATH}/${GIT_BACKEND} backend-test
 

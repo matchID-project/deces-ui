@@ -481,12 +481,12 @@ export const linkCompleted = writable(false);
 export const version = writable({
     ui: '__APP__ version __APP_VERSION__',
     data: {
-        version: 'd8cd99c0',
-        updateDate: '09/04/2021',
-        lastRecordDate: '30/03/2021',
-        lastDataset: 'deces-2021-m03',
-        rawRecordsCount: 25782935,
-        uniqRecordsCount: 25623337
+        version: '4857ea92',
+        updateDate: '07/05/2021',
+        lastRecordDate: '29/04/2021',
+        lastDataset: 'deces-2021-m04',
+        rawRecordsCount: 25841417,
+        uniqRecordsCount: 25681818
     }
 })
 
@@ -503,7 +503,7 @@ document.addEventListener('blur', updateActiveElement, true);
 
 export const firstSearch = writable(true);
 
-export const alphaFeatures = writable(true);
+export const alphaFeatures = writable(parseInt('__THEME_DNUM__') === 0);
 
 export const accessToken = writable('');
 

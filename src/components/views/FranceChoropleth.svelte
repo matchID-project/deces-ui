@@ -1,6 +1,6 @@
 <div style="position:relative">
   <svg {width} {height} viewBox="-30 0 205 130">
-      {#if view && departments.length && Object.keys(index).length}
+      {#if data && view && departments.length && Object.keys(index).length}
           <g>
           {#each departments as department}
               <path
@@ -33,7 +33,7 @@
                       y={(department.centroid[1] < 80) ? 10 + department.centroid[1] : department.centroid[1] - 40}
                   >
                           <tspan x={(department.centroid[0] < 80) ? 5 + department.centroid[0] : department.centroid[0] - 5}>{department.name}</tspan>
-                          <tspan x={(department.centroid[0] < 80) ? 5 + department.centroid[0] : department.centroid[0] - 5} dy=10>{labels[view]}: {value(view, department.id)}</tspan>
+                          <tspan x={(department.centroid[0] < 80) ? 5 + department.centroid[0] : department.centroid[0] - 5} dy=10>{labels[view]}: {data && value(view, department.id)}</tspan>
                   </text>
               </g>
           {/each}

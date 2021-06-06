@@ -141,7 +141,7 @@
             }
             const link = document.createElement('a');
             link.href = URL.createObjectURL(blob);
-            link.download = $linkFileName.replace(/\.(.*?)$/,`_deces_INSEE.${($linkOptions.csv.type === 'gedcom' && !filter) ? 'csv' : '$1'}`);
+            link.download = $linkFileName.replace(/\.(.*?)$/,`_deces_INSEE_${isDownloading}.${($linkOptions.csv.type === 'gedcom' && !filter) ? 'csv' : '$1'}`);
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
