@@ -68,12 +68,12 @@
     }
 
     const guessTypeRegexp = [
-        [/^[1-2]\d{3}\/[0-1]\d\/[0-3]\d$/, 'date=YYYY/MM/DD'],
-        [/^[1-2]\d{3}-[0-1]\d-[0-3]\d$/, 'date=YYYY-MM-DD'],
-        [/^[1-2]\d{3}[0-1]\d[0-3]\d$/, 'date=YYYYMMDD'],
-        [/^[0-3]\d-[0-1]\d-[1-2]\d{3}$/, 'date=DD-MM-YYYY'],
-        [/^[0-3]\d\/[0-1]\d\/[1-2]\d{3}$/, 'date=DD/MM/YYYY'],
-        [/^[0-3]\d[0-1]\d[1-2]\d{3}$/, 'date=DDMMYYYY'],
+        [/^[1-2]\d{3}\/[0-1]\d\/[0-3]\d$/, 'date=yyyy/MM/dd'],
+        [/^[1-2]\d{3}-[0-1]\d-[0-3]\d$/, 'date=yyyy-MM-dd'],
+        [/^[1-2]\d{3}[0-1]\d[0-3]\d$/, 'date=yyyyMMdd'],
+        [/^[0-3]\d-[0-1]\d-[1-2]\d{3}$/, 'date=dd-MM-yyyy'],
+        [/^[0-3]\d\/[0-1]\d\/[1-2]\d{3}$/, 'date=dd/MM/yyyy'],
+        [/^[0-3]\d[0-1]\d[1-2]\d{3}$/, 'date=ddMMyyyy'],
         [/^\d[0-9a-b]\d{3}/, 'locationCode'],
         [/^[1-2]$/, 'sex=12'],
         [/^[0-1]$/, 'sex=01'],
@@ -343,7 +343,7 @@
             $linkOptions.csv = {
                 sep: '\t',
                 skipLines: 0,
-                dateFormat: 'YYYYMMDD',
+                dateFormat: 'yyyyMMdd',
                 encoding: 'utf-8',
                 type: type,
                 gedcom: tree,
