@@ -1,7 +1,7 @@
 #######################
 # Step 1: Base target #
 #######################
-FROM node:alpine as base
+FROM node:16-alpine as base
 ARG http_proxy
 ARG https_proxy
 ARG no_proxy
