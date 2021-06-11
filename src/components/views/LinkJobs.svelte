@@ -96,7 +96,7 @@
         let response = await fetch('__BACKEND_PROXY_PATH__/queue/jobs', {headers: {Authorization: `Bearer ${$accessToken}`}});
         const tmpJobs = [];
         const list = (await response.json()).jobs || [];
-        list.forEach(j => {tmpJobs.push({rows: j.data.totalRows, id: j.data.randomKey, date: j.options.timestamp, status: j.status})});
+        list.forEach(j => {tmpJobs.push({rows: j.data.totalRows, id: j.id, date: j.options.timestamp, status: j.status})});
         jobs = tmpJobs.sort((a,b) => (b.date - a.date)).map(j => {
             j.date=new Date(j.date).toISOString();
             return j;
