@@ -35,6 +35,7 @@
                                 <tr>
                                     <th>id</th>
                                     <th>date</th>
+                                    <th>progrès(%)</th>
                                     <th>lignes</th>
                                     <th>statut</th>
                                 </tr>
@@ -44,6 +45,7 @@
                                     <tr>
                                         <td>{job.id.substring(0,20) + '...'}</td>
                                         <td>{job.date}</td>
+                                        <td>{job.progress}</td>
                                         <td>{job.rows}</td>
                                         <td>
                                             <div style="display:flex;align-items:center">
@@ -96,7 +98,7 @@
         let response = await fetch('__BACKEND_PROXY_PATH__/queue/jobs', {headers: {Authorization: `Bearer ${$accessToken}`}});
         const tmpJobs = [];
         const list = (await response.json()).jobs || [];
-        list.forEach(j => {tmpJobs.push({rows: j.data.totalRows, id: j.data.randomKey, date: j.options.timestamp, status: j.status})});
+        list.forEach(j => {tmpJobs.push({rows: j.data.totalRows, id: j.id, date: j.options.timestamp, status: j.status, progress: j.progress && j.progress.percentage ? Math.round(j.progress.percentage) : 0 })});
         jobs = tmpJobs.sort((a,b) => (b.date - a.date)).map(j => {
             j.date=new Date(j.date).toISOString();
             return j;
