@@ -1,10 +1,19 @@
 export const dataCorrections = {
     "H9HBeGybba1K": {
-      "permalink": "/search?advanced=true&fuzzy=false&view=card-expand&ln=Souche&fn=Bruno%2CEtienne%2CMarie&bd=19%2F11%2F1957&bc=Montpellier&dd=10%2F04%2F2020",
+      "permalink": "/id/H9HBeGybba1K",
       "change": "cancel",
-      "request": "user",
-      "proof": "certificate",
+      "reason": "false death declaration",
+      "request": "self",
+      "proofs": ["judgment of cancellation"],
       "certificateId" : 1271,
       "anonymize": false
+    },
+    "Sx46mXzoiNo5": {
+      "permalink": "/id/H9HBeGybba1K",
+      "change": "remove",
+      "request": "parent",
+      "reason": "cnil-art-85",
+      "proofs": ["family book", "parent id card", "death act"],
+      "anonymize": true
     }
 };
