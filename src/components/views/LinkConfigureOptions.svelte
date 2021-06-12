@@ -91,7 +91,7 @@
             label: "Formattage du fichier",
             defaultSize: 2,
             items: {
-                encoding: {label: "Codage", options: [['Unicode','utf8'], ['Latin','latin1'],['Mac'],['Windows 1252','windows-1252']]},
+                encoding: {label: "Codage", options: [['Unicode','utf8'], ['Latin','latin1'],['Mac','mac'],['Windows 1252','win1252']]},
                 sep: {label: "Séparateur", options:[["Point-virgule (;)",";"],["Virgule (,)",","],["Tabulation","\t","Barre verticale (|)",'|'],["Espace"," "]]},
                 quote: {size:3,label: "Délimiteur", options:[['aucun', undefined],['guillemets doubles (")','"'],["guillemets simples (')","'"]]},
                 skipLines: {label: "Lignes sautées:", options: [['aucune',0],[1,1],[2,2],[3,3],[4,4],[5,5]]},
