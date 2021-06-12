@@ -226,6 +226,17 @@ const correct = (person) => {
                 }
             }
         }
+        if (person.correction.change === "remove") {
+            person.name = { first: ["INCONNU"], last: "INCONNU"};
+            person.birth.sex = undefined;
+            person.birth.date = "XXXX";
+            person.birth.location = {
+                departmentCode: "",
+                country: person.birth.location.country,
+                countryCode: person.birth.location.countryCode
+            }
+            person.death = undefined;
+        }
     }
     return person;
   };
@@ -235,7 +246,7 @@ export const searchSubmit = async (newCurrent) => {
     if (searchTrigger(mySearchInput) && (!myWaitSearch)) {
         await waitSearch.update( v => true);
         const state = await search(mySearchInput, newCurrent);
-        await searchResults.update( v => state.persons.map(correct) );
+        await searchResults.update( v => state.persons.map(correct).filter(x => ! (x.correction && (x.correction.change === "remove"))));
         await totalResults.update(v => state.total);
         await totalPages.update(v => computeTotalPages(state.size, state.total));
         if (state.scrollId) {

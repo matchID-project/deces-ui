@@ -54,9 +54,9 @@
 
     const toString = (r) => {
         return `${r.name.last.toUpperCase()}
-        ${r.name.first ? r.name.first.join(' ') : ''}${r.death.age ? ` ${r.death.age} ans`:''},
+        ${r.name.first ? r.name.first.join(' ') : ''}${r.death && r.death.age ? ` ${r.death.age} ans`:''},
         ${cityString(result.birth.location.city, false)} ${dateFormat(r.birth.date)} -
-        ${cityString(result.death.location.city, false)} ${dateFormat(r.death.date)}`
+        ${result.death ? cityString(result.death.location.city, false) : ''} ${r.death ? dateFormat(r.death.date) : ''}`
     }
 
     const dateFormat = (dateString) => {

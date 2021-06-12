@@ -83,9 +83,13 @@
                             {#if result.correction}
                                 <span style="display:flex" class="rf-color--rm">
                                     <Icon icon='ri:alert-line' class="rf-color--rm rf-fi--md rf-margin-right-1N" title="erreur de donnée signalée"/>
-                                    La fiche a fait l'objet d'un signalement pour erreur.
-                                    {#if result.correction.change === "cancel"}
-                                        La personne mentionnée n'est pas décédée, et a demandé le retrait de cette fiche au fichier INSEE.
+                                    {#if result.correction.change === "remove"}
+                                        Fiche retirée
+                                    {:else}
+                                        La fiche a fait l'objet d'un signalement pour erreur.
+                                        {#if result.correction.change === "cancel"}
+                                            La personne mentionnée n'est pas décédée, et a demandé le retrait de cette fiche au fichier INSEE.
+                                        {/if}
                                     {/if}
                                 </span>
                             {/if}
