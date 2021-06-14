@@ -481,12 +481,12 @@ export const linkCompleted = writable(false);
 export const version = writable({
     ui: '__APP__ version __APP_VERSION__',
     data: {
-        version: '4857ea92',
-        updateDate: '07/05/2021',
-        lastRecordDate: '29/04/2021',
-        lastDataset: 'deces-2021-m04',
-        rawRecordsCount: 25841417,
-        uniqRecordsCount: 25681818
+        version: '77be9f47',
+        updateDate: '14/06/2021',
+        lastRecordDate: '30/05/2021',
+        lastDataset: 'deces-2021-m05',
+        rawRecordsCount: 25892695,
+        uniqRecordsCount: 25733093
     }
 })
 
