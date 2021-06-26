@@ -41,6 +41,7 @@ export FRONTEND_DEV_PORT = ${PORT}
 export LOG_DIR = ${FRONTEND}/log/mirror
 export LOG_DB_DIR = ${FRONTEND}/log/db
 export STATS_SCRIPTS = ${FRONTEND}/stats/src
+export STATS_UPDATE_DAYS = 35
 export STATS = ${FRONTEND}/stats/public
 export BACKEND_PORT=8080
 export BACKEND_HOST=backend
@@ -593,19 +594,15 @@ stats-full: config-stats ${STATS} logs-restore stats-db-restore
 	@zcat -f `ls -tr ${LOG_DIR}/access*gz` ${LOG_DIR}/access.log | ${STATS_SCRIPTS}/parseLogs.pl
 
 stats-full-init: config-stats ${STATS} logs-restore
-	@if [ "${GIT_BRANCH}" = "${GIT_BRANCH_MASTER}" ]; then\
-		rm -rf ${LOG_DB_DIR} && mkdir -p ${LOG_DB_DIR};\
-		(zcat -f `ls -tr ${LOG_DIR}/access*gz` ${LOG_DIR}/access.log | ${STATS_SCRIPTS}/parseLogs.pl);\
-		make stats-catalog stats-db-backup stats-backup;\
-	fi;
-
-stats-full-update: config-stats ${STATS} logs-restore stats-db-restore stats-restore
 	@\
-	if [ "${GIT_BRANCH}" = "${GIT_BRANCH_MASTER}" ]; then\
-		zcat -f `ls -tr ${LOG_DIR}/access.log.*gz | tail -2` ${LOG_DIR}/access.log | ${STATS_SCRIPTS}/parseLogs.pl;\
-	fi
+	rm -rf ${LOG_DB_DIR} && mkdir -p ${LOG_DB_DIR};\
+	(zcat -f `ls -tr ${LOG_DIR}/access*gz` ${LOG_DIR}/access.log | ${STATS_SCRIPTS}/parseLogs.pl);\
+	make stats-catalog stats-db-backup stats-backup;\
 
-stats-live: config-stats ${STATS} logs-restore
+stats-full-update: config-stats ${STATS} stats-db-restore stats-restore logs-restore
+	@zcat -f `ls -tr ${LOG_DIR}/access.log.*gz | tail -${STATS_UPDATE_DAYS}` ${LOG_DIR}/access.log | ${STATS_SCRIPTS}/parseLogs.pl;\
+
+stats-live: config-stats ${STATS} stats-restore logs-restore
 	@cat ${LOG_DIR}/access.log | ${STATS_SCRIPTS}/parseLogs.pl day
 
 stats-catalog: ${STATS}
@@ -614,16 +611,18 @@ stats-catalog: ${STATS}
 stats-update: stats-full-update stats-catalog
 
 stats-background:
-	@if [ "${GIT_BRANCH}" = "${GIT_BRANCH_MASTER}" ]; then\
-		((make stats-restore) > .stats-restore 2>&1 &);\
-		((sleep 60;make stats-full stats-catalog) > .stats-full 2>&1 &);\
-		((sleep 1200;while (true); do make stats-update;sleep 3600;done) > .stats-update 2>&1 &);\
-		((sleep 1350;while (true); do make stats-live;sleep 120;done) > .stats-live 2>&1 &);\
+	@((make logs-restore stats-restore stats-db-restore) > .stats-restore 2>&1 &);\
+	if [ "${GIT_BRANCH}" = "${GIT_BRANCH_MASTER}" ]; then\
+		(\
+			(\
+				((date '+%Y-%m-%d-%H:%M:%S';make stats-update stat-live) > .stats-init 2>&1);\
+				((while (true); do sleep 3600;date '+%Y-%m-%d-%H:%M:%S';make stats-update;done) > .stats-update 2>&1 &);\
+				((while (true); do sleep 120;date '+%Y-%m-%d-%H:%M:%S';make stats-live;done) > .stats-live 2>&1 &);\
+			)\
+		&);\
 	else\
-		((make stats-restore stats-db-restore) > .stats-restore 2>&1 &);\
-		((sleep 60;while (true); do make stats-update;sleep 3600;done) > .stats-update 2>&1 &);\
-		((sleep 200;while (true); do make stats-live;sleep 120;done) > .stats-live 2>&1 &);\
-	fi
+		((while (true); do date '+%Y-%m-%d-%H:%M:%S'; make stats-live;sleep 120;done) > .stats-live 2>&1 &);\
+	fi;
 
 ${PROOFS}:
 	@mkdir -p ${PROOFS}
