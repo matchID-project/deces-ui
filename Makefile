@@ -595,34 +595,32 @@ stats-full: config-stats ${STATS} logs-restore stats-db-restore
 
 stats-full-init: config-stats ${STATS} logs-restore
 	@\
-	rm -rf ${LOG_DB_DIR} && mkdir -p ${LOG_DB_DIR};\
-	(zcat -f `ls -tr ${LOG_DIR}/access*gz` ${LOG_DIR}/access.log | ${STATS_SCRIPTS}/parseLogs.pl);\
-	make stats-catalog stats-db-backup stats-backup;\
+		rm -rf ${LOG_DB_DIR} && mkdir -p ${LOG_DB_DIR};\
+		(zcat -f `ls -tr ${LOG_DIR}/access*gz` ${LOG_DIR}/access.log | ${STATS_SCRIPTS}/parseLogs.pl);\
+		make stats-catalog stats-db-backup stats-backup;
 
-stats-full-update: config-stats ${STATS} stats-db-restore stats-restore logs-restore
-	@zcat -f `ls -tr ${LOG_DIR}/access.log.*gz | tail -${STATS_UPDATE_DAYS}` ${LOG_DIR}/access.log | ${STATS_SCRIPTS}/parseLogs.pl;\
+stats-full-update: config-stats ${STATS} logs-restore stats-db-restore stats-restore
+	@\
+		zcat -f `ls -tr ${LOG_DIR}/access.log.*gz | tail -${STATS_UPDATE_DAYS}` ${LOG_DIR}/access.log | ${STATS_SCRIPTS}/parseLogs.pl;
 
-stats-live: config-stats ${STATS} stats-restore logs-restore
+stats-live: config-stats ${STATS} logs-restore
 	@cat ${LOG_DIR}/access.log | ${STATS_SCRIPTS}/parseLogs.pl day
 
 stats-catalog: ${STATS}
 	@ls ${STATS} | grep -v catalog | perl -e '@list=<>;print "[\n".join(",\n",map{chomp;s/.json//;"  \"$$_\""} (grep {/.json/} @list))."\n]\n"' >  ${STATS}/catalog.json
 
-stats-update: stats-full-update stats-catalog
+stats-update: stats-full-update stats-catalog stats-backup stats-db-backup
 
 stats-background:
-	@((make logs-restore stats-restore stats-db-restore) > .stats-restore 2>&1 &);\
-	if [ "${GIT_BRANCH}" = "${GIT_BRANCH_MASTER}" ]; then\
-		(\
-			(\
-				((date '+%Y-%m-%d-%H:%M:%S';make stats-update stat-live) > .stats-init 2>&1);\
-				((while (true); do sleep 3600;date '+%Y-%m-%d-%H:%M:%S';make stats-update;done) > .stats-update 2>&1 &);\
-				((while (true); do sleep 120;date '+%Y-%m-%d-%H:%M:%S';make stats-live;done) > .stats-live 2>&1 &);\
-			)\
-		&);\
+	@if [ "${GIT_BRANCH}" = "${GIT_BRANCH_MASTER}" ]; then\
+		((make stats-restore) > .stats-restore 2>&1 &);\
+		((sleep 60;make stats-update) > .stats-full 2>&1 &);\
+		((sleep 3600;while (true); do make stats-update;sleep 3600;done) > .stats-update 2>&1 &);\
+		((sleep 3720;while (true); do make stats-live;sleep 120;done) > .stats-live 2>&1 &);\
 	else\
-		((while (true); do date '+%Y-%m-%d-%H:%M:%S'; make stats-live;sleep 120;done) > .stats-live 2>&1 &);\
-	fi;
+		((make stats-restore stats-db-restore) > .stats-restore 2>&1 &);\
+		((sleep 200;while (true); do make stats-live;sleep 120;done) > .stats-live 2>&1 &);\
+	fi
 
 ${PROOFS}:
 	@mkdir -p ${PROOFS}
