@@ -1,0 +1,22 @@
+name: Index year
+
+on:
+  schedule:
+    - cron: "0 * * * 0"
+
+jobs:
+  logs:
+    name: Compute full logs
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v1
+      - name: compute full logs
+        run: make logs-restore stats-full-init stats-catalog stats-db-backup stats-backup
+        env:
+          GIT_BRANCH: ${{ steps.extract_branch.outputs.branch }}
+          TOOLS_STORAGE_ACCESS_KEY: ${{ secrets.TOOLS_STORAGE_ACCESS_KEY }}
+          TOOLS_STORAGE_SECRET_KEY: ${{ secrets.TOOLS_STORAGE_SECRET_KEY }}
+          LOG_BUCKET: ${{ secrets.LOG_BUCKET }}
+          LOG_DB_BUCKET: ${{ secrets.LOG_DB_BUCKET }}
+          STATS_BUCKET: ${{ secrets.STATS_BUCKET }}
