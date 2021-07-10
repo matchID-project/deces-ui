@@ -1,4 +1,4 @@
-name: Index year
+name: Compute full stats
 
 on:
   schedule:
