@@ -2,7 +2,7 @@ name: Compute full stats
 
 on:
   schedule:
-    - cron: "* * * * *"
+    - cron: "0 * * * *"
 
 jobs:
   logs:
@@ -12,7 +12,7 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - name: compute full logs
-        run: make logs-restore stats-full-init stats-catalog stats-db-backup stats-backup
+        run: make config logs-restore stats-full-init stats-catalog stats-db-backup stats-backup
         env:
           GIT_BRANCH: ${{ steps.extract_branch.outputs.branch }}
           TOOLS_STORAGE_ACCESS_KEY: ${{ secrets.TOOLS_STORAGE_ACCESS_KEY }}
