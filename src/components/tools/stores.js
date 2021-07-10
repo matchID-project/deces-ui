@@ -481,7 +481,7 @@ export const linkCompleted = writable(false);
 export const version = writable({
     ui: '__APP__ version __APP_VERSION__',
     data: {
-        version: '7535b24f-13f3a9b7',
+        version: '13f3a9b7',
         updateDate: '09/07/2021',
         lastRecordDate: '29/06/2021',
         lastDataset: 'deces-2021-m06',

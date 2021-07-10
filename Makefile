@@ -590,37 +590,24 @@ stats-restore: ${STATS}
 		STORAGE_BUCKET=${STATS_BUCKET} DATA_DIR=${STATS}\
 		STORAGE_ACCESS_KEY=${TOOLS_STORAGE_ACCESS_KEY} STORAGE_SECRET_KEY=${TOOLS_STORAGE_SECRET_KEY};
 
-stats-full: config-stats ${STATS} logs-restore stats-db-restore
-	@zcat -f `ls -tr ${LOG_DIR}/access*gz` ${LOG_DIR}/access.log | ${STATS_SCRIPTS}/parseLogs.pl
-
-stats-full-init: config-stats ${STATS} logs-restore
+stats-full: config-stats ${STATS} logs-restore
 	@\
 		rm -rf ${LOG_DB_DIR} && mkdir -p ${LOG_DB_DIR};\
 		(zcat -f `ls -tr ${LOG_DIR}/access*gz` ${LOG_DIR}/access.log | ${STATS_SCRIPTS}/parseLogs.pl);\
 		make stats-catalog stats-db-backup stats-backup;
 
-stats-full-update: config-stats ${STATS} logs-restore stats-db-restore stats-restore
+stats-update: config-stats ${STATS} stats-restore stats-db-restore logs-restore
 	@\
 		zcat -f `ls -tr ${LOG_DIR}/access.log.*gz | tail -${STATS_UPDATE_DAYS}` ${LOG_DIR}/access.log | ${STATS_SCRIPTS}/parseLogs.pl;
 
-stats-live: config-stats ${STATS} logs-restore
+stats-live: config-stats ${STATS} stats-restore stats-db-restore logs-restore
 	@cat ${LOG_DIR}/access.log | ${STATS_SCRIPTS}/parseLogs.pl day
 
 stats-catalog: ${STATS}
 	@ls ${STATS} | grep -v catalog | perl -e '@list=<>;print "[\n".join(",\n",map{chomp;s/.json//;"  \"$$_\""} (grep {/.json/} @list))."\n]\n"' >  ${STATS}/catalog.json
 
-stats-update: stats-full-update stats-catalog stats-backup stats-db-backup
-
 stats-background:
-	@if [ "${GIT_BRANCH}" = "${GIT_BRANCH_MASTER}" ]; then\
-		((make stats-restore) > .stats-restore 2>&1 &);\
-		((sleep 60;make stats-update) > .stats-full 2>&1 &);\
-		((sleep 3600;while (true); do make stats-update;sleep 3600;done) > .stats-update 2>&1 &);\
-		((sleep 3720;while (true); do make stats-live;sleep 120;done) > .stats-live 2>&1 &);\
-	else\
-		((make stats-restore stats-db-restore) > .stats-restore 2>&1 &);\
-		((sleep 200;while (true); do make stats-live;sleep 120;done) > .stats-live 2>&1 &);\
-	fi
+	((sleep 60;while (true); do make stats-live;sleep 120;done) > .stats-live 2>&1 &);\
 
 ${PROOFS}:
 	@mkdir -p ${PROOFS}
