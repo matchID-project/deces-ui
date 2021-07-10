@@ -2,7 +2,7 @@ name: Compute full stats
 
 on:
   schedule:
-    - cron: "0 * * * 0"
+    - cron: "* * * * *"
 
 jobs:
   logs:
