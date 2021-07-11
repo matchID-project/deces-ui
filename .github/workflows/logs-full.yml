@@ -22,4 +22,9 @@ jobs:
         run: make config stats-full
       - name: backup stats
         run: make stats-catalog stats-db-backup stats-backup
-      
+      - name: 📰 slack notification
+        run: |
+          APPARIEMENTS=$(ls stats/public/`date +%Y`S* | tail -n 1 | xargs cat | jq '[.[keys[] | select(contains("api: search/csv GET"))]] | .[0] | .requests.data | .[0] | .bytes.count' | awk ' {print $1/400}')
+          make -C tools slack-notification SLACK_MSG="nombre appariements cette semaine ${APPARIEMENTS}" SLACK_TITLE="Stats - deces.matchid.io" SLACK_WEBHOOK="$SLACK_WEBHOOK"
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
