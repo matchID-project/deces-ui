@@ -24,7 +24,10 @@ jobs:
         run: make stats-catalog stats-db-backup stats-backup
       - name: 📰 slack notification
         run: |
+          SEMAINE=$(ls stats/public/`date +%Y`S* | tail -n 1 | cut -b 1-7)
           APPARIEMENTS=$(ls stats/public/`date +%Y`S* | tail -n 1 | xargs cat | jq '[.[keys[] | select(contains("api: search/csv GET"))]] | .[0] | .requests.data | .[0] | .bytes.count' | awk ' {print $1/400}')
-          make -C tools slack-notification SLACK_MSG="nombre appariements cette semaine ${APPARIEMENTS}" SLACK_TITLE="Stats - deces.matchid.io" SLACK_WEBHOOK="$SLACK_WEBHOOK"
+          CORRECTIONS=$(ls stats/public/`date +%Y`S* | tail -n 1 | xargs cat | jq '[.[keys[] | select(.|test("^api: id.* POST"))]] | .[0] | .requests.data | .[0] | .hits.count')
+          NEWLINE=$'\n'
+          make -C tools slack-notification SLACK_MSG="* Appariements 👉 ${APPARIEMENTS} ${NEWLINE}* Corrections 👉 ${CORRECTIONS}" SLACK_TITLE="Stats - deces.matchid.io - ${SEMAINE}" SLACK_WEBHOOK="$SLACK_WEBHOOK"
         env:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
