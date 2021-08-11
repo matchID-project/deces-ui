@@ -8,16 +8,17 @@ jobs:
   logs:
     name: Compute full logs
     runs-on: ubuntu-latest
-
+    env:
+      TOOLS_STORAGE_ACCESS_KEY: ${{ secrets.TOOLS_STORAGE_ACCESS_KEY }}
+      TOOLS_STORAGE_SECRET_KEY: ${{ secrets.TOOLS_STORAGE_SECRET_KEY }}
+      LOG_BUCKET: ${{ secrets.LOG_BUCKET }}
+      LOG_DB_BUCKET: ${{ secrets.LOG_DB_BUCKET }}
+      STATS_BUCKET: ${{ secrets.STATS_BUCKET }}
+      MMDB_TOKEN: ${{ secrets.MMDB_TOKEN }}
+    
     steps:
       - uses: actions/checkout@v1
-      - name: compute full logs
-        run: make config stats-update stats-catalog stats-db-backup stats-backup
-        env:
-          GIT_BRANCH: ${{ steps.extract_branch.outputs.branch }}
-          TOOLS_STORAGE_ACCESS_KEY: ${{ secrets.TOOLS_STORAGE_ACCESS_KEY }}
-          TOOLS_STORAGE_SECRET_KEY: ${{ secrets.TOOLS_STORAGE_SECRET_KEY }}
-          LOG_BUCKET: ${{ secrets.LOG_BUCKET }}
-          LOG_DB_BUCKET: ${{ secrets.LOG_DB_BUCKET }}
-          STATS_BUCKET: ${{ secrets.STATS_BUCKET }}
-          MMDB_TOKEN: ${{ secrets.MMDB_TOKEN }}
+      - name: update stats
+        run: make config stats-update
+      - name: backup stats
+        run: make stats-catalog stats-db-backup stats-backup
