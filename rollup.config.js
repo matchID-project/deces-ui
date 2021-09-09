@@ -1,5 +1,6 @@
 import svelte from 'rollup-plugin-svelte';
 import replace from '@rollup/plugin-replace';
+import json from "@rollup/plugin-json";
 import resolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import livereload from 'rollup-plugin-livereload';
@@ -51,6 +52,7 @@ const options = {
 			dedupe: importee => importee === 'svelte' || importee.startsWith('svelte/')
 		}),
 		commonjs(),
+    json(),
 
 		// In dev mode, call `npm run start` once
 		// the bundle has been generated
