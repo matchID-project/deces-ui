@@ -24,7 +24,7 @@ jobs:
         run: make stats-catalog stats-db-backup stats-backup
       - name: 📰 slack notification
         run: |
-          SEMAINE=$(ls stats/public/`date +%Y`S* | tail -n 1 | cut -b 1-7)
+          SEMAINE=$(ls stats/public/`date +%Y`S* | tail -n 1  | sed -En "s/stats\/public\/(.*)\.json/\1/p")
           APPARIEMENTS=$(ls stats/public/`date +%Y`S* | tail -n 1 | xargs cat | jq '[.[keys[] | select(contains("api: search/csv GET"))]] | .[0] | .requests.data | .[0] | .bytes.count' | awk ' {print $1/400}')
           CORRECTIONS=$(ls stats/public/`date +%Y`S* | tail -n 1 | xargs cat | jq '[.[keys[] | select(.|test("^api: id.* POST"))]] | .[0] | .requests.data | .[0] | .hits.count')
           NEWLINE=$'\n'
