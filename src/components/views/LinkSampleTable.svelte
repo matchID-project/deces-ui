@@ -1,5 +1,5 @@
 
-<div style="height: 450px;overflow-y:scroll;overflow-x:None;">
+<div style="height: 520px;overflow-y:scroll;overflow-x:None;">
     <div class="rf-container-fluid">
         {#if header}
             <datalist id="LinkSampleTable">
