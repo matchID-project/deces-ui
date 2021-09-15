@@ -100,14 +100,14 @@
         { group: 'Naissance', size: 4, label: "Pays", field: "birthCountry", mapTo: undefined, type: "country"},
         { group: 'Naissance', size: 4, label: "Commune", field: "birthCity", mapTo: undefined, type: "city"},
         { group: 'Naissance', size: 4, label: "Code&nbsp;INSEE", field: "birthLocationCode", mapTo: undefined, type: "locationCode"},
-        { group: 'Naissance', size: 4, label: "Code&nbsp;Postal", field: "birthPostalCode", mapTo: undefined, type: "locationCode"},
+        { group: 'Naissance', size: 4, label: "Code&nbsp;Postal", field: "birthPostalCode", mapTo: undefined, type: "postalCode"},
         { group: 'Décès', size: 6, label: "Date", field: { query: "deathDate", result: "deathDate" }, mapTo: undefined, type: "date", blockOnWarning: true,
             errorMessage: "le champ date ne supporte que les format JJ/MM/AAAA, JJ-MM-AAAA, AAAA/MM/JJ et AAAA-MM-JJ"},
         { group: 'Décès', size: 6, label: "Après&nbsp;le&nbsp;(date)", field: { query: "lastSeenAliveDate", result: "deathDate" }, mapTo: undefined, type: "date", blockOnWarning: true,
             errorMessage: "le champ date ne supporte que les format JJ/MM/AAAA, JJ-MM-AAAA, AAAA/MM/JJ et AAAA-MM-JJ"},
         { group: 'Décès', size: 4, label: "Département", field: "deathDepartment", mapTo: undefined, type: "depCode"},
         { group: 'Décès', size: 4, label: "Code&nbsp;INSEE", field: "deathLocationCode", mapTo: undefined, type: "locationCode"},
-        { group: 'Décès', size: 4, label: "Code&nbsp;Postal", field: "deathPostalCode", mapTo: undefined, type: "locationCode"}
+        { group: 'Décès', size: 4, label: "Code&nbsp;Postal", field: "deathPostalCode", mapTo: undefined, type: "postalCode"}
     ];
     let done = false;
     let disabled = true;
