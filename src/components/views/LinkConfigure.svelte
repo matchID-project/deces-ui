@@ -25,7 +25,7 @@
                 <strong>Depuis les colonnes ci-dessous:</strong><br/>
                 <span class="rf-text--sm">glissez-collez une colonne du bas sur un champ ci-contre</span>
             </p>
-            <LinkSampleTable bind:mapping={mapping} bind:fields={fields}/>
+            <LinkSampleTable bind:fields={fields}/>
         </div>
         <div class="rf-col-12 rf-margin-top-2N">
             {#if warning}

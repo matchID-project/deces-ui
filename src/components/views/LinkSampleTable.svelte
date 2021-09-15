@@ -52,7 +52,7 @@
     export let quote;
     export let page = 1;
     export let pageSize=5;
-    export let mapping;
+    let mapping;
     export let fields;
     export let skipLines;
     export let encoding;
@@ -66,6 +66,18 @@
         firstName: 3,
         lastName: 2
     }
+
+    $: if (fields) {
+        const tmp = {
+            direct: {},
+            reverse: {}
+        };
+        fields.filter(f => f.mapTo).map(f => {
+            tmp.direct[f.mapTo]=f.field && (f.field.result || f.field);
+            tmp.reverse[f.field && (f.field.query || f.field)]=f.mapTo;
+        });
+        mapping = tmp;
+    };
 
     const locationCodeRegex = /^\d[0-9a-b]\d{3}/;
     const corsicaLocationCodeRegex = /^2[a-b]\d{3}/;
