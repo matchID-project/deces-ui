@@ -1,0 +1,85 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ${BACKEND_APP}-deployment
+  namespace: ${KUBE_NAMESPACE}
+spec:
+  replicas: ${APP_NODES}
+  selector:
+    matchLabels:
+      app: ${BACKEND_APP}
+  template:
+    metadata:
+      labels:
+        app: ${BACKEND_APP}
+    spec:
+      containers:
+      - name: ${DC_PREFIX}
+        image: ${DOCKER_USERNAME}/${BACKEND_APP}:${BACKEND_APP_VERSION}
+        ports:
+        - containerPort: ${BACKEND_PORT}
+        env:
+          - name: NODE_ENV
+            value: "${EXEC_ENV}"
+          - name: BACKEND_PORT
+            value: "${BACKEND_PORT}"
+          - name: APP
+            value: "${BACKEND_APP}"
+          - name: APP_VERSION
+            value: "${BACKEND_APP_VERSION}"
+          - name: APP_DNS
+            value: "${APP_DNS}"
+          - name: BACKEND_PROXY_PATH
+            value: "${BACKEND_PROXY_PATH}"
+          - name: BACKEND_JOB_CONCURRENCY
+            value: "${BACKEND_JOB_CONCURRENCY}"
+          - name: BACKEND_CHUNK_CONCURRENCY
+            value: "${BACKEND_CHUNK_CONCURRENCY}"
+          - name: BACKEND_LOG_LEVEL
+            value: "${BACKEND_LOG_LEVEL}"
+          - name: BACKEND_LOG_TIMER
+            value: "${BACKEND_LOG_TIMER}"
+          - name: BACKEND_TOKEN_KEY
+            value: "${BACKEND_TOKEN_KEY}"
+          - name: BACKEND_TOKEN_USER
+            value: "${BACKEND_TOKEN_USER}"
+          - name: BACKEND_TOKEN_PASSWORD
+            value: "${BACKEND_TOKEN_PASSWORD}"
+          - name: SMTP_HOST
+            value: "${SMTP_HOST}"
+          - name: SMTP_PORT
+            value: "${SMTP_PORT}"
+          - name: SMTP_USER
+            value: "${SMTP_USER}"
+          - name: SMTP_PWD
+            value: "${SMTP_PWD}"
+          - name: API_URL
+            value: "${API_URL}"
+          - name: API_SSL
+            value: "${API_SSL}"
+          - name: API_EMAIL
+            value: "${API_EMAIL}"
+          - name: DATAGOUV_CATALOG_URL
+            value: "${DATAGOUV_CATALOG_URL}"
+          - name: DATAGOUV_RESOURCES_URL
+            value: "${DATAGOUV_RESOURCES_URL}"
+          - name: DATAGOUV_PROXY_PATH
+            value: "${DATAGOUV_PROXY_PATH}"
+          - name: ES_URL
+            value: "${APP}-es-svc:${ES_PORT}"
+          - name: ES_INDEX
+            value: "${ES_INDEX}"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ${BACKEND_APP}-svc
+  namespace: ${KUBE_NAMESPACE}
+spec:
+  ports:
+  - port: ${BACKEND_PORT}
+    targetPort: ${BACKEND_PORT}
+    protocol: TCP
+    name: http
+  selector:
+    app: ${BACKEND_APP}

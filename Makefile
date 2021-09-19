@@ -47,6 +47,7 @@ export BACKEND_PORT=8080
 export BACKEND_HOST=backend
 export BACKEND_JOB_CONCURRENCY=2
 export BACKEND_CHUNK_CONCURRENCY=4
+export BACKEND_LOG_LEVEL=error
 export BACKEND_TOKEN_USER?=${API_EMAIL}
 export BACKEND_TOKEN_KEY?=$(shell openssl rand -base64 16)
 export BACKEND_TOKEN_PASSWORD?=$(shell openssl rand -base64 16)
@@ -92,18 +93,25 @@ export DC_PREFIX := $(shell echo ${APP} | tr '[:upper:]' '[:lower:]' | tr '_' '-
 export DC_IMAGE_NAME = ${DC_PREFIX}
 export DC_NETWORK := $(shell echo ${APP} | tr '[:upper:]' '[:lower:]')
 export DC_BUILD_ARGS = --pull --no-cache
-
 export DC := docker-compose
 export GIT_ORIGIN=origin
 export GIT_BRANCH := $(shell git branch | grep '*' | awk '{print $$2}')
 export GIT_BRANCH_MASTER=master
 export GIT_DATAPREP = deces-dataprep
 export GIT_BACKEND = deces-backend
+export BACKEND_APP=${GIT_BACKEND}
 export GIT_BACKEND_BRANCH = dev
 export GIT_ROOT = https://github.com/matchid-project
 export GIT_TOOLS = tools
 export API_URL?=${APP_DNS}
 export API_SSL?=1
+export APP_NODES=1
+export KUBE_NAMESPACE:=$(shell echo -n ${APP_GROUP}-${APP}-${GIT_BRANCH} | tr '[:upper:]' '[:lower:]' | tr '_' '-')
+export KUBE_DIR=${FRONTEND}/k8s
+export ES_MEM_KUBE:=$(shell echo -n ${ES_MEM} | sed 's/\s*m/Mi/')
+export STORAGE_ACCESS_KEY_B64:=$(shell echo -n ${STORAGE_ACCESS_KEY} | openssl base64)
+export STORAGE_SECRET_KEY_B64:=$(shell echo -n ${STORAGE_SECRET_KEY} | openssl base64)
+
 
 export PROOFS=${FRONTEND}/${GIT_BACKEND}/backend/data/proofs
 
@@ -476,6 +484,31 @@ local-test-api:
 	done ; \
 	exit $$ret
 
+
+
+
+deploy-k8s: deploy-k8s-elasticsearch deploy-k8s-redis deploy-k8s-backend deploy-k8s-frontend
+
+deploy-k8s-namespace:
+	@echo $@
+	(cat ${KUBE_DIR}/namespace.yaml | envsubst | kubectl apply -f -) && touch $@
+
+deploy-k8s-elasticsearch: deploy-k8s-namespace
+	@echo $@
+	@cat ${KUBE_DIR}/elasticsearch.yaml | envsubst | kubectl apply -f -
+
+deploy-k8s-redis: deploy-k8s-namespace
+	@echo $@
+	@cat ${KUBE_DIR}/redis.yaml | envsubst | kubectl apply -f -
+
+deploy-k8s-backend: deploy-k8s-namespace
+	@echo $@
+	@export BACKEND_APP_VERSION=$(shell cd ${APP_PATH}/${GIT_BACKEND} && git describe --tags);\
+	cat ${KUBE_DIR}/backend.yaml | envsubst | kubectl apply -f -
+
+deploy-k8s-frontend: deploy-k8s-namespace
+	@echo $@
+	@cat ${KUBE_DIR}/frontend.yaml | envsubst | kubectl apply -f -
 
 deploy-remote-instance: config-minimal backend-config
 	@BACKEND_APP_VERSION=$(shell cd ${APP_PATH}/${GIT_BACKEND} && git describe --tags);\

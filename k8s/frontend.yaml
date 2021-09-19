@@ -1,0 +1,101 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ${APP}-deployment
+  namespace: ${KUBE_NAMESPACE}
+spec:
+  replicas: ${APP_NODES}
+  selector:
+    matchLabels:
+      app: ${APP}
+  template:
+    metadata:
+      labels:
+        app: ${APP}
+    spec:
+      containers:
+      - name: ${DC_PREFIX}
+        image: ${DOCKER_USERNAME}/${DC_PREFIX}:${APP_VERSION}
+        ports:
+        - containerPort: 80
+        env:
+          - name: APP
+            value: "${APP}"
+          - name: ES_PROXY_PATH
+            value: "${ES_PROXY_PATH}"
+          - name: ES_HOST
+            value: "${APP}-es-svc"
+          - name: ES_INDEX
+            value: "${ES_INDEX}"
+          - name: ES_PORT
+            value: "${ES_PORT}"
+          - name: BACKEND_PROXY_PATH
+            value: "${BACKEND_PROXY_PATH}"
+          - name: BACKEND_PORT
+            value: "${BACKEND_PORT}"
+          - name: BACKEND_HOST
+            value: "${BACKEND_APP}-svc"
+          - name: DATAGOUV_PROXY_PATH
+            value: "${DATAGOUV_PROXY_PATH}"
+          - name: DATAGOUV_RESOURCES_PROXY
+            value: "${DATAGOUV_RESOURCES_PROXY}"
+          - name: DATAGOUV_RESOURCES_REWRITE_PATH
+            value: "${DATAGOUV_RESOURCES_REWRITE_PATH}"
+          - name: NGINX_CSP
+            value: "${NGINX_CSP}"
+          - name: API_SEARCH_LIMIT_RATE
+            value: "${API_SEARCH_LIMIT_RATE}"
+          - name: API_SEARCH_USER_BURST
+            value: "${API_SEARCH_USER_BURST}"
+          - name: API_SEARCH_GLOBAL_LIMIT_RATE
+            value: "${API_SEARCH_GLOBAL_LIMIT_RATE}"
+          - name: API_SEARCH_GLOBAL_BURST
+            value: "${API_SEARCH_GLOBAL_BURST}"
+          - name: API_BULK_SUBMIT_LIMIT_RATE
+            value: "${API_BULK_SUBMIT_LIMIT_RATE}"
+          - name: API_BULK_SUBMIT_BURST
+            value: "${API_BULK_SUBMIT_BURST}"
+          - name: API_MISC_LIMIT_RATE
+            value: "${API_MISC_LIMIT_RATE}"
+          - name: API_MISC_USER_BURST
+            value: "${API_MISC_USER_BURST}"
+          - name: API_MISC_GLOBAL_LIMIT_RATE
+            value: "${API_MISC_GLOBAL_LIMIT_RATE}"
+          - name: API_MISC_GLOBAL_BURST
+            value: "${API_MISC_GLOBAL_BURST}"
+          - name: API_AGG_LIMIT_RATE
+            value: "${API_AGG_LIMIT_RATE}"
+          - name: API_AGG_USER_BURST
+            value: "${API_AGG_USER_BURST}"
+          - name: API_AGG_GLOBAL_LIMIT_RATE
+            value: "${API_AGG_GLOBAL_LIMIT_RATE}"
+          - name: API_AGG_GLOBAL_BURST
+            value: "${API_AGG_GLOBAL_BURST}"
+          - name: API_DOWNLOAD_LIMIT_RATE
+            value: "${API_DOWNLOAD_LIMIT_RATE}"
+          - name: API_USER_SCOPE
+            value: "${API_USER_SCOPE}"
+          - name: API_SEND_TIMEOUT
+            value: "${API_SEND_TIMEOUT}"
+          - name: API_READ_TIMEOUT
+            value: "${API_READ_TIMEOUT}"
+          - name: API_MAX_BODY
+            value: "${API_MAX_BODY}"
+          - name: MITM_URL
+            value: "${MITM_URL}"
+          - name: GOOGLE_ANALYTICS_ID
+            value: "${GOOGLE_ANALYTICS_ID}"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ${APP}-svc
+  namespace: ${KUBE_NAMESPACE}
+spec:
+  ports:
+  - port: 80
+    targetPort: 80
+    protocol: TCP
+    name: ui
+  selector:
+    app: ${APP}
