@@ -17,6 +17,7 @@ services:
       - frontend-development
     environment:
       - APP
+      - PORT
       - FRONTEND_DEV_HOST
       - FRONTEND_DEV_PORT
       - BACKEND_PROXY_PATH

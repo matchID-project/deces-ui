@@ -15,6 +15,7 @@ services:
     container_name: ${DC_PREFIX}
     environment:
       - APP
+      - PORT
       - ES_PROXY_PATH
       - ES_HOST
       - ES_INDEX
