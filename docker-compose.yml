@@ -51,7 +51,7 @@ services:
     volumes:
       - ${STATS}:/usr/share/nginx/html/stats
     ports:
-      - ${PORT}:80
+      - ${PORT}:${PORT}
     restart: always
 
 networks:

@@ -55,7 +55,7 @@ services:
       - ${NGINX}/nginx-dev.template:/etc/nginx/nginx.template
       - ${FRONTEND}/public:/usr/share/nginx/html
     ports:
-      - ${PORT}:80
+      - ${PORT}:${PORT}
       - "35729:35729"
     restart: always
 
