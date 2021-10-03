@@ -20,8 +20,8 @@ export const dataCorrections = {
       "permalink": "/id/x-A_xOSvM5Ju",
       "change": "remove",
       "request": "child",
-      "reason": "cnil-art-21",
-      "proofs": ["child id card", "death act"],
-      "anonymize": true
+      "reason":"cnil-art-85",
+      "proofs":["death act","child birth act"],
+      "anonymyze": true
     }
 };
