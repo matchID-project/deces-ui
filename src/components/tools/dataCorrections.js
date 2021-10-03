@@ -9,11 +9,19 @@ export const dataCorrections = {
       "anonymize": false
     },
     "Sx46mXzoiNo5": {
-      "permalink": "/id/H9HBeGybba1K",
+      "permalink": "/id/Sx46mXzoiNo5",
       "change": "remove",
       "request": "parent",
       "reason": "cnil-art-85",
       "proofs": ["family book", "parent id card", "death act"],
       "anonymize": true
+    },
+    "x-A_xOSvM5Ju": {
+      "permalink": "/id/x-A_xOSvM5Ju",
+      "change":"remove",
+      "request":"parent",
+      "reason":"cnil-art-85",
+      "proofs":["death act","child birth act"],
+      "anonymyze": true
     }
 };
