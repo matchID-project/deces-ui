@@ -15,6 +15,7 @@ services:
     container_name: ${DC_PREFIX}
     environment:
       - APP
+      - PORT
       - ES_PROXY_PATH
       - ES_HOST
       - ES_INDEX
@@ -50,7 +51,7 @@ services:
     volumes:
       - ${STATS}:/usr/share/nginx/html/stats
     ports:
-      - ${PORT}:80
+      - ${PORT}:${PORT}
     restart: always
 
 networks:

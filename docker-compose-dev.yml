@@ -17,6 +17,7 @@ services:
       - frontend-development
     environment:
       - APP
+      - PORT
       - FRONTEND_DEV_HOST
       - FRONTEND_DEV_PORT
       - BACKEND_PROXY_PATH
@@ -54,7 +55,7 @@ services:
       - ${NGINX}/nginx-dev.template:/etc/nginx/nginx.template
       - ${FRONTEND}/public:/usr/share/nginx/html
     ports:
-      - ${PORT}:80
+      - ${PORT}:${PORT}
       - "35729:35729"
     restart: always
 
