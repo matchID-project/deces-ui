@@ -18,8 +18,8 @@ export const dataCorrections = {
     },
     "x-A_xOSvM5Ju": {
       "permalink": "/id/x-A_xOSvM5Ju",
-      "change":"remove",
-      "request":"parent",
+      "change": "remove",
+      "request": "child",
       "reason":"cnil-art-85",
       "proofs":["death act","child birth act"],
       "anonymyze": true
