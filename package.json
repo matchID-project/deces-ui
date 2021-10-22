@@ -28,7 +28,7 @@
     "shake.js": "^1.2.2",
     "sirv-cli": "^1.0.14",
     "svelte": "^3.42.5",
-    "svelte-chartjs": "^1.0.1",
+    "svelte-chartjs": "1.0.1",
     "svelte-scrollto": "0.2.0",
     "web-streams-polyfill": "^3.1.1",
     "yamljs": "^0.3.0"
