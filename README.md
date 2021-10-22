@@ -1,7 +1,7 @@
 
 # Conditions d'usage et garanties (version alpha)
 
-Ce service est financé sur fonds personnels et est donc offert sans garantie.
+Ce service est développé avec le ministère de l'Intérieur. Néanmoins, la mise en ligne de service est financé sur fonds personnels et est donc offert sans garantie.
 L'usage est limité à une requête par seconde afin de préserver un service pour tous. Selon
 l'affluence et les retours, nous envisagerons de le consolider. Contactez nous
 sur <a href="mailto:matchid.project@gmail.com">matchid-project@gmail.com</a> pour
@@ -18,7 +18,7 @@ Seules les personnes ayant eu un numéro INSEE et ayant fait l'objet d'une décl
 en consulat sont enregistrées. Le délai de déclaration et de transmission peut être variable (personnes disparues, ou
 recherches historiques e.g. identifications tardives après guerre).
 
-Le service de recherche est disponilbe depuis le 1er janvier 2002 sur <a href="https://deces.matchid.io" title="deces.matchid.io" target="_blank">deces.matchid.io</a>. Un service d'appariement en masse est également <a href="https://deces.matchid.io/link" title="deces.matchid.io" target="_blank">disponible ici</a>.
+Le service de recherche est disponilbe depuis le 1er janvier 2020 sur <a href="https://deces.matchid.io" title="deces.matchid.io" target="_blank">deces.matchid.io</a>. Un service d'appariement en masse est également <a href="https://deces.matchid.io/link" title="deces.matchid.io" target="_blank">disponible ici</a>.
 
 La présentation de l'ensemble des services matchID est disponible sur le site <a href="https://matchid.io" title="matchid.io" target="_blank">matchid.io</a>.
 
