@@ -1,7 +1,7 @@
 
 # Conditions d'usage et garanties (version alpha)
 
-Ce service est financé sur fonds personnels et est donc offert sans garantie.
+Ce service est développé avec le ministère de l'Intérieur. Néanmoins, la mise en ligne de service est financé sur fonds personnels et est donc offert sans garantie.
 L'usage est limité à une requête par seconde afin de préserver un service pour tous. Selon
 l'affluence et les retours, nous envisagerons de le consolider. Contactez nous
 sur <a href="mailto:matchid.project@gmail.com">matchid-project@gmail.com</a> pour
