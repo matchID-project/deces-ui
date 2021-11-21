@@ -44,3 +44,42 @@ matchID. Le projet a été libéré et mis en opensource. Nous avons créé de s
 en complément qui semblait d'utilité notamment pour la lutte contre la fraude.
 Pour en savoir plus sur le projet matchID, suivez ce <a href="https://matchid.io">lien</a>.
 Aujourd'hui le projet est composé de personnes travaillant dans l'administration (ministere de l'intérieur, ministère de la justice)
+
+# Données personnelles
+
+## Suppression des données : article 85 de la loi CNIL
+
+Les données de décès du site deces.matchid.io proviennent du site [data.gouv.fr](https://www.data.gouv.fr/fr/datasets/fichier-des-personnes-decedees/).
+
+Les données de décès ne sont pas soumises au RGPD directement (l'article 21 de la loi CNIL ne s'applique pas), mais à l'[article 85 de la loi CNIL](https://www.cnil.fr/fr/la-loi-informatique-et-libertes#article85) prévoyant les conditions de conservation et suppression de données après le décès. L'équipe matchID met tout en oeuvre pour oeuvrer à la suppression des données dans un délai rapide.
+
+Les tiers, ayants-droits ou héritiers peuvent de plus consulter la page « Protection des données personnelles » du site Insee.fr (https://www.insee.fr/fr/information/3719162), où ils trouveront des informations de contact leur permettant d'effectuer la démarche directement sur le fichier source. 
+
+L'INSEE met à disposition un fichier d'opposition permettant à chaque réutilisateur de ces données de décès. Ces opposition sont prises en compte sur deces.matchid.io, a minima chaque mois.
+
+## Traitement d'appariements
+
+Les personnes morales et physique utilisant la fonction d'appariement deces.matchid.io engagent leur responsabilité lorsqu'ils soumettent fichier nécessairement soumis au RGPD, à partir du moment où des personnes vivantes sont potentiellement incluses audit fichier.
+
+Le site deces.matchid.io devient dès lors implicitement sous-traitant au sens RGPD. Dès lors qu'aujourd'hui le site n'est pas soumis à l'obligation d'une identification, toute responsabilité quand à l'alerte d'une rupture de sécurité dans le traitement technique des données. Nous vous engageons donc à vous signaler auprès de l'équipe à matchid-project@gmail.com pour nouer le lien réciproque minimal nous permettant de vous alerter en cas de traitement récurrent.
+
+Les conditions générales de traitement sont les suivantes :
+- le fichier soumis est stocké chiffré pendant la durée du traitement et supprimé à l'issue
+- le fichier complété est stocké chiffré et conservé 1h à l'issue du traitement
+- la clé de chiffrement est uniquement accessible de l'application (et n'est pas accessible des opérateurs)
+- le protocole est AES256, et la clé est renouvelée chaque mois
+- l'opérateur d'hébergement est Scaleway (région Parisienne - fr-par-1, suceptible de bouger à tout moment sur fr-par-2)
+
+Lors de l'utilisation de l'application (plutôt que l'API) deces.matchid.io, les données résultantes sont stockées en clair dans le stockage local du navigateur. L'utilisation de la fonction de suppression (icône "poublelle") supprime définitivement les données. Néanmoins deces.matchid.io n'est pas responsable de la configuration du navigateur que vous utilisez et des failles potentielles qu'elle peut engendrer.
+
+## Cookies et données stockées sur le navigateurs
+
+Aucun agrément n'est demandé à l'entrée sur le site car l'application deces.matchid.io.
+
+Les seuls cookies implémentés sont les cookies techniques de Cloudflare ayant pour usage exclusif le bon fonctionnement de l'application (cookies de répartisseurs de charge, permettant le suivi de session sur les mêmes composants techniques).
+
+Aucun cookie n'est utilisé par ailleurs par l'application matchID
+
+## Données de statistiques
+
+L'application matchID conserve 12 mois les données de log pour des raisons de sécurité du traitement. Au-delà, les données IP sont hashées avec un identifiant mensuel unique aléatoire pour préserver les décomptes mensuels sans trop biaiser les statistiques. Les auteurs eux-même ne disposent pas de clé de réversibilité.
