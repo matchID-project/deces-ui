@@ -154,6 +154,7 @@
         linkOptions
     } from '../tools/stores.js';
     import jsdiff from 'diff';
+    import { runCompareRequest } from '../tools/runRequest.js';
 
     export let actionTitle;
     export let page = 1;
@@ -247,8 +248,23 @@
     }
 
     let selectedScores = undefined;
-    const selectRow = (row) => {
+    const selectRow = async (row) => {
         if (row) {
+            const persA = {}
+            header.filter(x => (x!=='score') && (x!=='check')).filter((h,index) => index < mappedColumns).forEach(h => {
+              persA[$linkMapping.direct[h]] = row[$linkResults.header.indexOf(h)]
+            })
+            const persB = {}
+            header.filter(x => (x!=='score') && (x!=='check')).filter((h,index) => index < mappedColumns).forEach(h => {
+              if ($linkMapping.direct[h] === 'birthDate' || $linkMapping.direct[h] === 'deathDate') {
+                persB[$linkMapping.direct[h]] = dateFormat(row[$linkResults.header.indexOf(headerMapping[$linkMapping.direct[h]])])
+              } else {
+                persB[$linkMapping.direct[h]] = row[$linkResults.header.indexOf(headerMapping[$linkMapping.direct[h]])]
+              }
+            })
+            let response
+            response = await runCompareRequest({personA: persA, personB: persB}, false)
+            console.log(response)
             selectedRow = row[$linkResults.header.indexOf('sourceLineNumber')];
             selectedScores = JSON.parse(get(row,'scores'));
         } else {
