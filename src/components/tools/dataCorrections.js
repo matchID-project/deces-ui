@@ -23,5 +23,13 @@ export const dataCorrections = {
       "reason":"cnil-art-85",
       "proofs":["death act","child birth act"],
       "anonymyze": true
+    },
+    "7A2vw8qrFmYz": {
+      "permalink": "/id/7A2vw8qrFmYz",
+      "change": "remove",
+      "request": "child",
+      "reason":"cnil-art-85",
+      "proofs":["none"],
+      "anonymyze": true
     }
 };
