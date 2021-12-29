@@ -68,6 +68,11 @@
             } else {
               formData[k] = $searchInput[k].value.replace(/\s+/,"_").toUpperCase()
             }
+            if ($searchInput[k].fuzzy) {
+              formData['fuzzy'] = 'true'
+            } else {
+              formData['fuzzy'] = 'false'
+            }
           }
         })
         const res = await axios.post('__BACKEND_PROXY_PATH__/search', formData, {
