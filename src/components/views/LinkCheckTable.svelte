@@ -189,6 +189,7 @@
         lastName: 'name.last',
         birthDate: 'birth.date',
         birthCity: 'birth.city',
+        birthPostalCode: 'birth.codePostal',
         birthDepartment: 'birth.departmentCode',
         birthCountry: 'birth.country',
         deathDate: 'death.date',
