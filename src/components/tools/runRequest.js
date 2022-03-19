@@ -13,6 +13,10 @@ export const runSearchRequest = async (body, cache=true) => {
   return await runRequest('search', 'POST', body, cache);
 };
 
+export const runCompareRequest = async (body, cache=true) => {
+  return await runRequest('compare', 'POST', body, cache);
+};
+
 export const runSearchStreamRequest = async (body, cache=true) => {
   return await runRequest('search', 'POST', body, cache, 'csvStream');
 };
