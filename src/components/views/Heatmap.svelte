@@ -138,11 +138,7 @@
   };
 
   $: if (Object.keys(max).length) {
-      if (options && options.scales.yAxes) {
-        scale = (x,id) => options.scales.yAxes[0].type === 'logarithmic' ?
-                            (max[id] ? Math.log(x+1)/Math.log(max[id]) : Math.log(x+1))
-                            : ( max[id] ? x/max[id] : x);
-      }
+    scale = (x,id) => ( max[id] ? x/max[id] : x);
   };
 
 </script>
