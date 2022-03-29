@@ -54,18 +54,9 @@
   import Icon from './Icon.svelte';
   import FranceChroropleth from './FranceChoropleth.svelte';
   import Radar from './Radar.svelte';
-  let Line;
-  import('svelte-chartjs/src/Line.svelte').then(module => {
-    Line = module.default;
-  });
-  let Bar;
-  import('svelte-chartjs/src/Bar.svelte').then(module => {
-    Bar = module.default;
-  });
-  let Pie;
-  import('svelte-chartjs/src/Pie.svelte').then(module => {
-    Pie = module.default;
-  });
+  import Line from './Line.svelte';
+  import Bar from './Bar.svelte';
+  import Pie from './Pie.svelte';
   import {
     searchInput,
     triggerAggregations,
