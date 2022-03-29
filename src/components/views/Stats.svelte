@@ -92,14 +92,8 @@
 
 <script>
   import { onMount } from 'svelte';
-  let Line;
-  import('svelte-chartjs/src/Line.svelte').then(module => {
-    Line = module.default;
-  });
-  let Bar;
-  import('svelte-chartjs/src/Bar.svelte').then(module => {
-    Bar = module.default;
-  });
+  import Bar from './Bar.svelte';
+  import Line from './Line.svelte';
   import Icon from './Icon.svelte';
   import WorldChoropleth from './WorldChoropleth.svelte';
   import FranceChoropleth from './FranceChoropleth.svelte';
@@ -388,7 +382,6 @@
   const ticks = {
     autoSkip: true,
     fontFamily : fontFamily,
-    callback: smartNumber,
   };
   const ticksY = {
     autoSkip: true,
@@ -399,6 +392,12 @@
   };
 
   const options = (view) => {
+    const yAxes = {};
+    Object.keys(datasets).forEach((id,i) => yAxes[id] = {
+        type: params[view] && params[view].yLog ? 'logarithmic' : 'linear',
+        position: i%2 ? 'left' : 'right',
+        ticks: ticksY
+    });
     const o = {
         maintainAspectRatio: false,
         hover: {
@@ -425,17 +424,8 @@
             position: 'bottom'
         },
         scales: {
-            yAxes: Object.keys(datasets).map((id, i) => {
-                return {
-                    id: id,
-                    type: params[view] && params[view].yLog ? 'logarithmic' : 'linear',
-                    position: i%2 ? 'left' : 'right',
-                    ticks: ticksY
-                }
-            }),
-            xAxes: params[view] && params[view].xAxes || [{
-                ticks: ticks
-            }]
+            ...yAxes,
+            xAxis: params[view] && params[view].xAxis || {}
         }
     };
     return o;
@@ -558,10 +548,9 @@
     },
     'hosts': { type: Bar },
     'visitors': {
-        xAxes: [{
+        xAxis: {
             type: 'time',
-            ticks: ticks
-        }],
+        },
         dataCB: (data) => data.map(d => { d.data = dateParse(d.data); return d})
     },
     'requests': {
@@ -597,7 +586,7 @@
 
     const data = (view) => {
         const data = (params[view] && (params[view].dataCB)) ? params[view].dataCB(rawData[view].data) : rawData[view].data;
-        return {
+        const d = {
             labels: data.map(d => d.data),
             datasets: Object.keys(datasets)
                 .map(id => {
@@ -609,6 +598,7 @@
                     })
                     return {
                         backgroundColor: datasets[id].color,
+                        fill: 'origin',
                         borderColor: 'rgba(255,255,255,0)',
                         borderWidth: borderWidth,
                         pointRadius: 0,
@@ -618,6 +608,7 @@
                     };
             })
         };
+        return d;
     };
 
     onMount(async () => {
