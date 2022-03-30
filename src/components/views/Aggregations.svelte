@@ -107,6 +107,7 @@
         })
         return {
           backgroundColor: params[view].type === Pie ? data.map((_, ind) => colors[ind]) : datasets[id].color,
+          fill: 'origin',
           borderColor: 'rgba(255,255,255,0)',
           borderWidth: 2,
           pointRadius: 0,
@@ -193,22 +194,16 @@
       dataCB: (data) => data.map(x => {
           return {data: x["key_as_string"], count: +x.doc_count}
         })
-        .filter(x => x.data >= "19700000"),
-      xAxes: [{
-        ticks: {
-          autoSkip: true,
-          fontFamily : fontFamily,
-        },
+        .filter(x => x.data >= "19700000")
+        .map(x => {x.data = dateParse(x.data); return x} ),
+      xAxis: {
         id: 'axisDeathDate',
         type: 'time',
-        gridLines: {
-          display: false
-        },
         //ticks: {
         //  min: 0,
         //  max: 1586000000000,
         //}
-      }],
+      },
       tooltipCallback: {
         title: (tooltipItems, data) => {
           let { index } = tooltipItems[0]
@@ -227,20 +222,13 @@
           return {data: x["key"], count: +x.doc_count}
         })
         .sort((a,b) => parseInt(a.data) - parseInt(b.data)),
-      xAxes: [{
-        ticks: {
-          autoSkip: true,
-          fontFamily : fontFamily,
-        },
+      xAxis: {
         id: 'axisDeathAge',
-        gridLines: {
-          display: false
-        },
         //ticks: {
         //  min: 0,
         //  max: 1586000000000,
         //}
-      }],
+      },
       tooltipCallback: {
         title: (tooltipItems, data) => {
           let { index } = tooltipItems[0]
@@ -260,17 +248,10 @@
           return {data: x["key"], count: x.doc_count}
         })
       ,
-      xAxes: [{
-        ticks: {
-          autoSkip: true,
-          fontFamily : fontFamily,
-        },
-        gridLines: {
-          display: false
-        },
+      xAxis: {
         id: 'axisFirstName',
         type: 'category',
-      }]
+      }
     },
     'lastName': {
       title: 'Nom',
@@ -281,17 +262,10 @@
           return {data: x["key"], count: x.doc_count}
         })
       ,
-      xAxes: [{
-        ticks: {
-          autoSkip: true,
-          fontFamily : fontFamily,
-        },
-        gridLines: {
-          display: false
-        },
+      xAxis: {
         id: 'axisLastName',
         type: 'category',
-      }]
+      }
     },
     'sex': {
       title: 'Sexe',
@@ -335,6 +309,25 @@
     refreshAggregations($searchInput);
     $triggerAggregations = false;
   };
+
+  const dateParse = (obj) => {
+      if ((typeof obj === 'string')) {
+          let d;
+          if (/^\d{8}-\d{4}$/.test(obj)) {
+            d = new Date(obj.substr(0,4), parseInt(obj.substr(4,2))-1 , obj.substr(6,2), obj.substr(9,2), obj.substr(11,2));
+          } else if (/^\d{8}$/.test(obj)) {
+            d = new Date(obj.substr(0,4), parseInt(obj.substr(4,2))-1 , obj.substr(6,2));
+          } else if (/^\d{4}S\d{2}-\d{4}$/.test(obj)) {
+            d = new Date(obj.substr(0,4), parseInt(obj.substr(8,2))-1 , obj.substr(10,2));
+          } else if (/^\d{4}S\d{2}-\d{4}-\d{4}$/.test(obj)) {
+            d = new Date(obj.substr(0,4), parseInt(obj.substr(8,2))-1 , obj.substr(10,2), obj.substr(13,2), obj.substr(15,2));
+          }
+          if (d) {
+            return new Date(d.getTime() + (60*60*1000));
+          }
+      }
+      return obj
+  }
 
   const refreshAggregations = async (mySearchInput) => {
     actualBuckets.set(0);
@@ -381,6 +374,12 @@
   };
 
   const options = (view) => {
+    const yAxes = {};
+    Object.keys(datasets).forEach((id,i) => yAxes[id] = {
+        type: params[view] && params[view].yLog ? 'logarithmic' : 'linear',
+        position: i%2 ? 'left' : 'right',
+        ticks: ticksY
+    });
     const o = {
         maintainAspectRatio: false,
         hover: {
@@ -413,17 +412,8 @@
           position: 'bottom'
         },
         scales: params[view].scales || {
-            yAxes: Object.keys(datasets).map((id, i) => {
-                return {
-                    id: id,
-                    type: params[view] && params[view].yLog ? 'logarithmic' : 'linear',
-                    position: i%2 ? 'right' : 'left',
-                    ticks: ticksY
-                }
-            }),
-            xAxes: params[view] && params[view].xAxes || [{
-                ticks: ticks
-            }]
+            ...yAxes,
+            xAxis: params[view] && params[view].xAxis || {}
         }
     };
     return o;
