@@ -479,15 +479,7 @@ export const linkValidations = writable(null);
 export const linkCompleted = writable(false);
 
 export const version = writable({
-    ui: '__APP__ version __APP_VERSION__',
-    data: {
-        version: 'b8655e2d_9513c02e',
-        updateDate: '12/03/2022',
-        lastRecordDate: '27/02/2022',
-        lastDataset: 'deces-2022-m02',
-        rawRecordsCount: 26392047,
-        uniqRecordsCount: "NA"
-    }
+    ui: '__APP__ version __APP_VERSION__'
 })
 
 export const activeElement = writable(undefined);
