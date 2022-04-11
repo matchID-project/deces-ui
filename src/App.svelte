@@ -22,7 +22,9 @@
 		if ($version && !$version.api) {
 			try {
 				const r = await fetch('__BACKEND_PROXY_PATH__/version');
-				$version.api = await r.json();
+				const json = await r.json();
+				$version.api = json.backend;
+				$version.data = json;
 			} catch(e) {
 			}
 		}

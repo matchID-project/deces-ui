@@ -15,6 +15,7 @@ jobs:
       LOG_DB_BUCKET: ${{ secrets.LOG_DB_BUCKET }}
       STATS_BUCKET: ${{ secrets.STATS_BUCKET }}
       MMDB_TOKEN: ${{ secrets.MMDB_TOKEN }}
+      GIT_BRANCH: dev
     
     steps:
       - uses: actions/checkout@v1

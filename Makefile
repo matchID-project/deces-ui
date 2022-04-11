@@ -106,7 +106,7 @@ export GIT_TOOLS = tools
 export API_URL?=${APP_DNS}
 export API_SSL?=1
 export APP_NODES=1
-export KUBE_NAMESPACE:=$(shell echo -n ${APP_GROUP}-${APP}-${GIT_BRANCH} | tr '[:upper:]' '[:lower:]' | tr '_' '-')
+#export KUBE_NAMESPACE:=$(shell echo -n ${APP_GROUP}-${APP}-${GIT_BRANCH} | tr '[:upper:]' '[:lower:]' | tr '_' '-')
 export KUBE_DIR=${FRONTEND}/k8s
 export ES_MEM_KUBE:=$(shell echo -n ${ES_MEM} | sed 's/\s*m/Mi/')
 export STORAGE_ACCESS_KEY_B64:=$(shell echo -n ${STORAGE_ACCESS_KEY} | openssl base64)
@@ -510,11 +510,15 @@ deploy-k8s-frontend: deploy-k8s-namespace
 	@echo $@
 	@cat ${KUBE_DIR}/frontend.yaml | envsubst | kubectl apply -f -
 
-deploy-remote-instance: config-minimal backend-config
-	@BACKEND_APP_VERSION=$(shell cd ${APP_PATH}/${GIT_BACKEND} && git describe --tags);\
+deploy-remote-instance: config-minimal backend-config ${DATAPREP_VERSION_FILE} ${DATA_VERSION_FILE}
+	@\
+	BACKEND_APP_VERSION=$(shell cd ${APP_PATH}/${GIT_BACKEND} && git describe --tags);\
+	DATAPREP_VERSION=$$(cat ${DATAPREP_VERSION_FILE});\
+	DATA_VERSION=$$(cat ${DATA_VERSION_FILE});\
 	${MAKE} -C ${APP_PATH}/${GIT_TOOLS} remote-config\
-			APP=${APP} APP_VERSION=${APP_VERSION} CLOUD_TAG=ui:${APP_VERSION}-backend:$$BACKEND_APP_VERSION DC_IMAGE_NAME=${DC_PREFIX}\
-			SCW_IMAGE_ID=${SCW_IMAGE_ID} GIT_BRANCH=${GIT_BRANCH} ${MAKEOVERRIDES}
+		CLOUD_TAG=ui:${APP_VERSION}-backend:$${BACKEND_APP_VERSION}-data:$${DATAPREP_VERSION}-$${DATA_VERSION}\
+		APP=${APP} APP_VERSION=${APP_VERSION} DC_IMAGE_NAME=${DC_PREFIX}\
+		SCW_IMAGE_ID=${SCW_IMAGE_ID} GIT_BRANCH=${GIT_BRANCH} ${MAKEOVERRIDES}
 
 deploy-remote-services:
 	@${MAKE} -C ${APP_PATH}/${GIT_TOOLS} remote-deploy remote-actions\
@@ -540,9 +544,15 @@ deploy-remote-publish:
 		APP_DNS=$$APP_DNS API_TEST_PATH=${API_TEST_PATH} API_TEST_JSON_PATH=${API_TEST_JSON_PATH} API_TEST_DATA='${API_TEST_REQUEST}'\
 		${MAKEOVERRIDES}
 
-deploy-delete-old:
-	@${MAKE} -C ${APP_PATH}/${GIT_TOOLS} cloud-instance-down-invalid\
-		APP=${APP} APP_VERSION=${APP_VERSION} GIT_BRANCH=${GIT_BRANCH} ${MAKEOVERRIDES}
+deploy-delete-old: ${DATAPREP_VERSION_FILE} ${DATA_VERSION_FILE}
+	@\
+	BACKEND_APP_VERSION=$(shell cd ${APP_PATH}/${GIT_BACKEND} && git describe --tags);\
+	DATAPREP_VERSION=$$(cat ${DATAPREP_VERSION_FILE});\
+	DATA_VERSION=$$(cat ${DATA_VERSION_FILE});\
+	${MAKE} -C ${APP_PATH}/${GIT_TOOLS} cloud-instance-down-invalid\
+		CLOUD_TAG=ui:${APP_VERSION}-backend:$${BACKEND_APP_VERSION}-data:$${DATAPREP_VERSION}-$${DATA_VERSION}\
+		APP=${APP} APP_VERSION=${APP_VERSION} DC_IMAGE_NAME=${DC_PREFIX}\
+		GIT_BRANCH=${GIT_BRANCH} ${MAKEOVERRIDES}
 
 deploy-monitor:
 	@${MAKE} -C ${APP_PATH}/${GIT_TOOLS} remote-install-monitor-nq NQ_TOKEN=${NQ_TOKEN} ${MAKEOVERRIDES}
@@ -564,7 +574,9 @@ update-base-image: deploy-remote-instance deploy-docker-pull-base
 	${MAKE} -C ${APP_PATH}/${GIT_TOOLS} remote-cmd REMOTE_CMD="rm -rf ${APP_GROUP}"; \
 	sleep 5;\
 	${MAKE} -C ${APP_PATH}/${GIT_TOOLS} SCW-instance-snapshot \
-		GIT_BRANCH=${GIT_BRANCH} APP=${APP} APP_VERSION=${APP_VERSION} CLOUD_TAG=ui:${APP_VERSION}-backend:$$BACKEND_APP_VERSION DC_IMAGE_NAME=${DC_PREFIX};
+		GIT_BRANCH=${GIT_BRANCH} APP=${APP} APP_VERSION=${APP_VERSION}\
+		CLOUD_TAG=ui:${APP_VERSION}-backend:$$BACKEND_APP_VERSION\
+		DC_IMAGE_NAME=${DC_PREFIX};
 	${MAKE} -C ${APP_PATH}/${GIT_TOOLS} SCW-instance-image \
 		CLOUD_APP=nner;\
 	SCW_IMAGE_ID=$$(cat ${APP_PATH}/${GIT_TOOLS}/cloud/SCW.image.id)/;\

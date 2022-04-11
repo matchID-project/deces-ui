@@ -19,13 +19,17 @@
           {#if $themeDnum}
             <strong>DNUM</strong> - Sous direction de l'innovation et de la transformation numérique
           {:else}
-            Recherchez parmi <strong>25 millions de décès</strong> depuis 1970 dans les enregistrements officiels de l'INSEE
+            Recherchez parmi <strong>26 millions de décès</strong> depuis 1970 dans les enregistrements officiels de l'INSEE
           {/if}
         </a>
       </p>
       {#if $version}
         <p class="rf-text--xs rf-padding-top-2N">
-          Dernier enregistrement de décès le {$version.data.lastRecordDate}
+          {#if $version.data}
+            {$version.data.uniqRecordsCount} enregistrements, mise à jour le {$version.data.updateDate}
+            <br>
+            dernier décès enregistré le {$version.data.lastRecordDate} ({$version.data.lastDataset})
+          {/if}
           <br>
           {$version.ui}
           {#if $version.api}
