@@ -14,15 +14,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/checkout@v3
-        if: github.event.action == "data-update"
-        with:
-          ref: ${{ github.event.client_payload.ref }}
       - name: extract branch name
         shell: bash
-        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF} | sed 's|^refs/heads/||;' | sed 's/[^a-zA-Z0-9]/-/g')"
+        run: |
+          if [ -z "${GIT_BRANCH_REF}" ]; then
+            echo "##[set-output name=branch;]$(echo ${GITHUB_REF} | sed 's|^refs/heads/||;' | sed 's/[^a-zA-Z0-9]/-/g')";
+          else
+            git checkout ${GIT_BRANCH_REF};
+            echo "##[set-output name=branch;]$(echo ${GIT_BRANCH_REF}
+          fi
         id: extract_branch
-      - name: config
+        env:
+          GIT_BRANCH_REF: ${{ github.event.client_payload.ref }}
+        - name: config
         run: echo "GIT_BRANCH=${GIT_BRANCH}" && make version config
         env:
           GIT_BRANCH: ${{ steps.extract_branch.outputs.branch }}
