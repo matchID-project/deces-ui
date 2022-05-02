@@ -14,6 +14,7 @@ services:
       - bootstrap.memory_lock=true
       - "ES_JAVA_OPTS=-Xms%M -Xmx%M"
       - discovery.type=single-node
+      - xpack.security.enabled=false
       - LOG4J_FORMAT_MSG_NO_LOOKUPS=true
     ulimits:
       memlock:
