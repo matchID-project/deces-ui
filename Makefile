@@ -446,7 +446,7 @@ ${GIT_DATAPREP}:
 	git clone ${GIT_ROOT}/${GIT_DATAPREP}
 
 ${DATAPREP_VERSION_FILE}: ${GIT_DATAPREP}
-	@cat \
+	@cat    ${GIT_DATAPREP}/Makefile\
 		${GIT_DATAPREP}/projects/deces-dataprep/recipes/deces_dataprep.yml\
 		${GIT_DATAPREP}/projects/deces-dataprep/datasets/deces_index.yml\
 	| sha1sum | awk '{print $1}' | cut -c-8 > ${DATAPREP_VERSION_FILE}
