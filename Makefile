@@ -106,7 +106,7 @@ export GIT_TOOLS = tools
 export API_URL?=${APP_DNS}
 export API_SSL?=1
 export APP_NODES=1
-#export KUBE_NAMESPACE:=$(shell echo -n ${APP_GROUP}-${APP}-${GIT_BRANCH} | tr '[:upper:]' '[:lower:]' | tr '_' '-')
+# export KUBE_NAMESPACE:=$(shell echo -n ${APP_GROUP}-${APP}-${GIT_BRANCH} | tr '[:upper:]' '[:lower:]' | tr '_' '-')
 export KUBE_DIR=${FRONTEND}/k8s
 export ES_MEM_KUBE:=$(shell echo -n ${ES_MEM} | sed 's/\s*m/Mi/')
 export STORAGE_ACCESS_KEY_B64:=$(shell echo -n ${STORAGE_ACCESS_KEY} | openssl base64)
@@ -136,7 +136,7 @@ export ES_MAX_RESULTS = 10000
 export ES_DATA = ${APP_PATH}/esdata
 export ES_NODES = 1
 export ES_MEM = 512m
-export ES_VERSION = 7.17.1
+export ES_VERSION = 8.1.3
 export ES_BACKUP_BASENAME := esdata
 export DATAPREP_VERSION_FILE = ${APP_PATH}/.dataprep.sha1
 export DATA_VERSION_FILE = ${APP_PATH}/.data.sha1
@@ -446,7 +446,7 @@ ${GIT_DATAPREP}:
 	git clone ${GIT_ROOT}/${GIT_DATAPREP}
 
 ${DATAPREP_VERSION_FILE}: ${GIT_DATAPREP}
-	@cat \
+	@cat    ${GIT_DATAPREP}/Makefile\
 		${GIT_DATAPREP}/projects/deces-dataprep/recipes/deces_dataprep.yml\
 		${GIT_DATAPREP}/projects/deces-dataprep/datasets/deces_index.yml\
 	| sha1sum | awk '{print $1}' | cut -c-8 > ${DATAPREP_VERSION_FILE}
@@ -670,9 +670,9 @@ proofs-backup: ${PROOFS}
 			STORAGE_ACCESS_KEY=${TOOLS_STORAGE_ACCESS_KEY} STORAGE_SECRET_KEY=${TOOLS_STORAGE_SECRET_KEY};\
 	fi;
 
-proofs-mount: proofs-restore
+proofs-mount:
 	@if [ -n "${PROOFS_BUCKET}" ];then\
-		((while (true); do  make proofs-backup;sleep 30;done) > .proofs-backup 2>&1 &);\
+		((make proofs-restore && while (true); do  make proofs-backup;sleep 30;done) > .proofs-backup 2>&1 &);\
 	fi;
 
 proofs-umount:
