@@ -36,7 +36,7 @@ export const dataCorrections = {
      "permalink": "/id/UbQHqivgYK9y",
      "change": "remove",
      "request": "child",
-     "reason": "cnil-art-85";
+     "reason": "cnil-art-85",
      "poofs":["none"],
      "anonymize": true
    }
