@@ -670,9 +670,9 @@ proofs-backup: ${PROOFS}
 			STORAGE_ACCESS_KEY=${TOOLS_STORAGE_ACCESS_KEY} STORAGE_SECRET_KEY=${TOOLS_STORAGE_SECRET_KEY};\
 	fi;
 
-proofs-mount: proofs-restore
+proofs-mount:
 	@if [ -n "${PROOFS_BUCKET}" ];then\
-		((while (true); do  make proofs-backup;sleep 30;done) > .proofs-backup 2>&1 &);\
+		((make proofs-restore && while (true); do  make proofs-backup;sleep 30;done) > .proofs-backup 2>&1 &);\
 	fi;
 
 proofs-umount:
