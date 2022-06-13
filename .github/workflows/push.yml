@@ -1,8 +1,9 @@
-name: Push
+name: Deploy (push)
 
 on:
   repository_dispatch:
     types: [data-update]
+  workflow_dispatch:
   push:
     branches:
       - dev
