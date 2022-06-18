@@ -118,20 +118,41 @@
                     }
                     f.chil.forEach(c => {
                         gedcom[c].pare = parents.filter(p => gedcom[p]).map(p => {
+                          if (typeof gedcom[p].name === 'object' &&
+                            !Array.isArray(gedcom[p].name) &&
+                            gedcom[p].name !== null) {
+
+                            return {
+                                id: p,
+                                surn: gedcom[p].name.surn,
+                                givn: gedcom[p].name.givn
+                            }
+                          } else {
                             return {
                                 id: p,
                                 surn: gedcom[p].surn || gedcom[p].name.replace(/^.*\/\s*(.*)\s*\/.*$/,'$1'),
                                 givn: gedcom[p].givn || gedcom[p].name.replace(/^(.*)\/\s*(.*)\s*\/.*$/,'$1')
                             }
+                          }
                         })
                     })
                     parents.forEach(p => {
                         gedcom[p].chil = f.chil.filter(c => gedcom[c]).map(c => {
+                          if (typeof gedcom[p].name === 'object' &&
+                            !Array.isArray(gedcom[p].name) &&
+                            gedcom[p].name !== null) {
+                            return {
+                                id: c,
+                                surn: gedcom[c].name.surn,
+                                givn: gedcom[c].name.givn
+                            }
+                          } else {
                             return {
                                 id: c,
                                 surn: gedcom[c].surn || gedcom[c].name.replace(/^.*\/\s*(.*)\s*\/.*$/,'$1'),
                                 givn: gedcom[c].givn || gedcom[c].name.replace(/^(.*)\/\s*(.*)\s*\/.*$/,'$1')
                             }
+                          }
                         })
                     })
                 }
@@ -139,14 +160,14 @@
                     if (!gedcom[f.wife].cons) { gedcom[f.wife].cons = [] }
                     gedcom[f.wife].cons.push({
                         id: f.husb,
-                        surn: gedcom[f.husb].surn || gedcom[f.husb].name.replace(/^.*\/\s*(.*)\s*\/.*$/,'$1'),
-                        givn: gedcom[f.husb].givn || gedcom[f.husb].name.replace(/^(.*)\/\s*(.*)\s*\/.*$/,'$1')
+                        surn: gedcom[f.husb].surn || gedcom[f.husb].name.surn || gedcom[f.husb].name.replace(/^.*\/\s*(.*)\s*\/.*$/,'$1'),
+                        givn: gedcom[f.husb].givn || gedcom[f.husb].name.givn || gedcom[f.husb].name.replace(/^(.*)\/\s*(.*)\s*\/.*$/,'$1')
                     });
                     if (!gedcom[f.husb].cons) { gedcom[f.husb].cons = [] }
                     gedcom[f.husb].cons.push({
                         id: f.wife,
-                        surn: gedcom[f.wife].surn || gedcom[f.wife].name.replace(/^.*\/\s*(.*)\s*\/.*$/,'$1'),
-                        givn: gedcom[f.wife].givn || gedcom[f.wife].name.replace(/^(.*)\/\s*(.*)\s*\/.*$/,'$1')
+                        surn: gedcom[f.wife].surn || gedcom[f.wife].name.surn || gedcom[f.wife].name.replace(/^.*\/\s*(.*)\s*\/.*$/,'$1'),
+                        givn: gedcom[f.wife].givn || gedcom[f.wife].name.givn || gedcom[f.wife].name.replace(/^(.*)\/\s*(.*)\s*\/.*$/,'$1')
                     });
                 }
             });
