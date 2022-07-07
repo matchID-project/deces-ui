@@ -354,16 +354,33 @@
                 const id = k;
                 let firstName = tree[k].surn;
                 let lastName = tree[k].givn;
-                const name = tree[k].name;
-                const normName = name.replace(/^\s*(Mr|Monsieur|Madame|Mme|M\.|Mrs)\s+/gi,'');
+                let name = tree[k].name;
                 const sex = tree[k].sex;
-                if (normName) {
-                    if (!firstName) {
-                        firstName = normName.replace(/^(.*)\s+\/.*$/,'$1');
-                    }
-                    if (!lastName) {
-                        lastName = name.replace(/^.*\/\s*(.*)\s*\/.*$/,'$1');
-                    }
+                if (typeof name === 'object' &&
+                  !Array.isArray(name) &&
+                  name !== null) {
+                  firstName = name.surn;
+                  lastName = name.givn;
+                  name = firstName + lastName;
+                  const normName = name.replace(/^\s*(Mr|Monsieur|Madame|Mme|M\.|Mrs)\s+/gi,'');
+                  if (normName) {
+                      if (!firstName) {
+                          firstName = normName.replace(/^(.*)\s+\/.*$/,'$1');
+                      }
+                      if (!lastName) {
+                          lastName = name.replace(/^.*\/\s*(.*)\s*\/.*$/,'$1');
+                      }
+                  }
+                } else {
+                  const normName = name.replace(/^\s*(Mr|Monsieur|Madame|Mme|M\.|Mrs)\s+/gi,'');
+                  if (normName) {
+                      if (!firstName) {
+                          firstName = normName.replace(/^(.*)\s+\/.*$/,'$1');
+                      }
+                      if (!lastName) {
+                          lastName = name.replace(/^.*\/\s*(.*)\s*\/.*$/,'$1');
+                      }
+                  }
                 }
                 let birthDate, birthPlace, birthCity, birthCountry, birthDep;
                 if (tree[k].birt) {

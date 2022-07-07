@@ -157,10 +157,10 @@
     $: if (record) {
         if (record.name) {
             if (!record.givn) {
-                record.givn = record.name.replace(/^\s*(Mr|Monsieur|Madame|Mme|M\.|Mrs)\s+/gi,'').replace(/^(.*)\/\s*(.*)\s*\/.*$/,'$1');
+                record.givn = typeof record.name === 'string' ? record.name.replace(/^\s*(Mr|Monsieur|Madame|Mme|M\.|Mrs)\s+/gi,'').replace(/^(.*)\/\s*(.*)\s*\/.*$/,'$1') : record.name.givn;
             }
             if (!record.surn) {
-                record.surn = record.name.replace(/^.*\/\s*(.*)\s*\/.*$/,'$1');
+                record.surn = typeof record.name === 'string' ? record.name.replace(/^.*\/\s*(.*)\s*\/.*$/,'$1') : record.name.surn;
             }
         }
         if (record.birt && record.birt.plac && record.birt.plac.includes(',')) {
