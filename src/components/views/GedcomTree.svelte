@@ -138,13 +138,19 @@
                     })
                     parents.forEach(p => {
                         gedcom[p].chil = f.chil.filter(c => gedcom[c]).map(c => {
-                          if (typeof gedcom[p].name === 'object' &&
-                            !Array.isArray(gedcom[p].name) &&
-                            gedcom[p].name !== null) {
+                          if (typeof gedcom[c].name === 'object' &&
+                            !Array.isArray(gedcom[c].name) &&
+                            gedcom[c].name !== null) {
                             return {
                                 id: c,
                                 surn: gedcom[c].name.surn,
                                 givn: gedcom[c].name.givn
+                            }
+                          } else if (Array.isArray(gedcom[c].name)) {
+                            return {
+                                id: c,
+                                surn: gedcom[c].surn || gedcom[c].name.join(" ").replace(/^.*\/\s*(.*)\s*\/.*$/,'$1'),
+                                givn: gedcom[c].givn || gedcom[c].name.join(" ").replace(/^(.*)\/\s*(.*)\s*\/.*$/,'$1')
                             }
                           } else {
                             return {
@@ -158,17 +164,45 @@
                 }
                 if (f.wife && f.husb) {
                     if (!gedcom[f.wife].cons) { gedcom[f.wife].cons = [] }
+                  if (typeof gedcom[f.husb].name == "object") {
+                    gedcom[f.wife].cons.push({
+                      id: f.husb,
+                      surn: gedcom[f.husb].surn || gedcom[f.husb].name.surn,
+                      givn: gedcom[f.husb].givn || gedcom[f.husb].name.givn
+                    });
+                  } else if (Array.isArray(gedcom[f.husb].name)) {
+                    gedcom[f.wife].cons.push({
+                      id: f.husb,
+                      surn: gedcom[f.husb].surn || gedcom[f.husb].name.surn || gedcom[f.husb].name.join(" ").replace(/^.*\/\s*(.*)\s*\/.*$/,'$1'),
+                      givn: gedcom[f.husb].givn || gedcom[f.husb].name.givn || gedcom[f.husb].name.join(" ").replace(/^(.*)\/\s*(.*)\s*\/.*$/,'$1')
+                    });
+                  } else {
                     gedcom[f.wife].cons.push({
                         id: f.husb,
-                        surn: gedcom[f.husb].surn || gedcom[f.husb].name.surn || gedcom[f.husb].name.replace(/^.*\/\s*(.*)\s*\/.*$/,'$1'),
+                        surn: gedcom[f.husb].surn || gedcom[f.husb].name.surn || gedcom[f.husb].name.replace(/^.*\/\s*(.*)\s*\/.*$/,'$1'),
                         givn: gedcom[f.husb].givn || gedcom[f.husb].name.givn || gedcom[f.husb].name.replace(/^(.*)\/\s*(.*)\s*\/.*$/,'$1')
                     });
+                  }
                     if (!gedcom[f.husb].cons) { gedcom[f.husb].cons = [] }
-                    gedcom[f.husb].cons.push({
-                        id: f.wife,
-                        surn: gedcom[f.wife].surn || gedcom[f.wife].name.surn || gedcom[f.wife].name.replace(/^.*\/\s*(.*)\s*\/.*$/,'$1'),
-                        givn: gedcom[f.wife].givn || gedcom[f.wife].name.givn || gedcom[f.wife].name.replace(/^(.*)\/\s*(.*)\s*\/.*$/,'$1')
-                    });
+                    if (typeof gedcom[f.wife].name == "object") {
+                      gedcom[f.husb].cons.push({
+                          id: f.wife,
+                          surn: gedcom[f.wife].surn || gedcom[f.wife].name.surn,
+                          givn: gedcom[f.wife].givn || gedcom[f.wife].name.givn
+                      });
+                    } else if (Array.isArray(gedcom[f.wife].name)) {
+                      gedcom[f.husb].cons.push({
+                          id: f.wife,
+                          surn: gedcom[f.wife].surn || gedcom[f.wife].name.surn || gedcom[f.wife].name.join(" ").replace(/^.*\/\s*(.*)\s*\/.*$/,'$1'),
+                          givn: gedcom[f.wife].givn || gedcom[f.wife].name.givn || gedcom[f.wife].name.join(" ").replace(/^(.*)\/\s*(.*)\s*\/.*$/,'$1')
+                      });
+                    } else {
+                      gedcom[f.husb].cons.push({
+                          id: f.wife,
+                          surn: gedcom[f.wife].surn || gedcom[f.wife].name.surn || gedcom[f.wife].name.replace(/^.*\/\s*(.*)\s*\/.*$/,'$1'),
+                          givn: gedcom[f.wife].givn || gedcom[f.wife].name.givn || gedcom[f.wife].name.replace(/^(.*)\/\s*(.*)\s*\/.*$/,'$1')
+                      });
+                    }
                 }
             });
             Object.keys(gedcom).filter(x => /\@i.*\@/i.test(x)).forEach(i => {
