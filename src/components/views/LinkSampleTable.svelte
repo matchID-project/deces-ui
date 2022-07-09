@@ -168,7 +168,11 @@
     });
 
     const norm = (s) => {
-        return s ? s.normalize('NFKD').replace(/[\u0300-\u036f]/g, "").toLocaleLowerCase() : '';
+      return s ?
+        Array.isArray(s) ?
+          s.join(" ").normalize('NFKD').replace(/[\u0300-\u036f]/g, "").toLocaleLowerCase() :
+          s.normalize('NFKD').replace(/[\u0300-\u036f]/g, "").toLocaleLowerCase() :
+        '';
     }
 
     const guessFieldType = (column) => {
@@ -370,6 +374,16 @@
                       if (!lastName) {
                           lastName = name.replace(/^.*\/\s*(.*)\s*\/.*$/,'$1');
                       }
+                  }
+                } else if (Array.isArray(name)) {
+                  const normName = name.join(' ').replace(/^\s*(Mr|Monsieur|Madame|Mme|M\.|Mrs)\s+/gi,'');
+                  if (normName) {
+                    if (!firstName) {
+                      firstName = normName.replace(/^(.*)\s+\/.*$/,'$1');
+                    }
+                    if (!lastName) {
+                      lastName = name.join(' ').replace(/^.*\/\s*(.*)\s*\/.*$/,'$1');
+                    }
                   }
                 } else {
                   const normName = name.replace(/^\s*(Mr|Monsieur|Madame|Mme|M\.|Mrs)\s+/gi,'');
