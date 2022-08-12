@@ -147,7 +147,7 @@ vm_max_count            := $(shell cat /etc/sysctl.conf | egrep vm.max_map_count
 
 export STORAGE_BUCKET=${DATASET}
 #prebuild image with docker and nginx-node-elasticsearch docker images
-export SCW_IMAGE_ID=110f4bd4-85ca-494b-9337-12971c6f3b5f
+export SCW_IMAGE_ID=9df18c35-fa36-4dfa-8d27-153e1d817a35
 
 dummy		    := $(shell touch artifacts)
 include ./artifacts
@@ -565,7 +565,7 @@ deploy-remote: config-minimal deploy-remote-instance deploy-remote-services depl
 deploy-docker-pull-base: deploy-remote-instance
 	@${MAKE} -C ${APP_PATH}/${GIT_TOOLS} remote-docker-pull DOCKER_IMAGE=node:12.14.0-slim
 	@${MAKE} -C ${APP_PATH}/${GIT_TOOLS} remote-docker-pull DOCKER_IMAGE=nginx:alpine
-	@${MAKE} -C ${APP_PATH}/${GIT_TOOLS} remote-docker-pull DOCKER_IMAGE=docker.elastic.co/elasticsearch/elasticsearch-oss:${ES_VERSION}
+	@${MAKE} -C ${APP_PATH}/${GIT_TOOLS} remote-docker-pull DOCKER_IMAGE=docker.elastic.co/elasticsearch/elasticsearch:${ES_VERSION}
 	@${MAKE} -C ${APP_PATH}/${GIT_TOOLS} remote-docker-pull DOCKER_IMAGE=redis:alpine
 
 update-base-image: deploy-remote-instance deploy-docker-pull-base
