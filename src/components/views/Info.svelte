@@ -214,7 +214,63 @@
           large échelle. Le code source du présent site est accessible sur <a href="https://github.com/matchid-project/deces-ui" target="_blank">Github</a>.
       </p>
       `},
-    { title: "Signaler un décès manquant",
+    { title: 'Données personnelles - article 85 loi CNIL',
+      icon: 'ri:shield-user-line',
+      filter: true,
+      content: `
+        <p>
+          <strong>
+            Le fichiers des décès est hors du champ d'application du RGPD
+          </strong>
+        </p>
+        <p>
+          Les informations des fichiers de personnes décédées ne sont pas des données à caractère personnel, ni ne relèvent du secret de la vie privée.
+          Les droits prévus par l’article 85 de la loi Informatique et libertés s’appliquent néanmoins au bénéfice des ayants-droits ou héritiers des défunts.
+        </p>
+        <p>
+          L’INSEE étant soumis à une obligation légale de diffusion, cet article ne s’applique à l’Insee.
+        </p>
+        <p>
+          Les rediffuseurs (comme ce site) en particulier doivent exclure du champ des données qu’ils publient les informations relatives aux décès (identifiés par leur date, leur lieu et leur numéro d’acte) qui figurent
+          dans le <a href="https://www.data.gouv.fr/fr/datasets/r/7bcdfa57-dc50-43a8-beb6-6c76537e7057">fichier des oppositions</a> à la rediffusion centralisées par l’Insee.
+        </p>
+        <p>
+          Une demande motivée au titre d'ayant-droit et de l'article 85 peut être adressée à ${mailTo}, auquel cas une suppression
+          sera effectuée le plus rapidement possible, et sous quelques jours au plus.
+          Nous vous recommandons de saisir l'INSEE afin que votre demande soit prise en compte
+          par l'ensemble des rediffuseurs.
+        </p>
+        <p>
+          <strong>
+            Traitement d'appariement en masse
+          </strong>
+        </p>
+        <p>
+          Concernant le service d'appariement, vous êtes susceptibles de transmettre à notre service
+          un fichier comportant à la fois des données de personnes vivantes, et de personnes décédées.
+        </p>
+        <p>
+          Les données que vous transmettez pour appariement sont stockées chiffrées temporairement pendant le traitement
+          et effacées automatiquement un heure après. Elles ne sont pas consultables par l'équipe matchID.
+        </p>
+        <p>
+          Si nous attachons une forte importance à la sécurité de nos serveurs, nous recommandons l'usage parcimonieux
+          des données personnelles. Vous vous engagez à ne nous transmettre que strictement que les données nécessaires
+          à l'appariement (nom, prénom, lieu, date de naissance/décès). Il relève de votre responsabilité
+          d'ajouter un identifiant technique pour une jointure ultérieur à un fichier comportant d'autres données personnelles.
+        </p>
+        <p>
+          Nous nous dégageons de toute responsabilité lié à un envoi inapproprié de données personnelles non strictement
+          nécessaires à l'appariement (e.g numéro de sécurité sociale), ne pouvant assurer une sécurité suffisante pour la
+          protection de ces données.
+        </p>
+        <p>
+          En utilisant le service, vous vous engagez sur la conformité d'usage au <a href="https://www.cnil.fr/fr/rgpd-de-quoi-parle-t-on">RGPD</a>,
+          et à la bonne information du délégué à la protection des données de votre entreprise, administration ou association.
+        </p>
+      `
+    },
+    { title: "Décès manquant",
       icon: 'ri:user-search-line',
       filter: true,
       content: `
