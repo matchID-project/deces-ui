@@ -112,8 +112,8 @@
             matchID.
         </p>
         <p>
-          Le projet a été libéré et mis en open source. L'équipe est maintenant composée de développeurs
-          du ministère de la Justice et du ministère de l'Intérieur, contribuant bénévolement au service sur leur temps libre.
+          Le projet a été libéré et mis en open source. L'équipe est maintenant composée de développeurs,
+          anciens du ministère de l'Intérieur, contribuant bénévolement au service sur leur temps libre.
         </p>
         <p>
             Nous avons créé ce service
@@ -122,9 +122,10 @@
         </p>
         ${$themeDnum ? "" : `
         <p>
-            L'exploitation du service est financé sur fonds personnels, il est offert sans garantie de fonctionnement, mais
-            nous y portons le plus grand soin, sur notre temps libre, en attendant son support officiel par les services
-            numériques de l'État.
+            L'exposition sur deces.matchid.io au profit du public est assurée par Fabien ANTOINE, avec le soutien de Cristian Brokate
+            notamment pour le soutien technique à l'API. Le service est offert sans garantie de fonctionnement,
+            nous nous efforçons de répondre aux messages (hors "absence du fichier") sur notre temps libre, faut de support
+            officiel par les services de l'Administration.
         </p>
         `}
         <p>
