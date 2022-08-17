@@ -275,6 +275,12 @@
       filter: true,
       content: `
             <p>
+              <strong>
+                Nous ne traitons pas aujourd'hui plus le cas des décès manquant,
+                ni ne répondons au mails associés, trop fréquents.
+              </strong>
+            </p>
+            <p>
                 Les données INSEE sont issues d'un processus de collecte administratif auprès
                 des collectivités. Des absence et des erreurs sont possibles, voici les
                 cas que nous avons identifié :
@@ -307,37 +313,39 @@
                 de la bonne transmission à l'INSEE.
             </p>
             <p>
-                Des erreurs liées à l'indexation peuvent subsister, nous nous tenons à disposition
-                en cas de problème d'exhaustivité (${mailTo})
-                pour confirmer l'absence du fichier d'origine.
-            </p>
-            <p>
                 Nous ne pourrons vous accompagner plus loin dans la démarche administrative. À ce stade, il n'existe pas de processus simplifié
                 pour les demandes d'ajout et de correction. Mais nous répondrons toujours à vos sollicitations.
             </p>
       `,
       tags: "Trouver personne proche absent"},
-    { title: "signaler une erreur dans une fiche",
+    { title: "Données erronnées",
       icon: 'ri:file-damage-line',
       content: `
             <p>
               <strong>
                 Nous ne sommes pas habilités à modifier les données de l'INSEE.
+                Il est inutile de nous écrire pour signaler une erreur, nous ne répondons plus à ces messages, trop nombreux.
               </strong>
+            </p>
+            <p>
+              Nous avons cependant implémenté une fonction permettant de proposer une correction
+              qui sera affichée explicitement comme telle après validation d'un administrateur.
+            </p>
+            <p>
+              La tâche étant laborieuse, nous n'avons pas le temps de traiter assez bien ces demandes.
+              Si vous êtes passionnés et souhaitez contribuer au service, écrivez nous à ${mailTo}.
             </p>
             <p>
                 En cas d'erreur (e.g enregistrement du nom d'époux au lieu du nom de naissance), seule
                 la mairie (ou le consultat) de décès est habilité à transmettre
                 un correctif à l'INSEE. Nous vous invitons donc à prendre contact avec le service
                 d'État civil de la mairie ou du consulat du décès.
-            </p>
             <p>
-              N'hésitez cependant pas à nous écrire pour signaler votre cas à ${mailTo}.
-              Nous reprendrons contact avec vous lorsqu'un processus de mise à jour sera identifié avec l'INSEE.
+              Vous pouvez également signaler le problème sur le site du fournisseur de données: https://www.data.gouv.fr/fr/datasets/fichier-des-personnes-decedees/
             </p>
       `,
       tags: "Problème corriger correction faute"},
-    { title: 'signaler un bug ou poser une question',
+    { title: 'Signaler un bug',
       icon: 'ri:bug-line',
       filter: true,
       content: `
@@ -383,7 +391,7 @@
       fullWidthMobile: true,
       tags: 'api hits visiteurs'
     },
-    { title: 'Le code est-il open source ?',
+    { title: 'Code open source',
       icon: 'ri:github-line',
       content: `
         <p>
