@@ -1,21 +1,21 @@
 <header class="rf-header">
     <div class="rf-container rf-container__header">
         <div class="rf-header__body">
-            <div
-                class="rf-header__brand"
-                on:click|preventDefault={() => goToPage('search', 'reset')}
-            >
-                <a
-                    href="/search{$advancedSearch ? '?advanced=true' : ''}"
-                    class="rf-logo"
-                    title="{organization.replace(/<br>/,' ')}"
-                >
-                    <span class="rf-logo__title">
-                        {@html organization}
-                    </span>
-                </a>
-            </div>
             {#if $themeDnum}
+                <div
+                    class="rf-header__brand"
+                    on:click|preventDefault={() => goToPage('search', 'reset')}
+                >
+                    <a
+                        href="/search{$advancedSearch ? '?advanced=true' : ''}"
+                        class="rf-logo"
+                        title="{organization.replace(/<br>/,' ')}"
+                    >
+                        <span class="rf-logo__title">
+                            {@html organization}
+                        </span>
+                    </a>
+                </div>
                 <img
                     src={"/dnum-logo-round.svg"}
                     alt="DNUM Logo"
