@@ -112,8 +112,8 @@
             matchID.
         </p>
         <p>
-          Le projet a été libéré et mis en open source. L'équipe est maintenant composée de développeurs
-          du ministère de la Justice et du ministère de l'Intérieur, contribuant bénévolement au service sur leur temps libre.
+          Le projet a été libéré et mis en open source. L'équipe est maintenant composée de développeurs,
+          anciens du ministère de l'Intérieur, contribuant bénévolement au service sur leur temps libre.
         </p>
         <p>
             Nous avons créé ce service
@@ -122,9 +122,10 @@
         </p>
         ${$themeDnum ? "" : `
         <p>
-            L'exploitation du service est financé sur fonds personnels, il est offert sans garantie de fonctionnement, mais
-            nous y portons le plus grand soin, sur notre temps libre, en attendant son support officiel par les services
-            numériques de l'État.
+            L'exposition sur deces.matchid.io au profit du public est assurée par Fabien ANTOINE, avec le soutien de Cristian Brokate
+            notamment pour le soutien technique à l'API. Le service est offert sans garantie de fonctionnement,
+            nous nous efforçons de répondre aux messages (hors "absence du fichier") sur notre temps libre, faut de support
+            officiel par les services de l'Administration.
         </p>
         `}
         <p>
@@ -149,13 +150,13 @@
             Quelques informations sur le fichier :
             <ul class="rf-margin-0 rf-padding-0 rf-padding-left-4N">
               <li class="rf-margin-0">
-                le fichier comporte ${$version && $version.data.uniqRecordsCount} décès et ${$version.data.rawRecordsCount - $version.data.uniqRecordsCount} doublons (stricts)
+                le fichier comporte ${$version && $version.data && $version.data.uniqRecordsCount} décès et ${$version.data && $version.data.rawRecordsCount - $version.data.uniqRecordsCount} doublons (stricts)
               </li>
               <li class="rf-margin-0">
-                il comporte les décès de 1970 à aujourd'hui (jusqu'au ${$version && $version.data.lastRecordDate})
+                il comporte les décès de 1970 à aujourd'hui (jusqu'au ${$version && $version.data && $version.data.lastRecordDate})
               </li>
               <li class="rf-margin-0">
-                il a été mis à jour le ${$version && $version.data.updateDate}
+                il a été mis à jour le ${$version && $version.data && $version.data.updateDate}
               </li>
             </ul>
           </p>
@@ -213,10 +214,72 @@
           large échelle. Le code source du présent site est accessible sur <a href="https://github.com/matchid-project/deces-ui" target="_blank">Github</a>.
       </p>
       `},
-    { title: "Signaler un décès manquant",
+    { title: 'Données personnelles - article 85 loi CNIL',
+      icon: 'ri:shield-user-line',
+      filter: true,
+      content: `
+        <p>
+          <strong>
+            Le fichiers des décès est hors du champ d'application du RGPD
+          </strong>
+        </p>
+        <p>
+          Les informations des fichiers de personnes décédées ne sont pas des données à caractère personnel, ni ne relèvent du secret de la vie privée.
+          Les droits prévus par l’article 85 de la loi Informatique et libertés s’appliquent néanmoins au bénéfice des ayants-droits ou héritiers des défunts.
+        </p>
+        <p>
+          L’INSEE étant soumis à une obligation légale de diffusion, cet article ne s’applique à l’Insee.
+        </p>
+        <p>
+          Les rediffuseurs (comme ce site) en particulier doivent exclure du champ des données qu’ils publient les informations relatives aux décès (identifiés par leur date, leur lieu et leur numéro d’acte) qui figurent
+          dans le <a href="https://www.data.gouv.fr/fr/datasets/r/7bcdfa57-dc50-43a8-beb6-6c76537e7057">fichier des oppositions</a> à la rediffusion centralisées par l’Insee.
+        </p>
+        <p>
+          Une demande motivée au titre d'ayant-droit et de l'article 85 peut être adressée à ${mailTo}, auquel cas une suppression
+          sera effectuée le plus rapidement possible, et sous quelques jours au plus.
+          Nous vous recommandons de saisir l'INSEE afin que votre demande soit prise en compte
+          par l'ensemble des rediffuseurs.
+        </p>
+        <p>
+          <strong>
+            Traitement d'appariement en masse
+          </strong>
+        </p>
+        <p>
+          Concernant le service d'appariement, vous êtes susceptibles de transmettre à notre service
+          un fichier comportant à la fois des données de personnes vivantes, et de personnes décédées.
+        </p>
+        <p>
+          Les données que vous transmettez pour appariement sont stockées chiffrées temporairement pendant le traitement
+          et effacées automatiquement un heure après. Elles ne sont pas consultables par l'équipe matchID.
+        </p>
+        <p>
+          Si nous attachons une forte importance à la sécurité de nos serveurs, nous recommandons l'usage parcimonieux
+          des données personnelles. Vous vous engagez à ne nous transmettre que strictement que les données nécessaires
+          à l'appariement (nom, prénom, lieu, date de naissance/décès). Il relève de votre responsabilité
+          d'ajouter un identifiant technique pour une jointure ultérieur à un fichier comportant d'autres données personnelles.
+        </p>
+        <p>
+          Nous nous dégageons de toute responsabilité lié à un envoi inapproprié de données personnelles non strictement
+          nécessaires à l'appariement (e.g numéro de sécurité sociale), ne pouvant assurer une sécurité suffisante pour la
+          protection de ces données.
+        </p>
+        <p>
+          En utilisant le service, vous vous engagez sur la conformité d'usage au <a href="https://www.cnil.fr/fr/rgpd-de-quoi-parle-t-on">RGPD</a>,
+          et à la bonne information du délégué à la protection des données de votre entreprise, administration ou association.
+        </p>
+      `
+    },
+    { title: "Décès manquant",
       icon: 'ri:user-search-line',
       filter: true,
       content: `
+            <p>
+              <strong>
+                Nous ne traitons pas aujourd'hui plus le cas des décès manquant,
+                ni ne répondons au mails associés, trop fréquents.
+              </strong>
+            </p>
             <p>
                 Les données INSEE sont issues d'un processus de collecte administratif auprès
                 des collectivités. Des absence et des erreurs sont possibles, voici les
@@ -250,37 +313,39 @@
                 de la bonne transmission à l'INSEE.
             </p>
             <p>
-                Des erreurs liées à l'indexation peuvent subsister, nous nous tenons à disposition
-                en cas de problème d'exhaustivité (${mailTo})
-                pour confirmer l'absence du fichier d'origine.
-            </p>
-            <p>
                 Nous ne pourrons vous accompagner plus loin dans la démarche administrative. À ce stade, il n'existe pas de processus simplifié
                 pour les demandes d'ajout et de correction. Mais nous répondrons toujours à vos sollicitations.
             </p>
       `,
       tags: "Trouver personne proche absent"},
-    { title: "signaler une erreur dans une fiche",
+    { title: "Données erronnées",
       icon: 'ri:file-damage-line',
       content: `
             <p>
               <strong>
                 Nous ne sommes pas habilités à modifier les données de l'INSEE.
+                Il est inutile de nous écrire pour signaler une erreur, nous ne répondons plus à ces messages, trop nombreux.
               </strong>
+            </p>
+            <p>
+              Nous avons cependant implémenté une fonction permettant de proposer une correction
+              qui sera affichée explicitement comme telle après validation d'un administrateur.
+            </p>
+            <p>
+              La tâche étant laborieuse, nous n'avons pas le temps de traiter assez bien ces demandes.
+              Si vous êtes passionnés et souhaitez contribuer au service, écrivez nous à ${mailTo}.
             </p>
             <p>
                 En cas d'erreur (e.g enregistrement du nom d'époux au lieu du nom de naissance), seule
                 la mairie (ou le consultat) de décès est habilité à transmettre
                 un correctif à l'INSEE. Nous vous invitons donc à prendre contact avec le service
                 d'État civil de la mairie ou du consulat du décès.
-            </p>
             <p>
-              N'hésitez cependant pas à nous écrire pour signaler votre cas à ${mailTo}.
-              Nous reprendrons contact avec vous lorsqu'un processus de mise à jour sera identifié avec l'INSEE.
+              Vous pouvez également signaler le problème sur le site du fournisseur de données: https://www.data.gouv.fr/fr/datasets/fichier-des-personnes-decedees/
             </p>
       `,
       tags: "Problème corriger correction faute"},
-    { title: 'signaler un bug ou poser une question',
+    { title: 'Signaler un bug',
       icon: 'ri:bug-line',
       filter: true,
       content: `
@@ -326,7 +391,7 @@
       fullWidthMobile: true,
       tags: 'api hits visiteurs'
     },
-    { title: 'Le code est-il open source ?',
+    { title: 'Code open source',
       icon: 'ri:github-line',
       content: `
         <p>
