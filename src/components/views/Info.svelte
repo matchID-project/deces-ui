@@ -197,23 +197,6 @@
             </strong>
         </p>
       `},
-    { title: 'Comment sont indexées les données ?',
-      icon: 'ri:file-search-line',
-      content: `
-        <p>
-          Les données sont traitées avec l'outil open source <a href="https://www.matchid.io" target="_blank">matchID</a> (Python/Pandas). Les traitements,
-          disponibles <a href="https://github.com/matchid-project/deces-dataprep" target="_blank">ici</a>,
-          consistent en une mise en forme (capitalisation, réconciliation avec les noms de pays et commune
-          selon les référentiels INSEE) puis une indexation. Les données sont actualisées chaque mois, après chaque diffusion sur le
-          site <a href="https://www.data.gouv.fr/fr/datasets/fichier-des-personnes-decedees/" target="_blank">data.gouv.fr</a>.
-      </p>
-      <p>
-          La recherche et l'indexation reposent sur <a href="https://elastic.co" target="_blank">Elasticsearch</a>
-          qui repose sur le moteur de recherche Lucène, apportant le bénéfice
-          des <a href="https://wikipedia.org/wiki/Recherche_approximative" target="_blank">recherches floues</a> à
-          large échelle. Le code source du présent site est accessible sur <a href="https://github.com/matchid-project/deces-ui" target="_blank">Github</a>.
-      </p>
-      `},
     { title: 'Données personnelles - article 85 loi CNIL',
       icon: 'ri:shield-user-line',
       filter: true,
@@ -270,6 +253,23 @@
         </p>
       `
     },
+    { title: 'Comment sont indexées les données ?',
+      icon: 'ri:file-search-line',
+      content: `
+        <p>
+          Les données sont traitées avec l'outil open source <a href="https://www.matchid.io" target="_blank">matchID</a> (Python/Pandas). Les traitements,
+          disponibles <a href="https://github.com/matchid-project/deces-dataprep" target="_blank">ici</a>,
+          consistent en une mise en forme (capitalisation, réconciliation avec les noms de pays et commune
+          selon les référentiels INSEE) puis une indexation. Les données sont actualisées chaque mois, après chaque diffusion sur le
+          site <a href="https://www.data.gouv.fr/fr/datasets/fichier-des-personnes-decedees/" target="_blank">data.gouv.fr</a>.
+      </p>
+      <p>
+          La recherche et l'indexation reposent sur <a href="https://elastic.co" target="_blank">Elasticsearch</a>
+          qui repose sur le moteur de recherche Lucène, apportant le bénéfice
+          des <a href="https://wikipedia.org/wiki/Recherche_approximative" target="_blank">recherches floues</a> à
+          large échelle. Le code source du présent site est accessible sur <a href="https://github.com/matchid-project/deces-ui" target="_blank">Github</a>.
+      </p>
+      `},
     { title: "Décès manquant",
       icon: 'ri:user-search-line',
       filter: true,
@@ -384,12 +384,17 @@
           Vos suggestions sont les bienvenues, nous les étudierons - écrivez nous à ${mailTo}.
       `,
       tags: "évolutions"},
-    { title: 'Statistiques de consultation',
-      icon: 'ri:bar-chart-box-line',
-      content: '',
-      component: Stats,
+    { title: 'Développeurs, utilisez l\'API',
+      icon: 'ri:plug-line',
+      content: `
+        <p>
+          La documentation de l'API est consultable ci-dessous ou en suivant <a href="/deces/api/v1/docs">le lien suivant</a>.
+        </p>
+      `,
+      component: Iframe,
       fullWidthMobile: true,
-      tags: 'api hits visiteurs'
+      params: { src: '/deces/api/v1/docs' },
+      tags: "swagger"
     },
     { title: 'Code open source',
       icon: 'ri:github-line',
@@ -402,17 +407,13 @@
           Il est diffusé sous la licence libre <a href="https://spdx.org/licenses/LGPL-3.0.html#licenseText" target="_blank">LGPL 3.0</a>.
         </p>
       `},
-    { title: 'Documentation de l\'API',
-      icon: 'ri:plug-line',
-      content: `
-        <p>
-          La documentation de l'API est consultable ci-dessous ou en suivant <a href="/deces/api/v1/docs">le lien suivant</a>.
-        </p>
-      `,
-      component: Iframe,
+    { title: 'Statistiques de consultation',
+      icon: 'ri:bar-chart-box-line',
+      content: '',
+      component: Stats,
       fullWidthMobile: true,
-      params: { src: '/deces/api/v1/docs' },
-      tags: "swagger"}
+      tags: 'api hits visiteurs'
+    },
   ]
 
   $: filteredPages = pages.filter(p => {
