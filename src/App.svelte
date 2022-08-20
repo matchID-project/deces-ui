@@ -1,4 +1,7 @@
 <svelte:window on:keydown={handleKeydown}/>
+{#if !$themeDnum && $liveConfig && $liveConfig.googleAnalyticsId}
+	<GoogleAnalytics properties={[ $liveConfig.googleAnalyticsId ]} />
+{/if}
 <MatchIDHeader/>
 <main>
 	{#if $route && $route.path && routes[$route.path] && routes[$route.path].component}
@@ -10,13 +13,14 @@
 	import { onMount } from 'svelte';
 	import MatchIDHeader from './components/views/MatchIDHeader.svelte';
 	import { admin, user, alphaFeatures, version, route, searchInput, searchCanvas, current, resultsPerPage,
-		updateURL, advancedSearch, fuzzySearch, displayMode, themeDnum, wasSearched
+		updateURL, advancedSearch, fuzzySearch, displayMode, themeDnum, wasSearched, liveConfig
 	} from './components/tools/stores.js';
 	import { URLSearchSubmit } from './components/tools/search.js';
 	import { routes } from './components/tools/routes.js';
 	import { register } from 'register-service-worker';
 	import { useLocalSync } from './components/tools/useLocalStorage.js';
 	import Shake from 'shake.js';
+	import { GoogleAnalytics } from '@beyonk/svelte-google-analytics';
 
 	onMount(async () => {
 		if ($version && !$version.api) {
@@ -26,6 +30,15 @@
 				$version.api = json.backend;
 				$version.data = json;
 			} catch(e) {
+			}
+		}
+		if (!$liveConfig) {
+			try {
+				const lr = await fetch('/liveConfig.json');
+				const lc = await lr.json()
+				await liveConfig.update(v => lc);
+			} catch(e) {
+				console.log(e);
 			}
 		}
 		if ('serviceWorker' in navigator) {
@@ -79,6 +92,10 @@
 			document.querySelector('meta[name="description"]').setAttribute("content", routes[$route.path].desc);
 	        setCanonical(window.location.href.replace(/#.*/,'').replace(/\?.*/,''));
 		};
+
+	$: if ($liveConfig && $liveConfig.googleAnalyticsId) {
+		console.log(`GA: ${$liveConfig.googleAnalyticsId}`);
+	}
 
 	$: element = document.getElementById('infoNotWorking');
 	$: element.parentNode  && element.parentNode.removeChild(element);
