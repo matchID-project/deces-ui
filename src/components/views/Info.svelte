@@ -139,7 +139,7 @@
       filter: true,
       content: $themeDnum ? `` : `
       <p>
-        Depuis 2 ans, ce site a été financé sur fonds personnels (30 mois de service, plus de 3000€ de serveurs) et développé sur notre temps libre (quelques centaines d'heures depuis les débuts du site).
+        Depuis 2 ans, ce site a été financé sur fonds personnels (30 mois de service, plus de 2500€ de serveurs & DNS) et développé sur notre temps libre (quelques centaines d'heures depuis les débuts du site).
       </p>
       <p>
         Malheureusement, l'Administration n'a pas pu incuber le service ni porter la responsabilité juridique du traitement.
