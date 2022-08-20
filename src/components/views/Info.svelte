@@ -139,17 +139,20 @@
       filter: true,
       content: $themeDnum ? `` : `
       <p>
-        Depuis 2 ans, ce site a été financé sur fonds personnels (plus de 2500€ de serveurs) et développé sur notre temps libre (quelques centaines d'heures depuis les débuts du site).
+        Depuis 2 ans, ce site a été financé sur fonds personnels (30 mois de service, plus de 3000€ de serveurs) et développé sur notre temps libre (quelques centaines d'heures depuis les débuts du site).
       </p>
       <p>
-        Malheureusement, l'Administration n'a pas pu incuber le service et portant la responsabilité juridique du traitement.
+        Malheureusement, l'Administration n'a pas pu incuber le service ni porter la responsabilité juridique du traitement.
       </p>
       <p>
-        Le portage juridique devient nécessaire, pour faire évoluer le service en permettant le financement de tous les usages, tout en garantissant le caractère non lucratif.
+        Le portage juridique devient nécessaire, pour maintenir et faire évoluer le service. 
+        Il permettant le financement de tous les usages, tout en garantissant le caractère non lucratif par un statut associatif.
         La création de l'association sera également l'occasion d'associer de nouveaux bénévoles à la contribution du service (e.g validation de modification de données erronnées).
       </p>
       <p>
         Nous avons donc pris la décision de constituer une collecter des fonds pour constituer l'association et continuer à faire tourner le service voire l'étendre.
+      </p>
+      <p>
         Pour nous aider, <a href="https://www.leetchi.com/c/matchid-lassociation" target="_blank">c'est ici !</a>
       </p>
       `,
