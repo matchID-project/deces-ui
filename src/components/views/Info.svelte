@@ -136,6 +136,7 @@
       tags: "bénévole geeks nerd passionnés fabien antoine cristian perez brokate"},
     { title: 'Soutenez-nous !',
       icon: 'ri:hand-heart-line',
+      filter: true,
       content: $themeDnum ? `` : `
       <p>
         Depuis 2 ans, ce site a été financé sur fonds personnels (plus de 2500€ de serveurs) et développé sur notre temps libre (quelques centaines d'heures depuis les débuts du site).
@@ -219,7 +220,6 @@
       `},
     { title: 'Données personnelles - article 85 loi CNIL',
       icon: 'ri:shield-user-line',
-      filter: true,
       content: `
         <p>
           <strong>
