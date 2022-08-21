@@ -1,4 +1,3 @@
-<GoogleAnalytics {...tag}/>
 <div class="rf-container-fluid" style="margin-top: -16px;">
   <form on:submit|preventDefault={handleSubmit}>
     <div class="rf-grid-row" style="position:relative;">
@@ -86,7 +85,7 @@
     sortInput, resultsPerPage, searchInputFocus,
     searchTyping, fuzzySearch, displayMode, triggerAggregations } from '../tools/stores.js';
   import { search, searchString, searchSubmit, searchURLUpdate, toggleAdvancedSearch, toggleFuzzySearch } from '../tools/search.js';
-  import GoogleAnalytics from './GoogleAnalytics.svelte';
+  import { ga } from '@beyonk/svelte-google-analytics';
 
   let lastInput = {}
 
@@ -136,14 +135,9 @@
     if ($displayMode === 'agg') {
       $triggerAggregations = true;
     }
-    tag = {
-      command: 'event',
-      commandParam: 'button',
-      eventParam: {
-        event_category: 'recherche',
-        event_label: searchString($searchInput)
-      }
-    };
+    ga.addEvent('event_name', {
+      recherche: searchString($searchInput)
+    });
   }
 
   const startDate = new Date().getTime();
