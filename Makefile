@@ -555,13 +555,10 @@ deploy-delete-old: ${DATAPREP_VERSION_FILE} ${DATA_VERSION_FILE}
 		APP=${APP} APP_VERSION=${APP_VERSION} DC_IMAGE_NAME=${DC_PREFIX}\
 		GIT_BRANCH=${GIT_BRANCH} ${MAKEOVERRIDES}
 
-deploy-monitor:
-	@${MAKE} -C ${APP_PATH}/${GIT_TOOLS} remote-install-monitor-nq NQ_TOKEN=${NQ_TOKEN} ${MAKEOVERRIDES}
-
 deploy-cdn-purge-cache:
 	@${MAKE} -C ${APP_PATH}/${GIT_TOOLS} cdn-cache-purge
 
-deploy-remote: config-minimal deploy-remote-instance deploy-remote-services deploy-remote-publish deploy-cdn-purge-cache deploy-delete-old deploy-monitor
+deploy-remote: config-minimal deploy-remote-instance deploy-remote-services deploy-remote-publish deploy-cdn-purge-cache deploy-delete-old
 
 deploy-docker-pull-base: deploy-remote-instance
 	@${MAKE} -C ${APP_PATH}/${GIT_TOOLS} remote-docker-pull DOCKER_IMAGE=node:12.14.0-slim
