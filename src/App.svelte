@@ -24,7 +24,7 @@
 	import { useLocalSync } from './components/tools/useLocalStorage.js';
 	import Shake from 'shake.js';
 	import { GoogleAnalytics } from '@beyonk/svelte-google-analytics';
-	import { GoogleAdsense } from './components/views/GoogleAdsense.svelte'
+	import GoogleAdsense from './components/views/GoogleAdsense.svelte'
 
 	onMount(async () => {
 		if ($version && !$version.api) {

@@ -14,7 +14,6 @@
                 script.onload = script.onreadystatechange = null;
                 script = undefined;
                 if(!isAbort) {
-                    await register(callback);
                     console.log(`Google Adsense script loaded and registered with ID ${id}`);
                 }
             }
@@ -22,5 +21,4 @@
         script.src = scriptURL;
         await prior.parentNode.insertBefore(script, prior);
     })
-
 </script>
