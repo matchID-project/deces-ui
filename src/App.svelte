@@ -2,6 +2,9 @@
 {#if !$themeDnum && $liveConfig && $liveConfig.googleAnalyticsId}
 	<GoogleAnalytics properties={[ $liveConfig.googleAnalyticsId ]} />
 {/if}
+{#if !$themeDnum && $liveConfig && $liveConfig.googleAdsenseId}
+	<GoogleAdsense id={$liveConfig.googleAdsenseId} />
+{/if}
 <MatchIDHeader/>
 <main>
 	{#if $route && $route.path && routes[$route.path] && routes[$route.path].component}
@@ -21,6 +24,7 @@
 	import { useLocalSync } from './components/tools/useLocalStorage.js';
 	import Shake from 'shake.js';
 	import { GoogleAnalytics } from '@beyonk/svelte-google-analytics';
+	import { GoogleAdsense } from './components/views/GoogleAdsense.svelte'
 
 	onMount(async () => {
 		if ($version && !$version.api) {
