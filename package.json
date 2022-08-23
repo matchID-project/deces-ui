@@ -35,6 +35,5 @@
     "svelte-scrollto": "0.2.0",
     "web-streams-polyfill": "^3.2.0",
     "yamljs": "^0.3.0"
-  },
-  "dependencies": {}
+  }
 }

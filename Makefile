@@ -18,8 +18,9 @@ export PORT=8083
 #currently used for backend / no backend test
 export AB_THRESHOLD=100
 
-#google analytics disable by default
+#google IDs disabled by default
 export GOOGLE_ANALYTICS_ID=
+export GOOGLE_ADSENSE_ID=
 
 export MAKEBIN = $(shell which make || echo make)
 export MAKE = ${MAKEBIN} --no-print-directory -s
@@ -60,7 +61,7 @@ export BACKEND_PROXY_PATH=/${API_PATH}/api/v1
 export NGINX = ${APP_PATH}/nginx
 export NGINX_TIMEOUT = 30
 export API_TIMEOUT = 45
-export NGINX_CSP=default-src https: 'self';script-src https: 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com;style-src https: 'self' 'unsafe-inline';font-src 'self' data:;img-src 'self' https://a.basemaps.cartocdn.com https://b.basemaps.cartocdn.com https://c.basemaps.cartocdn.com https://upload.wikimedia.org https://www.google-analytics.com www.google-analytics.com https://stats.g.doubleclick.net;connect-src 'self' https://www.data.gouv.fr https://www.google-analytics.com www.google-analytics.com https://stats.g.doubleclick.net
+export NGINX_CSP=default-src 'self';script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://pagead2.googlesyndication.com https://partner.googleadservices.com https://tpc.googlesyndication.com https://www.googletagservices.com https://adservice.google.*;style-src https: 'self' 'unsafe-inline';font-src 'self' data:;img-src 'self' https://a.basemaps.cartocdn.com https://b.basemaps.cartocdn.com https://c.basemaps.cartocdn.com https://upload.wikimedia.org https://pagead2.googlesyndication.com https://www.google-analytics.com https://www.google-analytics.com https://stats.g.doubleclick.net;connect-src 'self' https://www.data.gouv.fr https://www.google-analytics.com https://www.google-analytics.com https://stats.g.doubleclick.net https://pagead2.googlesyndication.com; frame-src 'self' https://googleads.g.doubleclick.net https://tpc.googlesyndication.com
 #export NGINX_CSP=default-src https: 'self' 'unsafe-inline' 'unsafe-eval';font-src 'self' data:;img-src 'self' data: https://*.cartocdn.com http://*.wikimedia.org https://www.google-analytics.com https://www.googletagmanager.com https://*.doubleclick.net;
 export API_SEARCH_LIMIT_RATE=1r/s
 export API_SEARCH_USER_BURST=30 nodelay
@@ -554,13 +555,10 @@ deploy-delete-old: ${DATAPREP_VERSION_FILE} ${DATA_VERSION_FILE}
 		APP=${APP} APP_VERSION=${APP_VERSION} DC_IMAGE_NAME=${DC_PREFIX}\
 		GIT_BRANCH=${GIT_BRANCH} ${MAKEOVERRIDES}
 
-deploy-monitor:
-	@${MAKE} -C ${APP_PATH}/${GIT_TOOLS} remote-install-monitor-nq NQ_TOKEN=${NQ_TOKEN} ${MAKEOVERRIDES}
-
 deploy-cdn-purge-cache:
 	@${MAKE} -C ${APP_PATH}/${GIT_TOOLS} cdn-cache-purge
 
-deploy-remote: config-minimal deploy-remote-instance deploy-remote-services deploy-remote-publish deploy-cdn-purge-cache deploy-delete-old deploy-monitor
+deploy-remote: config-minimal deploy-remote-instance deploy-remote-services deploy-remote-publish deploy-cdn-purge-cache deploy-delete-old
 
 deploy-docker-pull-base: deploy-remote-instance
 	@${MAKE} -C ${APP_PATH}/${GIT_TOOLS} remote-docker-pull DOCKER_IMAGE=node:12.14.0-slim

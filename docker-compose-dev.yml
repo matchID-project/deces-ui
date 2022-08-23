@@ -50,6 +50,7 @@ services:
       - API_READ_TIMEOUT
       - API_MAX_BODY
       - GOOGLE_ANALYTICS_ID
+      - GOOGLE_ADSENSE_ID
     volumes:
       - ${NGINX}/default-dev.template:/etc/nginx/conf.d/default.template
       - ${NGINX}/nginx-dev.template:/etc/nginx/nginx.template
