@@ -22,6 +22,7 @@ export AB_THRESHOLD=100
 export GOOGLE_ANALYTICS_ID=
 export GOOGLE_ADSENSE_ID=
 
+#make binary and options
 export MAKEBIN = $(shell which make || echo make)
 export MAKE = ${MAKEBIN} --no-print-directory -s
 
