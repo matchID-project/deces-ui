@@ -46,7 +46,7 @@ server {
 
   location /liveConfig.json {
     default_type application/json;
-    return 200 '{"googleAnalyticsId": "<GOOGLE_ANALYTICS_ID>"}';
+    return 200 '{"googleAnalyticsId": "<GOOGLE_ANALYTICS_ID>", "googleAdsenseId": "<GOOGLE_ADSENSE_ID>"}';
   }
 
   location ~ "^<DATAGOUV_PROXY_PATH>.*" {

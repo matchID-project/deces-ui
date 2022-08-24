@@ -48,6 +48,7 @@ services:
       - API_MAX_BODY
       - MITM_URL
       - GOOGLE_ANALYTICS_ID
+      - GOOGLE_ADSENSE_ID
     volumes:
       - ${STATS}:/usr/share/nginx/html/stats
     ports:

@@ -42,6 +42,7 @@ jobs:
         env:
           GIT_BRANCH: ${{ steps.extract_branch.outputs.branch }}
           GOOGLE_ANALYTICS_ID: ${{ secrets.GOOGLE_ANALYTICS_ID }}
+          GOOGLE_ADSENSE_ID: ${{ secrets.GOOGLE_ADSENSE_ID }}
           STORAGE_ACCESS_KEY: ${{ secrets.STORAGE_ACCESS_KEY }}
           STORAGE_SECRET_KEY: ${{ secrets.STORAGE_SECRET_KEY }}
           TOOLS_STORAGE_ACCESS_KEY: ${{ secrets.TOOLS_STORAGE_ACCESS_KEY }}
@@ -92,10 +93,10 @@ jobs:
         if: success()
         run: |
           if [[ ( "$GIT_BRANCH" == "dev" ) ]]; then
-            make deploy-remote FILES_TO_PROCESS=$FILES_TO_PROCESS_DEV GIT_BRANCH=$GIT_BRANCH NGINX_USER=$NGINX_USER NGINX_HOST=$NGINX_HOST SMTP_HOST=$SMTP_HOST SMTP_PORT=$SMTP_PORT remote_http_proxy=$remote_http_proxy remote_https_proxy=$remote_https_proxy remote_no_proxy=$remote_no_proxy NQ_TOKEN=$NQ_TOKEN_DEV GOOGLE_ANALYTICS_ID=$GOOGLE_ANALYTICS_ID LOG_BAN_IP=$LOG_BAN_IP MMDB_TOKEN=$MMDB_TOKEN;
+            make deploy-remote FILES_TO_PROCESS=$FILES_TO_PROCESS_DEV GIT_BRANCH=$GIT_BRANCH NGINX_USER=$NGINX_USER NGINX_HOST=$NGINX_HOST SMTP_HOST=$SMTP_HOST SMTP_PORT=$SMTP_PORT remote_http_proxy=$remote_http_proxy remote_https_proxy=$remote_https_proxy remote_no_proxy=$remote_no_proxy GOOGLE_ANALYTICS_ID=$GOOGLE_ANALYTICS_ID GOOGLE_ADSENSE_ID=$GOOGLE_ADSENSE_ID LOG_BAN_IP=$LOG_BAN_IP MMDB_TOKEN=$MMDB_TOKEN;
           fi;
           if [[ ( "$GIT_BRANCH" == "master" ) ]]; then
-            make deploy-remote BACKEND_CONCURRENCY=$BACKEND_CONCURRENCY_MASTER ES_MEM=$ES_MEM_MASTER SCW_FLAVOR=$SCW_FLAVOR_MASTER GIT_BACKEND_BRANCH=master GIT_BRANCH=$GIT_BRANCH NGINX_USER=$NGINX_USER NGINX_HOST=$NGINX_HOST SMTP_HOST=$SMTP_HOST SMTP_PORT=$SMTP_PORT remote_http_proxy=$remote_http_proxy remote_https_proxy=$remote_https_proxy remote_no_proxy=$remote_no_proxy NQ_TOKEN=$NQ_TOKEN_MASTER GOOGLE_ANALYTICS_ID=$GOOGLE_ANALYTICS_ID LOG_BAN_IP=$LOG_BAN_IP MMDB_TOKEN=$MMDB_TOKEN;
+            make deploy-remote BACKEND_CONCURRENCY=$BACKEND_CONCURRENCY_MASTER ES_MEM=$ES_MEM_MASTER SCW_FLAVOR=$SCW_FLAVOR_MASTER GIT_BACKEND_BRANCH=master GIT_BRANCH=$GIT_BRANCH NGINX_USER=$NGINX_USER NGINX_HOST=$NGINX_HOST SMTP_HOST=$SMTP_HOST SMTP_PORT=$SMTP_PORT remote_http_proxy=$remote_http_proxy remote_https_proxy=$remote_https_proxy remote_no_proxy=$remote_no_proxy GOOGLE_ANALYTICS_ID=$GOOGLE_ANALYTICS_ID GOOGLE_ADSENSE_ID=$GOOGLE_ADSENSE_ID LOG_BAN_IP=$LOG_BAN_IP MMDB_TOKEN=$MMDB_TOKEN;
           fi;
         env:
           FILES_TO_PROCESS_DEV: deces-2020-m[0-1][0-9].txt.gz
@@ -105,11 +106,9 @@ jobs:
           SCW_FLAVOR_MASTER: ${{ secrets.SCW_FLAVOR_MASTER }}
           SCW_FLAVOR_BULK: ${{ secrets.SCW_FLAVOR_BULK }}
           GOOGLE_ANALYTICS_ID: ${{ secrets.GOOGLE_ANALYTICS_ID }}
+          GOOGLE_ADSENSE_ID: ${{ secrets.GOOGLE_ADSENSE_ID }}
           NGINX_USER: ${{ secrets.NGINX_USER }}
           NGINX_HOST: ${{ secrets.NGINX_HOST }}
-          NQ_TOKEN_DEV: ${{ secrets.NQ_TOKEN_DEV }}
-          NQ_TOKEN_MASTER: ${{ secrets.NQ_TOKEN_MASTER }}
-          NQ_TOKEN_BULK: ${{ secrets.NQ_TOKEN_BULK }}
           GIT_BRANCH: ${{ steps.extract_branch.outputs.branch }}
           remote_http_proxy: ${{ secrets.remote_http_proxy }}
           remote_https_proxy: ${{ secrets.remote_https_proxy }}
