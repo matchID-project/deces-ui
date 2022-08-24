@@ -135,9 +135,7 @@
     if ($displayMode === 'agg') {
       $triggerAggregations = true;
     }
-    ga.addEvent('event_name', {
-      recherche: searchString($searchInput)
-    });
+    ga.all.search(searchString($searchInput));
   }
 
   const startDate = new Date().getTime();
