@@ -106,7 +106,7 @@ jobs:
           SCW_FLAVOR_MASTER: ${{ secrets.SCW_FLAVOR_MASTER }}
           SCW_FLAVOR_BULK: ${{ secrets.SCW_FLAVOR_BULK }}
           GOOGLE_ANALYTICS_ID: ${{ secrets.GOOGLE_ANALYTICS_ID }}
-          GOOGLE_ADSENSE_ID: ${{ secrets.GOOGLE_ANALYTICS_ID }}
+          GOOGLE_ADSENSE_ID: ${{ secrets.GOOGLE_ADSENSE_ID }}
           NGINX_USER: ${{ secrets.NGINX_USER }}
           NGINX_HOST: ${{ secrets.NGINX_HOST }}
           GIT_BRANCH: ${{ steps.extract_branch.outputs.branch }}
