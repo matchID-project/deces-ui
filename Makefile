@@ -114,11 +114,6 @@ export ES_MEM_KUBE:=$(shell echo -n ${ES_MEM} | sed 's/\s*m/Mi/')
 export STORAGE_ACCESS_KEY_B64:=$(shell echo -n ${STORAGE_ACCESS_KEY} | openssl base64)
 export STORAGE_SECRET_KEY_B64:=$(shell echo -n ${STORAGE_SECRET_KEY} | openssl base64)
 
-# monitoring vars
-# export NEW_RELIC_API_KEY=${NEW_RELIC_API_KEY}
-# export NEW_RELIC_ACCOUNT_ID=${NEW_RELIC_ACCOUNT_ID}
-
-
 export PROOFS=${FRONTEND}/${GIT_BACKEND}/backend/data/proofs
 
 # backup dir
@@ -658,7 +653,7 @@ stats-catalog: ${STATS}
 	@ls ${STATS} | grep -v catalog | perl -e '@list=<>;print "[\n".join(",\n",map{chomp;s/.json//;"  \"$$_\""} (grep {/.json/} @list))."\n]\n"' >  ${STATS}/catalog.json
 
 stats-background:
-	((sleep 60;while (true); do make stats-live;sleep 120;done) > .stats-live 2>&1 &);\
+	((sleep 60;while (true); do make stats-live;sleep 120;done) > .stats-live 2>&1 &)
 
 ${PROOFS}:
 	@mkdir -p ${PROOFS}
