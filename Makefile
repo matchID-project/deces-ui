@@ -556,7 +556,7 @@ deploy-delete-old: ${DATAPREP_VERSION_FILE} ${DATA_VERSION_FILE}
 		GIT_BRANCH=${GIT_BRANCH} ${MAKEOVERRIDES}
 
 deploy-monitor:
-	@${MAKE} -C ${APP_PATH}/${GIT_TOOLS} remote-install-monitor NEW_RELIC_API_KEY=${NEW_RELIC_API_KEY} NEW_RELIC_ACCOUNT_ID=${NEW_RELIC_ACCOUNT_ID} ${MAKEOVERRIDES}
+	@(sleep 60 && ${MAKE} -C ${APP_PATH}/${GIT_TOOLS} remote-install-monitor NEW_RELIC_API_KEY=${NEW_RELIC_API_KEY} NEW_RELIC_ACCOUNT_ID=${NEW_RELIC_ACCOUNT_ID} ${MAKEOVERRIDES}) &
 
 deploy-cdn-purge-cache:
 	@${MAKE} -C ${APP_PATH}/${GIT_TOOLS} cdn-cache-purge
