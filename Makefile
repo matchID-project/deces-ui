@@ -556,7 +556,7 @@ deploy-delete-old: ${DATAPREP_VERSION_FILE} ${DATA_VERSION_FILE}
 		GIT_BRANCH=${GIT_BRANCH} ${MAKEOVERRIDES}
 
 deploy-monitor:
-	@(sleep 60 && ${MAKE} -C ${APP_PATH}/${GIT_TOOLS} remote-install-monitor NEW_RELIC_API_KEY=${NEW_RELIC_API_KEY} NEW_RELIC_ACCOUNT_ID=${NEW_RELIC_ACCOUNT_ID} ${MAKEOVERRIDES}) &
+	@((sleep 60;${MAKE} -C ${APP_PATH}/${GIT_TOOLS} remote-install-monitor NEW_RELIC_API_KEY=${NEW_RELIC_API_KEY} NEW_RELIC_ACCOUNT_ID=${NEW_RELIC_ACCOUNT_ID} ${MAKEOVERRIDES}) > .install-monitor.log 2>&1 &)
 
 deploy-cdn-purge-cache:
 	@${MAKE} -C ${APP_PATH}/${GIT_TOOLS} cdn-cache-purge
@@ -653,7 +653,7 @@ stats-catalog: ${STATS}
 	@ls ${STATS} | grep -v catalog | perl -e '@list=<>;print "[\n".join(",\n",map{chomp;s/.json//;"  \"$$_\""} (grep {/.json/} @list))."\n]\n"' >  ${STATS}/catalog.json
 
 stats-background:
-	((sleep 60;while (true); do make stats-live;sleep 120;done) > .stats-live 2>&1 &);\
+	((sleep 60;while (true); do make stats-live;sleep 120;done) > .stats-live 2>&1 &)
 
 ${PROOFS}:
 	@mkdir -p ${PROOFS}
