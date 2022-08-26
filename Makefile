@@ -114,6 +114,10 @@ export ES_MEM_KUBE:=$(shell echo -n ${ES_MEM} | sed 's/\s*m/Mi/')
 export STORAGE_ACCESS_KEY_B64:=$(shell echo -n ${STORAGE_ACCESS_KEY} | openssl base64)
 export STORAGE_SECRET_KEY_B64:=$(shell echo -n ${STORAGE_SECRET_KEY} | openssl base64)
 
+# monitoring vars
+# export NEW_RELIC_API_KEY=${NEW_RELIC_API_KEY}
+# export NEW_RELIC_ACCOUNT_ID=${NEW_RELIC_ACCOUNT_ID}
+
 
 export PROOFS=${FRONTEND}/${GIT_BACKEND}/backend/data/proofs
 
