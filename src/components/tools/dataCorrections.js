@@ -47,5 +47,13 @@ export const dataCorrections = {
     "reason": "cnil-art-85",
     "poofs":["none"],
     "anonymize": true
+   },
+   "P7XeVrBIO1uN": {
+    "permalink": "/id/P7XeVrBIO1uN",
+    "change": "remove",
+    "request": "parent",
+    "reason": "cnil-art-85",
+    "poofs":["none"],
+    "anonymize": true
    }
 };
