@@ -237,6 +237,14 @@ const correct = (person) => {
             }
             person.death = undefined;
         }
+    } else if ( person.death && (person.death.age !== null) && (person.death.age >=0) && (person.death.age < 18) ) {
+        person.name.first = [ `${person.name.first[0][0]}****` ];
+        person.name.last = `${person.name.last[0]}****`;
+        person.birth.location = {
+            departmentCode: person.birth.location.departmentCode,
+            country: person.birth.location.country,
+            countryCode: person.birth.location.countryCode
+        }
     }
     return person;
   };
