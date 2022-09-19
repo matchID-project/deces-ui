@@ -55,6 +55,11 @@ const f = fuzzySearch.subscribe((value) => {myFuzzySearch = value});
 const d = displayMode.subscribe((value) => {myDisplayMode = value});
 const u = updateURL.subscribe((value) => { myUpdateURL=value });
 
+const today = new Date(Date.now());
+const currentYear = today.getFullYear();
+const currentMonth = today.getMonth()+1;
+
+
 export const enableDisplayMode = async (mode) => {
     if (myDisplayMode) {
         if ((myDisplayMode === 'geo') && (mode !== 'geo')) {
@@ -238,12 +243,18 @@ const correct = (person) => {
             person.death = undefined;
         }
     } else if ( person.death && (person.death.age !== null) && (person.death.age < 18) ) {
-        person.name.first = [ `${person.name.first[0][0]}****` ];
-        person.name.last = `${person.name.last[0]}****`;
-        person.birth.location = {
-            departmentCode: person.birth.location.departmentCode,
-            country: person.birth.location.country,
-            countryCode: person.birth.location.countryCode
+        if (person.death.date) {
+            const deathSinceYears = currentYear - parseInt(person.death.date.substring(0,4)) - (currentMonth >= parseInt(person.death.date.substring(4,6)) ? 0 : 1);
+            if (deathSinceYears < 10) {
+                person.name.first = [ `${person.name.first[0][0]}****` ];
+                person.name.last = `${person.name.last[0]}****`;
+                person.birth.location = {
+                    departmentCode: person.birth.location.departmentCode,
+                    country: person.birth.location.country,
+                    countryCode: person.birth.location.countryCode
+                }
+            }
+            person.anonymize = "recentKidDeath";
         }
     }
     return person;
