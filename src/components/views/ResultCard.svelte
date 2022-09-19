@@ -238,6 +238,14 @@
                                             </div>
                                         {/each}
                                     {/if}
+                                    {#if (result.anonymize && result.anonymize == "recentKidDeath") }
+                                            <div class="rf-col-xs-12 rf-col-sm-12 rf-col-md-12 rf-col-lg-12 rf-col-xl-12 rf-text--center rf-padding-top-1N">
+                                                <i>
+                                                    Du fait de la sensibilité de ces données personnelles, les décès de mineurs datant de moins de 10 ans sont anonymisés par défaut, pour limiter
+                                                    la vue grand public et l'indexation de ces données.
+                                                </i>
+                                            </div>
+                                    {/if}
                                     <div class="rf-col-12 rf-text--center rf-margin-top-2N">
                                         {#if edit && (Object.keys(editValue).length)}
                                             <p>

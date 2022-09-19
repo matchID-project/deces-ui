@@ -254,6 +254,7 @@ const correct = (person) => {
                     countryCode: person.birth.location.countryCode
                 }
             }
+            person.anonymize = "recentKidDeath";
         }
     }
     return person;
