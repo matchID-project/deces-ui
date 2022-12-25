@@ -185,11 +185,11 @@
                         if (/matchid/.test(x)) {
                             const id = x.replace(/.*\/(\S+).*/,'$1');
                             const score = x.replace(/.* à /,'')
-                            match = `<a target="_blank" class="rf-link" href="/id/${id}">identification à ${score}</a>`;
+                            match = `<a target="_blank" rel="noopener noreferrer" class="rf-link" href="/id/${id}">identification à ${score}</a>`;
                         }
                         return x && !match;
                     }).forEach(n => {
-                        note += '<br>' + `${n}`.replace(/(http:\S+)/g,'<a target="_blank" class="rf-link" href="$1">$1</a>')
+                        note += '<br>' + `${n}`.replace(/(http:\S+)/g,'<a target="_blank" rel="noopener noreferrer" class="rf-link" href="$1">$1</a>')
                     });
                 }
             }

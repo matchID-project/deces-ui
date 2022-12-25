@@ -133,6 +133,7 @@
                                                         <a
                                                             href={modifications[modificationsCurrent || 0].proof}
                                                             target="_blank"
+                                                            rel="noopener noreferrer"
                                                             class="rf-link"
                                                             on:click|preventDefault={() => $showProof = modifications[modificationsCurrent || 0].proof}
                                                         >
@@ -231,6 +232,7 @@
                                                     href={result.links[key]}
                                                     title={`lien ${key}`}
                                                     target="_blank"
+                                                    rel="noopener noreferrer"
                                                     class="rf-link"
                                                 >
                                                     Voir sur {key}
@@ -397,6 +399,7 @@
                                                 <a
                                                     href={modifications[modificationsCurrent || 0].proof}
                                                     target="_blank"
+                                                    rel="noopener noreferrer"
                                                     class="rf-link"
                                                     on:click|preventDefault={() => $showProof = modifications[modificationsCurrent || 0].proof}
                                                 >
@@ -1227,7 +1230,7 @@
             { label: 'Département',  value: result.death.location.departmentCode, update: ['deathDepartment'] },
             { label: 'Pays',  value: [result.death.location.country, result.death.location.countryCode], cb: (c) => `${c[0]}${c[1] ? ` (${c[1]})` : ''}`, update: ['deathCountry','deathCountryCode']},
             { label: 'Acte n°',  editable: false, value: result.death.certificateId, },
-            { label: 'Source INSEE', editable: false, value: $dataGouvCatalog && [result.source, result.sourceLine], cb: (s) => `<a href=${$dataGouvCatalog[s[0]]} title="source INSEE ${s[0]}" target="_blank">fichier ${s[0]}</a>, ligne n°${s[1]}` }
+            { label: 'Source INSEE', editable: false, value: $dataGouvCatalog && [result.source, result.sourceLine], cb: (s) => `<a href=${$dataGouvCatalog[s[0]]} title="source INSEE ${s[0]}" target="_blank" rel="noopener noreferrer">fichier ${s[0]}</a>, ligne n°${s[1]}` }
         ]
     } else {
         conf['Décès'] && delete conf['Décès'];
