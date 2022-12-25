@@ -9,6 +9,7 @@
     class:hovering={((hovering === true) || $linkFile) && !error}
     class:rf-text--error={error}
     on:click|preventDefault={chooseFile}
+    on:keydown|preventDefault={chooseFile}
     style="postition: relative;"
 >
     <p style="position: absolute;top: 1rem;left: 3rem;margin: 0">
