@@ -10,9 +10,9 @@
                                 <div class="rf-col-12">
                                     <div
                                         class="rf-card rf-card--horizontal rf-card--md rf-card--no-arrow"
-                                        style="position:relative;"
+                                        style="position: relative;"
                                     >
-                                        <div class="rf-card__img" style="position:relative;">
+                                        <div class="rf-card__img" style="position: relative;">
                                             <img
                                                 alt='login'
                                                 src='/favicon.svg'
@@ -40,7 +40,7 @@
                                                     <label
                                                         class="rf-label rf-text--left"
                                                         for="email"
-                                                        style="overflow:hidden;text-overflow:ellipsis;position: relative"
+                                                        style="overflow: hidden;text-overflow:ellipsis;position: relative"
                                                     >
                                                         Courriel
                                                     </label>
@@ -70,7 +70,7 @@
                                                     <label
                                                         class="rf-label rf-text--left"
                                                         for="token"
-                                                        style="overflow:hidden;text-overflow:ellipsis;position: relative"
+                                                        style="overflow: hidden;text-overflow:ellipsis;position: relative"
                                                     >
                                                         {isAdmin ?  "Mot de passe" : "Code"}
                                                     </label>

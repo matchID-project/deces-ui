@@ -2,7 +2,7 @@
     <div class="modal" transition:fade>
         <div class="modal-container">
             <div class="rf-container--fluid">
-                <div class="rf-grid-row" style="position:relative">
+                <div class="rf-grid-row" style="position: relative">
                     <div
                         style="position:absolute;top:8px;right:4px;color:var(--g300);"
                         on:click={() => $showProof = ''}

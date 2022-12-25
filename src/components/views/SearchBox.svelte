@@ -1,6 +1,6 @@
 <div class="rf-container-fluid" style="margin-top: -16px;">
   <form on:submit|preventDefault={handleSubmit}>
-    <div class="rf-grid-row" style="position:relative;">
+    <div class="rf-grid-row" style="position: relative;">
       <div class="rf-col-12">
         <span
           title={$advancedSearch ? "Recherche simplifiée" : "Recherche avancée"}
@@ -26,7 +26,7 @@
                       <label
                         class="rf-label"
                         for={$searchInput[key].url}
-                        style="overflow:hidden;text-overflow:ellipsis;"
+                        style="overflow: hidden;text-overflow:ellipsis;"
                       >
                         {$searchInput[key].label}
                       </label>

@@ -428,7 +428,7 @@
 
   td {
     max-width: 120px;
-    overflow:hidden;
+    overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
     vertical-align:middle!important;

@@ -8,7 +8,7 @@
                         class:rf-card--left-arrow={expand}
                         on:click|preventDefault={toggleExpand}
                     >
-                        <div class="rf-card__img" style="position:relative">
+                        <div class="rf-card__img" style="position: relative">
                             {#if (wikimediaImgSrc)}
                                 <img
                                     class:rf-hide={!wikimediaImgLoaded}
@@ -81,7 +81,7 @@
                     <div class="rf-col-12" transition:slide|local>
                         <div class="rf-callout rf-background--white">
                             {#if result.correction}
-                                <span style="display:flex" class="rf-color--rm">
+                                <span style="display: flex" class="rf-color--rm">
                                     <Icon icon='ri:alert-line' class="rf-color--rm rf-fi--md rf-margin-right-1N" title="erreur de donnée signalée"/>
                                     {#if result.correction.change === "remove"}
                                         Fiche retirée
@@ -302,7 +302,7 @@
                                                 {#each modificationsHistory as m}
                                                     <tr>
                                                         <td>
-                                                            <div style="display:flex">
+                                                            <div style="display: flex">
                                                                 <a
                                                                     href={m.proof}
                                                                     class="rf-link rf-href rf-fi-db-line rf-link--icon-left"
@@ -310,7 +310,7 @@
                                                                 >
                                                                     <Icon icon="ri:file-line"/>
                                                                 </a>
-                                                                <div style="display:block">
+                                                                <div style="display: block">
                                                                     <strong>
                                                                         {#each Object.keys(m.fields) as k}
                                                                             {displayField[k] || k}: {m.fields[k]} <br>
@@ -328,7 +328,7 @@
                                                             </div>
                                                         </td>
                                                         <td>
-                                                            <div style="display:flex;align-items:center;">
+                                                            <div style="display: flex;align-items:center;">
                                                                 {#if m.auth === 0}
                                                                     <Icon icon="ri:time-line" class="rf-color--rm rf-margin-right-1N"/>
                                                                     en attente
@@ -603,7 +603,7 @@
                                                     <label
                                                         class="rf-label rf-text--left"
                                                         for="editUrl"
-                                                        style="overflow:hidden;text-overflow:ellipsis;position: relative"
+                                                        style="overflow: hidden;text-overflow:ellipsis;position: relative"
                                                     >
                                                         <span
                                                             class:rf-fi-check-line={editUrl && editUrlValidate}
@@ -664,7 +664,7 @@
                                                         <label
                                                             class="rf-label rf-text--left"
                                                             for="editMail"
-                                                            style="overflow:hidden;text-overflow:ellipsis;position: relative"
+                                                            style="overflow: hidden;text-overflow:ellipsis;position: relative"
                                                         >
                                                             Courriel
                                                         </label>
@@ -703,7 +703,7 @@
                                                         <label
                                                             class="rf-label rf-text--left"
                                                             for="editMailOTP"
-                                                            style="overflow:hidden;text-overflow:ellipsis;position: relative"
+                                                            style="overflow: hidden;text-overflow:ellipsis;position: relative"
                                                         >
                                                             Code de validation
                                                         </label>

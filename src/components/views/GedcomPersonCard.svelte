@@ -15,7 +15,7 @@
                         on:click={toggleExpand}
                         class:rf-inactive={(!active)&&(!focus)}
                     >
-                        <div class="rf-card__img" style="position:relative">
+                        <div class="rf-card__img" style="position: relative">
                             <img
                                 class="{ focus ? "rf-background--bf" : (active? "rf-callout--scheme-soft-blue-soft" : "rf-background--g400") }"
                                 class:match={match}

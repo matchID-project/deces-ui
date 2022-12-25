@@ -13,7 +13,7 @@
     <p style="position: absolute;top: 1rem;left: 3rem;margin: 0">
         <strong>Étape {step}. {title}</strong>
     </p>
-    <p class="rf-text--center" style="overflow:hidden;text-overflow:ellipsis;">
+    <p class="rf-text--center" style="overflow: hidden;text-overflow:ellipsis;">
         {@html label}
     </p>
 </div>

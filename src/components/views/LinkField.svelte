@@ -13,7 +13,7 @@
     <label
         class="rf-label"
         for={field.group+field.label}
-        style="overflow:hidden;text-overflow:ellipsis;position: relative"
+        style="overflow: hidden;text-overflow:ellipsis;position: relative"
     >
         <span
             class:rf-fi-check-line={field && field.mapTo && !field.warning}

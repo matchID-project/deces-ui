@@ -1,4 +1,4 @@
-<div style="position:relative">
+<div style="position: relative">
     <svg {width} {height} viewBox="0 0 260 130">
         {#if view && countries.length && data && Object.keys(index).length}
             <g>

@@ -18,7 +18,7 @@
         href="#step{step}"
         aria-label={label}
     >
-        <p class="rf-text--center" style="overflow:hidden;text-overflow:ellipsis;">
+        <p class="rf-text--center" style="overflow: hidden;text-overflow:ellipsis;">
             {@html label}
         </p>
     </a>

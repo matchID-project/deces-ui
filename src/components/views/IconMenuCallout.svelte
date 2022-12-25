@@ -2,10 +2,10 @@
     id="options"
     class:rf-padding-2N={!display}
     class:rf-padding-bottom-2N={display}
-    style="position:relative"
+    style="position: relative"
 >
     <div style="position: absolute;top: 1.1rem; left: 1rem;z-index:1200;">
-        <div style="display:flex">
+        <div style="display: flex">
             {#each Object.keys(menu).filter(m => (!display || (activeComponent === m))) as m (m)}
                 <span
                     on:click={() => {

@@ -34,7 +34,7 @@
         <label
             class="rf-label"
             for="threshold"
-            style="overflow:hidden;text-overflow:ellipsis;"
+            style="overflow: hidden;text-overflow:ellipsis;"
         >
             Seuil (pour F1-score, rappel, précision)
         </label>

@@ -15,7 +15,7 @@
             </p>
             <LinkFields bind:mapping={mapping} bind:fields={fields}/>
         </div>
-        <div class="rf-col-1" style="position:relative">
+        <div class="rf-col-1" style="position: relative">
             <div class="rf-col--vcenter">
                 <Icon icon="ri:arrow-left-line" class="rf-fi--xxl"/>
             </div>
