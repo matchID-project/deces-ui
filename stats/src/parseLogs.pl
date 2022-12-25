@@ -28,9 +28,9 @@ $reportName = @ARGV[0] || full;
         [qr/^(GET|POST) \/.*php.*$/i, '"hacking"'],
         [qr/^(GET|OPTIONS) \/?.*(js|json|js.map|css|css.map|png|svg|woff2|favicon?)$/, '"static"'],
         [qr|^(\S+) /matchID.*/api/v(\d)/((\w+)+(/\w+)?)(/\S+)?$|, '"api: matchID"'],
-        [qr|^(\S+) /[^/]*/api/v(\d)/(([a-z]+)(/[a-z]+)?)(/\S+)?$|, '"api: $3 $1 $2"'],
+        [qr/^(\S+) \/[^\/]*\/api\/v(\d)\/(compare|version|search\/csv|search\/json|search|updates\/proof|updates|updated|id|auth|register|healthcheck|queue\/jobs|queue)(\/\S+|\?\S+)?$/, '"api: $3 $1 $2"'],
         [qr/^(GET|OPTIONS|HEAD|CONNECT) \/(\?.*)?$/, '"page: /search ($1)"'],
-        [qr/^(GET|HEAD|OPTIONS|POST|CONNECT) (\/(search|id|about|stats|link|edits|notFound)).*$/, '"page: $2 ($1)"'],
+        [qr/^(GET|HEAD|OPTIONS|POST|CONNECT) (\/(search|id|about|stats|link|edits|notFound|[^\/]*\/api\/v.\/docs)).*$/, '"page: $2 ($1)"'],
         [qr/^(GET|HEAD|OPTIONS|POST|CONNECT) .*$/i, '"hacking"'],
         [qr/^\S+$/i, '"hacking"'],
 );

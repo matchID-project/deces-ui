@@ -48,7 +48,7 @@
                                         <td>{job.progress}</td>
                                         <td>{job.rows}</td>
                                         <td>
-                                            <div style="display:flex;align-items:center">
+                                            <div style="display: flex;align-items:center">
                                                 {statusLabel[job.status] || job.status}
                                                 {#if job.status == 'active'}
                                                     <span

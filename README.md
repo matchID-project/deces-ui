@@ -1,7 +1,8 @@
 
-# Conditions d'usage et garanties (version alpha)
+# Conditions d'usage et garanties
 
-Ce service est développé avec le ministère de l'Intérieur. Néanmoins, la mise en ligne de service est financé sur fonds personnels et est donc offert sans garantie.
+Ce service a éte développé partiellement avec le ministère de l'Intérieur, et est maintenant 100% en maintenance bénévole.
+La mise en ligne de service est financé sur fonds personnels et est donc offert sans garantie.
 L'usage est limité à une requête par seconde afin de préserver un service pour tous. Selon
 l'affluence et les retours, nous envisagerons de le consolider. Contactez nous
 sur <a href="mailto:matchid.project@gmail.com">matchid-project@gmail.com</a> pour
@@ -74,12 +75,10 @@ Lors de l'utilisation de l'application (plutôt que l'API) deces.matchid.io, les
 
 ## Cookies et données stockées sur le navigateurs
 
-Aucun agrément n'est demandé à l'entrée sur le site car l'application deces.matchid.io.
+Les cookies utilisés sont ceux de Cloudflare pour des raisons techniques, ainsi que Google Ads lors des campagnes de financement du site (c'est le cas depuis debut fin aout 2022), les revenus ayant pour seul but le financement des serveurs.
 
-Les seuls cookies implémentés sont les cookies techniques de Cloudflare ayant pour usage exclusif le bon fonctionnement de l'application (cookies de répartisseurs de charge, permettant le suivi de session sur les mêmes composants techniques).
-
-Aucun cookie n'est utilisé par ailleurs par l'application matchID
+Aucun cookie n'est utilisé par ailleurs par l'application matchID.
 
 ## Données de statistiques
 
-L'application matchID conserve 12 mois les données de log pour des raisons de sécurité du traitement. Au-delà, les données IP sont hashées avec un identifiant mensuel unique aléatoire pour préserver les décomptes mensuels sans trop biaiser les statistiques. Les auteurs eux-même ne disposent pas de clé de réversibilité.
+L'application matchID conserve 12 mois les données de log pour des raisons de sécurité du traitement. 

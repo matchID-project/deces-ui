@@ -21,7 +21,7 @@
         <td><div class="expand-on-hover">{result.death && result.death.location && result.death.certificateId || ''}</div></td>
         <td><div class="expand-on-hover">
             {#if $dataGouvCatalog && result.source}
-                <a href={$dataGouvCatalog[result.source]} target="_blank">
+                <a href={$dataGouvCatalog[result.source]} target="_blank" rel="noopener noreferrer">
                 {result.source}
                 </a>
             {/if}

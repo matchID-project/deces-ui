@@ -8,7 +8,7 @@
                         class:rf-card--left-arrow={expand}
                         on:click|preventDefault={toggleExpand}
                     >
-                        <div class="rf-card__img" style="position:relative">
+                        <div class="rf-card__img" style="position: relative">
                             {#if (wikimediaImgSrc)}
                                 <img
                                     class:rf-hide={!wikimediaImgLoaded}
@@ -81,7 +81,7 @@
                     <div class="rf-col-12" transition:slide|local>
                         <div class="rf-callout rf-background--white">
                             {#if result.correction}
-                                <span style="display:flex" class="rf-color--rm">
+                                <span style="display: flex" class="rf-color--rm">
                                     <Icon icon='ri:alert-line' class="rf-color--rm rf-fi--md rf-margin-right-1N" title="erreur de donnée signalée"/>
                                     {#if result.correction.change === "remove"}
                                         Fiche retirée
@@ -133,6 +133,7 @@
                                                         <a
                                                             href={modifications[modificationsCurrent || 0].proof}
                                                             target="_blank"
+                                                            rel="noopener noreferrer"
                                                             class="rf-link"
                                                             on:click|preventDefault={() => $showProof = modifications[modificationsCurrent || 0].proof}
                                                         >
@@ -231,6 +232,7 @@
                                                     href={result.links[key]}
                                                     title={`lien ${key}`}
                                                     target="_blank"
+                                                    rel="noopener noreferrer"
                                                     class="rf-link"
                                                 >
                                                     Voir sur {key}
@@ -300,7 +302,7 @@
                                                 {#each modificationsHistory as m}
                                                     <tr>
                                                         <td>
-                                                            <div style="display:flex">
+                                                            <div style="display: flex">
                                                                 <a
                                                                     href={m.proof}
                                                                     class="rf-link rf-href rf-fi-db-line rf-link--icon-left"
@@ -308,7 +310,7 @@
                                                                 >
                                                                     <Icon icon="ri:file-line"/>
                                                                 </a>
-                                                                <div style="display:block">
+                                                                <div style="display: block">
                                                                     <strong>
                                                                         {#each Object.keys(m.fields) as k}
                                                                             {displayField[k] || k}: {m.fields[k]} <br>
@@ -326,7 +328,7 @@
                                                             </div>
                                                         </td>
                                                         <td>
-                                                            <div style="display:flex;align-items:center;">
+                                                            <div style="display: flex;align-items:center;">
                                                                 {#if m.auth === 0}
                                                                     <Icon icon="ri:time-line" class="rf-color--rm rf-margin-right-1N"/>
                                                                     en attente
@@ -397,6 +399,7 @@
                                                 <a
                                                     href={modifications[modificationsCurrent || 0].proof}
                                                     target="_blank"
+                                                    rel="noopener noreferrer"
                                                     class="rf-link"
                                                     on:click|preventDefault={() => $showProof = modifications[modificationsCurrent || 0].proof}
                                                 >
@@ -600,7 +603,7 @@
                                                     <label
                                                         class="rf-label rf-text--left"
                                                         for="editUrl"
-                                                        style="overflow:hidden;text-overflow:ellipsis;position: relative"
+                                                        style="overflow: hidden;text-overflow:ellipsis;position: relative"
                                                     >
                                                         <span
                                                             class:rf-fi-check-line={editUrl && editUrlValidate}
@@ -661,7 +664,7 @@
                                                         <label
                                                             class="rf-label rf-text--left"
                                                             for="editMail"
-                                                            style="overflow:hidden;text-overflow:ellipsis;position: relative"
+                                                            style="overflow: hidden;text-overflow:ellipsis;position: relative"
                                                         >
                                                             Courriel
                                                         </label>
@@ -700,7 +703,7 @@
                                                         <label
                                                             class="rf-label rf-text--left"
                                                             for="editMailOTP"
-                                                            style="overflow:hidden;text-overflow:ellipsis;position: relative"
+                                                            style="overflow: hidden;text-overflow:ellipsis;position: relative"
                                                         >
                                                             Code de validation
                                                         </label>
@@ -1227,7 +1230,7 @@
             { label: 'Département',  value: result.death.location.departmentCode, update: ['deathDepartment'] },
             { label: 'Pays',  value: [result.death.location.country, result.death.location.countryCode], cb: (c) => `${c[0]}${c[1] ? ` (${c[1]})` : ''}`, update: ['deathCountry','deathCountryCode']},
             { label: 'Acte n°',  editable: false, value: result.death.certificateId, },
-            { label: 'Source INSEE', editable: false, value: $dataGouvCatalog && [result.source, result.sourceLine], cb: (s) => `<a href=${$dataGouvCatalog[s[0]]} title="source INSEE ${s[0]}" target="_blank">fichier ${s[0]}</a>, ligne n°${s[1]}` }
+            { label: 'Source INSEE', editable: false, value: $dataGouvCatalog && [result.source, result.sourceLine], cb: (s) => `<a href=${$dataGouvCatalog[s[0]]} title="source INSEE ${s[0]}" target="_blank" rel="noopener noreferrer">fichier ${s[0]}</a>, ligne n°${s[1]}` }
         ]
     } else {
         conf['Décès'] && delete conf['Décès'];
