@@ -106,7 +106,7 @@
         <p>
           Le projet matchID a été initié au ministère de l'Intérieur ${$themeDnum ? "(administrateur ministériel des données)":""}
            dans le contexte des challenges d'
-           <a href="https://entrepreneur-interet-general.etalab.gouv.fr/defis/2017/mi-matchid.html" target="_blank">
+           <a href="https://entrepreneur-interet-general.etalab.gouv.fr/defis/2017/mi-matchid.html" target="_blank" rel="noopener noreferrer">
            Entrepreneur d'intérêt général</a>.
           La réconciliation des personnes décédées avec le permis de conduire a été le premier cas d'usage réalisé avec
             matchID.
@@ -129,7 +129,7 @@
         </p>
         `}
         <p>
-            Pour en savoir plus sur le projet matchID, consultez notre site <a href="https://www.matchid.io" target="_blank">https://matchid.io</a>.
+            Pour en savoir plus sur le projet matchID, consultez notre site <a href="https://www.matchid.io" target="_blank" rel="noopener noreferrer">https://matchid.io</a>.
         </p>
 
       `,
@@ -145,7 +145,7 @@
         Malheureusement, l'Administration n'a pas pu incuber le service ni porter la responsabilité juridique du traitement.
       </p>
       <p>
-        Le portage juridique devient nécessaire, pour maintenir et faire évoluer le service. 
+        Le portage juridique devient nécessaire, pour maintenir et faire évoluer le service.
         Il permettant le financement de tous les usages, tout en garantissant le caractère non lucratif par un statut associatif.
         La création de l'association sera également l'occasion d'associer de nouveaux bénévoles à la contribution du service (e.g validation de modification de données erronnées).
       </p>
@@ -153,7 +153,7 @@
         Nous avons donc pris la décision de constituer une collecter des fonds pour constituer l'association et continuer à faire tourner le service voire l'étendre.
       </p>
       <p>
-        Pour nous aider, <a href="https://www.leetchi.com/c/matchid-lassociation" target="_blank">c'est ici !</a>
+        Pour nous aider, <a href="https://www.leetchi.com/c/matchid-lassociation" target="_blank" rel="noopener noreferrer">c'est ici !</a>
       </p>
       `,
       tags: "help donate"
@@ -163,8 +163,8 @@
       content: `
           <p>
               Le site exploite les fichiers des personnes décédées, disponibles en open data sur
-              <a href="https://www.data.gouv.fr/fr/datasets/fichier-des-personnes-decedees/" target="_blank">data.gouv.fr</a> et
-              recueillies par l'<a href="https://www.insee.fr/fr/information/4190491" target="_blank">INSEE</a>.
+              <a href="https://www.data.gouv.fr/fr/datasets/fichier-des-personnes-decedees/" target="_blank" rel="noopener noreferrer">data.gouv.fr</a> et
+              recueillies par l'<a href="https://www.insee.fr/fr/information/4190491" target="_blank" rel="noopener noreferrer">INSEE</a>.
           </p>
           <p>
               Les fichiers des personnes décédées sont établis par l’INSEE à partir des informations reçues des communes
@@ -188,16 +188,16 @@
             Quelques liens utiles :
             <ul class="rf-margin-0 rf-padding-0 rf-padding-left-4N">
               <li class="rf-margin-0">
-                <a href="https://www.cnil.fr/fr/rnipp-repertoire-national-didentification-des-personnes-physiques-0" target="_blank">le RNIPP vu par la CNIL</a>
+                <a href="https://www.cnil.fr/fr/rnipp-repertoire-national-didentification-des-personnes-physiques-0" target="_blank" rel="noopener noreferrer">le RNIPP vu par la CNIL</a>
               </li>
               <li class="rf-margin-0">
-                formulaires de <a href="https://www.insee.fr/fr/information/1303477" target="_blank">déclaration
+                formulaires de <a href="https://www.insee.fr/fr/information/1303477" target="_blank" rel="noopener noreferrer">déclaration
                 de décès</a> des communes vers l'INSEE
               <li class="rf-margin-0">
-                démarches relatives au décès sur <a href="https://www.service-public.fr/particuliers/vosdroits/F16507" target="_blank">service-public.fr</a>
+                démarches relatives au décès sur <a href="https://www.service-public.fr/particuliers/vosdroits/F16507" target="_blank" rel="noopener noreferrer">service-public.fr</a>
               </li>
               <li class="rf-margin-0">
-                article wikipedia concernant le <a href="https://fr.wikipedia.org/wiki/R%C3%A9pertoire_national_d%27identification_des_personnes_physiques" target="_blank">RNIPP</a>
+                article wikipedia concernant le <a href="https://fr.wikipedia.org/wiki/R%C3%A9pertoire_national_d%27identification_des_personnes_physiques" target="_blank" rel="noopener noreferrer">RNIPP</a>
               </li>
           </p>
         </ul>
@@ -209,7 +209,7 @@
             Le fichier de personnes décédées est un document administratif. Les données sont publiées en application des dispositions des articles L311-9 et L312-1-1 du code des relations entre le public et l’administration, et réutilisables dans les conditions prévues par le titre II de ce livre.
         </p>
         <p>
-            Les données INSEE sont sous <a href="https://www.etalab.gouv.fr/licence-ouverte-open-licence" target="_blank">Licence Ouverte / Open Licence version 2.0</a>.
+            Les données INSEE sont sous <a href="https://www.etalab.gouv.fr/licence-ouverte-open-licence" target="_blank" rel="noopener noreferrer">Licence Ouverte / Open Licence version 2.0</a>.
         </p>
         <p> L’INSEE (et donc ce service) ne peuvent garantir que les fichiers des personnes décédées sont exempts d’omissions ou d’erreurs.
             Ce service et l'INSEE ne sauraient encourir aucune responsabilité quant à l’utilisation faite des informations contenues dans ces fichiers.
@@ -280,17 +280,17 @@
       icon: 'ri:file-search-line',
       content: `
         <p>
-          Les données sont traitées avec l'outil open source <a href="https://www.matchid.io" target="_blank">matchID</a> (Python/Pandas). Les traitements,
-          disponibles <a href="https://github.com/matchid-project/deces-dataprep" target="_blank">ici</a>,
+          Les données sont traitées avec l'outil open source <a href="https://www.matchid.io" target="_blank" rel="noopener noreferrer">matchID</a> (Python/Pandas). Les traitements,
+          disponibles <a href="https://github.com/matchid-project/deces-dataprep" target="_blank" rel="noopener noreferrer">ici</a>,
           consistent en une mise en forme (capitalisation, réconciliation avec les noms de pays et commune
           selon les référentiels INSEE) puis une indexation. Les données sont actualisées chaque mois, après chaque diffusion sur le
-          site <a href="https://www.data.gouv.fr/fr/datasets/fichier-des-personnes-decedees/" target="_blank">data.gouv.fr</a>.
+          site <a href="https://www.data.gouv.fr/fr/datasets/fichier-des-personnes-decedees/" target="_blank" rel="noopener noreferrer">data.gouv.fr</a>.
       </p>
       <p>
-          La recherche et l'indexation reposent sur <a href="https://elastic.co" target="_blank">Elasticsearch</a>
+          La recherche et l'indexation reposent sur <a href="https://elastic.co" target="_blank" rel="noopener noreferrer">Elasticsearch</a>
           qui repose sur le moteur de recherche Lucène, apportant le bénéfice
-          des <a href="https://wikipedia.org/wiki/Recherche_approximative" target="_blank">recherches floues</a> à
-          large échelle. Le code source du présent site est accessible sur <a href="https://github.com/matchid-project/deces-ui" target="_blank">Github</a>.
+          des <a href="https://wikipedia.org/wiki/Recherche_approximative" target="_blank" rel="noopener noreferrer">recherches floues</a> à
+          large échelle. Le code source du présent site est accessible sur <a href="https://github.com/matchid-project/deces-ui" target="_blank" rel="noopener noreferrer">Github</a>.
       </p>
       `},
     { title: "Décès manquant",
@@ -423,11 +423,11 @@
       icon: 'ri:github-line',
       content: `
         <p>
-          Le code source de ce site est open source et disponible sur <a href="https://github.com/matchid-project/deces-ui" target="_blank">GitHub</a>,
-          ainsi que celui de l'<a href="https://github.com/matchid-project/deces-backend" target="_blank">API</a>.
+          Le code source de ce site est open source et disponible sur <a href="https://github.com/matchid-project/deces-ui" target="_blank" rel="noopener noreferrer">GitHub</a>,
+          ainsi que celui de l'<a href="https://github.com/matchid-project/deces-backend" target="_blank" rel="noopener noreferrer">API</a>.
         </p>
         <p>
-          Il est diffusé sous la licence libre <a href="https://spdx.org/licenses/LGPL-3.0.html#licenseText" target="_blank">LGPL 3.0</a>.
+          Il est diffusé sous la licence libre <a href="https://spdx.org/licenses/LGPL-3.0.html#licenseText" target="_blank" rel="noopener noreferrer">LGPL 3.0</a>.
         </p>
       `},
     { title: 'Statistiques de consultation',

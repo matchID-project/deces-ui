@@ -9,7 +9,7 @@
       class={classes}
       class:spin={spin}
       class:rf-color--rm={!icons[icon]}
-      style="position:relative"
+      style="position: relative"
     >
       {#if href}
         <a class="rf-fi__link" href={href} aria-label={label}>

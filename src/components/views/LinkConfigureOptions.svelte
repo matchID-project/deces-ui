@@ -16,7 +16,7 @@
                         <label
                             class="rf-label"
                             for={key}
-                            style="overflow:hidden;text-overflow:ellipsis;"
+                            style="overflow: hidden;text-overflow:ellipsis;"
                         >
                             {options[section].items[key].label}
                         </label>
@@ -25,7 +25,7 @@
                     <label
                         class="rf-label"
                         for={key}
-                        style="overflow:hidden;text-overflow:ellipsis;"
+                        style="overflow: hidden;text-overflow:ellipsis;"
                     >
                         {options[section].items[key].label}
                         {#if options[section].items[key].range}

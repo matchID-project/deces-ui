@@ -36,7 +36,7 @@
 							<div class="rf-card rf-card--no-arrow rf-margin-0 rf-padding-0">
 								<div
 									class="rf-card__body rf-margin-0 rf-padding-1N rf-text--center"
-									style="overflow:hidden;text-overflow:ellipsis;"
+									style="overflow: hidden;text-overflow:ellipsis;"
 									class:hovering={hovering === index}
 								>
 									<slot {item} {index}>
@@ -84,7 +84,7 @@
 							<div class="rf-card rf-card--no-arrow rf-margin-0 rf-padding-0">
 								<div
 									class="rf-card__body rf-margin-0 rf-padding-1N rf-text--center"
-									style="overflow:hidden;text-overflow:ellipsis;"
+									style="overflow: hidden;text-overflow:ellipsis;"
 									class:hovering={hovering === index}
 								>
 									<slot {item} {index}>
