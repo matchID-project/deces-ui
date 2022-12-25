@@ -1,7 +1,7 @@
 #######################
 # Step 1: Base target #
 #######################
-FROM nginx:1.23.1-alpine as base
+FROM nginx:1.23.3-alpine as base
 ARG app_name
 ARG app_ver
 
