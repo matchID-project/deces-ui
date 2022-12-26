@@ -659,7 +659,7 @@ stats-catalog: ${STATS}
 	@ls ${STATS} | grep -v catalog | perl -e '@list=<>;print "[\n".join(",\n",map{chomp;s/.json//;"  \"$$_\""} (grep {/.json/} @list))."\n]\n"' >  ${STATS}/catalog.json
 
 stats-background:
-	((sleep 60;while (true); do make stats-live;sleep 120;done) > .stats-live 2>&1 &)
+	((sleep 60;while (true); do make stats-live;sleep 300;done) > .stats-live 2>&1 &)
 
 ${PROOFS}:
 	@mkdir -p ${PROOFS}
