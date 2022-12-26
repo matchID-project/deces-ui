@@ -413,7 +413,7 @@
         },
         scales: params[view].scales || {
             ...yAxes,
-            xAxis: params[view] && params[view].xAxis || {}
+            x: params[view] && params[view].xAxis || {}
         }
     };
     return o;
