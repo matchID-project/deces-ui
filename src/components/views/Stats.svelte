@@ -425,7 +425,7 @@
         },
         scales: {
             ...yAxes,
-            xAxis: params[view] && params[view].xAxis || {}
+            x: params[view] && params[view].xAxis || {}
         }
     };
     return o;
@@ -601,6 +601,8 @@
                         fill: 'origin',
                         borderColor: 'rgba(255,255,255,0)',
                         borderWidth: borderWidth,
+                        barPercentage: 1,
+                        categoryPercentage: 1,
                         pointRadius: 0,
                         label:  labels[id] || id,
                         yAxisID: id,
