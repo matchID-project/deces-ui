@@ -9,7 +9,7 @@
     export let options = {};
 
     Chart.register(Adapter);
-    Chart.defaults.font.family = '"Marianne"';
+    Chart.defaults.font.family = '-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji"';
 
 	let canvas;
 	let chart;

@@ -14,7 +14,7 @@
                                             points="{axis.points}"/>
      {/each}
      {#each polarValues.groups.caption as element}
-       <text x={element.x} y={element.y} 
+       <text x={element.x} y={element.y}
              font-family={element.fontFamily}
              font-size={element.fontSize}
              fill="{seasonColor(element.text)}"
@@ -24,7 +24,7 @@
                               {element.text}
        </text>
        {#if selected !== undefined && renderData[selected][element.col] !== undefined}
-           <text x={element.x} y={element.y} 
+           <text x={element.x} y={element.y}
                  font-family={element.fontFamily}
                  font-size={element.fontSize}
                  fill="{seasonColor(element.text)}"
@@ -49,7 +49,7 @@
 
 
 <script>
-  import render from '../tools/radar';	
+  import render from '../tools/radar';
   export let data = undefined;
   export let width = "100%";
   export let height = undefined;
@@ -125,8 +125,9 @@
       scales: 10, // show scale circles?
       captionProps: () => ({
         className: 'caption',
-        textAnchor: 'middle', fontSize: 8,
-        fontFamily: 'Marianne'
+        textAnchor: 'middle',
+        fontSize: 8,
+        fontFamily: '-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji"'
       })
     })
   }

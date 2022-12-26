@@ -36,7 +36,7 @@
                           name={$searchInput[key].path}
                           autoComplete="off"
                           placeholder={$searchInput[key].placeholder}
-                          class="rf-input {!$advancedSearch ? "rf-input--btn" : ""} {isValid(key) ? "" : "rf-color--rm rf-input--error"}"
+                          class="rf-input {isValid(key) ? "" : "rf-color--rm rf-input--error"}"
                           bind:value={$searchInput[key].value}
                           title={$searchInput[key].title}
                           on:input={() => handleInput(key)}
@@ -44,11 +44,6 @@
                           on:focus={focusInput(key,true)}
                           disabled={$searchInput[key].disabled}
                         />
-                        {#if !$advancedSearch}
-                          <button class="rf-btn" title="Recherche">
-                            <span class="rf-fi-search-line rf-fi--lg"></span>
-                          </button>
-                        {/if}
                       </div>
                     </div>
                 {/if}
