@@ -76,7 +76,7 @@
 
     let threshold = $linkOptions.check.autoCheckThreshold;
 
-    const fontFamily = '"Marianne",arial,sans-serif';
+    const fontFamily = '-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji"'
     const ticks = {
         autoSkip: true,
         fontFamily : fontFamily,
