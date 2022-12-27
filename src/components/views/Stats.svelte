@@ -232,7 +232,7 @@
     if (/^day/.test(s)) {
         while (s === source) {
             await getData(s);
-            await sleep(60000);
+            await sleep(150000);
         }
     } else {
         getData(s);
