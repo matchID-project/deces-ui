@@ -652,7 +652,7 @@ stats-update: config-stats ${STATS} stats-restore stats-db-restore logs-restore
 	@\
 		zcat -f `ls -tr ${LOG_DIR}/access.log.*gz | tail -${STATS_UPDATE_DAYS}` ${LOG_DIR}/access.log | ${STATS_SCRIPTS}/parseLogs.pl;
 
-stats-live: config-stats ${STATS} stats-restore stats-db-restore logs-restore
+stats-live: config-stats ${STATS} logs-restore
 	@cat ${LOG_DIR}/access.log | ${STATS_SCRIPTS}/parseLogs.pl day
 
 stats-catalog: ${STATS}
