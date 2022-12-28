@@ -655,90 +655,7 @@
                                         <div class="rf-col-xs-12 rf-col-sm-12 rf-col-md-12 rf-col-lg-12 rf-col-xl-2" transition:fade></div>
                                         <div class="rf-col-xs-6 rf-col-sm-6 rf-col-md-6 rf-col-lg-6 rf-col-xl-4" transition:fade>
                                             <div style="padding-left:8px;padding-right:8px;margin-top:-3px;">
-                                                {#if (!editMailSent || $user)}
-                                                    <div
-                                                        class="rf-input-group"
-                                                        class:rf-input-group--valid={editMail && editMailSent}
-                                                        class:rf-input-group--error={editMailSent===false}
-                                                    >
-                                                        <label
-                                                            class="rf-label rf-text--left"
-                                                            for="editMail"
-                                                            style="overflow: hidden;text-overflow:ellipsis;position: relative"
-                                                        >
-                                                            Courriel
-                                                        </label>
-                                                        <input
-                                                            id="editMail"
-                                                            type="email"
-                                                            class:rf-input--valid={editMailSent}
-                                                            class="rf-input rf-margin-top-0"
-                                                            style="width: 100%; max-width: 240px;"
-                                                            bind:value={editMail}
-                                                            on:input={() => editMailSent = undefined}
-                                                            on:focus={() => {
-                                                                editMail = undefined;
-                                                                editMailSent = undefined;
-                                                            }}
-                                                            on:blur={register}
-                                                            disabled={$user}
-                                                        >
-                                                        {#if ($user)}
-                                                            <p class="rf-valid-text">
-                                                                Vous êtes identifié(e)<br>
-                                                            </p>
-                                                        {:else}
-                                                            <p class="rf-text--xs" style="margin-top:.5rem">
-                                                                Un code d'accès sera envoyé à cette<br>
-                                                                adresse pour valider votre identité
-                                                            </p>
-                                                        {/if}
-                                                    </div>
-                                                {:else}
-                                                    <div
-                                                        class="rf-input-group"
-                                                        class:rf-input-group--valid={editMail && editMailValidate}
-                                                        class:rf-input-group--error={editMailValidate===false}
-                                                    >
-                                                        <label
-                                                            class="rf-label rf-text--left"
-                                                            for="editMailOTP"
-                                                            style="overflow: hidden;text-overflow:ellipsis;position: relative"
-                                                        >
-                                                            Code de validation
-                                                        </label>
-                                                        <input
-                                                            id="editMailOTP"
-                                                            type="text"
-                                                            maxlength="6"
-                                                            class:rf-input--valid={editUrlValidate}
-                                                            class="rf-input rf-margin-top-0"
-                                                            style="width: 100%; max-width: 240px;"
-                                                            bind:value={editMailOTP}
-                                                            on:input={() => {
-                                                                editMailOTP = editMailOTP.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1').replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');
-                                                                editMailValidate = undefined;
-                                                                login();
-                                                            }}
-                                                            on:focus={() => {
-                                                                editMailOTP = '';
-                                                                editMailValidate = undefined;
-                                                            }}
-                                                            on:blur={login}
-                                                        >
-                                                        {#if (!editMailOTP)}
-                                                            <p class="rf-valid-text">
-                                                                Un code vous a été envoyé à l'adresse<br>
-                                                                indiquée pour valider votre identité
-                                                            </p>
-                                                        {:else if (editMailValidate === false)}
-                                                            <p class="rf-error-text">
-                                                                Le code d'accès n'est pas valide<br>
-                                                                Veuillez réessayer
-                                                            </p>
-                                                        {/if}
-                                                    </div>
-                                                {/if}
+                                                <LoginField/>
                                             </div>
                                         </div>
                                         <div class="rf-col-xs-6 rf-col-sm-6 rf-col-md-6 rf-col-lg-6 rf-col-xl-4 rf-text--center" transition:fade>
@@ -804,6 +721,7 @@
     import { fade, slide } from 'svelte/transition';
     import { showProof, admin, user, accessToken, alphaFeatures, route, dataGouvCatalog, displayMode, searchInput, activeElement } from '../tools/stores.js';
     import Icon from './Icon.svelte';
+    import LoginField from './LoginField.svelte';
     import RadioButtons from './RadioButtons.svelte';
     import { capitalize,
         lastNameEditMask, lastNameStringify, lastNameParse,
@@ -999,65 +917,6 @@
     $: if (result) { setModificationStates() };
 
     $: if ($user) { editMail = $user;}
-
-    const register = () => {
-        if (/^\S+\@\S+\.\S+$/.test(editMail)) {
-            if (!$user) {
-                fetch('__BACKEND_PROXY_PATH__/register', {
-                    method: 'POST',
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ user: editMail })
-                }).then((response) => {
-                    if (response.status === 422) {
-                        editMailSent = false
-                        return;
-                    }
-                    return response.json().then((json) => {
-                        editMailSent = true
-                    });
-                })
-            } else {
-                editMailValidate = true;
-            }
-        } else {
-            editMailSent = false;
-        }
-    }
-
-    const login = () => {
-        if (/^\d{6}$/.test(`${editMailOTP}`)) {
-            if (!$user) {
-                fetch('__BACKEND_PROXY_PATH__/auth', {
-                    method: 'POST',
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ user: editMail, password: `${editMailOTP}` })
-                }).then((response) => {
-                    if (response.status === 401) {
-                        editMailValidate = false
-                        $user = undefined;
-                        $accessToken = undefined;
-                        return;
-                    }
-                    return response.json().then((json) => {
-                        $accessToken = json.access_token;
-                        $user = editMail;
-                        editMailOTP = '';
-                        editMailValidate = true
-                    });
-                })
-            } else {
-                editMailValidate = true;
-            }
-        } else {
-            editMailValidate = undefined;
-        }
-    }
 
     $: expand = forceExpand || ($displayMode === 'card-expand');
 
