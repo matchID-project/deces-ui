@@ -1,9 +1,11 @@
 import sum from 'hash-sum';
-import { cachedResponses, scrollIdTimeout } from './stores.js';
+import { cachedResponses, accessToken, scrollIdTimeout } from './stores.js';
 
 let myCachedResponses;
+let myAccessToken;
 
-let r = cachedResponses.subscribe((value) => { myCachedResponses = value });
+cachedResponses.subscribe((value) => { myCachedResponses = value });
+accessToken.subscribe((value) => { myAccessToken = value });
 
 const fullApiPath = (api) => {
   return `__BACKEND_PROXY_PATH__/${api}`;
@@ -37,13 +39,18 @@ const runRequest = async (api, method, request, cache=true, responseType = 'json
     }
   }
   const apiPath = fullApiPath(api);
+  const headers = {
+    "Content-Type": "application/json",
+    "Accept": (responseType === 'json') ? "application/json": "text/csv"
+  };
+  if (myAccessToken) {
+    headers.Authorization = `Bearer ${myAccessToken}`;
+  }
+
   const response = await fetch(`${apiPath}${method === 'GET' ? '/' + request : ''}`,
     method === "POST" ? {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Accept": (responseType === 'json') ? "application/json": "text/csv"
-      },
+      headers: headers,
       body: JSON.stringify(request)
     } : { method: 'GET'});
   if (response.status >= 400) {
