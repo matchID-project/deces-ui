@@ -1,4 +1,4 @@
-<div>
+<div style={style}>
     {#if (!emailSent || $user)}
         <div
             class="rf-input-group"
@@ -12,29 +12,42 @@
             >
                 Courriel
             </label>
+            <form style="display: flex">
             <input
                 id="email"
                 type="email"
                 class:rf-input--valid={emailSent}
                 class="rf-input rf-margin-top-0"
-                style="width: 100%; max-width: 240px;"
+                style="width: 100%"
                 bind:value={email}
                 on:input={() => emailSent = undefined}
                 on:focus={() => {
                     email = undefined;
                     emailSent = undefined;
                 }}
-                on:blur={register}
+                on:blur={button?null:register}
                 disabled={$user}
             >
+            {#if button && !$user}
+                <button
+                    title="Valider le courriel"
+                    type="button"
+                    class="rf-btn"
+                    style="margin-top: 0px; padding: 0 0.5rem 0 0.5rem; overflow: visible!important;"
+                    on:click|preventDefault={register}
+                    on:keydown|preventDefault={register}
+                >
+                    <Icon icon="ri:send-plane-line" style="margin: 0"/>
+                </button>
+            {/if}
+            </form>
             {#if ($user)}
                 <p class="rf-valid-text">
                     Vous êtes identifié(e)<br>
                 </p>
             {:else}
-                <p class="rf-text--xs" style="margin-top:.5rem">
-                    Un code d'accès sera envoyé à cette<br>
-                    adresse pour valider votre identité
+                <p class="rf-text--xs rf-text--left" style="margin-top:.5rem">
+                    Un code d'accès sera envoyé à cette adresse pour valider votre identité
                 </p>
             {/if}
         </div>
@@ -51,25 +64,41 @@
             >
                 Code de validation
             </label>
+            <form style="display: flex;">
             <input
                 id="emailOTP"
                 type="text"
                 maxlength="6"
                 class:rf-input--valid={emailValidate}
                 class="rf-input rf-margin-top-0"
-                style="width: 100%; max-width: 240px;"
+                style="width: 100%"
                 bind:value={emailOTP}
                 on:input={() => {
                     emailOTP = emailOTP.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1').replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');
                     emailValidate = undefined;
-                    login();
+                    if (!button) {
+                        login();
+                    }
                 }}
                 on:focus={() => {
                     emailOTP = '';
                     emailValidate = undefined;
                 }}
-                on:blur={login}
+                on:blur={button?null:login}
             >
+            {#if button && !$user}
+                <button
+                    title="Valider pour s'identifier"
+                    type="button"
+                    class="rf-btn"
+                    style="margin-top: 0px; padding:0 0.5rem 0 0.5rem; overflow: visible!important;"
+                    on:click|preventDefault={login}
+                    on:keydown|preventDefault={login}
+                >
+                    <Icon icon="ri:login-box-line" style="margin: 0"/>
+                </button>
+            {/if}
+            </form>
             {#if (!emailOTP)}
                 <p class="rf-valid-text">
                     Un code vous a été envoyé à l'adresse<br>
@@ -87,7 +116,10 @@
 
 <script>
     import { user, accessToken } from '../tools/stores.js';
+    import Icon from './Icon.svelte';
 
+    export let style="width: 100%;";
+    export let button = false;
     let email;
     let emailSent;
     let emailOTP;
