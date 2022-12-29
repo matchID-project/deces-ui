@@ -5,6 +5,7 @@
         <span
           title={$advancedSearch ? "Recherche simplifiée" : "Recherche avancée"}
           on:click|preventDefault={toggleAdvancedSearch}
+          on:keydown|preventDefault={toggleAdvancedSearch}
           class="rf-color--bf"
           style="position: absolute;top: 12px; right: 10px;"
         >
@@ -55,6 +56,7 @@
         <div class="rf-margin-top-1N rf-col-{$displayMode === 'agg' ? '6' : '12'}" style="text-align: center">
           <div
             on:click|preventDefault={ toggleFuzzySearch }
+            on:keydown|preventDefault={ toggleFuzzySearch }
           >
             <input style="width: 0px" id="switchRoundedInfo" type="checkbox" name="switchRoundedInfo" class="switch is-rounded is-white is-unchecked-grey" bind:checked={$fuzzySearch}>
             <label for="switchRoundedInfo">
