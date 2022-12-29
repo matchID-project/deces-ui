@@ -655,7 +655,7 @@
                                         <div class="rf-col-xs-12 rf-col-sm-12 rf-col-md-12 rf-col-lg-12 rf-col-xl-2" transition:fade></div>
                                         <div class="rf-col-xs-6 rf-col-sm-6 rf-col-md-6 rf-col-lg-6 rf-col-xl-4" transition:fade>
                                             <div style="padding-left:8px;padding-right:8px;margin-top:-3px;">
-                                                <LoginField/>
+                                                <LoginField style="max-width: 240px;" button/>
                                             </div>
                                         </div>
                                         <div class="rf-col-xs-6 rf-col-sm-6 rf-col-md-6 rf-col-lg-6 rf-col-xl-4 rf-text--center" transition:fade>
