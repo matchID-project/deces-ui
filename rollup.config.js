@@ -11,6 +11,12 @@ import { generateSW } from 'rollup-plugin-workbox';
 const production = !process.env.ROLLUP_WATCH;
 
 const options = {
+	onwarn: function (warning) {
+        if (warning.code === 'THIS_IS_UNDEFINED') {
+			return;
+		}
+		console.error(warning.message);
+	},
 	plugins: [
         iconifySvg({
 			targets: [{ src: 'src/components/views', dest: 'src/components/tools/icons.js' }]
