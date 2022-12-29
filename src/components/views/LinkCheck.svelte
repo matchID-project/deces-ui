@@ -29,7 +29,7 @@
                         {/if}
                         <br/>
                         <button
-                            title="télécharger le fichier ${$linkOptions.csv.type === 'gedcom' ? 'CSV' : 'complet'}"
+                            title="télécharger le fichier {$linkOptions.csv.type === 'gedcom' ? 'CSV' : 'complet'}"
                             class="rf-btn rf-margin-1N"
                             on:click|preventDefault={e => download(false)}
                         >
