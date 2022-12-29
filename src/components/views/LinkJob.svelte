@@ -57,7 +57,7 @@
     let estimator;
     export let error=false;
 
-    import { linkWaiter, linkMapping, linkFile, linkFileSize, linkJob, linkStep,
+    import { accessToken, linkWaiter, linkMapping, linkFile, linkFileSize, linkJob, linkStep,
         linkCompleteResults, linkResults, linkOptions,
         linkValidations, themeDnum
     } from '../tools/stores.js';
@@ -139,11 +139,15 @@
         }
     };
 
+    $: axiosUploadConfig.headers = { Authorization: `Bearer ${$accessToken}` }
+
     const axiosDownloadConfig = {
         onDownloadProgress: (progressEvent) => {
             progressDownload = progressEvent.currentTarget.response.length * 100 / ($linkFileSize * upDownRatio);
         }
     };
+
+    $: axiosDownloadConfig.headers = { Authorization: `Bearer ${$accessToken}` }
 
     const upload = async () =>  {
         progressUpload = 0;
