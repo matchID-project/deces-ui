@@ -76,9 +76,13 @@
 </div>
 
 <script>
+  import { onMount } from 'svelte';
+  import { useLocalSync } from '../tools/useLocalStorage.js';
   import Icon from './Icon.svelte'
 
-  import { advancedSearch, searchInput, searchCanvas,
+  let isMounted = false;
+
+  import { accessToken, advancedSearch, searchInput, searchCanvas,
     sortInput, resultsPerPage, searchInputFocus,
     searchTyping, fuzzySearch, displayMode, triggerAggregations } from '../tools/stores.js';
   import { search, searchString, searchSubmit, searchURLUpdate, toggleAdvancedSearch, toggleFuzzySearch } from '../tools/search.js';
@@ -92,8 +96,8 @@
 
   $: inputsKeys = Object.keys($searchInput);
 
-  $: handleSubmit($resultsPerPage);
-  $: handleSubmit($sortInput);
+  $: if (isMounted) { handleSubmit($resultsPerPage) };
+  $: if (isMounted || $accessToken) { handleSubmit($sortInput) };
 
   let isActive;
 
@@ -168,6 +172,11 @@
       }
     }
   }
+
+  onMount(async () => {
+    await useLocalSync(accessToken, 'accessToken');
+    isMounted = true;
+  });
 
 </script>
 
