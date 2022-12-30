@@ -12,7 +12,7 @@
             >
                 Courriel
             </label>
-            <form style="display: flex">
+            <form style="display: flex" on:submit|preventDefault={register}>
             <input
                 id="email"
                 type="email"
@@ -25,17 +25,16 @@
                     email = undefined;
                     emailSent = undefined;
                 }}
+                on:keypress={register}
                 on:blur={button?null:register}
                 disabled={$user}
             >
             {#if button && !$user}
                 <button
                     title="Valider le courriel"
-                    type="button"
+                    type="submit"
                     class="rf-btn"
                     style="margin-top: 0px; padding: 0 0.5rem 0 0.5rem; overflow: visible!important;"
-                    on:click|preventDefault={register}
-                    on:keydown|preventDefault={register}
                 >
                     <Icon icon="ri:send-plane-line" style="margin: 0"/>
                 </button>
@@ -64,7 +63,7 @@
             >
                 Code de validation
             </label>
-            <form style="display: flex;">
+            <form style="display: flex;" on:submit|preventDefault={login}>
             <input
                 id="emailOTP"
                 type="text"
@@ -89,11 +88,9 @@
             {#if button && !$user}
                 <button
                     title="Valider pour s'identifier"
-                    type="button"
+                    type="submit"
                     class="rf-btn"
                     style="margin-top: 0px; padding:0 0.5rem 0 0.5rem; overflow: visible!important;"
-                    on:click|preventDefault={login}
-                    on:keydown|preventDefault={login}
                 >
                     <Icon icon="ri:login-box-line" style="margin: 0"/>
                 </button>
