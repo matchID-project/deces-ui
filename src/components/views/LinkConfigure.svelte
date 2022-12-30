@@ -1,7 +1,7 @@
-<div class="rf-container-fluid">
+<div class="rf-container-fluid" style="margin-top: -1rem;">
     <div class="rf-grid-row rf-text--center">
         {#if $linkOptions.csv}
-            <div class="rf-col-12 rf-margin-top-2N">
+            <div class="rf-col-12">
                 <IconMenuCallout menu={iconMenuCallout}/>
             </div>
         {/if}
@@ -60,15 +60,41 @@
                         <br/>
                     {/each}
                 {/if}
+                {#if !$user}
+                        <span class="rf-text--sm rf-color--rm">
+                            Pour des raisons de traçabilité et conformité RGPD,
+                            <br>
+                            vous devez être identifié pour effectuer un appariement.
+                            <br>
+                            Veuillez vous enregistrer ci-dessous.
+                        </span>
+                        <br/>
+                {:else}
+                    <span class="rf-text--sm" style="color: var(--success);">
+                        Vous êtes identifié(e)
+                    </span>
+                {/if}
+            {:else}
+                <span class="rf-text--sm" style="color: var(--success);">
+                    Vous êtes identifié(e), vous pouvez poursuivre l'appariement
+                </span>
             {/if}
-            <button
-                type="button"
-                class="rf-btn rf-margin-1N"
-                disabled={disabled}
-                on:click|preventDefault={validate}
-            >
-                Valider
-            </button>
+            <div style="display:flex;justify-content: center">
+                {#if !$user}
+                    <LoginField style="width: 100%; max-width: 320px;" button/>
+                {:else}
+                    <button
+                        type="button"
+                        class="rf-btn"
+                        style="margin-top:1.3rem;height: 2.5rem;overflow: visible!important;"
+                        disabled={disabled}
+                        on:click|preventDefault={validate}
+                        on:keydown|preventDefault={validate}
+                    >
+                        Valider
+                    </button>
+                {/if}
+            </div>
         </div>
         {#if $linkOptions.csv && $linkOptions.csv.gedcom}
             <GedcomTree gedcom={$linkOptions.csv.gedcom}/>
@@ -76,12 +102,13 @@
     </div>
 </div>
 <script>
-    import { linkStep, linkFile, linkMapping, linkMinFields, linkSourceHeaderTypes, linkOptions } from '../tools/stores.js';
+    import { user, linkStep, linkFile, linkMapping, linkMinFields, linkSourceHeaderTypes, linkOptions } from '../tools/stores.js';
     import Icon from './Icon.svelte';
     import LinkFields from './LinkFields.svelte';
     import LinkSampleTable from './LinkSampleTable.svelte';
     import IconMenuCallout from './IconMenuCallout.svelte';
     import LinkConfigureOptions from './LinkConfigureOptions.svelte';
+    import LoginField from './LoginField.svelte';
     import GedcomTree from './GedcomTree.svelte';
     let mapping = {};
 
@@ -120,7 +147,7 @@
     $: warning = fields.some(f => (f.warning && !f.blockOnWarning));
     $: blockOnWarning = fields.some(f => (f.warning && f.blockOnWarning));
     $: notEnoughFields = (selectedFieldsNumber < $linkMinFields);
-    $: disabled =  notEnoughFields || blockOnWarning ;
+    $: disabled =  notEnoughFields || blockOnWarning || (!$user) ;
 
     $: if ($linkSourceHeaderTypes) {
         fields = fields.map(field => {
