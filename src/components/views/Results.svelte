@@ -16,14 +16,14 @@
                   </strong>
                 </h4>
               <p>
-                L'usage anonyme du service est dorénavant limité à 5 minutes toutes les 4 heures.
+                L'usage anonyme du service est dorénavant limité en nombre de requêtes.
               </p>
               <p>
-                Pour poursuivre sans limite d'usage et toujours gratuitement, vous devez simplement saisir votre mail, puis le code envoyé pour confirmer
-                votre identité.
+                Pour poursuivre immédiatement, sans limite d'usage et toujours gratuitement, vous pouvez simplement saisir votre mail, puis le code envoyé pour confirmer
+                votre identité. Nous ne faisons strictement aucun usage de cette addresse autre que la journalisation (statistique, légale).
               </p>
               <p>
-                Nous ne faisons strictement aucun usage de cette addresse autre que la journalisation (statistique, légale).
+                Sinon, vous pourrez à nouveau utiliser le service de façon anonyme dans quelques heures.
               </p>
             </div>
             <div class="rf-col-xl-2 rf-col-lg-2 rf-col-md-1 rf-col-sm-12 rf-col-xs-12"></div>
