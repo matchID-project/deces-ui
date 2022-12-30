@@ -28,6 +28,7 @@
                 <div
                     style="position: absolute;top: 12px;right: 0px;"
                     on:click|preventDefault={reset}
+                    on:keydown|preventDefault={reset}
                 >
                     <Icon
                         href="#reset"
@@ -72,7 +73,7 @@
             <div class="rf-container-fluid">
                 <div class="rf-grid-row">
                     {#if ($linkStep > 1)}
-                        <div class="rf-col-12 rf-padding-3N rf-hide--mobile">
+                        <div class="rf-col-12 rf-padding-2N rf-hide--mobile">
                             <strong>
                                 Étape {$linkStep}
                             </strong>
@@ -122,7 +123,7 @@
         xl: ($linkStep>1) ? 3 : 6
     };
 
-    $: margin = ($linkStep>1) ? "" : "rf-margin-top-6N";
+    $: margin = ($linkStep>1) ? "" : "rf-margin-top-2N";
 
 
     $: if ($linkWaiter) {
@@ -196,10 +197,15 @@
                 L'appariement est une fonction de rapprochement vous permettant de soumettre une <strong>liste de personnes
                 pour y retrouver d' éventuels décès</strong>.
             </p>
-            <p>Le service est offert gratuitement pour
-                assurer notamment la <strong>mise en conformité RGPD </strong>("droit à l'oubli"). La limite du service est liée à la taille
+            <p>
+                Le service est offert pour
+                assurer notamment la <strong>mise en conformité RGPD </strong>(fiabilisation / "droit à l'oubli"). La limite du service est liée à la taille
                 du fichier (100Mo, soit 1 à 2 millions d'enregistrements). Il doit permettre en quelques minutes le traitement
-                de fichiers clients de quelques dizaines de milliers de lignes. Les données transmises sont chiffrées (AES-256) et effacées 1h après
+                de fichiers clients de quelques dizaines de milliers de lignes.
+            </p>
+            <p>
+                L'utilisation du service représente un traitement de données à cartère personnel, soumis au RGPD - vous devrez
+                vous enregistrer pour garantir une tracabilité de l'autorisation de traitement. Les données transmises sont chiffrées (AES-256) et supprimées 1h après
                 la fin du traitement.
             </p>
             <p>

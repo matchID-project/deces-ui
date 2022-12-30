@@ -7,6 +7,31 @@
             <Info filter={true}/>
           </div>
         {:else if $wasSearched && ($searchResults.length === 1) && ($searchResults[0].error)}
+          {#if $searchResults[0].status === 422}
+            <div class="rf-col-xl-2 rf-col-lg-2 rf-col-md-1 rf-col-sm-12 rf-col-xs-12"></div>
+            <div class="rf-col-xl-8 rf-col-lg-8 rf-col-md-10 rf-col-sm-12 rf-col-xs-12 rf-margin-top-4N">
+                <h4 class="rf-h4 rf-text--center">
+                  <strong>
+                    Pour poursuivre, enregistrez-vous !
+                  </strong>
+                </h4>
+              <p>
+                L'usage anonyme du service est dorénavant limité en nombre de requêtes.
+              </p>
+              <p>
+                Pour poursuivre immédiatement, sans limite d'usage et toujours gratuitement, vous pouvez simplement saisir votre mail, puis le code envoyé pour confirmer
+                votre identité. Nous ne faisons strictement aucun usage de cette addresse autre que la journalisation (statistique, légale).
+              </p>
+              <p>
+                Sinon, vous pourrez à nouveau utiliser le service de façon anonyme dans quelques heures.
+              </p>
+            </div>
+            <div class="rf-col-xl-2 rf-col-lg-2 rf-col-md-1 rf-col-sm-12 rf-col-xs-12"></div>
+            <div class="rf-col-xl-2 rf-col-lg-2 rf-col-md-1 rf-col-sm-12 rf-col-xs-12"></div>
+            <div class="rf-col-xl-8 rf-col-lg-8 rf-col-md-10 rf-col-sm-12 rf-col-xs-12 rf-margin-top-2N rf-content--center">
+              <LoginField style="width:100%;max-width: 400px;margin: auto;" button/>
+            </div>
+          {:else}
             <div class="rf-col-xl-3 rf-col-lg-2 rf-col-md-1 rf-col-sm-12 rf-col-xs-12"></div>
             <div class="rf-col-xl-6 rf-col-lg-8 rf-col-md-10 rf-col-sm-12 rf-col-xs-12 rf-margin-top-4N">
                 <h4 class="rf-h4 rf-text--center rf-color--rm">
@@ -22,7 +47,8 @@
                     }
                 </p>
             </div>
-        {:else}
+          {/if}
+        {:else if $wasSearched}
           <div class="rf-col-12">
             {#if ($displayMode && ['card','card-expand'].includes($displayMode))}
               <div class="rf-container-fluid">
@@ -102,6 +128,7 @@
   import ResultRow from "./ResultRow.svelte";
   import ResultsHeader from './ResultsHeader.svelte';
   import Info from './Info.svelte';
+  import LoginField from './LoginField.svelte';
 
   let from;
   let columns = [

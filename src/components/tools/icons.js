@@ -363,6 +363,19 @@ viewBox="0 0 24 24">
 <path d="M12 2a1 1 0 0 1 1 1v3a1 1 0 0 1-2 0V3a1 1 0 0 1 1-1zm0 15a1 1 0 0 1 1 1v3a1 1 0 0 1-2 0v-3a1 1 0 0 1 1-1zm8.66-10a1 1 0 0 1-.366 1.366l-2.598 1.5a1 1 0 1 1-1-1.732l2.598-1.5A1 1 0 0 1 20.66 7zM7.67 14.5a1 1 0 0 1-.366 1.366l-2.598 1.5a1 1 0 1 1-1-1.732l2.598-1.5a1 1 0 0 1 1.366.366zM20.66 17a1 1 0 0 1-1.366.366l-2.598-1.5a1 1 0 0 1 1-1.732l2.598 1.5A1 1 0 0 1 20.66 17zM7.67 9.5a1 1 0 0 1-1.366.366l-2.598-1.5a1 1 0 1 1 1-1.732l2.598 1.5A1 1 0 0 1 7.67 9.5z" fill="currentColor"/>
 <rect x="0" y="0" width="24" height="24" fill="rgba(0, 0, 0, 0)" />
 </svg>`,
+    "ri:login-box-line": `<svg
+width="100%" 
+xmlns="http://www.w3.org/2000/svg"
+xmlns:xlink="http://www.w3.org/1999/xlink"
+aria-hidden="true"
+focusable="false"
+style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg);
+transform: rotate(360deg);"
+preserveAspectRatio="xMidYMid meet"
+viewBox="0 0 24 24">
+<path d="M4 15h2v5h12V4H6v5H4V3a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-6zm6-4V8l5 4l-5 4v-3H2v-2h8z" fill="currentColor"/>
+<rect x="0" y="0" width="24" height="24" fill="rgba(0, 0, 0, 0)" />
+</svg>`,
     "ri:plug-line": `<svg
 width="100%" 
 xmlns="http://www.w3.org/2000/svg"

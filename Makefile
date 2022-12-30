@@ -593,7 +593,7 @@ ${LOG_DIR}:
 logs-restore: ${LOG_DIR}
 	@echo sync ${LOG_BUCKET} to ${LOG_DIR};\
 	${MAKE} -C ${APP_PATH}/${GIT_TOOLS} storage-sync-pull\
-		RCLONE_OPTS="--checksum"\
+		RCLONE_OPTS="--checksum" RCLONE_SYNC="copy"\
 		STORAGE_BUCKET=${LOG_BUCKET} DATA_DIR=${LOG_DIR}\
 		STORAGE_ACCESS_KEY=${TOOLS_STORAGE_ACCESS_KEY} STORAGE_SECRET_KEY=${TOOLS_STORAGE_SECRET_KEY};
 
@@ -613,7 +613,7 @@ stats-db-restore: ${LOG_DB_DIR}
 	@mkdir -p ${LOG_DB_DIR};\
 	echo sync ${LOG_DB_BUCKET} to ${LOG_DB_DIR};\
 	${MAKE} -C ${APP_PATH}/${GIT_TOOLS} storage-sync-pull\
-		RCLONE_OPTS="--checksum"\
+		RCLONE_OPTS="--checksum" RCLONE_SYNC="copy"\
 		STORAGE_BUCKET=${LOG_DB_BUCKET} DATA_DIR=${LOG_DB_DIR}\
 		STORAGE_ACCESS_KEY=${TOOLS_STORAGE_ACCESS_KEY} STORAGE_SECRET_KEY=${TOOLS_STORAGE_SECRET_KEY};
 	touch log-db
@@ -621,7 +621,7 @@ stats-db-restore: ${LOG_DB_DIR}
 stats-db-backup: ${LOG_DB_DIR}
 	@echo sync ${LOG_DB_DIR} to ${LOG_DB_BUCKET};\
 	${MAKE} -C ${APP_PATH}/${GIT_TOOLS} storage-sync-push\
-		RCLONE_OPTS="--checksum"\
+		RCLONE_OPTS="--checksum" RCLONE_SYNC="copy"\
 		STORAGE_BUCKET=${LOG_DB_BUCKET} DATA_DIR=${LOG_DB_DIR}\
 		STORAGE_ACCESS_KEY=${TOOLS_STORAGE_ACCESS_KEY} STORAGE_SECRET_KEY=${TOOLS_STORAGE_SECRET_KEY};
 
@@ -631,14 +631,14 @@ ${STATS}:
 stats-backup: ${STATS}
 	@echo sync ${STATS} to ${STATS_BUCKET};\
 	${MAKE} -C ${APP_PATH}/${GIT_TOOLS} storage-sync-push\
-		RCLONE_OPTS="--checksum"\
+		RCLONE_OPTS="--checksum" RCLONE_SYNC="copy"\
 		STORAGE_BUCKET=${STATS_BUCKET} DATA_DIR=${STATS}\
 		STORAGE_ACCESS_KEY=${TOOLS_STORAGE_ACCESS_KEY} STORAGE_SECRET_KEY=${TOOLS_STORAGE_SECRET_KEY};
 
 stats-restore: ${STATS}
 	@echo sync ${STATS_BUCKET} to ${STATS};\
 	${MAKE} -C ${APP_PATH}/${GIT_TOOLS} storage-sync-pull\
-		RCLONE_OPTS="--checksum"\
+		RCLONE_OPTS="--checksum" RCLONE_SYNC="copy"\
 		STORAGE_BUCKET=${STATS_BUCKET} DATA_DIR=${STATS}\
 		STORAGE_ACCESS_KEY=${TOOLS_STORAGE_ACCESS_KEY} STORAGE_SECRET_KEY=${TOOLS_STORAGE_SECRET_KEY};
 
@@ -652,14 +652,14 @@ stats-update: config-stats ${STATS} stats-restore stats-db-restore logs-restore
 	@\
 		zcat -f `ls -tr ${LOG_DIR}/access.log.*gz | tail -${STATS_UPDATE_DAYS}` ${LOG_DIR}/access.log | ${STATS_SCRIPTS}/parseLogs.pl;
 
-stats-live: config-stats ${STATS} logs-restore
+stats-live: config-stats ${STATS} stats-restore logs-restore
 	@cat ${LOG_DIR}/access.log | ${STATS_SCRIPTS}/parseLogs.pl day
 
 stats-catalog: ${STATS}
 	@ls ${STATS} | grep -v catalog | perl -e '@list=<>;print "[\n".join(",\n",map{chomp;s/.json//;"  \"$$_\""} (grep {/.json/} @list))."\n]\n"' >  ${STATS}/catalog.json
 
 stats-background:
-	((sleep 60;while (true); do make stats-live;sleep 300;done) > .stats-live 2>&1 &)
+	@((sleep 60;while (true); do make stats-live;sleep 300;done) > .stats-live 2>&1 &)
 
 ${PROOFS}:
 	@mkdir -p ${PROOFS}
@@ -668,14 +668,14 @@ proofs-restore: ${PROOFS}
 	@if [ -n "${PROOFS_BUCKET}" ];then\
 		echo restoring proofs data;\
 		${MAKE} -C ${APP_PATH}/${GIT_TOOLS} storage-sync-pull STORAGE_BUCKET=${PROOFS_BUCKET}/${GIT_BACKEND_BRANCH} DATA_DIR=${PROOFS} \
-			RCLONE_OPTS="--checksum"\
+			RCLONE_OPTS="--checksum" RCLONE_SYNC="copy"\
 			STORAGE_ACCESS_KEY=${TOOLS_STORAGE_ACCESS_KEY} STORAGE_SECRET_KEY=${TOOLS_STORAGE_SECRET_KEY};\
 	fi
 
 proofs-backup: ${PROOFS}
 	@if [ -n "${PROOFS_BUCKET}" ];then\
 		${MAKE} -C ${APP_PATH}/${GIT_TOOLS} storage-sync-push STORAGE_BUCKET=${PROOFS_BUCKET}/${GIT_BACKEND_BRANCH} DATA_DIR=${PROOFS} \
-			RCLONE_OPTS="--checksum"\
+			RCLONE_OPTS="--checksum" RCLONE_SYNC="copy"\
 			STORAGE_ACCESS_KEY=${TOOLS_STORAGE_ACCESS_KEY} STORAGE_SECRET_KEY=${TOOLS_STORAGE_SECRET_KEY};\
 	fi;
 
