@@ -25,7 +25,6 @@
                     email = undefined;
                     emailSent = undefined;
                 }}
-                on:keypress={register}
                 on:blur={button?null:register}
                 disabled={$user}
             >
