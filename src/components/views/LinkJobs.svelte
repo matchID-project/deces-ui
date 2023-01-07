@@ -7,11 +7,11 @@
                 <div class="rf-container-fluid">
                     <div class="rf-grid-row rf-grid-row--gutters">
                         <div class="rf-col-4">
-                            <StatsTile number={jobs.filter(j => j.status === 'succeeded').length} label="Nombre de traitements"/>
+                            <StatsTile number={jobs.filter(j => j.status === 'completed').length} label="Nombre de traitements"/>
                         </div>
                         <div class="rf-col-4">
-                            <StatsTile number={jobs.filter(j => j.status === 'succeeded').length
-                                && jobs.filter(j => j.status === 'succeeded').map(j =>j.rows).reduce((a,b) => a+b)} label="Appariements"/>
+                            <StatsTile number={jobs.filter(j => j.status === 'completed').length
+                                && jobs.filter(j => j.status === 'completed').map(j =>j.rows).reduce((a,b) => a+b)} label="Appariements"/>
                         </div>
                         <div class="rf-col-4">
                             <StatsTile number={jobs.filter(j => j.status === 'failed').length} label="Traitements en échec"/>
@@ -88,7 +88,7 @@
     let ready = false;
 
     const statusLabel = {
-        succeeded: 'succès',
+        completed: 'succès',
         failed: 'échec',
         cancelled: 'interrompu',
         created: 'en cours'
