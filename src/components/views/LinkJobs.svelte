@@ -86,6 +86,13 @@
     import { admin, accessToken } from '../tools/stores.js';
     let jobs = [];
     let ready = false;
+    let headers;
+
+    $: headers = {
+        headers: {
+            Authorization: `Bearer ${$accessToken}`
+        }
+    };
 
     const statusLabel = {
         completed: 'succès',
@@ -95,7 +102,7 @@
     }
 
     const getJobsData = async () => {
-        let response = await fetch('__BACKEND_PROXY_PATH__/queue/jobs', {headers: {Authorization: `Bearer ${$accessToken}`}});
+        let response = await fetch('__BACKEND_PROXY_PATH__/queue/jobs', headers);
         const tmpJobs = [];
         const list = (await response.json()).jobs || [];
         list.forEach(j => {
@@ -112,8 +119,10 @@
         ready = true;
     }
 
+
+
     const deleteJob = async (job, idx) => {
-      const res = await axios.delete(`__BACKEND_PROXY_PATH__/search/csv/${job.id}`)
+      const res = await axios.delete(`__BACKEND_PROXY_PATH__/search/csv/${job.id}`, headers)
       if (res.data && res.data.msg.includes('cancelled')) {
         jobs[idx].status = 'arrêté'
       }
