@@ -57,7 +57,8 @@
                                     <th>id</th>
                                     <th>statut</th>
                                     <th>lignes</th>
-                                    <th>performance</th>
+                                    <th>colonnes</th>
+                                    <th>velocité (l/s)</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -83,8 +84,13 @@
                                         </td>
                                         <td>{job.rows}</td>
                                         <td>
+                                            {#if job.columns && job.columns.length}
+                                                {job.columns.length}
+                                            {/if}
+                                            </td>
+                                        <td>
                                             {#if job.performance}
-                                                {job.performance} ligne/s
+                                                {job.performance}
                                             {:else}
                                                 N/A
                                             {/if}
@@ -129,6 +135,22 @@
         created: 'en cours'
     }
 
+    const validColumns = [
+        'lastName',
+        'legalName',
+        'sex',
+        'birthDate',
+        'birthCity',
+        'birthDepartment',
+        'birthCountry',
+        'deathDate',
+        'deathCity',
+        'deathDepartment',
+        'deathCountry',
+        'lastSeenAliveDate'
+    ];
+
+
     const getJobsData = async () => {
         let response = await fetch('__BACKEND_PROXY_PATH__/queue/jobs', headers);
         const tmpJobs = [];
@@ -143,6 +165,7 @@
                 id: j.id, date: j.timestamp,
                 status: j.status,
                 delay: delay,
+                columns: validColumns.filter(c => j.data && j.data[c]),
                 performance: j.processedOn && Math.floor(j.data.totalRows / delay),
                 progress: j.status && j.status === "completed" ? "100" : j.progress && j.progress.percentage ? Math.round(j.progress.percentage) : 0
             })});
