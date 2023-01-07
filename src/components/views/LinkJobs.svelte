@@ -65,7 +65,7 @@
                                 {#each jobs as job, idx}
                                     <tr>
                                         <td>{job.date}</td>
-                                        <td>{job.id.substring(0,10) + '...'}</td>
+                                        <td>{job.user || job.id.substring(0,10) + '...'}</td>
                                         <td>
                                             <div style="display: flex;align-items:center">
                                                 {#if job.status == 'active'}
@@ -160,14 +160,19 @@
                 (j.finishedOn ? j.finishedOn : Math.floor(Date.now()))
                 - j.processedOn
             ) / 1000;
+            const progress = j.status && j.status === "completed" ?
+                "100" : j.progress && j.progress.percentage ?
+                    Math.round(j.progress.percentage) : 0
             tmpJobs.push({
                 rows: j.data.totalRows,
-                id: j.id, date: j.timestamp,
+                id: j.id,
+                user: j.data && j.data.user,
+                date: j.timestamp,
                 status: j.status,
                 delay: delay,
                 columns: validColumns.filter(c => j.data && j.data[c]),
-                performance: j.processedOn && Math.floor(j.data.totalRows / delay),
-                progress: j.status && j.status === "completed" ? "100" : j.progress && j.progress.percentage ? Math.round(j.progress.percentage) : 0
+                performance: j.processedOn && Math.floor((progress / 100) * (j.data.totalRows / delay)),
+                progress: progress
             })});
         jobs = tmpJobs.sort((a,b) => (b.date - a.date)).map(j => {
             j.date=new Date(j.date).toISOString();
