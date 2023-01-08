@@ -6,12 +6,12 @@
             <div class="rf-col-xl-8 rf-col-lg-8 rf-col-md-12 rf-col-sm-12 rf-col-xs-12">
                 <div class="rf-container-fluid">
                     <div class="rf-grid-row rf-grid-row--gutters">
-                        <div class="rf-col-3">
+                        <div class="rf-col-xl-3 rf-col-lg-3 rf-col-md-3 rf-col-sm-3 rf-col-xs-6">
                             <StatsTile
                                 number={jobs.filter(j => j.status === 'completed').length}
                                 label="Traitements"/>
                         </div>
-                        <div class="rf-col-3">
+                        <div class="rf-col-xl-3 rf-col-lg-3 rf-col-md-3 rf-col-sm-3 rf-col-xs-6">
                             <StatsTile
                                 number={
                                     jobs.filter(j => j.status === 'completed').length &&
@@ -19,12 +19,12 @@
                                 }
                                 label="Appariements"/>
                         </div>
-                        <div class="rf-col-3">
+                        <div class="rf-col-xl-3 rf-col-lg-3 rf-col-md-3 rf-col-sm-3 rf-col-xs-6">
                             <StatsTile
                                 number={jobs.filter(j => j.status === 'failed').length}
                                 label="Échecs"/>
                         </div>
-                        <div class="rf-col-3">
+                        <div class="rf-col-xl-3 rf-col-lg-3 rf-col-md-3 rf-col-sm-3 rf-col-xs-6">
                             <StatsTile
                                 number={
                                     jobs.filter(j => j.status === 'completed').length &&
