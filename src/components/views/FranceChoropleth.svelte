@@ -1,39 +1,39 @@
 <div style="position: relative">
   <svg {width} {height} viewBox="-30 0 205 130">
-      {#if data && view && departments.length && Object.keys(index).length}
+      {#if data && view && geozones.length && Object.keys(index).length}
           <g>
-          {#each departments as department}
+          {#each geozones as geozone}
               <path
                   class="hoverable"
-                  d={department.path}
-                  id={department.id}
+                  d={geozone.path}
+                  id={geozone.id}
                   z-index=0
                   stroke="var(--bf500)"
                   stroke-width="0.1px"
                   fill="var(--bf500)"
-                  on:mouseenter={()=> toggle(department.id)}
-                  on:mouseleave={() => toggle(department.id)}
-                  fill-opacity={scale(value(view, department.id), view)}
+                  on:mouseenter={()=> toggle(geozone.id)}
+                  on:mouseleave={() => toggle(geozone.id)}
+                  fill-opacity={scale(value(view, geozone.id), view)}
               />
           {/each}
-          {#each departments as department}
+          {#each geozones as geozone}
               <g
                   class="tooltip"
-                  opacity={selected === department.id ? 0.9 : 0}
+                  opacity={selected === geozone.id ? 0.9 : 0}
               >
                   <rect
-                      x={(department.centroid[0] < 80) ? department.centroid[0] : department.centroid[0] - 100}
-                      y={(department.centroid[1] < 80) ? department.centroid[1] : department.centroid[1] - 50}
+                      x={(geozone.centroid[0] < 80) ? geozone.centroid[0] : geozone.centroid[0] - 100}
+                      y={(geozone.centroid[1] < 80) ? geozone.centroid[1] : geozone.centroid[1] - 50}
                       width="100"
                       height="30"
                   />
                   <text
                       class="text"
-                      text-anchor={(department.centroid[0] < 80) ? 'start' : 'end'}
-                      y={(department.centroid[1] < 80) ? 10 + department.centroid[1] : department.centroid[1] - 40}
+                      text-anchor={(geozone.centroid[0] < 80) ? 'start' : 'end'}
+                      y={(geozone.centroid[1] < 80) ? 10 + geozone.centroid[1] : geozone.centroid[1] - 40}
                   >
-                          <tspan x={(department.centroid[0] < 80) ? 5 + department.centroid[0] : department.centroid[0] - 5}>{department.name}</tspan>
-                          <tspan x={(department.centroid[0] < 80) ? 5 + department.centroid[0] : department.centroid[0] - 5} dy=10>{labels[view]}: {data && value(view, department.id)}</tspan>
+                          <tspan x={(geozone.centroid[0] < 80) ? 5 + geozone.centroid[0] : geozone.centroid[0] - 5}>{geozone.name}</tspan>
+                          <tspan x={(geozone.centroid[0] < 80) ? 5 + geozone.centroid[0] : geozone.centroid[0] - 5} dy=10>{labels[view]}: {data && value(view, geozone.id)}</tspan>
                   </text>
               </g>
           {/each}
@@ -68,7 +68,7 @@
   let max = {};
   let yLog = {};
   let labels = {};
-  let departments = [];
+  let geozones = [];
   let index = {};
   let scale =  (x, view) => x;
   let views = [];
@@ -91,8 +91,8 @@
 
   $: if (data && data.labels) {
     index = {};
-    data.labels.forEach((departmentId, i)=> {
-      index[departmentId] = i;
+    data.labels.forEach((geozoneId, i)=> {
+      index[geozoneId] = i;
     });
   };
 
@@ -131,30 +131,30 @@
   });
 
   $: if (geojson) {
-      departments = geojson.features.filter(feature => feature.geometry && feature.geometry.coordinates)
+      geozones = geojson.features.filter(feature => feature.geometry && feature.geometry.coordinates)
         .map(feature => {
-            const department = {
+            const geozone = {
                 id: feature.properties.code,
                 name: feature.properties.nom,
                 path: converter.convert(feature)
             };
-            `${department.path[0]}`.replace(/^M/,'').split(/\s+/).forEach(c => {
+            `${geozone.path[0]}`.replace(/^M/,'').split(/\s+/).forEach(c => {
                 c = c.split(/,/).map(x => parseInt(x));
-                department.xmin = Math.min(c[0],department.xmin||99999);
-                department.ymin = Math.min(c[1],department.ymin||99999);
-                department.xmax = Math.max(c[0],department.xmax||-99999);
-                department.ymax = Math.max(c[1],department.ymax||-99999);
+                geozone.xmin = Math.min(c[0],geozone.xmin||99999);
+                geozone.ymin = Math.min(c[1],geozone.ymin||99999);
+                geozone.xmax = Math.max(c[0],geozone.xmax||-99999);
+                geozone.ymax = Math.max(c[1],geozone.ymax||-99999);
             });
-            department.centroid = [
-                (department.xmin + department.xmax) / 2,
-                (department.ymin + department.ymax) / 2,
+            geozone.centroid = [
+                (geozone.xmin + geozone.xmax) / 2,
+                (geozone.ymin + geozone.ymax) / 2,
             ];
-            return department;
+            return geozone;
         });
   }
 
   const value = (view, id) => {
-    const v = (index[id] !== undefined) ? data.datasets[index[view]].data[index[id]] : 0;
+    const v = (index[id] !== undefined) ? data.datasets[index[view] || 0].data[index[id]] : 0;
     return v && v.y || 0;
   }
 
