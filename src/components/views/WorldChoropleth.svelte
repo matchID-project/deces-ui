@@ -1,41 +1,41 @@
 <div style="position: relative">
     <svg {width} {height} viewBox="0 0 260 130">
-        {#if view && countries.length && data && Object.keys(index).length}
+        {#if view && geozones.length && data && Object.keys(index).length}
             <g>
-            {#each countries as country}
+            {#each geozones as geozone}
                 <path
                     class="hoverable"
-                    d={country.path}
-                    id={country.id}
+                    d={geozone.path}
+                    id={geozone.id}
                     z-index=0
                     stroke="var(--bf500)"
                     stroke-width="0.1px"
                     fill="var(--bf500)"
-                    on:mouseenter={()=> toggle(country.id)}
-                    on:mouseleave={() => toggle(country.id)}
-                    fill-opacity={scale(value(view, country.id), view)}
+                    on:mouseenter={()=> toggle(geozone.id)}
+                    on:mouseleave={() => toggle(geozone.id)}
+                    fill-opacity={scale(value(view, geozone.id), view)}
                 />
             {/each}
-            {#each countries as country}
+            {#each geozones as geozone}
                 <g
                     class="tooltip"
-                    opacity={selected === country.id ? 0.9 : 0}
+                    opacity={selected === geozone.id ? 0.9 : 0}
                 >
                     <rect
-                        x={(country.centroid[0] < 120) ? country.centroid[0] : country.centroid[0] - 100}
-                        y={(country.centroid[1] < 80) ? country.centroid[1] : country.centroid[1] - 50}
+                        x={(geozone.centroid[0] < 120) ? geozone.centroid[0] : geozone.centroid[0] - 100}
+                        y={(geozone.centroid[1] < 80) ? geozone.centroid[1] : geozone.centroid[1] - 50}
                         width="100"
                         height="50"
                     />
                     <text
                         class="text"
-                        text-anchor={(country.centroid[0] < 120) ? 'start' : 'end'}
-                        y={(country.centroid[1] < 80) ? 10 + country.centroid[1] : country.centroid[1] - 40}
+                        text-anchor={(geozone.centroid[0] < 120) ? 'start' : 'end'}
+                        y={(geozone.centroid[1] < 80) ? 10 + geozone.centroid[1] : geozone.centroid[1] - 40}
                     >
-                            <tspan x={(country.centroid[0] < 120) ? 5 + country.centroid[0] : country.centroid[0] - 5}>{country.id}</tspan>
-                            <tspan x={(country.centroid[0] < 120) ? 5 + country.centroid[0] : country.centroid[0] - 5} dy=10>{labels['visitors']}:{value('visitors', country.id)}</tspan>
-                            <tspan x={(country.centroid[0] < 120) ? 5 + country.centroid[0] : country.centroid[0] - 5} dy=10>{labels['hits']}:{value('hits', country.id)}</tspan>
-                            <tspan x={(country.centroid[0] < 120) ? 5 + country.centroid[0] : country.centroid[0] - 5} dy=10>{labels['bytes']}:{value('bytes', country.id)}</tspan>
+                            <tspan x={(geozone.centroid[0] < 120) ? 5 + geozone.centroid[0] : geozone.centroid[0] - 5}>{geozone.id}</tspan>
+                            <tspan x={(geozone.centroid[0] < 120) ? 5 + geozone.centroid[0] : geozone.centroid[0] - 5} dy=10>{labels['visitors']}:{value('visitors', geozone.id)}</tspan>
+                            <tspan x={(geozone.centroid[0] < 120) ? 5 + geozone.centroid[0] : geozone.centroid[0] - 5} dy=10>{labels['hits']}:{value('hits', geozone.id)}</tspan>
+                            <tspan x={(geozone.centroid[0] < 120) ? 5 + geozone.centroid[0] : geozone.centroid[0] - 5} dy=10>{labels['bytes']}:{value('bytes', geozone.id)}</tspan>
                     </text>
                 </g>
             {/each}
@@ -68,9 +68,10 @@
   let selected;
   let geojson;
   let max = {};
+  let yLog = {};
   let labels = {};
   let layers = undefined;
-  let countries = [];
+  let geozones = [];
   let index = {};
   let scale =  (x, view) => x;
   let views = [];
@@ -97,34 +98,32 @@
 
   $: if (data && data.labels) {
       index = {};
-      data.labels.forEach((countryId, i)=> {
-        index[countryId] = i;
+      data.labels.forEach((geozoneId, i)=> {
+        index[geozoneId] = i;
       });
   };
 
   $: if (data && data.datasets) {
       views = [];
       data.datasets.forEach((ds, i) => {
-          const id = ds.yAxisID;
-          labels[id] = ds.label;
-          index[id] = i;
-          views.push(id);
-          max[id] = 0;
-          ds.data.forEach(d => {
-              max[id] = Math.max(max[id], d.y)
-          });
+        const id = ds.yAxisID;
+        labels[id] = ds.label;
+        index[id] = i;
+        views.push(id);
+        const sorted = ds.data.slice(0).sort((a, b) => +b.y - +a.y);
+        max[id] = sorted.length ? sorted[0].y : 0;
+        const secMax = sorted.length > 1 ? sorted[1].y : max[id];
+        yLog[id] = (secMax < (max[id]/5)) ? true : false;
       });
       if (!view) {
         view = views[0];
       }
   }
 
-  $: if (Object.keys(max).length) {
-      if (options && options.scales.yAxes) {
-        scale = (x,id) => options.scales.yAxes[0].type === 'logarithmic' ?
-                            (max[id] ? Math.log(x+1)/Math.log(max[id]) : Math.log(x+1))
-                            : ( max[id] ? x/max[id] : x);
-      }
+  $: if (Object.keys(yLog).length) {
+      scale = (x,id) => yLog[id] ?
+                (max[id] ? Math.log(x+1)/Math.log(max[id]) : Math.log(x+1))
+                : ( max[id] ? x/max[id] : x);
   };
 
   const converter = geojson2svg({
@@ -134,24 +133,24 @@
   });
 
   $: if (geojson) {
-      countries = geojson.features.filter(feature => feature.geometry && feature.geometry.coordinates)
+      geozones = geojson.features.filter(feature => feature.geometry && feature.geometry.coordinates)
         .map(feature => {
-            const country = {
+            const geozone = {
                 id: feature.id,
                 path: converter.convert(feature)
             };
-            `${country.path[0]}`.replace(/^M/,'').split(/\s+/).forEach(c => {
+            `${geozone.path[0]}`.replace(/^M/,'').split(/\s+/).forEach(c => {
                 c = c.split(/,/).map(x => parseInt(x));
-                country.xmin = Math.min(c[0],country.xmin||99999);
-                country.ymin = Math.min(c[1],country.ymin||99999);
-                country.xmax = Math.max(c[0],country.xmax||-99999);
-                country.ymax = Math.max(c[1],country.ymax||-99999);
+                geozone.xmin = Math.min(c[0],geozone.xmin||99999);
+                geozone.ymin = Math.min(c[1],geozone.ymin||99999);
+                geozone.xmax = Math.max(c[0],geozone.xmax||-99999);
+                geozone.ymax = Math.max(c[1],geozone.ymax||-99999);
             });
-            country.centroid = [
-                (country.xmin + country.xmax) / 2,
-                (country.ymin + country.ymax) / 2,
+            geozone.centroid = [
+                (geozone.xmin + geozone.xmax) / 2,
+                (geozone.ymin + geozone.ymax) / 2,
             ];
-            return country;
+            return geozone;
         });
   }
 
@@ -165,7 +164,8 @@
             const response = await fetch('/simple-world-map.json');
             geojson = await response.json();
         } catch(e) {
-            console.log(reponse);
+            console.log(e);
+            console.log(response);
         }
   })
 </script>
