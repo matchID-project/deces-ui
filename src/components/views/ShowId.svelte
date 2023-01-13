@@ -53,10 +53,14 @@
     })
 
     const toString = (r) => {
+      if (r !== undefined) {
         return `${r.name.last.toUpperCase()}
         ${r.name.first ? r.name.first.join(' ') : ''}${r.death && r.death.age ? ` ${r.death.age} ans`:''},
         ${cityString(result.birth.location.city, false)} ${dateFormat(r.birth.date)} -
         ${result.death ? cityString(result.death.location.city, false) : ''} ${r.death ? dateFormat(r.death.date) : ''}`
+      } else {
+        return 'not found'
+      }
     }
 
     const dateFormat = (dateString) => {
