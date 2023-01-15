@@ -627,7 +627,7 @@
             }
             sourceScope = $route.query.scope
         } else {
-            sourceScope = 'full';
+            sourceScope = 'today';
         }
       }
   })
