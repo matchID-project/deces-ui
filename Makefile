@@ -56,6 +56,7 @@ export BACKEND_TMP_WINDOW = 86400 # seconds before reset of request count
 export BACKEND_TOKEN_USER?=${API_EMAIL}
 export BACKEND_TOKEN_KEY?=$(shell openssl rand -base64 16)
 export BACKEND_TOKEN_PASSWORD?=$(shell openssl rand -base64 16)
+#export SMTP_TLS_SELFSIGNED=true #if need self signed smtp relay
 export SMTP_HOST=smtp
 export SMTP_PORT?=1025
 export SMTP_USER?=${API_EMAIL}
