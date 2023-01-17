@@ -216,12 +216,12 @@
             </strong>
         </p>
       `},
-    { title: 'Données personnelles - article 85 loi CNIL',
+    { title: 'Données personnelles',
       icon: 'ri:shield-user-line',
       content: `
         <p>
           <strong>
-            Le fichiers des décès est hors du champ d'application du RGPD
+            Le fichiers des décès est hors du champ d'application du RGPD  - article 85 loi CNIL
           </strong>
         </p>
         <p>
@@ -252,7 +252,8 @@
         </p>
         <p>
           Les données que vous transmettez pour appariement sont stockées chiffrées temporairement pendant le traitement
-          et effacées automatiquement un heure après. Elles ne sont pas consultables par l'équipe matchID.
+          et effacées automatiquement un heure après. Leur consultation par l'équipe matchID n'est pas directement possible et
+          nécessite un effort particulier relevant d'une volonté d'accès, contraire à notre engagement.
         </p>
         <p>
           Si nous attachons une forte importance à la sécurité de nos serveurs, nous recommandons l'usage parcimonieux
@@ -263,12 +264,38 @@
         <p>
           Nous nous dégageons de toute responsabilité lié à un envoi inapproprié de données personnelles non strictement
           nécessaires à l'appariement (e.g numéro de sécurité sociale), ne pouvant assurer une sécurité suffisante pour la
-          protection de ces données.
+          protection de ces données en cas de sensibilité au sens CNIL/RGPD.
         </p>
         <p>
           En utilisant le service, vous vous engagez sur la conformité d'usage au <a href="https://www.cnil.fr/fr/rgpd-de-quoi-parle-t-on">RGPD</a>,
           et à la bonne information du délégué à la protection des données de votre entreprise, administration ou association.
         </p>
+         <p>
+          <strong>
+            Données personnelles des utilisateurs de matchID
+          </strong>
+        </p>
+        <p>
+          Le service matchID n'utilise pas de base de donnée utilisateur. L'identification par mail repose sur un mécanisme sans base visant à
+          assurer la validité d'une identité par mail. Ce mail est uniquement stocké en mémoire et dans le jeton d'accès (jwt) fourni lors de l'identification.
+        </p>
+        <p>
+          Les mail utilisateurs sont présent dans les données suivantes : données de journaux l'API qui ne sont pas archivées (usage de New Relic EU pour l'exploitation aux finalités
+          statistiques et de sécurité), mails d'identification (stockés dans Gmail), et données de suggestion de correction.
+        <p>
+        <p>
+          Les IP sont présentes dans les logs de proxy applicatifs et archivées aux finalités statistiques et de sécurité.
+        </p>
+        <p>
+          <strong>
+            Google Analytics & Google Ads
+          </strong>
+        </p>
+        <p>
+          Le service matchID fait l'usage de cookies Google Analytics et Google Ads pour le ciblage publicitaire aux finalités de rémunération des serveurs.
+          Cette utilisation est temporaire en attendant la constitution d'une association à but non lucratif visant à collecter les fonds nécessaires.
+        </p>
+
       `
     },
     { title: 'Comment sont indexées les données ?',
