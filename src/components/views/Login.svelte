@@ -115,6 +115,9 @@
                                                 <p>
                                                     <strong>Connecté en tant que {$user}</strong>
                                                 </p>
+                                                <p>
+                                                    Session valide jusqu'au {expirationDate}
+                                                </p>
                                                 <button
                                                     class="rf-btn rf-padding-right-2N"
                                                     on:click|preventDefault={() => {
@@ -162,6 +165,7 @@ let id;
 let codeSent;
 let validId;
 let mounting = true;
+let expirationDate;
 
 $: isAdmin = (id === '__BACKEND_TOKEN_USER__')
 
@@ -198,6 +202,11 @@ const checkJwt = async () => {
             if (response.status === 422) {
                 $accessToken = '';
                 $user = '';
+            }
+            if (response.status === 200) {
+                response.json().then((json) => {
+                  expirationDate = new Date(Number(json.expiration_date) * 1000).toLocaleString();
+                });
             }
             await sleep(60000);
         } catch(e) {
