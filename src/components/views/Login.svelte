@@ -21,6 +21,7 @@
                                         <div
                                             style="position:absolute;top:26px;right:26px"
                                             on:click={closeLogin}
+                                            on:keydown={closeLogin}
                                         >
                                             <Icon
                                                 icon='ri:close-line'
