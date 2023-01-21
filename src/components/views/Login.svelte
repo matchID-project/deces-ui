@@ -163,10 +163,9 @@ let id;
 let codeSent;
 let validId;
 let mounting = true;
+let refresh = true;
 
 $: isAdmin = (id === '__BACKEND_TOKEN_USER__')
-
-$: if ($accessToken) { checkJwt() };
 
 $: $admin = $accessToken && ($user === '__BACKEND_TOKEN_USER__') && $user;
 
@@ -185,13 +184,15 @@ onMount(async () => {
     await useLocalSync(accessToken, 'accessToken');
     await useLocalSync(user, 'user');
     id = $user || '';
+    refresh = true;
     mounting = false;
+    checkJwt();
 });
 
 const checkJwt = async () => {
     while($accessToken) {
         try {
-            const response = await fetch('__BACKEND_PROXY_PATH__/auth',
+            const response = await fetch(`__BACKEND_PROXY_PATH__/auth${refresh ? "?refresh=true" : ""}`,
                 {
                     method: 'GET',
                     headers: { Authorization: `Bearer ${$accessToken}` }
@@ -199,6 +200,13 @@ const checkJwt = async () => {
             if (response.status === 422) {
                 $accessToken = '';
                 $user = '';
+            } else if (refresh) {
+                const json = await response.json();
+                if (json.access_token) {
+                    $accessToken = json.access_token;
+                    refresh = false;
+                    setTimeout(() => refresh = true, 3600000)
+                }
             }
             await sleep(60000);
         } catch(e) {
