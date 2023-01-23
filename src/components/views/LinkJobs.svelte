@@ -89,8 +89,8 @@
                                             {/if}
                                             </td>
                                         <td>
-                                            {#if job.performance}
-                                                {job.performance}
+                                            {#if job.processing_rate}
+                                                {job.processing_rate}
                                             {:else}
                                                 N/A
                                             {/if}
@@ -169,9 +169,10 @@
                 user: j.data && j.data.user,
                 date: j.timestamp,
                 status: j.status,
-                delay: delay,
+                waiting_time: j.processedOn && (j.processedOn - j.timestamp) / 1000,
+                processing_time: delay,
                 columns: validColumns.filter(c => j.data && j.data[c]),
-                performance: j.processedOn && Math.floor((progress / 100) * (j.data.totalRows / delay)),
+                processing_rate: j.processedOn && Math.floor((progress / 100) * (j.data.totalRows / delay)),
                 progress: progress
             })});
         jobs = tmpJobs.sort((a,b) => (b.date - a.date)).map(j => {
