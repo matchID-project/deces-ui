@@ -59,11 +59,11 @@
                                                     >
                                                     {#if ((id) && (validId === false))}
                                                         <p class="rf-error-text">
-                                                            Le courriel fourni n'est pas valide.
+                                                          {codeSent}
                                                         </p>
-                                                    {:else if codeSent}
+                                                    {:else if (validId == true) && (codeSent)}
                                                         <p class="rf-valid-text">
-                                                            Un code vous a été envoyé à l'adresse indiquée
+                                                          {codeSent}
                                                         </p>
                                                     {/if}
                                                 </div>
@@ -233,17 +233,15 @@ const register = () => {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({ user: id })
-        }).then((response) => {
-            if (response.status === 422) {
-                codeSent = false
-                return;
-            }
-            return response.json().then((json) => {
-                codeSent = true;
+        }).then(async (response) => {
+            await response.json().then((json) => {
+              validId = json.valid
+              codeSent = json.msg
             });
         })
     } else {
-        validId = false;
+      codeSent = "Le courriel fourni n'est pas valide.";
+      validId = false;
     }
 }
 
