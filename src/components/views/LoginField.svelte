@@ -1,9 +1,9 @@
 <div style={style}>
-    {#if (!emailSent || $user)}
+    {#if (!emailSent || (emailSent && !emailSent.valid) || $user)}
         <div
             class="rf-input-group"
             class:rf-input-group--valid={email && emailSent}
-            class:rf-input-group--error={emailSent===false}
+            class:rf-input-group--error={emailSent && emailSent.valid===false}
         >
             <label
                 class="rf-label rf-text--left"
@@ -16,7 +16,7 @@
             <input
                 id="email"
                 type="email"
-                class:rf-input--valid={emailSent}
+                class:rf-input--valid={emailSent && emailSent.valid}
                 class="rf-input rf-margin-top-0"
                 style="width: 100%"
                 bind:value={email}
@@ -28,24 +28,28 @@
                 on:blur={button?null:register}
                 disabled={$user}
             >
-            {#if button && !$user}
-                <button
-                    title="Valider le courriel"
-                    type="submit"
-                    class="rf-btn"
-                    style="margin-top: 0px; padding: 0 0.5rem 0 0.5rem; overflow: visible!important;"
-                >
-                    <Icon icon="ri:send-plane-line" style="margin: 0"/>
-                </button>
-            {/if}
+                {#if button && !$user}
+                    <button
+                        title="Valider le courriel"
+                        type="submit"
+                        class="rf-btn"
+                        style="margin-top: 0px; padding: 0 0.5rem 0 0.5rem; overflow: visible!important;"
+                    >
+                        <Icon icon="ri:send-plane-line" style="margin: 0"/>
+                    </button>
+                {/if}
             </form>
             {#if ($user)}
                 <p class="rf-valid-text">
                     Vous êtes identifié(e)<br>
                 </p>
-            {:else}
+            {:else if !emailSent}
                 <p class="rf-text--xs rf-text--left" style="margin-top:.5rem">
                     Un code d'accès sera envoyé à cette adresse pour valider votre identité
+                </p>
+            {:else if emailSent && !emailSent.valid}
+                <p class="rf-error-text rf-text--xs rf-text--left">
+                    {emailSent.msg}
                 </p>
             {/if}
         </div>
@@ -96,12 +100,12 @@
             {/if}
             </form>
             {#if (!emailOTP)}
-                <p class="rf-valid-text">
+                <p class="rf-valid-text rf-text--left">
                     Un code vous a été envoyé à l'adresse<br>
                     indiquée pour valider votre identité
                 </p>
             {:else if (emailValidate === false)}
-                <p class="rf-error-text">
+                <p class="rf-error-text rf-text--left">
                     Le code d'accès n'est pas valide<br>
                     Veuillez réessayer
                 </p>
@@ -166,20 +170,16 @@
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({ user: email })
-                }).then((response) => {
-                    if (response.status === 422) {
-                        emailSent = false
-                        return;
-                    }
-                    return response.json().then((json) => {
-                        emailSent = true
+                }).then(async (response) => {
+                    await response.json().then((json) => {
+                        emailSent = json;
                     });
                 })
             } else {
                 emailValidate = true;
             }
         } else {
-            emailSent = false;
+            emailSent = {valid: false, msg: "Format email invalide"};
         }
     }
 
