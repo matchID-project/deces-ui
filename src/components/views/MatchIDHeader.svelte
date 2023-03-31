@@ -4,12 +4,12 @@
             {#if $themeDnum}
                 <div
                     class="rf-header__brand"
-                    on:click|preventDefault={() => goToPage('search', 'reset')}
                 >
                     <a
                         href="/search{$advancedSearch ? '?advanced=true' : ''}"
                         class="rf-logo"
                         title="{organization.replace(/<br>/,' ')}"
+                        on:click|preventDefault={() => goToPage('search', 'reset')}
                     >
                         <span class="rf-logo__title">
                             {@html organization}
@@ -74,12 +74,12 @@
                                         <li
                                             class="rf-menu__item rf-href"
                                             class:rf-menu__item--active={!modal && ($route.path === '/search') && item.isActive}
-                                            on:click|preventDefault={() => goToPage('search',item.mode)}
                                         >
                                             <a
                                                 href={item.mode === 'simple' ? location.href.replace("&advanced=true","") : location.href.replace(/(&advanced=true|$)/, "&advanced=true")}
                                                 class="rf-link"
                                                 aria-label="recherche {item.title}"
+                                                on:click|preventDefault={() => goToPage('search',item.mode)}
                                             >
                                                 <tr>
                                                     <td class="rf-td--vcenter rf-padding-right-1N">
@@ -104,16 +104,16 @@
                                             class:rf-menu__item--active={!modal && ($route.path === '/search') && item.isActive}
                                             class:rf-href={viewOptionsActive}
                                             class:rf-inactive={!viewOptionsActive}
-                                            on:click|preventDefault={() => {
-                                                if (viewOptionsActive) {
-                                                    goToPage('search',item.mode)
-                                                }
-                                            }}
                                         >
                                             <a
                                                 href={item.mode === 'card' ? location.href.replace(/(&view=[a-z\-]+|\?view=[a-z\-]+)/,"") : location.href.replace(/(&view=[a-z\-]+|\?view=[a-z\-]+)/,"").replace('?', `?view=${item.mode}&`)}
                                                 class="rf-link"
                                                 arial-label="mode d'affichage {item.title}"
+                                                on:click|preventDefault={() => {
+                                                    if (viewOptionsActive) {
+                                                        goToPage('search',item.mode)
+                                                    }
+                                                }}
                                             >
                                                 <tr>
                                                     <td class="rf-td--vcenter rf-padding-right-1N">
@@ -132,55 +132,82 @@
 
                         <li
                             class="rf-nav__item"
-                            on:click|preventDefault={() => goToPage('link')}
                             class:rf-nav__item--active={!modal && ($route.path === '/link')}
                         >
                             <a
                                 href="/link"
                                 class="rf-link rf-href"
+                                on:click|preventDefault={() => goToPage('link')}
                             >
                                 Appariement
                             </a>
                         </li>
                         <li
                             class="rf-nav__item"
-                            on:click|preventDefault={() => goToPage('about')}
                             class:rf-nav__item--active={!modal && ($route.path === '/about')}
                         >
                             <a
                                 href="/about"
                                 class="rf-link rf-href rf-fi-question-line rf-link--icon-left"
+                                on:click|preventDefault={() => goToPage('about')}
                             >
                                 À propos
                             </a>
                         </li>
-                        {#if $alphaFeatures}
-                            <li
-                                class="rf-nav__item rf-nav__item--hoverable rf-nav__item--shadow"
-                                class:rf-nav__item--active={!modal && (['/jobs','/edits'].includes($route.path) )}
-                                on:mouseenter={() => {expandMenu.admin = true}}
-                                on:mouseleave={() => {expandMenu.admin = false}}
-                                bind:this={adminMenu}
+                        <li
+                            class="rf-nav__item rf-nav__item--hoverable rf-nav__item--shadow"
+                            class:rf-nav__item--active={!modal && (['/jobs','/edits'].includes($route.path) )}
+                            on:mouseenter={() => {expandMenu.admin = true}}
+                            on:mouseleave={() => {expandMenu.admin = false}}
+                            bind:this={adminMenu}
+                        >
+                            <button
+                                class="rf-btn"
+                                aria-controls="rf-admin"
+                                aria-expanded={expandMenu.admin}
+                                on:click={() => {expandMenu.admin = !expandMenu.admin}}
                             >
-                                <button
-                                    class="rf-btn"
-                                    aria-controls="rf-admin"
-                                    aria-expanded={expandMenu.admin}
-                                    on:click={() => {expandMenu.admin = !expandMenu.admin}}
-                                >
-                                    <Icon icon={$user ? 'ri:user-follow-line' : 'ri:user-line'} circleText={$admin}/>
-                                </button>
-                                <div
-                                    class="rf-menu"
-                                    class:rf-menu--expanded={expandMenu.admin}
-                                    style="width: 10rem;right:0px;"
-                                    id="rf-admin"
-                                >
-                                    <ul class="rf-menu__list">
+                                <Icon icon={$user ? 'ri:user-follow-line' : 'ri:user-line'} circleText={$admin}/>
+                            </button>
+                            <div
+                                class="rf-menu"
+                                class:rf-menu--expanded={expandMenu.admin}
+                                style="width: 10rem;right:0px;"
+                                id="rf-admin"
+                            >
+                                <ul class="rf-menu__list">
+                                    <li
+                                        class="rf-menu__item rf-href"
+                                        class:rf-nav__item--active={showLogin}
+                                        on:mouseenter={() => {zoom = true}}
+                                        on:mouseleave={() => {zoom = false}}
+                                    >
+                                        <a
+                                            href="/logout"
+                                            title={$user ? "Se déconnecter" : "S'identifier"}
+                                            class="rf-link rf-href rf-fi-question-line rf-link--icon-left"
+                                            on:click|preventDefault={() => showLogin = !showLogin}
+                                        >
+                                            {$user ? "Se déconnecter" : "S'identifier"}
+                                        </a>
+                                    </li>
+                                    {#if $user}
                                         <li
                                             class="rf-menu__item rf-href"
-                                            on:click|preventDefault={() => $showLogin = !$showLogin}
-                                            class:rf-nav__item--active={$showLogin}
+                                            class:rf-menu__item--active={!modal && ($route.path === '/edits')}
+                                        >
+                                            <a
+                                                href="/edits"
+                                                title="Corrections"
+                                                class="rf-link rf-href rf-fi-question-line rf-link--icon-left"
+                                                on:click|preventDefault={() => goToPage('edits')}
+                                            >
+                                                Corrections
+                                            </a>
+                                        </li>
+                                        <li
+                                            class="rf-menu__item rf-href"
+                                            class:rf-nav__item--active={showAPIKey}
                                             on:mouseenter={() => {zoom = true}}
                                             on:mouseleave={() => {zoom = false}}
                                         >
@@ -192,53 +219,38 @@
                                                 {$user ? "Se déconnecter" : "S'identifier"}
                                             </a>
                                         </li>
-                                        {#if $user}
-                                            <li
-                                                class="rf-menu__item rf-href"
-                                                class:rf-menu__item--active={!modal && ($route.path === '/edits')}
-                                                on:click|preventDefault={() => goToPage('edits')}
-                                            >
-                                                <a
-                                                    href="/edits"
-                                                    title="Corrections"
-                                                    class="rf-link rf-href rf-fi-question-line rf-link--icon-left"
-                                                >
-                                                    Corrections
-                                                </a>
-                                            </li>
-                                        {/if}
-                                        {#if $admin}
-                                            <li
-                                                class="rf-menu__item rf-href"
-                                                class:rf-menu__item--active={!modal && ($route.path === '/jobs')}
+                                    {/if}
+                                    {#if $admin}
+                                        <li
+                                            class="rf-menu__item rf-href"
+                                            class:rf-menu__item--active={!modal && ($route.path === '/jobs')}
+                                        >
+                                            <a
+                                                href="/jobs"
+                                                title="Appariements"
+                                                class="rf-link rf-href rf-fi-question-line rf-link--icon-left"
                                                 on:click|preventDefault={() => goToPage('jobs')}
                                             >
-                                                <a
-                                                    href="/jobs"
-                                                    title="Appariements"
-                                                    class="rf-link rf-href rf-fi-question-line rf-link--icon-left"
-                                                >
-                                                    Appariements
-                                                </a>
-                                            </li>
-                                            <li
-                                                class="rf-menu__item rf-href"
-                                                class:rf-menu__item--active={!modal && ($route.path === '/stats')}
+                                                Appariements
+                                            </a>
+                                        </li>
+                                        <li
+                                            class="rf-menu__item rf-href"
+                                            class:rf-menu__item--active={!modal && ($route.path === '/stats')}
+                                        >
+                                            <a
+                                                href="/stats"
+                                                title="Statistiques"
+                                                class="rf-link rf-href rf-fi-question-line rf-link--icon-left"
                                                 on:click|preventDefault={() => goToPage('stats')}
                                             >
-                                                <a
-                                                    href="/stats"
-                                                    title="Statistiques"
-                                                    class="rf-link rf-href rf-fi-question-line rf-link--icon-left"
-                                                >
-                                                    Statistiques
-                                                </a>
-                                            </li>
-                                        {/if}
-                                    </ul>
-                                </div>
-                            </li>
-                        {/if}
+                                                Statistiques
+                                            </a>
+                                        </li>
+                                    {/if}
+                                </ul>
+                            </div>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -266,7 +278,7 @@
                         Fermer
                     </span>
                 </button>
-                <nav role="navigation" aria-label="Menu mobile">
+                <nav aria-label="Menu mobile">
                     <ul class="rf-nav__list">
                         <li
                             class="rf-nav__item"
@@ -292,18 +304,24 @@
                                     </li>
                                     {#each searchOptions as item}
                                         <li
-                                            class="rf-menu__item rf-href"
+                                            class="rf-menu__item"
                                             class:rf-menu__item--active={!modal && ($route.path === '/search') && item.isActive}
-                                            on:click|preventDefault={() => goToPage('search',item.mode)}
                                         >
-                                            <tr>
-                                                <td class="rf-td--vcenter rf-padding-right-1N">
-                                                    <Icon class="rf-fi" icon={item.icon}/>
-                                                </td>
-                                                <td class="rf-td--vcenter">
-                                                    {item.title}
-                                                </td>
-                                            </tr>
+                                            <a
+                                                href={item.mode === 'simple' ? location.href.replace("&advanced=true","") : location.href.replace(/(&advanced=true|$)/, "&advanced=true")}
+                                                class="rf-link"
+                                                aria-label="recherche {item.title}"
+                                                on:click|preventDefault={() => goToPage('search',item.mode)}
+                                            >
+                                                <tr>
+                                                    <td class="rf-td--vcenter rf-padding-right-1N">
+                                                        <Icon class="rf-fi" icon={item.icon}/>
+                                                    </td>
+                                                    <td class="rf-td--vcenter">
+                                                        {item.title}
+                                                    </td>
+                                                </tr>
+                                            </a>
                                         </li>
                                     {/each}
                                     <li
@@ -318,20 +336,26 @@
                                             class:rf-menu__item--active={!modal && ($route.path === '/search') && item.isActive}
                                             class:rf-href={viewOptionsActive}
                                             class:rf-inactive={!viewOptionsActive}
-                                            on:click|preventDefault={() => {
-                                                if (viewOptionsActive) {
-                                                    goToPage('search',item.mode)
-                                                }
-                                            }}
                                         >
-                                            <tr>
-                                                <td class="rf-td--vcenter rf-padding-right-1N">
-                                                    <Icon icon={item.icon}/>
-                                                </td>
-                                                <td class="rf-td--vcenter">
-                                                    {item.title}
-                                                </td>
-                                            </tr>
+                                            <a
+                                                href={item.mode === 'card' ? location.href.replace(/(&view=[a-z\-]+|\?view=[a-z\-]+)/,"") : location.href.replace(/(&view=[a-z\-]+|\?view=[a-z\-]+)/,"").replace('?', `?view=${item.mode}&`)}
+                                                class="rf-link"
+                                                arial-label="mode d'affichage {item.title}"
+                                                on:click|preventDefault={() => {
+                                                    if (viewOptionsActive) {
+                                                        goToPage('search',item.mode)
+                                                    }
+                                                }}
+                                            >
+                                                <tr>
+                                                    <td class="rf-td--vcenter rf-padding-right-1N">
+                                                        <Icon icon={item.icon}/>
+                                                    </td>
+                                                    <td class="rf-td--vcenter">
+                                                        {item.title}
+                                                    </td>
+                                                </tr>
+                                            </a>
                                         </li>
                                     {/each}
                                 </ul>
@@ -339,104 +363,108 @@
                         </li>
                         <li
                             class="rf-nav__item"
-                            on:click|preventDefault={() => goToPage('link')}
                             class:rf-nav__item--active={!modal && ($route.path === '/link')}
                         >
-                            <span class="rf-link rf-href rf-fi-db-line rf-link--icon-left">
+                            <a
+                                href="/link"
+                                class="rf-link rf-href rf-fi-db-line rf-link--icon-left"
+                                on:click|preventDefault={() => goToPage('link')}
+                            >
                                 Appariement
-                            </span>
+                            </a>
                         </li>
                         <li
                             class="rf-nav__item"
-                            on:click|preventDefault={() => goToPage('about')}
                             class:rf-nav__item--active={!modal && ($route.path === '/about')}
                         >
-                            <span class="rf-link rf-href rf-fi-question-line rf-link--icon-left">
-                                À propos
-                            </span>
-                        </li>
-                        {#if $alphaFeatures}
-                            <li
-                                class="rf-nav__item"
-                                class:rf-nav__item--active={!modal && (['/jobs','/edits'].includes($route.path) )}
-                                aria-expanded={expandMenu.admin}
-                                aria-controls="rf-admin-popin"
+                            <a
+                                href="/about"
+                                class="rf-link rf-href rf-fi-question-line rf-link--icon-left"
+                                on:click|preventDefault={() => goToPage('about')}
                             >
-                                <button
-                                    class="rf-btn rf-padding-left-1N"
-                                    aria-expanded={expandMenu.admin}
-                                    on:click={() => {expandMenu.admin = !expandMenu.admin}}
-                                >
-                                    <Icon icon={$user ? 'ri:user-follow-line' : 'ri:user-line'} circleText={$admin}/>
-                                </button>
-                                <div
-                                    class="rf-menu"
-                                    class:rf-menu--expanded={expandMenu.admin}
-                                    id="rf-admin-popin"
-                                >
-                                    <ul class="rf-menu__list">
+                                À propos
+                            </a>
+                        </li>
+                        <li
+                            class="rf-nav__item"
+                            class:rf-nav__item--active={!modal && (['/jobs','/edits'].includes($route.path) )}
+                            aria-expanded={expandMenu.admin}
+                            aria-controls="rf-admin-popin"
+                        >
+                            <button
+                                class="rf-btn rf-padding-left-1N"
+                                aria-expanded={expandMenu.admin}
+                                on:click={() => {expandMenu.admin = !expandMenu.admin}}
+                            >
+                                <Icon icon={$user ? 'ri:user-follow-line' : 'ri:user-line'} circleText={$admin}/>
+                            </button>
+                            <div
+                                class="rf-menu"
+                                class:rf-menu--expanded={expandMenu.admin}
+                                id="rf-admin-popin"
+                            >
+                                <ul class="rf-menu__list">
+                                    <li
+                                        class="rf-menu__item rf-href"
+                                        class:rf-nav__item--active={showLogin}
+                                        on:mouseenter={() => {zoom = true}}
+                                        on:mouseleave={() => {zoom = false}}
+                                    >
+                                        <a
+                                            href="/logout"
+                                            title={$user ? "Se déconnecter" : "S'identifier"}
+                                            class="rf-link rf-href rf-fi-question-line rf-link--icon-left"
+                                            on:click|preventDefault={() => showLogin = !showLogin}
+                                        >
+                                            {$user ? "Se déconnecter" : "S'identifier"}
+                                        </a>
+                                    </li>
+                                    {#if $user}
                                         <li
                                             class="rf-menu__item rf-href"
-                                            on:click|preventDefault={() => $showLogin = !$showLogin}
-                                            class:rf-nav__item--active={$showLogin}
-                                            on:mouseenter={() => {zoom = true}}
-                                            on:mouseleave={() => {zoom = false}}
+                                            class:rf-menu__item--active={!modal && ($route.path === '/edits')}
                                         >
                                             <a
-                                                href="/logout"
-                                                title={$user ? "Se déconnecter" : "S'identifier"}
+                                                href="/edits"
+                                                title="Corrections"
                                                 class="rf-link rf-href rf-fi-question-line rf-link--icon-left"
-                                            >
-                                                {$user ? "Se déconnecter" : "S'identifier"}
-                                            </a>
-                                        </li>
-                                        {#if $user}
-                                            <li
-                                                class="rf-menu__item rf-href"
-                                                class:rf-menu__item--active={!modal && ($route.path === '/edits')}
                                                 on:click|preventDefault={() => goToPage('edits')}
                                             >
-                                                <a
-                                                    href="/edits"
-                                                    title="Corrections"
-                                                    class="rf-link rf-href rf-fi-question-line rf-link--icon-left"
-                                                >
-                                                    Corrections
-                                                </a>
-                                            </li>
-                                        {/if}
-                                        {#if $admin}
-                                            <li
-                                                class="rf-menu__item rf-href"
-                                                class:rf-menu__item--active={!modal && ($route.path === '/jobs')}
+                                                Corrections
+                                            </a>
+                                        </li>
+                                    {/if}
+                                    {#if $admin}
+                                        <li
+                                            class="rf-menu__item rf-href"
+                                            class:rf-menu__item--active={!modal && ($route.path === '/jobs')}
+                                        >
+                                            <a
+                                                href="/jobs"
+                                                title="Appariements"
+                                                class="rf-link rf-href rf-fi-question-line rf-link--icon-left"
                                                 on:click|preventDefault={() => goToPage('jobs')}
                                             >
-                                                <a
-                                                    href="/jobs"
-                                                    title="Appariements"
-                                                    class="rf-link rf-href rf-fi-question-line rf-link--icon-left"
-                                                >
-                                                    Appariements
-                                                </a>
-                                            </li>
-                                            <li
-                                                class="rf-menu__item rf-href"
-                                                class:rf-menu__item--active={!modal && ($route.path === '/stats')}
+                                                Appariements
+                                            </a>
+                                        </li>
+                                        <li
+                                            class="rf-menu__item rf-href"
+                                            class:rf-menu__item--active={!modal && ($route.path === '/stats')}
+                                        >
+                                            <a
+                                                href="/edits"
+                                                title="Statistiques"
+                                                class="rf-link rf-href rf-fi-question-line rf-link--icon-left"
                                                 on:click|preventDefault={() => goToPage('stats')}
                                             >
-                                                <a
-                                                    href="/edits"
-                                                    title="Statistiques"
-                                                    class="rf-link rf-href rf-fi-question-line rf-link--icon-left"
-                                                >
-                                                    Statistiques
-                                                </a>
-                                            </li>
-                                        {/if}
-                                    </ul>
-                                </div>
-                            </li>
-                        {/if}
+                                                Statistiques
+                                            </a>
+                                        </li>
+                                    {/if}
+                                </ul>
+                            </div>
+                        </li>
                     </ul>
                 </nav>
             </div>
