@@ -212,11 +212,12 @@
                                             on:mouseleave={() => {zoom = false}}
                                         >
                                             <a
-                                                href="/logout"
-                                                title={$user ? "Se déconnecter" : "S'identifier"}
+                                                href="/api-key"
+                                                title="API Key"
                                                 class="rf-link rf-href rf-fi-question-line rf-link--icon-left"
+                                                on:click|preventDefault={() => showAPIKey = !showAPIKey}
                                             >
-                                                {$user ? "Se déconnecter" : "S'identifier"}
+                                                API Key
                                             </a>
                                         </li>
                                     {/if}
@@ -471,14 +472,16 @@
         </div>
     </div>
 </header>
-<Login/>
+<Login bind:showLogin={showLogin}/>
+<APIKey bind:showAPIKey={showAPIKey}/>
 <ProofViewer/>
 
 <script>
-    import { showLogin, showProof, admin, user, alphaFeatures, firstSearch, themeDnum, advancedSearch, displayMode, wasSearched, activeElement } from '../tools/stores.js';
+    import { showProof, admin, user, alphaFeatures, firstSearch, themeDnum, advancedSearch, displayMode, wasSearched, activeElement } from '../tools/stores.js';
     import Icon from './Icon.svelte';
     import SearchBox from './SearchBox.svelte';
     import Login from './Login.svelte';
+    import APIKey from './APIKey.svelte';
     import ProofViewer from './ProofViewer.svelte';
     import { toggleAdvancedSearch, enableDisplayMode } from '../tools/search.js';
     import { goTo } from '../tools/routes.js';
@@ -498,8 +501,10 @@
     let searchMenu;
     let adminMenu;
     let zoom;
+    let showLogin = false;
+    let showAPIKey = false;
 
-    $: modal = $showLogin;
+    $: modal = showLogin || showAPIKey;
 
     $: searchOptions = [
         { title: 'Simple',
