@@ -17,7 +17,7 @@
 
 .rf-menu__item--active::before {
   width: 3px!important;
-  z-index: 1200;
+  z-index: 25001;
 }
 
 :not(.rf-nav__item,li) > a.rf-link {
