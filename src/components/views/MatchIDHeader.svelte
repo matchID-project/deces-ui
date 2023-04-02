@@ -434,6 +434,21 @@
                                                 Corrections
                                             </a>
                                         </li>
+                                        <li
+                                            class="rf-menu__item rf-href"
+                                            class:rf-nav__item--active={showAPIKey}
+                                            on:mouseenter={() => {zoom = true}}
+                                            on:mouseleave={() => {zoom = false}}
+                                        >
+                                            <a
+                                                href="/api-key"
+                                                title="API Key"
+                                                class="rf-link rf-href rf-fi-question-line rf-link--icon-left"
+                                                on:click|preventDefault={() => showAPIKey = !showAPIKey}
+                                            >
+                                                API Key
+                                            </a>
+                                        </li>
                                     {/if}
                                     {#if $admin}
                                         <li
