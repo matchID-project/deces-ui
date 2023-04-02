@@ -499,9 +499,9 @@ export const alphaFeatures = writable(parseInt('__THEME_DNUM__') === 0);
 
 export const accessToken = writable('');
 
-export const user = writable(undefined);
+export const accessTokenInfos = writable({});
 
-export const showLogin = writable(false);
+export const user = writable(undefined);
 
 export const admin = writable(false);
 

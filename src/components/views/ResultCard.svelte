@@ -7,6 +7,7 @@
                         class="rf-card rf-card--horizontal rf-card--{expand ? "md": "sm"}"
                         class:rf-card--left-arrow={expand}
                         on:click|preventDefault={toggleExpand}
+                        on:keydown|preventDefault={toggleExpand}
                     >
                         <div class="rf-card__img" style="position: relative">
                             {#if (wikimediaImgSrc)}
