@@ -1,162 +1,119 @@
-{#if $showLogin}
-    <div class="modal" transition:fade>
-        <div class="modal-container">
-            <div class="rf-container-fluid">
-                <div class="rf-grid-row">
-                    <div class="rf-col-xs-0 rf-col-sm-1 rf-col-md-2 rf-col-lg-3 rf-col-xl-3"></div>
-                    <div class="rf-col-xs-12 rf-col-sm-10 rf-col-md-8 rf-col-lg-6 rf-col-xl-6">
-                        <div class="rf-container-fluid rf-margin-top-4N">
-                            <div class="rf-grid-row modal-content" transition:slide>
-                                <div class="rf-col-12">
-                                    <div
-                                        class="rf-card rf-card--horizontal rf-card--md rf-card--no-arrow"
-                                        style="position: relative;"
-                                    >
-                                        <div class="rf-card__img" style="position: relative;">
-                                            <img
-                                                alt='login'
-                                                src='/favicon.svg'
-                                            />
-                                        </div>
-                                        <div
-                                            style="position:absolute;top:26px;right:26px"
-                                            on:click={closeLogin}
-                                            on:keydown={closeLogin}
-                                        >
-                                            <Icon
-                                                icon='ri:close-line'
-                                                class="rf-fi--lg"
-                                            />
-                                        </div>
-                                        <div class="rf-card__body rf-text--center" style="margin-left: -80px!important; padding-top: 26px!important;">
-                                            <h4 class="rf-card_lead rf-margin-0">Connexion</h4>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="rf-col-12">
-                                    <div class="rf-padding-7N rf-background--white">
-                                        {#if !$accessToken}
-                                            <form transition:slide>
-                                                <div class="rf-input-group" class:rf-input-group--error={authError}>
-                                                    <label
-                                                        class="rf-label rf-text--left"
-                                                        for="email"
-                                                        style="overflow: hidden;text-overflow:ellipsis;position: relative"
-                                                    >
-                                                        Courriel
-                                                    </label>
-                                                    <input
-                                                        id="email"
-                                                        type="email"
-                                                        class="rf-input"
-                                                        on:input={() => {authError = false}}
-                                                        bind:value={id}
-                                                        on:focus={() => {
-                                                            validId = undefined;
-                                                            codeSent = undefined;
-                                                        }}
-                                                        on:blur={register}
-                                                    >
-                                                    {#if ((id) && (validId === false))}
-                                                        <p class="rf-error-text">
-                                                          {codeSent}
-                                                        </p>
-                                                    {:else if (validId == true) && (codeSent)}
-                                                        <p class="rf-valid-text">
-                                                          {codeSent}
-                                                        </p>
-                                                    {/if}
-                                                </div>
-                                                <div class="rf-input-group rf-margin-top-1N" class:rf-input-group--error={authError}>
-                                                    <label
-                                                        class="rf-label rf-text--left"
-                                                        for="token"
-                                                        style="overflow: hidden;text-overflow:ellipsis;position: relative"
-                                                    >
-                                                        {isAdmin ?  "Mot de passe" : "Code"}
-                                                    </label>
-                                                    {#if isAdmin}
-                                                        <input
-                                                            id="token"
-                                                            type="password"
-                                                            class="rf-input"
-                                                            on:input={() => {authError = false}}
-                                                            bind:value={authPassword}
-                                                        >
-                                                    {:else}
-                                                        <input
-                                                            id="token"
-                                                            type="text"
-                                                            maxlength="6"
-                                                            class="rf-input"
-                                                            on:input={() => {
-                                                                authPassword = authPassword.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1').replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');
-                                                                authError = false;
-                                                            }}
-                                                            bind:value={authPassword}
-                                                        >
-                                                    {/if}
-                                                    {#if authError}
-                                                        <p id="text-input-error-desc-error" class="rf-error-text">
-                                                            Mauvais courriel ou code d'accès
-                                                        </p>
-                                                    {/if}
-                                                </div>
-                                                <div class="rf-container--fluid rf-text--center">
-                                                    <button
-                                                        class="rf-btn rf-margin-top-1N"
-                                                        on:click|preventDefault={login}
-                                                    >
-                                                        Se connecter
-                                                    </button>
-                                                </div>
-                                            </form>
-                                        {:else}
-                                            <div style="width:100%;text-align:center;" transition:slide>
-                                                <p>
-                                                    <strong>Connecté en tant que {$user}</strong>
-                                                </p>
-                                                <button
-                                                    class="rf-btn rf-padding-right-2N"
-                                                    on:click|preventDefault={() => {
-                                                        authPassword = '';
-                                                        authError = false;
-                                                        id = '';
-                                                        validId = undefined;
-                                                        codeSent = '';
-                                                        $accessToken = '';
-                                                        $user = '';
-                                                    }}
-                                                >
-                                                    Se déconnecter
-                                                    &nbsp;
-                                                    <Icon
-                                                        icon='ri:close-line'
-                                                        class="rf-fi--md"
-                                                    />
-                                                </button>
-                                            </div>
-                                        {/if}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="rf-col-xs-0 rf-col-sm-1 rf-col-md-2 rf-col-lg-3 rf-col-xl-3"></div>
-                </div>
+<Modal title="Connexion" bind:show={showLogin}>
+    {#if !$accessToken}
+        <form transition:slide>
+            <div class="rf-input-group" class:rf-input-group--error={authError}>
+                <label
+                    class="rf-label rf-text--left"
+                    for="email"
+                    style="overflow: hidden;text-overflow:ellipsis;position: relative"
+                >
+                    Courriel
+                </label>
+                <input
+                    id="email"
+                    type="email"
+                    class="rf-input"
+                    on:input={() => {authError = false}}
+                    bind:value={id}
+                    on:focus={() => {
+                        validId = undefined;
+                        codeSent = undefined;
+                    }}
+                    on:blur={register}
+                >
+                {#if ((id) && (validId === false))}
+                    <p class="rf-error-text">
+                        {codeSent}
+                    </p>
+                {:else if (validId == true) && (codeSent)}
+                    <p class="rf-valid-text">
+                        {codeSent}
+                    </p>
+                {/if}
             </div>
+            <div class="rf-input-group rf-margin-top-1N" class:rf-input-group--error={authError}>
+                <label
+                    class="rf-label rf-text--left"
+                    for="token"
+                    style="overflow: hidden;text-overflow:ellipsis;position: relative"
+                >
+                    {isAdmin ?  "Mot de passe" : "Code"}
+                </label>
+                {#if isAdmin}
+                    <input
+                        id="token"
+                        type="password"
+                        class="rf-input"
+                        on:input={() => {authError = false}}
+                        bind:value={authPassword}
+                    >
+                {:else}
+                    <input
+                        id="token"
+                        type="text"
+                        maxlength="6"
+                        class="rf-input"
+                        on:input={() => {
+                            authPassword = authPassword.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1').replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');
+                            authError = false;
+                        }}
+                        bind:value={authPassword}
+                    >
+                {/if}
+                {#if authError}
+                    <p id="text-input-error-desc-error" class="rf-error-text">
+                        Mauvais courriel ou code d'accès
+                    </p>
+                {/if}
+            </div>
+            <div class="rf-container--fluid rf-text--center">
+                <button
+                    class="rf-btn rf-margin-top-1N"
+                    on:click|preventDefault={login}
+                >
+                    Se connecter
+                </button>
+            </div>
+        </form>
+    {:else}
+        <div style="width:100%;text-align:center;" transition:slide>
+            <p>
+                <strong>Connecté en tant que {$user}</strong>
+            </p>
+            <button
+                class="rf-btn rf-padding-right-2N"
+                on:click|preventDefault={() => {
+                    authPassword = '';
+                    authError = false;
+                    id = '';
+                    validId = undefined;
+                    codeSent = '';
+                    $accessToken = '';
+                    $accessTokenInfos = {};
+                    $user = '';
+                }}
+            >
+                Se déconnecter
+                &nbsp;
+                <Icon
+                    icon='ri:close-line'
+                    class="rf-fi--md"
+                />
+            </button>
         </div>
-    </div>
-{/if}
+    {/if}
+</Modal>
 
 <script>
 import { onMount } from 'svelte';
-import { fade, slide } from 'svelte/transition';
-import { route, showLogin, user, accessToken, admin } from '../tools/stores.js';
+import { slide } from 'svelte/transition';
+import { route, user, accessToken, accessTokenInfos, admin } from '../tools/stores.js';
 import { routes, goTo, defaultRoute } from '../tools/routes.js';
 import { useLocalSync } from '../tools/useLocalStorage.js';
+import Modal from './Modal.svelte';
 import Icon from './Icon.svelte';
 
+export let showLogin = false;
 let authPassword = '';
 let authError = false;
 let id;
@@ -170,14 +127,14 @@ $: isAdmin = (id === '__BACKEND_TOKEN_USER__')
 $: $admin = $accessToken && ($user === '__BACKEND_TOKEN_USER__') && $user;
 
 $: if (!mounting && !$user && $route && $route.path && routes[$route.path].auth) {
-    $showLogin = true;
+    showLogin = true;
 }
 
 const closeLogin = () =>  {
     if (!mounting && !$user && $route && $route.path && routes[$route.path].auth) {
         goTo({path: defaultRoute});
     }
-    $showLogin = false;
+    showLogin = false;
 }
 
 onMount(async () => {
@@ -199,11 +156,13 @@ const checkJwt = async () => {
                 });
             if (response.status === 422) {
                 $accessToken = '';
+                $accessTokenInfos = {};
                 $user = '';
             } else if (refresh) {
                 const json = await response.json();
                 if (json.access_token) {
                     $accessToken = json.access_token;
+                    $accessTokenInfos = json;
                     refresh = false;
                     setTimeout(() => refresh = true, 3600000)
                 }
@@ -212,6 +171,7 @@ const checkJwt = async () => {
         } catch(e) {
             $user = '';
             $accessToken = '';
+            $accessTokenInfos = {};
         }
     }
 };
@@ -258,39 +218,16 @@ const login = () => {
             authError = true;
             $user = '';
             $accessToken = '';
+            $accessTokenInfos = {};
             return;
         }
         return response.json().then((json) => {
             authError = false;
             $accessToken = json.access_token;
+            $accessTokenInfos = json;
             $user = id;
         });
     })
 }
 
 </script>
-
-<style>
-
-.modal {
-    position: fixed;
-    z-index: 50000;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0,0,0,.4);
-    display: table;
-}
-
-.modal-container {
-    display: table-cell;
-    vertical-align: middle;
-    overflow-y: hidden;
-    padding: 16px;
-}
-
-.modal-content {
-        box-shadow: 0 5px 15px rgb(0 0 0 / 50%);
-}
-</style>

@@ -23,6 +23,7 @@
                 class="rf-card rf-card--md rf-card--horizontal rf-href"
                 class:rf-card--left-arrow={currentPage === page.id}
                 on:click|preventDefault={() => { togglePage(page.id) }}
+                on:keydown|preventDefault={() => { togglePage(page.id) }}
               >
                 <div class="rf-card__body">
                   <span class="rf-card__lead rf-margin-top-1N rf-margin-left-1N">
