@@ -5,6 +5,7 @@
         {#if Object.values($searchInput).some(item => item.value != "")}
           <span
             class="rf-color--bf"
+            title="Réinitialiser"
             on:click|preventDefault={clearInputs}
             on:keydown|preventDefault={clearInputs}
             style="position: absolute;top: 12px; right: 36px;"
