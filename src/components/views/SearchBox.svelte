@@ -2,6 +2,17 @@
   <form on:submit|preventDefault={handleSubmit}>
     <div class="rf-grid-row" style="position: relative;">
       <div class="rf-col-12">
+        {#if Object.values($searchInput).some(item => item.value != "")}
+          <span
+            class="rf-color--bf"
+            title="Réinitialiser"
+            on:click|preventDefault={clearInputs}
+            on:keydown|preventDefault={clearInputs}
+            style="position: absolute;top: 12px; right: 36px;"
+            >
+            <Icon icon='ri:eraser-line' class="rf-fi--lg"/>
+          </span>
+        {/if}
         <span
           title={$advancedSearch ? "Recherche simplifiée" : "Recherche avancée"}
           on:click|preventDefault={toggleAdvancedSearch}
@@ -120,6 +131,14 @@
   }
 
   );
+
+  const clearInputs = () => {
+    inputsKeys.forEach(key => {
+      if ($searchInput[key].value != "") {
+        $searchInput[key].value = "";
+      }
+    });
+  }
 
   const focusInput = (key, value) => {
     setTimeout(() => {
