@@ -5,6 +5,7 @@ import Link from '../views/Link.svelte';
 import LinkJobs from '../views/LinkJobs.svelte';
 import EditsList from '../views/EditsList.svelte';
 import Stats from '../views/Stats.svelte';
+import AlgoDetails from '../views/AlgoDetails.svelte';
 
 import {
     route,
@@ -43,6 +44,7 @@ export const routes = {
     '/jobs': { auth: true, component: LinkJobs, title: 'Traitements', desc: 'page d\'administration des traitements' },
     '/edits': { auth: true, component: EditsList, title: 'Modifications', desc: 'page d\'administration des modifications' },
     '/stats': { component: Stats, title: 'statistiques de fréquentation', desc: 'statistiques de consultation de deces.matchid.io: visiteurs uniques, appels API, ... historique depuis début 2020' },
+    '/explain': { component: AlgoDetails, title: 'Explication de l\'algorithme', desc: 'détails sur l\'algorithme d\'appariement' },
     '/notFound': { component: Default, props: { title: 'Pas de page à l\'adresse indiquée'}, title: '404 - Pas de page à l\'adresse indiquée', desc: '404' },
 };
 

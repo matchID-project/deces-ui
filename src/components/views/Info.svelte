@@ -66,6 +66,7 @@
   import Icon from './Icon.svelte';
   import Stats from './Stats.svelte';
   import Iframe from './Iframe.svelte';
+  import AlgoDetails from '../views/AlgoDetails.svelte';
 
   let currentPage = undefined;
   let pages;
@@ -441,6 +442,13 @@
       fullWidthMobile: true,
       params: { src: '/deces/api/v1/docs' },
       tags: "swagger"
+    },
+    { title: 'Comment fonctionne l\'algorithme de rapprochement d\'identités?',
+      icon: 'mdi:brain-freeze-outline',
+      content: '',
+      component: AlgoDetails,
+      fullWidthMobile: true,
+      tags: 'explication algorithme'
     },
     { title: 'Code open source',
       icon: 'ri:github-line',
