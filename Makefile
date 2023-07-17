@@ -40,6 +40,7 @@ export FRONTEND_DEV_PORT = ${PORT}
 # export STATS_BUCKET = s3bucket/override/me
 # export LOG_DB_BUCKET = s3bucket/override/me
 # export PROOFS_BUCKET = s3bucket/override/me
+# export MONITOR_BUCKET = s3bucket/override/me
 export LOG_DIR = ${FRONTEND}/log/mirror
 export LOG_DB_DIR = ${FRONTEND}/log/db
 export STATS_SCRIPTS = ${FRONTEND}/stats/src
@@ -119,6 +120,7 @@ export STORAGE_ACCESS_KEY_B64:=$(shell echo -n ${STORAGE_ACCESS_KEY} | openssl b
 export STORAGE_SECRET_KEY_B64:=$(shell echo -n ${STORAGE_SECRET_KEY} | openssl base64)
 
 export PROOFS=${FRONTEND}/${GIT_BACKEND}/backend/data/proofs
+export MONITOR_DIR = ${APP}/log/instances/${APP_GROUP}-${APP}-${GIT_BRANCH}
 
 # backup dir
 export BACKUP_DIR = ${APP_PATH}/backup
@@ -531,8 +533,13 @@ deploy-remote-instance: config-minimal backend-config ${DATAPREP_VERSION_FILE} $
 		SCW_IMAGE_ID=${SCW_IMAGE_ID} GIT_BRANCH=${GIT_BRANCH} ${MAKEOVERRIDES}
 
 deploy-remote-services:
-	@${MAKE} -C ${APP_PATH}/${GIT_TOOLS} remote-deploy remote-actions\
+	@\
+	BACKEND_APP_VERSION=$(shell cd ${APP_PATH}/${GIT_BACKEND} && git describe --tags);\
+	DATAPREP_VERSION=$$(cat ${DATAPREP_VERSION_FILE});\
+	DATA_VERSION=$$(cat ${DATA_VERSION_FILE});\
+	${MAKE} -C ${APP_PATH}/${GIT_TOOLS} remote-deploy remote-actions\
 		APP=${APP} APP_VERSION=${APP_VERSION} DC_IMAGE_NAME=${DC_PREFIX}\
+		BACKEND_APP_VERSION=$${BACKEND_APP_VERSION} DATAPREP_VERSION=$${DATAPREP_VERSION} DATA_VERSION=$${DATA_VERSION}\
 		ACTIONS=deploy-local GIT_BRANCH=${GIT_BRANCH}\
 		TOOLS_STORAGE_ACCESS_KEY=${TOOLS_STORAGE_ACCESS_KEY}\
 		TOOLS_STORAGE_SECRET_KEY=${TOOLS_STORAGE_SECRET_KEY}\
@@ -565,7 +572,11 @@ deploy-delete-old: ${DATAPREP_VERSION_FILE} ${DATA_VERSION_FILE}
 		GIT_BRANCH=${GIT_BRANCH} ${MAKEOVERRIDES}
 
 deploy-monitor:
-	@${MAKE} -C ${APP_PATH}/${GIT_TOOLS} remote-install-monitor NEW_RELIC_INGEST_KEY=${NEW_RELIC_INGEST_KEY} NEW_RELIC_API_KEY=${NEW_RELIC_API_KEY} NEW_RELIC_ACCOUNT_ID=${NEW_RELIC_ACCOUNT_ID} ${MAKEOVERRIDES}
+	@${MAKE} -C ${APP_PATH}/${GIT_TOOLS} remote-install-monitor\
+		MONITOR_BUCKET=${MONITOR_BUCKET} MONITOR_DIR=${MONITOR_DIR}\
+		STORAGE_ACCESS_KEY=${TOOLS_STORAGE_ACCESS_KEY} STORAGE_SECRET_KEY=${TOOLS_STORAGE_SECRET_KEY}\
+		NEW_RELIC_INGEST_KEY=${NEW_RELIC_INGEST_KEY} NEW_RELIC_API_KEY=${NEW_RELIC_API_KEY} NEW_RELIC_ACCOUNT_ID=${NEW_RELIC_ACCOUNT_ID}\
+		${MAKEOVERRIDES}
 
 deploy-cdn-purge-cache:
 	@${MAKE} -C ${APP_PATH}/${GIT_TOOLS} cdn-cache-purge
