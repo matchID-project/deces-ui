@@ -51,6 +51,7 @@ jobs:
           LOG_DB_BUCKET: ${{ secrets.LOG_DB_BUCKET }}
           STATS_BUCKET: ${{ secrets.STATS_BUCKET }}
           PROOFS_BUCKET: ${{ secrets.PROOFS_BUCKET }}
+          MONITOR_BUCKET: ${{ secrets.MONITOR_BUCKET }}
           BACKEND_TOKEN_KEY: ${{ secrets.BACKEND_TOKEN_KEY }}
           BACKEND_TOKEN_PASSWORD: ${{ secrets.BACKEND_TOKEN_PASSWORD }}
       - name: publish
@@ -128,6 +129,7 @@ jobs:
           LOG_DB_BUCKET: ${{ secrets.LOG_DB_BUCKET }}
           STATS_BUCKET: ${{ secrets.STATS_BUCKET }}
           PROOFS_BUCKET: ${{ secrets.PROOFS_BUCKET }}
+          MONITOR_BUCKET: ${{ secrets.MONITOR_BUCKET }}
           BLOCK_DEPLOY: ${{ secrets.BLOCK_DEPLOY }}
           SSH_AUTH_SOCK: /tmp/ssh_agent.sock
           BACKEND_TOKEN_KEY: ${{ secrets.BACKEND_TOKEN_KEY }}
