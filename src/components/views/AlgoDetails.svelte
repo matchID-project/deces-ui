@@ -2,13 +2,15 @@
   <div class="rf-col-12 rf-text--center">
     <h4 class="rf-margin-bottom-0">Détails sur l'algorithme d'appariement </h4>
     <p>
-      L'algorithme donne un score proximité en fonction des paramètres disponibles pour le rapprochement des identités. <br>
-      Pour les dates, une distance de Levenshtein est calculée en prenant en compte des cas ou la date est incertaine. <br>
-      Pour la comparaison des noms, une distance phonétique mais aussi une distance de Levenshtein, pondérées par des facteurs comme l'ordre et le nombre des mots. <br>
-      Pour les lieux, un approche top-down est utilisé:
-      une comparaison du pays et une pénalité en cas d'absence de l'information, ensuite une comparaison est faite en utilisant le département et finalement la commune, en utilisant une distance géographique.
-      L'ensemble de scores sont comparés de façon empirique pour donner lieu à le score final. <br>
-      Le schéma suivant permet d'interagir avec le score final en fonction des paramètres d'entrée.
+      Le scoring est composé de trois composantes relatives aux données de l'identité pivot: nom & prénom, sexe, date et lieu de naissance.
+
+      Les champs textuels (nom prénom, libellés de commune et pays) sont traités en normalisation et tokenization, puis comparés avec la distance de Levenshtein, et sont pénalisés en cas de différence de sonorité (soundex-fr).
+
+      Le lieu de naissance prend en compte les trois paramètres éventuels (commune, département, pays) et effectue un traitement différencié en cas de naissance à l'étranger.
+
+      Les scores (nom+prénom, sexe, date, lieu) sont ensuite multipliés, et un coefficient de puissance est affecté selon le nombre de paramètres de match (moins il y a de champs soumis à requête, plus une erreur unitaire est pénalisante). Lorsque l'une des données n'est pas fournie, une faible pénalité est soumise (entre 50% et 100% selon le champ).
+
+      Le code source du scoring est également <a href="https://github.com/matchID-project/deces-backend/blob/dev/backend/src/score.ts" title="code source de la recherche" rel="noreferrer" target="_blank">sur GitHub</a>.
     </p>
     <svg width="137.94624mm" height="{maxHeight}mm" viewBox="0 0 137.94624 {maxHeight}">
       <g
