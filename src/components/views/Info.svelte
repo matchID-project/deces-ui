@@ -433,14 +433,13 @@
       tags: "évolutions"},
     { title: 'Développeurs, utilisez l\'API',
       icon: 'ri:plug-line',
-      content: `
-        <p>
-          La documentation de l'API est consultable ci-dessous ou en suivant <a href="/deces/api/v1/docs">le lien suivant</a>.
-        </p>
-      `,
+      content: ``,
       component: Iframe,
       fullWidthMobile: true,
-      params: { src: '/deces/api/v1/docs' },
+      params: {
+        src: 'https://matchid.io/link-api',
+        style: 'margin-top:-450px;margin-bottom:-1000px;width: 100%;height: 2200px;border-width: 0px;'
+      },
       tags: "swagger"
     },
     { title: 'Comment fonctionne l\'algorithme de rapprochement d\'identités?',
