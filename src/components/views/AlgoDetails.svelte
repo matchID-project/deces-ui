@@ -83,7 +83,15 @@
           (entre 50% et 100% selon le champ).
       </p>
       <p>
-          Le code source du scoring est également <a href="https://github.com/matchID-project/deces-backend/blob/dev/backend/src/score.ts" title="code source de la recherche" target="_blank">sur GitHub</a>.
+          Le code source du scoring est également
+            <a
+              href="https://github.com/matchID-project/deces-backend/blob/dev/backend/src/score.ts"
+              title="code source de la recherche"
+              target="_blank"
+              rel="noreferrer"
+            >
+              sur GitHub
+            </a>.
       </p>
     </div>
     <div class="rf-col-12 rf-text--center">
@@ -541,7 +549,7 @@
       <i>Le diagramme ci-dessus illustre le fonctionnement du scoring d'appariement,
       en fonction des deux identités ci-dessous.</i>
     </div>
-    <div class="rf-col-6">
+    <div class="rf-col-xl-6 rf-col-lg-6 rf-col-md-6 rf-col-sm-12 rf-col-12">
       <div class="rf-container-fluid">
         <div class="rf-grid-row">
           {#each Object.keys(personA) as key}
@@ -585,7 +593,7 @@
         </div>
       </div>
     </div>
-    <div class="rf-col-6">
+    <div class="rf-col-xl-6 rf-col-lg-6 rf-col-md-6 rf-col-sm-12 rf-col-12">
       <div class="rf-container-fluid">
         <div class="rf-grid-row">
           {#each Object.keys(personB) as key}
@@ -628,6 +636,96 @@
           {/each}
         </div>
       </div>
+    </div>
+    <div class="rf-col-xl-6 rf-col-lg-6 rf-col-md-6 rf-col-sm-12 rf-col-12">
+      <h4> Mise au point et évaluation </h4>
+      <p>
+        L'algorithme matchID a été implémenté initialement avec le logiciel Dataiku puis avec l'outil
+        <a
+              href="https://github.com/matchID-project/backend"
+              title="matchID"
+              target="_blank"
+              rel="noreferrer"
+        >
+          matchID en <code>Python/Pandas</code>
+        </a>,
+        dans le cadre des défis
+        <a
+              href="https://eig.etalab.gouv.fr/defis/mi-matchid/"
+              title="EIG"
+              target="_blank"
+              rel="noreferrer"
+        >
+          Entrepreneur d'intérêt général
+        </a>.
+        Lors de la publication opendata des jeu de donnée de l'INSEE, l'algorithme a été réimplémenté
+        en <code>Node.js</code>.
+      </p>
+      <p>
+        Le jeu de donnée sur lequel l'algorithme a été mis au point en 2017 est le permis de conduire (56M d'identiés),
+        auquel figuraient encore beaucoup de personnes décédées (4,3M). L'objectif premier était de fiabiliser le nombre
+        de décès figurant au registre du permis. L'algorithme a donc non seulement été évalué pour
+        maximiser le taux de rappel, mais sa précision également évaluée par tranche de score pour fiabiliser
+        l'évaluation statistique du nombre de décès. Un objectif secondaire était l'évaluation d'usurpation d'identité
+        post décès (infraction après le décès - cas de fraude <i>in fine</i> marginal - chiffre confidentiel).
+      </p>
+      <p>
+        Un sous-échantillons de 29.675 identités environ étaient des décès enregistrés au permis de conduire, sur base
+        de déclaration rapportées en préfectures. L'échantillon a été examiné et était exempt de biais par rapport au permis
+        d'une part et au fichier des personnes dédédées d'autre part.
+      </p>
+      <p>
+        Lors du défi, et de la réimplémentation de l'algorithme, les tests on été effectués de deux façons:
+      </p>
+      <ul>
+        <li>Taux de précision 99,99% pour un taux de rappel à 90% </li>
+        <li>Taux de précision 99,3% pour un taux de rappel à 93% (F1-Score de 96%) </li>
+        <li>Taux de précision 95% pour un taux de rappel à 95% </li>
+        <li>Taux de rappel maximal: 97%</li>
+      </ul>
+      <p>
+        Lors de la mise au point de l'algorithme de l'API décès, d'autres jeux de données ont été utilisés,
+        notamment avec certains hopitaux (études cliniques) ou certaines demande de généalogistes,
+        pour améliorer la généricité de l'algorithme (réduire la sensibilité à la source d'appariement).
+      </p>
+      <p>
+        Les performances sur le jeu de données historique ont été légèrement améliorées :
+        <li>Taux de précision 99,99% pour un taux de rappel à 93,3% </li>
+        <li>Taux de précision 99,9% pour un taux de rappel à 97,1% (F1-Score de 98,5%) </li>
+        <li>Taux de rappel maximal: 97,6%</li>
+      </p>
+    </div>
+    <div class="rf-col-xl-6 rf-col-lg-6 rf-col-md-6 rf-col-sm-12 rf-col-12">
+      <h4> Interface de validation intelligente </h4>
+      <p>
+        La validation des appariement est une étape nécessaire pour une fiabilisation statistique dans une
+        approche par échantillonnage: elle permet d'établir la distribution des scores.
+        Il est recommandé de valider une dizaine de milliers d'identités pour une approche rigoureuse.
+      </p>
+      <p>
+        Selon l'usage (e.g fraude), une validation exhaustive est même recommandée.
+      </p>
+      <p>
+        Cette étape étant rébarbative, une interface visuelle (reposant sur diff) a été mise au point
+        pour améliorer le confort de validation de la qualité des appariements.
+      </p>
+      <p>
+        L'interface a été améliorer pour accélérer une validation, en proposant un regroupement
+        automatique des cas d'erreur similaires. La similarité d'erreur est basée sur la distance
+        normale des vecteurs de score (nom, prénom, date et lieu de naissance). Le seuil de similarité
+        initial est de 97% (et la fonction est débrayable).
+      <p>
+        Le bénéfice est alors de permettre d'éviter d'avoir à valider
+        systématiquement des centaines de fois des cas suivant des patterns d'erreurs très marqués
+        liés à la source de donnée à apparier (e.g écriture des départements, erreurs de resaisie, ...).
+        Avec cette méthode, valider 10.000 appariements peut prendre 5 à 10 minutes.
+      </p>
+      <p>
+        L'interface offre de plus une aide de calcul du taux de validation et les scores de rappel,
+        précision et F1-score. Attention toutefois aux biais de base du calcul relatif au rappel (il faut
+        disposer d'un fichier étiqueté de façon fiable pour les décès).
+      </p>
+      <img width="100%" src="https://matchid.io/assets/images/deces-ui-link-validate.png" alt="valider l'appariement">
     </div>
   </div>
 </div>
