@@ -442,7 +442,7 @@
       },
       tags: "swagger"
     },
-    { title: 'Comment fonctionne l\'algorithme de rapprochement d\'identités?',
+    { title: 'Algorithme de rapprochement d\'identités',
       icon: 'mdi:brain-freeze-outline',
       content: '',
       component: AlgoDetails,
