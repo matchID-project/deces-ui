@@ -121,6 +121,7 @@ jobs:
           SCW_PROJECT_ID: ${{ secrets.SCW_PROJECT_ID }}
           SCW_SECRET_TOKEN: ${{ secrets.SCW_SECRET_TOKEN }}
           SCW_SERVER_OPTS: ${{ secrets.SCW_SERVER_OPTS }}
+          SCW_PRIVATE_NETWORK_ID: ${{ secrets.SCW_PRIVATE_NETWORK_ID }}
           STORAGE_ACCESS_KEY: ${{ secrets.STORAGE_ACCESS_KEY }}
           STORAGE_SECRET_KEY: ${{ secrets.STORAGE_SECRET_KEY }}
           TOOLS_STORAGE_ACCESS_KEY: ${{ secrets.TOOLS_STORAGE_ACCESS_KEY }}
