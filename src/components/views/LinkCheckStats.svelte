@@ -36,7 +36,7 @@
             for="threshold"
             style="overflow: hidden;text-overflow:ellipsis;"
         >
-            Seuil (pour F1-score, rappel, précision)
+            Seuil (pour F1-score, rappel, précision): {smartNumber(threshold*100,1)}%
         </label>
         <input
             class="rf-range"
@@ -52,7 +52,7 @@
         <div class="rf-container-fluid">
             <div class="rf-grid-row rf-grid-row--gutters">
                 <div class="rf-col-4">
-                    <StatsTile number="{recallRate} %" label="Rappel (seuil {(100 * $linkOptions.check.autoCheckThreshold).toFixed(0)} %)"/>
+                    <StatsTile number="{recallRate} %" label="Rappel"/>
                 </div>
                 <div class="rf-col-4">
                     <StatsTile number="{precisionRate} %" label="Précision"/>
@@ -163,7 +163,6 @@
                 color: hexToRgba(style.getPropertyValue('--warning'), 0.7)
             }
         };
-        console.log(d);
         scoresData = {
             labels: Object.keys(d.Total.data).map(k => parseFloat(k)).sort(),
             datasets: Object.keys(d).map((label) => {
@@ -181,13 +180,15 @@
 
     $: if ($linkResults && $linkResults.rows && $linkResults.rows.length) {
         const s = $linkResults.header.indexOf('score');
+        const l = $linkValidations;
         rawMatchingRate = smartNumber(100 * $linkResults.rows.length / $linkCompleteResults.rows.length,1);
         recallRate = smartNumber(100 * $linkResults.rows.filter(r => r[0][s]>=threshold).length / $linkResults.rows.length,1);
         multiMatchingRate = smartNumber(100 * $linkResults.rows.filter(r => r.length > 1).length / $linkResults.rows.length,1);
         // helpedCheckRate = smartNumber(100 * $linkValidations.filter(r => r.some(rr => rr.checked)).length / $linkResults.rows.length,1);
         checkRate = smartNumber(100 * $linkValidations.filter(r => r.every(rr => rr.checked && rr.checked.includes('manual'))).length / $linkResults.rows.length,1);
         // helpedPrecisionRate = smartNumber(100 * $linkValidations.filter(r => r[0].checked && r[0].valid).length / ($linkValidations.filter(r => r[0].checked).length || 1),1);
-        precisionRate = smartNumber(100 * $linkValidations.filter(r => r[0].checked && r[0].checked.includes('manual') && r[0].valid).length / ($linkValidations.filter(r => r[0].checked && r[0].checked.includes('manual')).length || 1),1);
+        precisionRate = smartNumber(100 * $linkResults.rows.filter((r,i) => l[i][0].valid && (r[0][s]>=threshold)).length
+            / $linkResults.rows.filter(r => r[0][s]>=threshold).length,1);
         fScore = smartNumber(100 * 2/(100/precisionRate + 100/recallRate),1);
     }
 
