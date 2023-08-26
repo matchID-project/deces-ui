@@ -79,5 +79,13 @@ export const dataCorrections = {
     "reason": "cnil-art-85",
     "poofs":["id card"],
     "anonymize": true
-   }
+   },
+   "0OKcTpNXofof": {
+    "permalink": "/id/0OKcTpNXofof",
+    "change": "remove",
+    "request": "child",
+    "reason": "cnil-art-85",
+    "poofs":["none"],
+    "anonymize": true        
+  }
 };
