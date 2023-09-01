@@ -136,14 +136,14 @@
       filter: true,
       content: $themeDnum ? `` : `
       <p>
-        Depuis 3 ans, le site était financé sur fonds personnel, puis à l'aide de la publicité.
+        Depuis 3 ans, le site était financé sur fonds personnels, puis à l'aide de la publicité.
       </p>
       <p>
         En août 2022 une cagnotte a été créée pour lancer l'association matchID.
       </p>
       <p>
         Nous remercions tous les généreux donnateurs - l'objectif a été atteint et la création de l'association est en cours de lancement,
-        et de supprimer la publicité jusque fin 2023.
+        et permettra de supprimer la publicité jusque fin 2023.
       </p>
       <p>
         Plus d'information sur <a href="https://matchid.io/cagnotte" target="_blank" rel="noopener noreferrer">la cagnotte</a>
