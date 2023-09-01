@@ -131,26 +131,22 @@
 
       `,
       tags: "bénévole geeks nerd passionnés fabien antoine cristian perez brokate"},
-    { title: 'Soutenez-nous !',
+    { title: 'Merci pour votre soutien !',
       icon: 'ri:hand-heart-line',
       filter: true,
       content: $themeDnum ? `` : `
       <p>
-        Depuis 2 ans, ce site a été financé sur fonds personnels (30 mois de service, plus de 2500€ de serveurs & DNS) et développé sur notre temps libre (quelques centaines d'heures depuis les débuts du site).
+        Depuis 3 ans, le site était financé sur fonds personnels, puis à l'aide de la publicité.
       </p>
       <p>
-        Malheureusement, l'Administration n'a pas pu incuber le service ni porter la responsabilité juridique du traitement.
+        En août 2022 une cagnotte a été créée pour lancer l'association matchID.
       </p>
       <p>
-        Le portage juridique devient nécessaire, pour maintenir et faire évoluer le service.
-        Il permettant le financement de tous les usages, tout en garantissant le caractère non lucratif par un statut associatif.
-        La création de l'association sera également l'occasion d'associer de nouveaux bénévoles à la contribution du service (e.g validation de modification de données erronnées).
+        Nous remercions tous les généreux donnateurs - l'objectif a été atteint et la création de l'association est en cours de lancement,
+        et permettra de supprimer la publicité jusque fin 2023.
       </p>
       <p>
-        Nous avons donc pris la décision de constituer une collecter des fonds pour constituer l'association et continuer à faire tourner le service voire l'étendre.
-      </p>
-      <p>
-        Pour nous aider, <a href="https://www.leetchi.com/c/matchid-lassociation" target="_blank" rel="noopener noreferrer">c'est ici !</a>
+        Plus d'information sur <a href="https://matchid.io/cagnotte" target="_blank" rel="noopener noreferrer">la cagnotte</a>
       </p>
       `,
       tags: "help donate"
