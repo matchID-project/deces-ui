@@ -284,7 +284,7 @@ backend-docker-check: backend-config
 	@BACKEND_APP_VERSION=$(shell cd ${APP_PATH}/${GIT_BACKEND} && git describe --tags);\
 	${MAKE} docker-check DC_IMAGE_NAME=deces-backend APP_VERSION=$$BACKEND_APP_VERSION GIT_BRANCH=${GIT_BACKEND_BRANCH}
 
-backend: backend-config backend-docker-check
+backend: backend-config backend-docker-check proofs-mount
 	@BACKEND_APP_VERSION=$(shell cd ${APP_PATH}/${GIT_BACKEND} && git describe --tags);\
 	${MAKE} -C ${APP_PATH}/${GIT_BACKEND} backend-start APP=deces-backend DC_NETWORK=${DC_NETWORK} APP_VERSION=$$BACKEND_APP_VERSION GIT_BRANCH=${GIT_BACKEND_BRANCH}\
 		API_URL=${API_URL} API_EMAIL=${API_EMAIL} API_SSL=${API_SSL}\
@@ -472,7 +472,7 @@ ${DATA_VERSION_FILE}:
 show-env:
 	env | egrep 'STORAGE|BUCKET'
 
-deploy-local: config show-env stats-background proofs-mount elasticsearch-storage-pull elasticsearch-restore elasticsearch docker-check up backup-dir-clean local-test-api
+deploy-local: config show-env stats-background elasticsearch-storage-pull elasticsearch-restore elasticsearch docker-check up backup-dir-clean local-test-api
 
 frontend-test:
 	${DC} -f ${DC_FILE}-test.yml run ui-test yarn install
