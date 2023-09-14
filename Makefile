@@ -472,7 +472,7 @@ ${DATA_VERSION_FILE}:
 show-env:
 	env | egrep 'STORAGE|BUCKET'
 
-deploy-local: config show-env stats-background elasticsearch-storage-pull elasticsearch-restore elasticsearch docker-check up backup-dir-clean local-test-api
+deploy-local: config show-env stats-background proofs-restore-async elasticsearch-storage-pull elasticsearch-restore elasticsearch docker-check up backup-dir-clean local-test-api
 
 frontend-test:
 	${DC} -f ${DC_FILE}-test.yml run ui-test yarn install
@@ -690,6 +690,9 @@ proofs-restore: ${PROOFS}
 			RCLONE_OPTS="--checksum" RCLONE_SYNC="copy"\
 			STORAGE_ACCESS_KEY=${TOOLS_STORAGE_ACCESS_KEY} STORAGE_SECRET_KEY=${TOOLS_STORAGE_SECRET_KEY};\
 	fi
+
+proofs-restore-async:
+	@(make proofs-restore > .proofs-restore 2>&1 &);\
 
 proofs-backup: ${PROOFS}
 	@if [ -n "${PROOFS_BUCKET}" ];then\
