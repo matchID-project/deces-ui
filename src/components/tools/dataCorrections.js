@@ -86,7 +86,7 @@ export const dataCorrections = {
     "request": "child",
     "reason": "cnil-art-85",
     "poofs":["none"],
-    "anonymize": true        
+    "anonymize": true
   },
    "FNXiuByElw2Y": {
     "permalink": "/id/FNXiuByElw2Y",
@@ -94,6 +94,14 @@ export const dataCorrections = {
     "request": "child",
     "reason": "cnil-art-85",
     "poofs":["none"],
-    "anonymize": true        
+    "anonymize": true
+  },
+  "p--muL0mztIs": {
+    "permalink": "/id/p--muL0mztIs",
+    "change": "remove",
+    "request": "child",
+    "reason": "cnil-art-85",
+    "poofs":["none"],
+    "anonymize": true
   }
 };
