@@ -55,7 +55,15 @@
                           on:blur={focusInput(key,false)}
                           on:focus={focusInput(key,true)}
                           disabled={$searchInput[key].disabled}
+                          list={$searchInput[key].datalist ? `${key}-datalist` : null || null}
                         />
+                        {#if $searchInput[key].datalist && $searchInput[key].datalist.length > 0}
+                          <datalist id="{key}-datalist">
+                            {#each $searchInput[key].datalist as element}
+                              <option value="{element}"></option>
+                            {/each}
+                          </datalist>
+                        {/if}
                       </div>
                     </div>
                 {/if}
