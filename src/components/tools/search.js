@@ -88,12 +88,19 @@ const computeTotalPages = (resultsPerPage, totalResults) => {
 };
 
 export const searchTrigger = (searchInput) => {
-    return (myDisplayMode === 'agg') || Object.keys(searchInput).some(key => searchInput[key].value.length >= mySearchMinLength) &&
-           Object.keys(searchInput).every(key =>
-            (searchInput[key].mask && searchInput[key].mask.validation)
-            ? searchInput[key].mask.validation(searchInput[key].value)
-            : true
-           )
+    return (myDisplayMode === 'agg') ||
+        Object.keys(searchInput).some(key => {
+            if (searchInput[key].datalist && (searchInput[key].datalist.length > 0) && (searchInput[key].value.length > 0)) {
+                return searchInput[key].datalist.includes(searchInput[key].value)
+            } else {
+                return (searchInput[key].value.length >= mySearchMinLength)
+            }
+        }) &&
+        Object.keys(searchInput).every(key =>
+        (searchInput[key].mask && searchInput[key].mask.validation)
+        ? searchInput[key].mask.validation(searchInput[key].value)
+        : true
+        )
 };
 
 export const searchString = (searchInput) => {

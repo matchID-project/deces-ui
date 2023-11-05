@@ -51,7 +51,8 @@
                           class="rf-input {isValid(key) ? "" : "rf-color--rm rf-input--error"}"
                           bind:value={$searchInput[key].value}
                           title={$searchInput[key].title}
-                          on:input={() => handleInput(key)}
+                          on:input={handleInput(key)}
+                          on:change={handleSubmit()}
                           on:blur={focusInput(key,false)}
                           on:focus={focusInput(key,true)}
                           disabled={$searchInput[key].disabled}
@@ -173,7 +174,9 @@
   }
 
   const isValid = (key) => {
-    if ($searchInput[key].mask && $searchInput[key].mask.validation) {
+    if ($searchInput[key].datalist) {
+      return $searchInput[key].datalist.includes($searchInput[key].value) || $searchInput[key].value === '';
+    } else if ($searchInput[key].mask && $searchInput[key].mask.validation) {
       return $searchInput[key].mask.validation($searchInput[key].value);
     } else {
       return true;
