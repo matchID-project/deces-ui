@@ -18,6 +18,41 @@ import {
     matchQuery
 } from './queries.js';
 
+const datalist = {
+    sex: ["F", "M"],
+    departments_birth: ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "2A", "2B", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31", "32", "33", "34", "35", "36", "37", "38", "39", "40", "41", "42", "43", "44", "45", "46", "47", "48", "49", "50", "51", "52", "53", "54", "55", "56", "57", "58", "59", "60", "61", "62", "63", "64", "65", "66", "67", "68", "69", "70", "71", "72", "73", "74", "75", "76", "77", "78", "79", "80", "81", "82", "83", "84", "85", "86", "87", "88", "89", "90", "91", "92", "93", "94", "95", "971", "972", "973", "974", "975", "976", "977", "978"],
+    countries: [
+        "Acores, Madere", "Afghanistan", "Afrique du Sud", "Alaska", "Albanie", "Algerie", "Allemagne", "Andorre", "Angola", "Anguilla", "Antigua-et-Barbuda", "Antilles Neerlandaises", "Arabie Saoudite", "Argentine", "Armenie", "Aruba", "Australie", "Autriche", "Azerbaidjan",
+        "Bahamas", "Bahrein", "Bangladesh", "Barbade", "Belgique", "Belize", "Benin", "Bermudes", "Bhoutan", "Bielorussie", "Birmanie", "Bolivie", "Bonaire, Saint Eustache Et Saba", "Bosnie-Herzegovine", "Botswana", "Bouvet (Ile)", "Bresil", "Brunei", "Bulgarie", "Burkina", "Burundi",
+        "Caimanes (Iles)", "Cambodge", "Cameroun", "Cameroun Et Togo", "Canada", "Canaries (Iles)", "Cap-Vert", "Centrafricaine (Republique)", "Chili", "Chine", "Christmas (Ile)", "Chypre", "Cocos Ou Keeling (Iles)", "Colombie", "Comores", "Congo",  "Congo Republique Democratique", "Cook (Iles)", "Coree", "Coree Republique de", "Coree Republique Populaire Democratique de", "Costa Rica", "Cote D'ivoire", "Croatie", "Cuba", "Curaçao",
+        "Danemark", "Djibouti", "Dominicaine (Republique)", "Dominique",
+        "Egypte", "El Salvador", "Emirats Arabes Unis", "Equateur", "Erythree", "Espagne", "Estonie", "Etats Malais Non Federes", "Etats-Unis", "Ethiopie", "Republique Yougoslave De Macedoine",
+        "Feroe (Iles)", "Fidji", "Finlande", "France",
+        "Gabon", "Gambie", "Georgie", "Ghana", "Gibraltar", "Goa", "Grece", "Grenade", "Groenland", "Guam", "Guatemala", "Guernesey", "Guinee", "Guinee Equatoriale", "Guinee-Bissau", "Guyana",
+        "Haiti", "Hawaii (Iles)", "Heard Et Macdonald (Iles)", "Honduras", "Hong-Kong", "Hongrie",
+        "Iles Portugaises De L'ocean Indien", "Inde", "Indonesie", "Iran", "Iraq", "Irlande", "Islande", "Israel", "Italie",
+        "Jamaique", "Japon", "Jersey", "Jordanie",
+        "Kamtchatka", "Kazakhstan", "Kenya", "Kirghizistan", "Kiribati", "Kosovo", "Koweit",
+        "Labrador", "Laos", "Lesotho", "Lettonie", "Liban", "Liberia", "Libye", "Liechtenstein", "Lituanie", "Luxembourg",
+        "Macao", "Madagascar", "Malaisie", "Malawi", "Maldives", "Mali", "Malouines, Ou Falkland (Iles)", "Malte", "Man (Ile)", "Mandchourie", "Mariannes Du Nord (Iles)", "Maroc", "Marshall (Iles)", "Maurice", "Mauritanie", "Mexique", "Micronesie", "Moldavie", "Monaco", "Mongolie", "Montenegro", "Montserrat", "Mozambique",
+        "Namibie", "Nauru", "Nepal", "Nicaragua", "Niger", "Nigeria", "Niue", "Norfolk (Ile)", "Norvege", "Nouvelle-Zelande", "Ocean Indien (Territoire Britannique De L')",
+        "Oman", "Ouganda", "Ouzbekistan",
+        "Pakistan", "Palaos (Iles)", "Palestine", "Panama", "Papouasie-Nouvelle-Guinee", "Paraguay", "Pays-Bas", "Perou", "Philippines", "Pitcairn (Ile)", "Pologne", "Porto Rico", "Portugal", "Possessions Britanniques Au Proche-Orient", "Presides", "Provinces Espagnoles d'Afrique",
+        "Qatar",
+        "Republique Democratique Allemande", "Republique Federale d'Allemagne", "Roumanie", "Royaume-Uni", "Russie", "Rwanda",
+        "Sahara Occidental", "Saint-Christophe-Et-Nieves", "Saint-Marin", "Saint-Martin (Partie Neerlandaise)", "Saint-Vincent-Et-Les Grenadines", "Sainte Helene, Ascension Et Tristan Da Cunha", "Sainte-Lucie", "Salomon (Iles)", "Samoa Americaines", "Samoa Occidentales", "Sao Tome-Et-Principe", "Senegal", "Serbie", "Seychelles", "Siberie", "Sierra Leone", "Singapour", "Slovaquie", "Slovenie", "Somalie", "Soudan", "Soudan Anglo-Egyptien, Kenya, Ouganda", "Soudan Du Sud", "Sri Lanka", "Suede", "Suisse", "Suriname", "Svalbard Et Ile Jan Mayen", "Swaziland", "Syrie",
+        "Tadjikistan", "Taiwan", "Tanger", "Tanzanie", "Tchad", "Tchecoslovaquie", "Tcheque (Republique)", "Terr. Des Etats-Unis D'amerique En Amerique", "Terr. Des Etats-Unis D'amerique En Oceanie", "Terr. Du Royaume-Uni Dans L'atlantique Sud", "Terre-Neuve", "Territoires Du Royaume-Uni Aux Antilles", "Thailande", "Timor Oriental", "Togo", "Tokelau", "Tonga", "Trinite-Et-Tobago", "Tunisie", "Turkestan Russe", "Turkmenistan", "Turks Et Caiques (Iles)", "Turquie", "Turquie D'europe", "Tuvalu",
+        "Ukraine", "Uruguay",
+        "Vanuatu", "Vatican, Ou Saint-Siege", "Venezuela", "Vierges Britanniques (Iles)", "Vierges Des Etats-Unis (Iles)", "Viet Nam", "Viet Nam Du Nord", "Viet Nam Du Sud",
+        "Yemen", "Yemen Democratique", "Yemen Republique Arabe du", "Yougoslavie",
+        "Zambie", "Zanzibar", "Zimbabwe",
+        "Pays Inconnu",
+        "Algerie Departement d'Alger", "Algerie Departement de Constantine", "Algerie Departement d'Oran"
+    ]
+}
+
+datalist.departments_death = datalist.departments_birth.filter(d => d !== "20");
+
 export const searchInput = writable({
     fullText: {
         section: "Recherche simplifiée",
@@ -78,6 +113,7 @@ export const searchInput = writable({
         },
         size: "rf-col-4",
         active: true,
+        datalist: datalist.sex
     },
     birthDate: {
         section: "Naissance",
@@ -129,6 +165,7 @@ export const searchInput = writable({
         title:"Saisissez le département de naissance",
         size: "rf-col-6",
         active: true,
+        datalist: datalist.departments_birth
     },
     birthCountry: {
         label: "Pays",
@@ -144,6 +181,7 @@ export const searchInput = writable({
         placeholder: "France",
         size: "rf-col-6",
         active: true,
+        datalist: datalist.countries
     },
     deathDate: {
         label: "Date",
@@ -216,6 +254,7 @@ export const searchInput = writable({
         title:"Saisissez le département de décès",
         size: "rf-col-4",
         active: true,
+        datalist: datalist.departments_death
     },
     deathCountry: {
         label: "Pays",
@@ -231,6 +270,7 @@ export const searchInput = writable({
         title:"Saisissez le pays de décès",
         size: "rf-col-4",
         active: true,
+        datalist: datalist.countries
     }
 });
 

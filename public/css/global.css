@@ -1328,4 +1328,11 @@ svg.leaflet-image-layer.leaflet-interactive path {
   display: none;
 }
 
+.rf-input::-webkit-calendar-picker-indicator {
+  opacity: 100;
+  color: var(--g500);
+  margin-right: -0.5rem;
+  margin-top: -0.5rem;
+}
+
   /* Leaflet */
