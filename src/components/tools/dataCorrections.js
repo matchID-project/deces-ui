@@ -103,5 +103,13 @@ export const dataCorrections = {
     "reason": "cnil-art-85",
     "poofs":["none"],
     "anonymize": true
-  }
+  },
+  "6yOmThVVGfvi": {
+    "permalink": "/id/6yOmThVVGfvi",
+    "change": "remove",
+    "request": "child",
+    "reason": "cnil-art-85",
+    "poofs":["none"],
+    "anonymize": true
+  }    
 };
