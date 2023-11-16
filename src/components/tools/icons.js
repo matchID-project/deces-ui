@@ -155,6 +155,19 @@ viewBox="0 0 24 24">
 <path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10s-4.477 10-10 10zm-.997-6l7.07-7.071l-1.414-1.414l-5.656 5.657l-2.829-2.829l-1.414 1.414L11.003 16z" fill="currentColor"/>
 <rect x="0" y="0" width="24" height="24" fill="rgba(0, 0, 0, 0)" />
 </svg>`,
+    "ri:clipboard-line": `<svg
+width="100%" 
+xmlns="http://www.w3.org/2000/svg"
+xmlns:xlink="http://www.w3.org/1999/xlink"
+aria-hidden="true"
+focusable="false"
+style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg);
+transform: rotate(360deg);"
+preserveAspectRatio="xMidYMid meet"
+viewBox="0 0 24 24">
+<path d="M7 4V2h10v2h3.007c.548 0 .993.445.993.993v16.014a.994.994 0 0 1-.993.993H3.993A.994.994 0 0 1 3 21.007V4.993C3 4.445 3.445 4 3.993 4H7zm0 2H5v14h14V6h-2v2H7V6zm2-2v2h6V4H9z" fill="currentColor"/>
+<rect x="0" y="0" width="24" height="24" fill="rgba(0, 0, 0, 0)" />
+</svg>`,
     "ri:close-line": `<svg
 width="100%" 
 xmlns="http://www.w3.org/2000/svg"
