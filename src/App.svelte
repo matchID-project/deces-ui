@@ -84,7 +84,6 @@
 			const accessTokenTmp = searchParams.get('accessToken');
 			const userTmp = searchParams.get('user');
 			if (accessTokenTmp && userTmp) {
-				console.log(userTmp, accessTokenTmp);
 				localStorage.setItem("accessToken", JSON.stringify(accessTokenTmp));
 				localStorage.setItem("user", JSON.stringify(userTmp));
 			}
