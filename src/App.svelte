@@ -15,7 +15,7 @@
 <script>
 	import { onMount } from 'svelte';
 	import MatchIDHeader from './components/views/MatchIDHeader.svelte';
-	import { admin, user, alphaFeatures, version, route, searchInput, searchCanvas, current, resultsPerPage,
+	import { admin, user, accessToken, alphaFeatures, version, route, searchInput, searchCanvas, current, resultsPerPage,
 		updateURL, advancedSearch, fuzzySearch, displayMode, themeDnum, wasSearched, liveConfig
 	} from './components/tools/stores.js';
 	import { URLSearchSubmit } from './components/tools/search.js';
@@ -78,7 +78,19 @@
 		window.addEventListener('shake', handleShake, false);
 	});
 
-	$: if ($route.path === '/search') { URLSearchSubmit(new URLSearchParams(location.search)) };
+	$: if ($route.path === '/search') {
+		const searchParams = new URLSearchParams(location.search)
+		if (! $accessToken) {
+			const accessTokenTmp = searchParams.get('accessToken');
+			const userTmp = searchParams.get('user');
+			if (accessTokenTmp && userTmp) {
+				console.log(userTmp, accessTokenTmp);
+				localStorage.setItem("accessToken", JSON.stringify(accessTokenTmp));
+				localStorage.setItem("user", JSON.stringify(userTmp));
+			}
+		}
+		URLSearchSubmit(searchParams);
+	};
 
 	const setCanonical = (url) => {
 		var link = !!document.querySelector("link[rel='canonical']") ? document.querySelector("link[rel='canonical']") : document.createElement('link');
