@@ -1,7 +1,7 @@
 export const dataCorrections = {
     "H9HBeGybba1K": {
       "permalink": "/id/H9HBeGybba1K",
-      "change": "cancel",
+8      "change": "cancel",
       "reason": "false death declaration",
       "request": "self",
       "proofs": ["judgment of cancellation"],
@@ -111,5 +111,13 @@ export const dataCorrections = {
     "reason": "cnil-art-85",
     "poofs":["none"],
     "anonymize": true
-  }    
+  },
+  "XAuWEszp6jGX": {
+    "permalink": "XAuWEszp6jGX",
+    "change": "remove",
+    "request": "child",
+    "reason": "cnil-art-85",
+    "poofs":["none"],
+    "anonymize": true
+  }
 };
