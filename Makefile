@@ -156,6 +156,7 @@ export STORAGE_BUCKET=${DATASET}
 #prebuild image with docker and nginx-node-elasticsearch docker images
 #export SCW_IMAGE_ID=5944cb49-190d-49f1-b208-ab2fa2da5bac
 export SCW_IMAGE_ID=f3a3ef5b-ea03-4260-b122-3998cd34871b
+export SCW_VOLUME_SIZE=50000000000
 
 dummy		    := $(shell touch artifacts)
 include ./artifacts
@@ -530,7 +531,7 @@ deploy-remote-instance: config-minimal backend-config ${DATAPREP_VERSION_FILE} $
 	${MAKE} -C ${APP_PATH}/${GIT_TOOLS} remote-config\
 		CLOUD_TAG=ui:${APP_VERSION}-backend:$${BACKEND_APP_VERSION}-data:$${DATAPREP_VERSION}-$${DATA_VERSION}\
 		APP=${APP} APP_VERSION=${APP_VERSION} DC_IMAGE_NAME=${DC_PREFIX}\
-		SCW_IMAGE_ID=${SCW_IMAGE_ID} GIT_BRANCH=${GIT_BRANCH} ${MAKEOVERRIDES}
+		SCW_IMAGE_ID=${SCW_IMAGE_ID} SCW_VOLUME_SIZE=${SCW_VOLUME_SIZE} GIT_BRANCH=${GIT_BRANCH} ${MAKEOVERRIDES}
 
 deploy-remote-services:
 	@\
