@@ -36,7 +36,7 @@
                         Fichier des décès
                     </span>
                     <p class="rf-service__tagline">
-                        Recherche <span class="rf-hide--mobile">libre</span> parmi <strong>26 millions de décès</strong>
+                        Recherche <span class="rf-hide--mobile">libre</span> parmi <strong>27 millions de décès</strong>
                         {#if !$themeDnum}
                             <span class="rf-hide--mobile">depuis 1970</span>
                         {/if}
