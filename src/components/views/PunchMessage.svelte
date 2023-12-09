@@ -19,7 +19,7 @@
           {#if $themeDnum}
             <strong>DNUM</strong> - Sous direction de l'innovation et de la transformation numérique
           {:else}
-            Recherchez parmi <strong>26 millions de décès</strong> depuis 1970 dans les enregistrements officiels de l'INSEE
+            Recherchez parmi <strong>27 millions de décès</strong> depuis 1970 dans les enregistrements officiels de l'INSEE
           {/if}
         </a>
       </p>
