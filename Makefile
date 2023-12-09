@@ -154,6 +154,8 @@ vm_max_count            := $(shell cat /etc/sysctl.conf | egrep vm.max_map_count
 
 export STORAGE_BUCKET=${DATASET}
 export SCW_VOLUME_SIZE=20000000000
+export SCW_VOLUME_TYPE=l_ssd
+
 #prebuild image with docker and nginx-node-elasticsearch docker images
 export SCW_IMAGE_ID=7a1d4022-766c-42b0-866e-d9c3cbd9d3b4
 
@@ -530,7 +532,8 @@ deploy-remote-instance: config-minimal backend-config ${DATAPREP_VERSION_FILE} $
 	${MAKE} -C ${APP_PATH}/${GIT_TOOLS} remote-config\
 		CLOUD_TAG=ui:${APP_VERSION}-backend:$${BACKEND_APP_VERSION}-data:$${DATAPREP_VERSION}-$${DATA_VERSION}\
 		APP=${APP} APP_VERSION=${APP_VERSION} DC_IMAGE_NAME=${DC_PREFIX}\
-		SCW_IMAGE_ID=${SCW_IMAGE_ID} SCW_VOLUME_SIZE=${SCW_VOLUME_SIZE} GIT_BRANCH=${GIT_BRANCH} ${MAKEOVERRIDES}
+		SCW_IMAGE_ID=${SCW_IMAGE_ID} SCW_VOLUME_SIZE=${SCW_VOLUME_SIZE} SCW_VOLUME_TYPE=${SCW_VOLUME_TYPE} \
+		GIT_BRANCH=${GIT_BRANCH} ${MAKEOVERRIDES}
 
 deploy-remote-services:
 	@\
