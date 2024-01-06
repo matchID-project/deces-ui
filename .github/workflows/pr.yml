@@ -23,8 +23,12 @@ jobs:
           GIT_BRANCH: ${{ steps.extract_branch.outputs.branch }}
       - name: test
         if: success()
-        run: make deploy-local backend-test FILES_TO_PROCESS=deces-2020-m01.txt.gz API_SEARCH_LIMIT_RATE=10r/s
+        run: |
+          make deploy-local backend-test
         env:
+          FILES_TO_PROCESS: deces-2020-m01.txt.gz
+          REPOSITORY_BUCKET: fichier-des-personnes-decedees-elasticsearch-dev
+          API_SEARCH_LIMIT_RATE: 10r/s
           GIT_BRANCH: ${{ steps.extract_branch.outputs.branch }}
           GOOGLE_ANALYTICS_ID: ${{ secrets.GOOGLE_ANALYTICS_ID }}
           STORAGE_ACCESS_KEY: ${{ secrets.STORAGE_ACCESS_KEY }}

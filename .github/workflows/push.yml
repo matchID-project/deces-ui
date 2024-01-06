@@ -38,8 +38,11 @@ jobs:
           GIT_BRANCH: ${{ steps.extract_branch.outputs.branch }}
       - name: test
         if: success()
-        run: make deploy-local backend-test FILES_TO_PROCESS=deces-2020-m01.txt.gz API_SEARCH_LIMIT_RATE=10r/s
+        run: make deploy-local backend-test
         env:
+          FILES_TO_PROCESS: deces-2020-m01.txt.gz
+          REPOSITORY_BUCKET: fichier-des-personnes-decedees-elasticsearch-dev
+          API_SEARCH_LIMIT_RATE: 10r/s
           GIT_BRANCH: ${{ steps.extract_branch.outputs.branch }}
           GOOGLE_ANALYTICS_ID: ${{ secrets.GOOGLE_ANALYTICS_ID }}
           GOOGLE_ADSENSE_ID: ${{ secrets.GOOGLE_ADSENSE_ID }}
@@ -94,13 +97,34 @@ jobs:
         if: success()
         run: |
           if [[ ( "$GIT_BRANCH" == "dev" ) ]]; then
-            make deploy-remote FILES_TO_PROCESS=$FILES_TO_PROCESS_DEV GIT_BRANCH=$GIT_BRANCH NGINX_USER=$NGINX_USER NGINX_HOST=$NGINX_HOST SMTP_TLS_SELFSIGNED=$SMTP_TLS_SELFSIGNED SMTP_HOST=$SMTP_HOST SMTP_PORT=$SMTP_PORT remote_http_proxy=$remote_http_proxy remote_https_proxy=$remote_https_proxy remote_no_proxy=$remote_no_proxy GOOGLE_ANALYTICS_ID=$GOOGLE_ANALYTICS_ID GOOGLE_ADSENSE_ID=$GOOGLE_ADSENSE_ID LOG_BAN_IP=$LOG_BAN_IP MMDB_TOKEN=$MMDB_TOKEN NEW_RELIC_API_KEY=${NEW_RELIC_API_KEY} NEW_RELIC_ACCOUNT_ID=${NEW_RELIC_ACCOUNT_ID} NEW_RELIC_INGEST_KEY=${NEW_RELIC_INGEST_KEY};
+            make deploy-remote \
+              GIT_BRANCH=$GIT_BRANCH \
+              FILES_TO_PROCESS=$FILES_TO_PROCESS_DEV REPOSITORY_BUCKET=$REPOSITORY_BUCKET_DEV \
+              NGINX_USER=$NGINX_USER NGINX_HOST=$NGINX_HOST \
+              SMTP_TLS_SELFSIGNED=$SMTP_TLS_SELFSIGNED SMTP_HOST=$SMTP_HOST SMTP_PORT=$SMTP_PORT \
+              remote_http_proxy=$remote_http_proxy remote_https_proxy=$remote_https_proxy remote_no_proxy=$remote_no_proxy \
+              GOOGLE_ANALYTICS_ID=$GOOGLE_ANALYTICS_ID GOOGLE_ADSENSE_ID=$GOOGLE_ADSENSE_ID \
+              LOG_BAN_IP=$LOG_BAN_IP \
+              MMDB_TOKEN=$MMDB_TOKEN \
+              NEW_RELIC_API_KEY=${NEW_RELIC_API_KEY} NEW_RELIC_ACCOUNT_ID=${NEW_RELIC_ACCOUNT_ID} NEW_RELIC_INGEST_KEY=${NEW_RELIC_INGEST_KEY};
           fi;
           if [[ ( "$GIT_BRANCH" == "master" ) ]]; then
-            make deploy-remote BACKEND_CONCURRENCY=$BACKEND_CONCURRENCY_MASTER ES_MEM=$ES_MEM_MASTER SCW_FLAVOR=$SCW_FLAVOR_MASTER SCW_VOLUME_SIZE=$SCW_VOLUME_SIZE_MASTER SCW_VOLUME_TYPE=$SCW_VOLUME_TYPE_MASTER GIT_BACKEND_BRANCH=master GIT_BRANCH=$GIT_BRANCH NGINX_USER=$NGINX_USER NGINX_HOST=$NGINX_HOST SMTP_TLS_SELFSIGNED=$SMTP_TLS_SELFSIGNED SMTP_HOST=$SMTP_HOST SMTP_PORT=$SMTP_PORT remote_http_proxy=$remote_http_proxy remote_https_proxy=$remote_https_proxy remote_no_proxy=$remote_no_proxy GOOGLE_ANALYTICS_ID=$GOOGLE_ANALYTICS_ID GOOGLE_ADSENSE_ID=$GOOGLE_ADSENSE_ID LOG_BAN_IP=$LOG_BAN_IP MMDB_TOKEN=$MMDB_TOKEN NEW_RELIC_API_KEY=${NEW_RELIC_API_KEY} NEW_RELIC_ACCOUNT_ID=${NEW_RELIC_ACCOUNT_ID} NEW_RELIC_INGEST_KEY=${NEW_RELIC_INGEST_KEY};
+            make deploy-remote \
+              GIT_BACKEND_BRANCH=master GIT_BRANCH=$GIT_BRANCH \
+              BACKEND_CONCURRENCY=$BACKEND_CONCURRENCY_MASTER \
+              ES_MEM=$ES_MEM_MASTER \
+              SCW_FLAVOR=$SCW_FLAVOR_MASTER SCW_VOLUME_SIZE=$SCW_VOLUME_SIZE_MASTER SCW_VOLUME_TYPE=$SCW_VOLUME_TYPE_MASTER \
+              NGINX_USER=$NGINX_USER NGINX_HOST=$NGINX_HOST \
+              SMTP_TLS_SELFSIGNED=$SMTP_TLS_SELFSIGNED SMTP_HOST=$SMTP_HOST SMTP_PORT=$SMTP_PORT \
+              remote_http_proxy=$remote_http_proxy remote_https_proxy=$remote_https_proxy remote_no_proxy=$remote_no_proxy \
+              GOOGLE_ANALYTICS_ID=$GOOGLE_ANALYTICS_ID GOOGLE_ADSENSE_ID=$GOOGLE_ADSENSE_ID \
+              LOG_BAN_IP=$LOG_BAN_IP \
+              MMDB_TOKEN=$MMDB_TOKEN \
+              NEW_RELIC_API_KEY=${NEW_RELIC_API_KEY} NEW_RELIC_ACCOUNT_ID=${NEW_RELIC_ACCOUNT_ID} NEW_RELIC_INGEST_KEY=${NEW_RELIC_INGEST_KEY};
           fi;
         env:
           FILES_TO_PROCESS_DEV: deces-2020-m[0-1][0-9].txt.gz
+          REPOSITORY_BUCKET_DEV: fichier-des-personnes-decedees-elasticsearch-dev
           BACKEND_CONCURRENCY_MASTER: 4
           ES_MEM_MASTER: 8192m
           SCW_FLAVOR_MASTER: GP1-XS

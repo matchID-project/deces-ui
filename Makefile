@@ -69,25 +69,25 @@ export NGINX_TIMEOUT = 30
 export API_TIMEOUT = 45
 export NGINX_CSP=default-src 'self';script-src 'self' 'unsafe-inline' 'unsafe-eval' static.cloudflareinsights.com ajax.cloudflare.com www.googletagmanager.com fundingchoicesmessages.google.com www.google.com www.google.ca analytics.google.com www.google-analytics.com pagead2.googlesyndication.com partner.googleadservices.com tpc.googlesyndication.com www.googletagservices.com adservice.google.com adservice.google.fr;style-src https: 'self' 'unsafe-inline';font-src 'self' data:;img-src 'self' matchid.io a.basemaps.cartocdn.com b.basemaps.cartocdn.com c.basemaps.cartocdn.com upload.wikimedia.org pagead2.googlesyndication.com www.google-analytics.com stats.g.doubleclick.net www.google.fr;connect-src 'self' www.data.gouv.fr cloudflareinsights.com www.google-analytics.com analytics.google.com csi.gstatic.com region1.analytics.google.com stats.g.doubleclick.net pagead2.googlesyndication.com; frame-src 'self' matchid.io www.google.com google.com googleads.g.doubleclick.net tpc.googlesyndication.com
 #export NGINX_CSP=default-src https: 'self' 'unsafe-inline' 'unsafe-eval';font-src 'self' data:;img-src 'self' data: https://*.cartocdn.com http://*.wikimedia.org https://www.google-analytics.com https://www.googletagmanager.com https://*.doubleclick.net;
-export API_SEARCH_LIMIT_RATE=1r/s
-export API_SEARCH_USER_BURST=30 nodelay
-export API_SEARCH_GLOBAL_LIMIT_RATE=20r/s
-export API_SEARCH_GLOBAL_BURST=400 nodelay
-export API_BULK_SUBMIT_LIMIT_RATE=4r/m
-export API_BULK_SUBMIT_BURST=4 nodelay
-export API_MISC_LIMIT_RATE=2r/s
-export API_MISC_USER_BURST=7 nodelay
-export API_MISC_GLOBAL_LIMIT_RATE=5r/s
-export API_MISC_GLOBAL_BURST=40 nodelay
-export API_AGG_LIMIT_RATE=30r/m
-export API_AGG_USER_BURST=15 nodelay
-export API_AGG_GLOBAL_LIMIT_RATE=1r/s
-export API_AGG_GLOBAL_BURST=15 nodelay
-export API_DOWNLOAD_LIMIT_RATE=30r/m
-export API_USER_SCOPE=http_x_forwarded_for
-export API_READ_TIMEOUT=3600
-export API_SEND_TIMEOUT=1200
-export API_MAX_BODY=100m
+export API_SEARCH_LIMIT_RATE?=1r/s
+export API_SEARCH_USER_BURST?=30 nodelay
+export API_SEARCH_GLOBAL_LIMIT_RATE?=20r/s
+export API_SEARCH_GLOBAL_BURST?=400 nodelay
+export API_BULK_SUBMIT_LIMIT_RATE?=4r/m
+export API_BULK_SUBMIT_BURST?=4 nodelay
+export API_MISC_LIMIT_RATE?=2r/s
+export API_MISC_USER_BURST?=7 nodelay
+export API_MISC_GLOBAL_LIMIT_RATE?=5r/s
+export API_MISC_GLOBAL_BURST?=40 nodelay
+export API_AGG_LIMIT_RATE?=30r/m
+export API_AGG_USER_BURST?=15 nodelay
+export API_AGG_GLOBAL_LIMIT_RATE?=1r/s
+export API_AGG_GLOBAL_BURST?=15 nodelay
+export API_DOWNLOAD_LIMIT_RATE?=30r/m
+export API_USER_SCOPE?=http_x_forwarded_for
+export API_READ_TIMEOUT?=3600
+export API_SEND_TIMEOUT?=1200
+export API_MAX_BODY?=100m
 export MITM_URL=/mitm/mitm.html
 export THEME_DNUM=0
 export API_TEST_PATH = ${API_PATH}/api/v1/search
@@ -102,12 +102,12 @@ export DC_NETWORK := $(shell echo ${APP} | tr '[:upper:]' '[:lower:]')
 export DC_BUILD_ARGS = --pull --no-cache
 export DC := docker-compose
 export GIT_ORIGIN=origin
-export GIT_BRANCH := $(shell git branch | grep '*' | awk '{print $$2}')
-export GIT_BRANCH_MASTER=master
+export GIT_BRANCH ?= $(shell git branch | grep '*' | awk '{print $$2}')
+export GIT_BRANCH_MASTER = master
 export GIT_DATAPREP = deces-dataprep
 export GIT_BACKEND = deces-backend
 export BACKEND_APP=${GIT_BACKEND}
-export GIT_BACKEND_BRANCH = dev
+export GIT_BACKEND_BRANCH ?= dev
 export GIT_ROOT = https://github.com/matchid-project
 export GIT_TOOLS = tools
 export API_URL?=${APP_DNS}
@@ -143,14 +143,18 @@ export ES_MAX_RESULTS = 10000
 export ES_DATA = ${APP_PATH}/esdata
 export ES_NODES = 1
 export ES_MEM = 512m
+export ES_JAVA_OPTS=-Xms${ES_MEM} -Xmx${ES_MEM}
 export ES_VERSION = 8.6.1
 export ES_BACKUP_BASENAME := esdata
 export DATAPREP_VERSION_FILE = ${APP_PATH}/.dataprep.sha1
 export DATA_VERSION_FILE = ${APP_PATH}/.data.sha1
-export FILES_TO_PROCESS=deces-([0-9]{4}|2023-m[0-9]{2}).txt.gz
+export FILES_TO_PROCESS?=deces-([0-9]{4}|2023-m[0-9]{2}).txt.gz
+export FILES_TO_PROCESS_TEST=deces-2020-m01.txt.gz # reference for test env
+export FILES_TO_PROCESS_DEV=deces-2020-m[0-1][0-9].txt.gz # reference for preprod env
+export REPOSITORY_BUCKET?=fichier-des-personnes-decedees-elasticsearch
+export REPOSITORY_BUCKET_DEV=fichier-des-personnes-decedees-elasticsearch-dev # reference for non-prod env
 
 vm_max_count            := $(shell cat /etc/sysctl.conf | egrep vm.max_map_count\s*=\s*262144 && echo true)
-
 
 export STORAGE_BUCKET=${DATASET}
 export SCW_VOLUME_SIZE=20000000000
@@ -159,6 +163,7 @@ export SCW_VOLUME_TYPE=l_ssd
 #prebuild image with docker and nginx-node-elasticsearch docker images
 export SCW_IMAGE_ID=7a1d4022-766c-42b0-866e-d9c3cbd9d3b4
 
+-include ${APP_PATH}/${GIT_TOOLS}/artifacts.SCW
 dummy		    := $(shell touch artifacts)
 include ./artifacts
 
@@ -228,7 +233,7 @@ clean-remote:
 	@${MAKE} -C ${APP_PATH}/${GIT_TOOLS} remote-clean ${MAKEOVERRIDES} > /dev/null 2>&1 || true
 
 clean-config:
-	@rm -rf ${APP_PATH}/${GIT_TOOLS} ${APP_PATH}/aws config > /dev/null 2>&1 || true
+	@rm -rf ${APP_PATH}/${GIT_TOOLS} ${APP_PATH}/aws config elasticsearch-repository-* > /dev/null 2>&1 || true
 
 clean-local: clean-data clean-frontend clean-backend clean-config
 
@@ -396,35 +401,43 @@ backup-dir:
 backup-dir-clean:
 	@if [ -d "$(BACKUP_DIR)" ] ; then (rm -rf $(BACKUP_DIR) > /dev/null 2>&1 || true) ; fi
 
-elasticsearch-storage-pull: backup-dir ${DATAPREP_VERSION_FILE} ${DATA_VERSION_FILE}
-	@\
-	DATAPREP_VERSION=$$(cat ${DATAPREP_VERSION_FILE});\
-	DATA_VERSION=$$(cat ${DATA_VERSION_FILE});\
-	ES_BACKUP_FILE=${ES_BACKUP_BASENAME}_$${DATAPREP_VERSION}_$${DATA_VERSION}.tar;\
-	if [ ! -f "${BACKUP_DIR}/$$ES_BACKUP_FILE" ];then\
-		echo pulling ${STORAGE_BUCKET}/$$ES_BACKUP_FILE;\
-		${MAKE} -C ${APP_PATH}/${GIT_TOOLS} storage-pull\
-			FILE=$$ES_BACKUP_FILE DATA_DIR=${BACKUP_DIR}\
-			STORAGE_BUCKET=${STORAGE_BUCKET} STORAGE_ACCESS_KEY=${STORAGE_ACCESS_KEY} STORAGE_SECRET_KEY=${STORAGE_SECRET_KEY};\
-	fi
-
 elasticsearch-stop:
 	@echo docker-compose down matchID elasticsearch
 	@if [ -f "${DC_FILE}-elasticsearch-huge.yml" ]; then ${DC} -f ${DC_FILE}-elasticsearch-huge.yml down;fi
 
-elasticsearch-restore: elasticsearch-stop elasticsearch-storage-pull
-	@if [ -d "$(ES_DATA)" ] ; then (echo purging ${ES_DATA} && sudo rm -rf ${ES_DATA} && echo purge done) ; fi
+elasticsearch-repository-creds: elasticsearch
+	@if [ ! -f "elasticsearch-repository-plugin" ]; then\
+		echo installing elasticsearch repository plugin;\
+		docker exec -i ${USE_TTY} ${DC_PREFIX}-elasticsearch sh -c \
+			"echo ${STORAGE_ACCESS_KEY} | bin/elasticsearch-keystore add --stdin --force s3.client.default.access_key";\
+		docker exec -i ${USE_TTY} ${DC_PREFIX}-elasticsearch sh -c \
+			"echo ${STORAGE_SECRET_KEY} | bin/elasticsearch-keystore add --stdin --force s3.client.default.secret_key";\
+		docker restart ${DC_PREFIX}-elasticsearch;\
+		timeout=${ES_TIMEOUT} ; ret=1 ; until [ "$$timeout" -le 0 -o "$$ret" -eq "0"  ] ; do (docker exec -i ${USE_TTY} ${DC_PREFIX}-elasticsearch curl -s --fail -XGET localhost:9200/_cat/indices > /dev/null) ; ret=$$? ; if [ "$$ret" -ne "0" ] ; then echo -en "\rwaiting for elasticsearch to start $$timeout" ; fi ; ((timeout--)); sleep 1 ; done ;\
+		echo; touch elasticsearch-repository-plugin ; exit $$ret;\
+	fi;
+
+elasticsearch-repository-config: elasticsearch-repository-creds
+	@if [ ! -f "elasticsearch-repository-config" ]; then\
+		echo creating elasticsearch repository ${APP_GROUP} in s3 bucket ${REPOSITORY_BUCKET} && \
+		docker exec -i ${USE_TTY} ${DC_PREFIX}-elasticsearch \
+			curl -s -XPUT "localhost:9200/_snapshot/${APP_GROUP}" -H 'Content-Type: application/json' \
+			-d '{"type": "s3","settings": {"bucket": "${REPOSITORY_BUCKET}","client": "default","region": "${SCW_REGION}","endpoint": "${SCW_ENDPOINT}","path_style_access": true,"protocol": "https"}}' \
+			| grep -q '"acknowledged":true' && touch elasticsearch-repository-config;\
+	fi
+
+elasticsearch-restore: elasticsearch-repository-config ${DATAPREP_VERSION_FILE} ${DATA_VERSION_FILE}
 	@\
 	DATAPREP_VERSION=$$(cat ${DATAPREP_VERSION_FILE});\
 	DATA_VERSION=$$(cat ${DATA_VERSION_FILE});\
-	ESBACKUPFILE=${ES_BACKUP_BASENAME}_$${DATAPREP_VERSION}_$${DATA_VERSION}.tar;\
-	if [ ! -f "${BACKUP_DIR}/$$ESBACKUPFILE" ];then\
-		(echo no such archive "${BACKUP_DIR}/$$ESBACKUPFILE" && exit 1);\
-	else\
-		echo restoring from ${BACKUP_DIR}/$$ESBACKUPFILE to ${ES_DATA} && \
-		sudo tar xf ${BACKUP_DIR}/$$ESBACKUPFILE -C $$(dirname ${ES_DATA}) && \
-		echo backup restored;\
-	fi;
+	ES_BACKUP_NAME=${ES_BACKUP_BASENAME}_$${DATAPREP_VERSION}_$${DATA_VERSION};\
+	echo restoring snapshot $${ES_BACKUP_NAME} from elasticsearch repository;\
+	(\
+		docker exec -i ${USE_TTY} ${DC_PREFIX}-elasticsearch \
+			curl -s -XPOST localhost:9200/_snapshot/${APP_GROUP}/$${ES_BACKUP_NAME}/_restore?wait_for_completion=true -H 'Content-Type: application/json'\
+			-d '{"indices": "${ES_INDEX}","ignore_unavailable": true,"include_global_state": false}' \
+		> /dev/null 2>&1\
+	) && echo "snapshot $${ES_BACKUP_NAME} restored from elasticsearch repository" && touch elasticsearch-repository-restore
 
 elasticsearch-clean: elasticsearch-stop
 	@sudo rm -rf ${ES_DATA} > /dev/null 2>&1 || true
@@ -436,18 +449,10 @@ ifeq ("$(vm_max_count)", "")
 endif
 
 elasticsearch: network vm_max
-	@echo docker-compose up elasticsearch with ${ES_NODES} nodes
-	@cat ${DC_FILE}-elasticsearch.yml | sed "s/%M/${ES_MEM}/g" > ${DC_FILE}-elasticsearch-huge.yml
-	@(if [ ! -d ${ES_DATA}/node1 ]; then sudo mkdir -p ${ES_DATA}/node1 ; sudo chmod g+rw ${ES_DATA}/node1/.; sudo chgrp 1000 ${ES_DATA}/node1/.; fi)
-	@(i=$(ES_NODES); while [ $${i} -gt 1 ]; \
-		do \
-			if [ ! -d ${ES_DATA}/node$$i ]; then (echo ${ES_DATA}/node$$i && sudo mkdir -p ${ES_DATA}/node$$i && sudo chmod g+rw ${ES_DATA}/node$$i/. && sudo chgrp 1000 ${ES_DATA}/node$$i/.); fi; \
-		cat ${DC_FILE}-elasticsearch-node.yml | sed "s/%N/$$i/g;s/%MM/${ES_MEM}/g;s/%M/${ES_MEM}/g" >> ${DC_FILE}-elasticsearch-huge.yml; \
-		i=`expr $$i - 1`; \
-	done;\
-	true)
-	${DC} -f ${DC_FILE}-elasticsearch-huge.yml up -d
-	@timeout=${ES_TIMEOUT} ; ret=1 ; until [ "$$timeout" -le 0 -o "$$ret" -eq "0"  ] ; do (docker exec -i ${USE_TTY} ${DC_PREFIX}-elasticsearch curl -s --fail -XGET localhost:9200/_cat/indices > /dev/null) ; ret=$$? ; if [ "$$ret" -ne "0" ] ; then echo "waiting for elasticsearch to start $$timeout" ; fi ; ((timeout--)); sleep 1 ; done ; exit $$ret
+	@echo docker-compose up matchID elasticsearch with ${ES_NODES} nodes
+	@(if [ ! -d ${ES_DATA}/node1 ]; then sudo mkdir -p ${ES_DATA}/node1 ; sudo chmod g+rw ${ES_DATA}/node1/.; sudo chown 1000:1000 ${ES_DATA}/node1/.; fi)
+	${DC} -f ${DC_FILE}-elasticsearch.yml up -d
+	@timeout=${ES_TIMEOUT} ; ret=1 ; until [ "$$timeout" -le 0 -o "$$ret" -eq "0"  ] ; do (docker exec -i ${USE_TTY} ${DC_PREFIX}-elasticsearch curl -s --fail -XGET localhost:9200/_cat/indices > /dev/null) ; ret=$$? ; if [ "$$ret" -ne "0" ] ; then echo -en "\rwaiting for elasticsearch to start $$timeout" ; fi ; ((timeout--)); sleep 1 ; done ; echo ; exit $$ret
 
 up: start
 
@@ -474,7 +479,7 @@ ${DATA_VERSION_FILE}:
 show-env:
 	env | egrep 'STORAGE|BUCKET'
 
-deploy-local: config show-env stats-background elasticsearch-storage-pull elasticsearch-restore elasticsearch docker-check up backup-dir-clean local-test-api
+deploy-local: config show-env stats-background elasticsearch-restore elasticsearch docker-check up backup-dir-clean local-test-api
 
 frontend-test:
 	${DC} -f ${DC_FILE}-test.yml run ui-test yarn install
