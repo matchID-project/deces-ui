@@ -138,6 +138,7 @@ export DATAGOUV_RESOURCES_REWRITE_PATH := $(shell echo ${DATAGOUV_RESOURCES_HOST
 export ES_HOST = elasticsearch
 export ES_PORT = 9200
 export ES_TIMEOUT = 60
+export ES_RESTORE_TIMEOUT = 480
 export ES_INDEX = deces
 export ES_MAX_RESULTS = 10000
 export ES_DATA = ${APP_PATH}/esdata
@@ -291,7 +292,7 @@ backend-docker-check: backend-config
 	@BACKEND_APP_VERSION=$(shell cd ${APP_PATH}/${GIT_BACKEND} && git describe --tags);\
 	${MAKE} docker-check DC_IMAGE_NAME=deces-backend APP_VERSION=$$BACKEND_APP_VERSION GIT_BRANCH=${GIT_BACKEND_BRANCH}
 
-backend: backend-config backend-docker-check proofs-mount
+backend: backend-config backend-docker-check proofs-mount elasticsearch-index-readiness
 	@BACKEND_APP_VERSION=$(shell cd ${APP_PATH}/${GIT_BACKEND} && git describe --tags);\
 	${MAKE} -C ${APP_PATH}/${GIT_BACKEND} backend-start APP=deces-backend DC_NETWORK=${DC_NETWORK} APP_VERSION=$$BACKEND_APP_VERSION GIT_BRANCH=${GIT_BACKEND_BRANCH}\
 		API_URL=${API_URL} API_EMAIL=${API_EMAIL} API_SSL=${API_SSL}\
@@ -405,7 +406,7 @@ elasticsearch-stop:
 	@echo docker-compose down matchID elasticsearch
 	@if [ -f "${DC_FILE}-elasticsearch-huge.yml" ]; then ${DC} -f ${DC_FILE}-elasticsearch-huge.yml down;fi
 
-elasticsearch-repository-creds: elasticsearch
+elasticsearch-repository-creds: elasticsearch-start
 	@if [ ! -f "elasticsearch-repository-plugin" ]; then\
 		echo installing elasticsearch repository plugin;\
 		docker exec -i ${USE_TTY} ${DC_PREFIX}-elasticsearch sh -c \
@@ -413,7 +414,7 @@ elasticsearch-repository-creds: elasticsearch
 		docker exec -i ${USE_TTY} ${DC_PREFIX}-elasticsearch sh -c \
 			"echo ${STORAGE_SECRET_KEY} | bin/elasticsearch-keystore add --stdin --force s3.client.default.secret_key";\
 		docker restart ${DC_PREFIX}-elasticsearch;\
-		timeout=${ES_TIMEOUT} ; ret=1 ; until [ "$$timeout" -le 0 -o "$$ret" -eq "0"  ] ; do (docker exec -i ${USE_TTY} ${DC_PREFIX}-elasticsearch curl -s --fail -XGET localhost:9200/_cat/indices > /dev/null) ; ret=$$? ; if [ "$$ret" -ne "0" ] ; then echo -en "\rwaiting for elasticsearch to start $$timeout" ; fi ; ((timeout--)); sleep 1 ; done ;\
+		timeout=${ES_TIMEOUT} ; ret=1 ; until [ "$$timeout" -le 0 -o "$$ret" -eq "0"  ] ; do (docker exec -i ${USE_TTY} ${DC_PREFIX}-elasticsearch curl -s --fail -XGET localhost:9200/ > /dev/null) ; ret=$$? ; if [ "$$ret" -ne "0" ] ; then echo -en "\rwaiting for elasticsearch to start $$timeout" ; fi ; ((timeout--)); sleep 1 ; done ;\
 		echo; touch elasticsearch-repository-plugin ; exit $$ret;\
 	fi;
 
@@ -439,8 +440,23 @@ elasticsearch-restore: elasticsearch-repository-config ${DATAPREP_VERSION_FILE} 
 		> /dev/null 2>&1\
 	) && echo "snapshot $${ES_BACKUP_NAME} restored from elasticsearch repository" && touch elasticsearch-repository-restore
 
+elasticsearch-restore-async: elasticsearch-repository-config ${DATAPREP_VERSION_FILE} ${DATA_VERSION_FILE}
+	@\
+	DATAPREP_VERSION=$$(cat ${DATAPREP_VERSION_FILE});\
+	DATA_VERSION=$$(cat ${DATA_VERSION_FILE});\
+	ES_BACKUP_NAME=${ES_BACKUP_BASENAME}_$${DATAPREP_VERSION}_$${DATA_VERSION};\
+	echo restoring snapshot $${ES_BACKUP_NAME} from elasticsearch repository;\
+	(\
+		docker exec -i ${USE_TTY} ${DC_PREFIX}-elasticsearch \
+			curl -s -XPOST localhost:9200/_snapshot/${APP_GROUP}/$${ES_BACKUP_NAME}/_restore -H 'Content-Type: application/json'\
+			-d '{"indices": "${ES_INDEX}","ignore_unavailable": true,"include_global_state": false}' \
+		> /dev/null 2>&1\
+	) && echo "snapshot $${ES_BACKUP_NAME} restore initiated from elasticsearch repository" && touch elasticsearch-repository-restore
+
+
+
 elasticsearch-clean: elasticsearch-stop
-	@sudo rm -rf ${ES_DATA} > /dev/null 2>&1 || true
+	@sudo rm -rf elasticsearch-repository-* ${ES_DATA} > /dev/null 2>&1 || true
 
 vm_max:
 ifeq ("$(vm_max_count)", "")
@@ -448,11 +464,16 @@ ifeq ("$(vm_max_count)", "")
 	sudo sysctl -w vm.max_map_count=262144
 endif
 
-elasticsearch: network vm_max
+elasticsearch-start: network vm_max
 	@echo docker-compose up matchID elasticsearch with ${ES_NODES} nodes
 	@(if [ ! -d ${ES_DATA}/node1 ]; then sudo mkdir -p ${ES_DATA}/node1 ; sudo chmod g+rw ${ES_DATA}/node1/.; sudo chown 1000:1000 ${ES_DATA}/node1/.; fi)
 	${DC} -f ${DC_FILE}-elasticsearch.yml up -d
-	@timeout=${ES_TIMEOUT} ; ret=1 ; until [ "$$timeout" -le 0 -o "$$ret" -eq "0"  ] ; do (docker exec -i ${USE_TTY} ${DC_PREFIX}-elasticsearch curl -s --fail -XGET localhost:9200/_cat/indices > /dev/null) ; ret=$$? ; if [ "$$ret" -ne "0" ] ; then echo -en "\rwaiting for elasticsearch to start $$timeout" ; fi ; ((timeout--)); sleep 1 ; done ; echo ; exit $$ret
+
+elasticsearch: elasticsearch-start
+	@timeout=${ES_TIMEOUT} ; ret=1 ; until [ "$$timeout" -le 0 -o "$$ret" -eq "0"  ] ; do (docker exec -i ${USE_TTY} ${DC_PREFIX}-elasticsearch curl -s --fail -XGET localhost:9200/ > /dev/null) ; ret=$$? ; if [ "$$ret" -ne "0" ] ; then echo -en "\rwaiting for elasticsearch API to start $$timeout" ; fi ; ((timeout--)); sleep 1 ; done ; echo ; exit $$ret
+
+elasticsearch-index-readiness:
+	@timeout=${ES_RESTORE_TIMEOUT} ; ret=1 ; until [ "$$timeout" -le 0 -o "$$ret" -eq "0"  ] ; do (docker exec -i ${USE_TTY} ${DC_PREFIX}-elasticsearch curl -s --fail -XGET localhost:9200/_cat/indices | grep -q green > /dev/null) ; ret=$$? ; if [ "$$ret" -ne "0" ] ; then echo -en "\rwaiting for elasticsearch index to be ready $$timeout" ; fi ; ((timeout--)); sleep 1 ; done ; echo ; exit $$ret
 
 up: start
 
@@ -479,7 +500,7 @@ ${DATA_VERSION_FILE}:
 show-env:
 	env | egrep 'STORAGE|BUCKET'
 
-deploy-local: config show-env stats-background elasticsearch-restore elasticsearch docker-check up backup-dir-clean local-test-api
+deploy-local: config show-env stats-background elasticsearch-restore-async docker-check up local-test-api
 
 frontend-test:
 	${DC} -f ${DC_FILE}-test.yml run ui-test yarn install
