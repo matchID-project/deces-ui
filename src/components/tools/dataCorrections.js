@@ -120,4 +120,12 @@ export const dataCorrections = {
     "poofs":["none"],
     "anonymize": true
   },
+  "-BlZFy_WNj9M": {
+    "permalink": "/id/-BlZFy_WNj9M",
+    "change": "remove",
+    "reason": "false death declaration",
+    "request": "insee",
+    "proofs":["fichier_des_oppositions"],
+    "anonymize": true
+  },
 };
