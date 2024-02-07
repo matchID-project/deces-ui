@@ -37,7 +37,7 @@ export const dataCorrections = {
      "change": "remove",
      "request": "child",
      "reason": "cnil-art-85",
-     "poofs":["none"],
+     "proofs":["none"],
      "anonymize": true
    },
    "aE-PqRHJ6-ZY": {
@@ -45,7 +45,7 @@ export const dataCorrections = {
     "change": "remove",
     "request": "child",
     "reason": "cnil-art-85",
-    "poofs":["none"],
+    "proofs":["none"],
     "anonymize": true
    },
    "P7XeVrBIO1uN": {
@@ -53,7 +53,7 @@ export const dataCorrections = {
     "change": "remove",
     "request": "parent",
     "reason": "cnil-art-85",
-    "poofs":["none"],
+    "proofs":["none"],
     "anonymize": true
    },
    "Dzb6Lwv7lwfP": {
@@ -61,7 +61,7 @@ export const dataCorrections = {
     "change": "remove",
     "request": "parent",
     "reason": "cnil-art-85",
-    "poofs":["none"],
+    "proofs":["none"],
     "anonymize": true
    },
    "FevE2JaVwlg8": {
@@ -69,7 +69,7 @@ export const dataCorrections = {
     "change": "remove",
     "request": "child",
     "reason": "cnil-art-85",
-    "poofs":["family booklet","id card"],
+    "proofs":["family booklet","id card"],
     "anonymize": true
    },
    "Z6zM2e9P1Otb": {
@@ -77,7 +77,7 @@ export const dataCorrections = {
     "change": "remove",
     "request": "child",
     "reason": "cnil-art-85",
-    "poofs":["id card"],
+    "proofs":["id card"],
     "anonymize": true
    },
    "0OKcTpNXofof": {
@@ -85,7 +85,7 @@ export const dataCorrections = {
     "change": "remove",
     "request": "child",
     "reason": "cnil-art-85",
-    "poofs":["none"],
+    "proofs":["none"],
     "anonymize": true
   },
    "FNXiuByElw2Y": {
@@ -93,7 +93,7 @@ export const dataCorrections = {
     "change": "remove",
     "request": "child",
     "reason": "cnil-art-85",
-    "poofs":["none"],
+    "proofs":["none"],
     "anonymize": true
   },
   "p--muL0mztIs": {
@@ -101,7 +101,7 @@ export const dataCorrections = {
     "change": "remove",
     "request": "child",
     "reason": "cnil-art-85",
-    "poofs":["none"],
+    "proofs":["none"],
     "anonymize": true
   },
   "6yOmThVVGfvi": {
@@ -109,7 +109,7 @@ export const dataCorrections = {
     "change": "remove",
     "request": "child",
     "reason": "cnil-art-85",
-    "poofs":["none"],
+    "proofs":["none"],
     "anonymize": true
   },
   "XAuWEszp6jGX": {
@@ -117,7 +117,7 @@ export const dataCorrections = {
     "change": "remove",
     "request": "child",
     "reason": "cnil-art-85",
-    "poofs":["none"],
+    "proofs":["none"],
     "anonymize": true
   },
   "-BlZFy_WNj9M": {
@@ -126,6 +126,14 @@ export const dataCorrections = {
     "reason": "false death declaration",
     "request": "insee",
     "proofs":["fichier_des_oppositions"],
+    "anonymize": true
+  },
+  "0Dts3lDwtRHX": {
+    "permalink": "/id/0Dts3lDwtRHX",
+    "change": "remove",
+    "reason": "cnil-art-85",
+    "request": "child",
+    "proofs":["none"],
     "anonymize": true
   },
 };
