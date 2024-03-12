@@ -537,14 +537,16 @@ deploy-k8s-cluster-local:
 	sudo chown ${USER} $${KUBECONFIG};\
 	cp $${KUBECONFIG} ${KUBECONFIG}
 
-deploy-k8s: deploy-k8s-elasticsearch deploy-k8s-redis deploy-k8s-backend deploy-k8s-frontend
+deploy-k8s-local: deploy-k8s-services deploy-k8s-ingress-local
+
+deploy-k8s-services: deploy-k8s-namespace deploy-k8s-elasticsearch deploy-k8s-redis deploy-k8s-backend deploy-k8s-frontend
 
 deploy-k8s-namespace:
 	@echo $@;\
 	cat ${KUBE_DIR}/namespace.yaml | envsubst `env | sed "s/=.*//;s/^/$$/" | tr "\n" ","`;\
-	(cat ${KUBE_DIR}/namespace.yaml | envsubst `env | sed "s/=.*//;s/^/$$/" | tr "\n" ","` | kubectl apply -f -) && touch $@
+	(cat ${KUBE_DIR}/namespace.yaml | envsubst `env | sed "s/=.*//;s/^/$$/" | tr "\n" ","` | kubectl apply -f -)
 
-deploy-k8s-elasticsearch: deploy-k8s-namespace ${DATAPREP_VERSION_FILE} ${DATA_VERSION_FILE}
+deploy-k8s-elasticsearch: ${DATAPREP_VERSION_FILE} ${DATA_VERSION_FILE}
 	@echo $@
 	@DATAPREP_VERSION=$$(cat ${DATAPREP_VERSION_FILE});\
 	DATA_VERSION=$$(cat ${DATA_VERSION_FILE});\
@@ -552,18 +554,23 @@ deploy-k8s-elasticsearch: deploy-k8s-namespace ${DATAPREP_VERSION_FILE} ${DATA_V
 	echo SCW_REGION=${SCW_REGION} SCW_ENDPOINT=${SCW_ENDPOINT} SCW_BUCKET=${REPOSITORY_BUCKET};\
 	cat ${KUBE_DIR}/elasticsearch.yaml | envsubst `env | sed "s/=.*//;s/^/$$/" | tr "\n" ","` | kubectl apply -f -
 
-deploy-k8s-redis: deploy-k8s-namespace
+deploy-k8s-redis:
 	@echo $@
 	@cat ${KUBE_DIR}/redis.yaml | envsubst `env | sed "s/=.*//;s/^/$$/" | tr "\n" ","` | kubectl apply -f -
 
-deploy-k8s-backend: deploy-k8s-namespace
+deploy-k8s-backend:
 	@echo $@
 	@export BACKEND_APP_VERSION=$(shell cd ${APP_PATH}/${GIT_BACKEND} && git describe --tags);\
 	cat ${KUBE_DIR}/backend.yaml | envsubst `env | sed "s/=.*//;s/^/$$/" | tr "\n" ","` | kubectl apply -f -
 
-deploy-k8s-frontend: deploy-k8s-namespace
+deploy-k8s-frontend:
 	@echo $@
 	@cat ${KUBE_DIR}/frontend.yaml | envsubst `env | sed "s/=.*//;s/^/$$/" | tr "\n" ","` | kubectl apply -f -
+
+deploy-k8s-ingress-local:
+	@echo $@
+	@export APP_DNS=deces.matchid.local;\
+	cat ${KUBE_DIR}/ingress-local.yaml | envsubst `env | sed "s/=.*//;s/^/$$/" | tr "\n" ","` | kubectl apply -f -
 
 deploy-remote-instance: config-minimal backend-config ${DATAPREP_VERSION_FILE} ${DATA_VERSION_FILE}
 	@\

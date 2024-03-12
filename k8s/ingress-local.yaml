@@ -1,0 +1,17 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ${APP}-ingress
+  namespace: ${KUBE_NAMESPACE}
+spec:
+  rules:
+  - host: ${APP_DNS}
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: ${APP}-svc
+            port:
+              number: 80
