@@ -113,11 +113,10 @@ export GIT_TOOLS = tools
 export API_URL?=${APP_DNS}
 export API_SSL?=1
 export APP_NODES=1
-# export KUBE_NAMESPACE:=$(shell echo -n ${APP_GROUP}-${APP}-${GIT_BRANCH} | tr '[:upper:]' '[:lower:]' | tr '_' '-')
+export KUBE_NAMESPACE:=$(shell echo -n ${APP_GROUP}-${APP}-${GIT_BRANCH} | tr '[:upper:]' '[:lower:]' | tr '_/' '-')
 export KUBE_DIR=${FRONTEND}/k8s
-export ES_MEM_KUBE:=$(shell echo -n ${ES_MEM} | sed 's/\s*m/Mi/')
-export STORAGE_ACCESS_KEY_B64:=$(shell echo -n ${STORAGE_ACCESS_KEY} | openssl base64)
-export STORAGE_SECRET_KEY_B64:=$(shell echo -n ${STORAGE_SECRET_KEY} | openssl base64)
+export KUBECONFIG=${HOME}/.kube/config
+export ES_MEM_KUBE?=$(shell echo -n ${ES_MEM} | sed 's/\s*m/Mi/')
 
 export PROOFS=${FRONTEND}/${GIT_BACKEND}/backend/data/proofs
 export MONITOR_DIR = ${APP}/log/instances/${APP_GROUP}-${APP}-${GIT_BRANCH}
@@ -167,6 +166,9 @@ export SCW_IMAGE_ID=7a1d4022-766c-42b0-866e-d9c3cbd9d3b4
 -include ${APP_PATH}/${GIT_TOOLS}/artifacts.SCW
 dummy		    := $(shell touch artifacts)
 include ./artifacts
+
+export STORAGE_ACCESS_KEY_B64:=$(shell echo -n ${STORAGE_ACCESS_KEY} | openssl base64)
+export STORAGE_SECRET_KEY_B64:=$(shell echo -n ${STORAGE_SECRET_KEY} | openssl base64)
 
 export VERSION := $(shell cat tagfiles.version | xargs -I '{}' find {} -type f -not -name '*.tar.gz'  | sort | xargs cat | sha1sum - | sed 's/\(......\).*/\1/')
 
@@ -524,31 +526,44 @@ local-test-api:
 	done ; \
 	exit $$ret
 
-
-
+deploy-k8s-cluster-local:
+	@if ! (which k3s > /dev/null 2>&1); then\
+		(curl -sfL https://get.k3s.io | sh - 2>&1 |\
+			awk 'BEGIN{s=0}{printf "\r☸️  Installing k3s (" s++ "/16)"}') && echo -e "\r\033[2K☸️   Installed k3s";\
+	fi;\
+	mkdir -p ~/.kube;\
+	KUBECONFIG=${HOME}/.kube/config-local-k3s.yaml;\
+	sudo cp /etc/rancher/k3s/k3s.yaml $${KUBECONFIG};\
+	sudo chown ${USER} $${KUBECONFIG};\
+	cp $${KUBECONFIG} ${KUBECONFIG}
 
 deploy-k8s: deploy-k8s-elasticsearch deploy-k8s-redis deploy-k8s-backend deploy-k8s-frontend
 
 deploy-k8s-namespace:
-	@echo $@
-	(cat ${KUBE_DIR}/namespace.yaml | envsubst | kubectl apply -f -) && touch $@
+	@echo $@;\
+	cat ${KUBE_DIR}/namespace.yaml | envsubst `env | sed "s/=.*//;s/^/$$/" | tr "\n" ","`;\
+	(cat ${KUBE_DIR}/namespace.yaml | envsubst `env | sed "s/=.*//;s/^/$$/" | tr "\n" ","` | kubectl apply -f -) && touch $@
 
-deploy-k8s-elasticsearch: deploy-k8s-namespace
+deploy-k8s-elasticsearch: deploy-k8s-namespace ${DATAPREP_VERSION_FILE} ${DATA_VERSION_FILE}
 	@echo $@
-	@cat ${KUBE_DIR}/elasticsearch.yaml | envsubst | kubectl apply -f -
+	@DATAPREP_VERSION=$$(cat ${DATAPREP_VERSION_FILE});\
+	DATA_VERSION=$$(cat ${DATA_VERSION_FILE});\
+	export ES_BACKUP_NAME=${ES_BACKUP_BASENAME}_$${DATAPREP_VERSION}_$${DATA_VERSION};\
+	echo SCW_REGION=${SCW_REGION} SCW_ENDPOINT=${SCW_ENDPOINT} SCW_BUCKET=${REPOSITORY_BUCKET};\
+	cat ${KUBE_DIR}/elasticsearch.yaml | envsubst `env | sed "s/=.*//;s/^/$$/" | tr "\n" ","` | kubectl apply -f -
 
 deploy-k8s-redis: deploy-k8s-namespace
 	@echo $@
-	@cat ${KUBE_DIR}/redis.yaml | envsubst | kubectl apply -f -
+	@cat ${KUBE_DIR}/redis.yaml | envsubst `env | sed "s/=.*//;s/^/$$/" | tr "\n" ","` | kubectl apply -f -
 
 deploy-k8s-backend: deploy-k8s-namespace
 	@echo $@
 	@export BACKEND_APP_VERSION=$(shell cd ${APP_PATH}/${GIT_BACKEND} && git describe --tags);\
-	cat ${KUBE_DIR}/backend.yaml | envsubst | kubectl apply -f -
+	cat ${KUBE_DIR}/backend.yaml | envsubst `env | sed "s/=.*//;s/^/$$/" | tr "\n" ","` | kubectl apply -f -
 
 deploy-k8s-frontend: deploy-k8s-namespace
 	@echo $@
-	@cat ${KUBE_DIR}/frontend.yaml | envsubst | kubectl apply -f -
+	@cat ${KUBE_DIR}/frontend.yaml | envsubst `env | sed "s/=.*//;s/^/$$/" | tr "\n" ","` | kubectl apply -f -
 
 deploy-remote-instance: config-minimal backend-config ${DATAPREP_VERSION_FILE} ${DATA_VERSION_FILE}
 	@\
@@ -621,6 +636,7 @@ deploy-docker-pull-base: deploy-remote-instance
 	@${MAKE} -C ${APP_PATH}/${GIT_TOOLS} remote-docker-pull DOCKER_IMAGE=nginx:alpine
 	@${MAKE} -C ${APP_PATH}/${GIT_TOOLS} remote-docker-pull DOCKER_IMAGE=docker.elastic.co/elasticsearch/elasticsearch:${ES_VERSION}
 	@${MAKE} -C ${APP_PATH}/${GIT_TOOLS} remote-docker-pull DOCKER_IMAGE=redis:alpine
+
 
 update-base-image: deploy-remote-instance deploy-docker-pull-base
 	@BACKEND_APP_VERSION=$(shell cd ${APP_PATH}/${GIT_BACKEND} && git describe --tags); \
