@@ -69,6 +69,18 @@ spec:
             value: "${APP}-es-svc:${ES_PORT}"
           - name: ES_INDEX
             value: "${ES_INDEX}"
+        volumeMounts:
+          - name: proofs
+            mountPath: /${BACKEND_APP}/data/proofs
+          - name: jobs
+            mountPath:  /${BACKEND_APP}/data/jobs
+      volumes:
+        - name: proofs
+          persistentVolumeClaim:
+            claimName: proofs
+        - name: jobs
+          persistentVolumeClaim:
+            claimName: jobs
 ---
 apiVersion: v1
 kind: Service
@@ -83,3 +95,65 @@ spec:
     name: http
   selector:
     app: ${BACKEND_APP}
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: proofs
+  labels:
+    app: proofs
+spec:
+  capacity:
+    storage: 2Gi
+  accessModes:
+    - ReadWriteMany
+  nfs:
+    server: "nfs-service.storage.svc.cluster.local"
+    path: "/proofs" # "pvc" folder must exist in "/exports" directory of NFS server
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: proofs
+  namespace: ${KUBE_NAMESPACE}
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 2Gi
+  storageClassName: ""
+  selector:
+    matchLabels:
+      app: proofs
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: jobs
+  labels:
+    app: jobs
+spec:
+  capacity:
+    storage: 2Gi
+  accessModes:
+    - ReadWriteMany
+  nfs:
+    server: "nfs-service.storage.svc.cluster.local"
+    path: "/proofs" # "pvc" folder must exist in "/exports" directory of NFS server
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: jobs
+  namespace: ${KUBE_NAMESPACE}
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 2Gi
+  storageClassName: ""
+  selector:
+    matchLabels:
+      app: jobs

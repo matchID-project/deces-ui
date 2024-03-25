@@ -541,10 +541,20 @@ deploy-k8s-local: deploy-k8s-services deploy-k8s-ingress-local
 
 deploy-k8s-services: deploy-k8s-namespace deploy-k8s-elasticsearch deploy-k8s-redis deploy-k8s-backend deploy-k8s-frontend
 
+deploy-k8s-filesystem:
+	@cd ${KUBE_DIR}/rook;\
+	kubectl create -f crds.yaml -f common.yaml -f operator.yaml;\
+	kubectl create -f cluster.yaml;\
+	kubectl create -f filesystem.yaml;\
+	kubectl create -f storageclass.yaml
+
+deploy-k8s-filesystem-local:
+	@echo $@
+	@cat ${KUBE_DIR}/nfs.yaml | envsubst `env | sed "s/=.*//;s/^/$$/" | tr "\n" ","` | kubectl apply -f -
+
 deploy-k8s-namespace:
-	@echo $@;\
-	cat ${KUBE_DIR}/namespace.yaml | envsubst `env | sed "s/=.*//;s/^/$$/" | tr "\n" ","`;\
-	(cat ${KUBE_DIR}/namespace.yaml | envsubst `env | sed "s/=.*//;s/^/$$/" | tr "\n" ","` | kubectl apply -f -)
+	@echo $@
+	@(cat ${KUBE_DIR}/namespace.yaml | envsubst `env | sed "s/=.*//;s/^/$$/" | tr "\n" ","` | kubectl apply -f -)
 
 deploy-k8s-elasticsearch: ${DATAPREP_VERSION_FILE} ${DATA_VERSION_FILE}
 	@echo $@
