@@ -11,67 +11,180 @@ data:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: ${APP}-es-deployment
+  name: elasticsearch-deployment
   namespace: ${KUBE_NAMESPACE}
 spec:
   selector:
     matchLabels:
-      app: ${APP}-es
+      app: elasticsearch
   template:
     metadata:
       labels:
-        app: ${APP}-es
+        app: elasticsearch
     spec:
       initContainers:
       - name: sysctl
         image: docker.elastic.co/elasticsearch/elasticsearch:${ES_VERSION}
         securityContext:
           privileged: true
-        command: ['sh', '-c', 'sysctl -w vm.max_map_count=262144']
-      - name: install-plugins
-        image: docker.elastic.co/elasticsearch/elasticsearch:${ES_VERSION}
+          runAsUser: 0
         command:
-        - sh
-        - -c
-        - |
-          bin/elasticsearch-plugin install --batch repository-s3
-      - name: add-aws-keys
+          - sh
+          - -c
+          - |
+            sysctl -w vm.max_map_count=262144;
+            sysctl -w fs.file-max=65536;
+            echo Set vm.max_map_count and fs.file-max with success
+      # - name: add-aws-keys
+      #   image: docker.elastic.co/elasticsearch/elasticsearch:${ES_VERSION}
+      #   env:
+      #     - name: AWS_ACCESS_KEY_ID
+      #       valueFrom:
+      #         secretKeyRef:
+      #           name: s3-data-keys
+      #           key: AWS_ACCESS_KEY_ID
+      #     - name: AWS_SECRET_ACCESS_KEY
+      #       valueFrom:
+      #         secretKeyRef:
+      #           name: s3-data-keys
+      #           key: AWS_SECRET_ACCESS_KEY
+      #   command:
+      #   - sh
+      #   - -c
+      #   - |
+      #     echo Adding $AWS_ACCESS_KEY_ID;
+      #     echo $AWS_ACCESS_KEY_ID | bin/elasticsearch-keystore add --stdin --force s3.client.default.access_key;
+      #     echo $AWS_SECRET_ACCESS_KEY | bin/elasticsearch-keystore add --stdin --force s3.client.default.secret_key;
+      #     echo Added AWS keys with success
+      - name: restore-snapshot
         image: docker.elastic.co/elasticsearch/elasticsearch:${ES_VERSION}
+        volumeMounts:
+          - name: elasticsearch-data
+            mountPath: /usr/share/elasticsearch/data
         env:
-        - name: AWS_ACCESS_KEY_ID
-          valueFrom:
-            secretKeyRef:
-              name: s3-data-keys
-              key: AWS_ACCESS_KEY_ID
-        - name: AWS_SECRET_ACCESS_KEY
-          valueFrom:
-            secretKeyRef:
-              name: s3-data-keys
-              key: AWS_SECRET_ACCESS_KEY
+          - name: AWS_ACCESS_KEY_ID
+            valueFrom:
+              secretKeyRef:
+                name: s3-data-keys
+                key: AWS_ACCESS_KEY_ID
+          - name: AWS_SECRET_ACCESS_KEY
+            valueFrom:
+              secretKeyRef:
+                name: s3-data-keys
+                key: AWS_SECRET_ACCESS_KEY
+          - name: xpack.security.enabled
+            value: "false"
+          - name: ES_JAVA_OPTS
+            value: -Xms${ES_MEM} -Xmx${ES_MEM}
+          - name: discovery.type
+            value: single-node
+          - name: http_proxy
+            value: ${http_proxy}
+          - name: https_proxy
+            value: ${https_proxy}
+          - name: no_proxy
+            value: ${no_proxy}
+          - name: LOG4J2_FORMAT_MSG_NO_LOOKUPS
+            value: "true"
+          - name: bootstrap.memory_lock
+            value: "true"
+          - name: REPOSITORY_BUCKET
+            value: ${REPOSITORY_BUCKET}
+          - name: SCW_REGION
+            value: ${SCW_REGION}
+          - name: SCW_ENDPOINT
+            value: ${SCW_ENDPOINT}
+          - name: APP_GROUP
+            value: ${APP_GROUP}
+          - name: ES_BACKUP_NAME
+            value: ${ES_BACKUP_NAME}
+          - name: ES_INDEX
+            value: ${ES_INDEX}
+          - name: ES_TIMEOUT
+            value: "${ES_TIMEOUT}"
+          - name: ES_RESTORE_TIMEOUT
+            value: "${ES_RESTORE_TIMEOUT}"
         command:
-        - sh
-        - -c
-        - |
-          echo $AWS_ACCESS_KEY_ID | bin/elasticsearch-keystore add --stdin --force s3.client.default.access_key
-          echo $AWS_SECRET_ACCESS_KEY | bin/elasticsearch-keystore add --stdin --force s3.client.default.secret_key
+          - sh
+          - -c
+          - |
+            echo $AWS_ACCESS_KEY_ID | bin/elasticsearch-keystore add --stdin --force s3.client.default.access_key;
+            echo $AWS_SECRET_ACCESS_KEY | bin/elasticsearch-keystore add --stdin --force s3.client.default.secret_key;
+            PID=$(/usr/local/bin/docker-entrypoint.sh > /dev/null & echo $!);
+            timeout=${ES_TIMEOUT};
+            ret=1 ;
+            until [ "$timeout" -le 0 -o "$ret" -eq "0"  ] ;
+              do (curl -s --fail --connect-timeout 1 --max-time 1 -XGET localhost:9200/ > /dev/null) ;
+              ret=$? ;
+              if [ "$ret" -ne "0" ] ;
+                then echo "Waiting for elasticsearch to start $timeout" ;
+              fi ;
+              ((timeout--));
+              sleep 1 ;
+            done ;
+            if [ "$ret" -ne "0" ] ;
+              then echo "Failed to start elasticsearch" && exit 1 ;
+            fi ;
+            echo "Adding repository ${APP_GROUP} from S3 bucket ${REPOSITORY_BUCKET}";
+            curl -s -XPUT "localhost:9200/_snapshot/${APP_GROUP}" -H 'Content-Type: application/json' -d '{"type": "s3","settings": {"bucket": "${REPOSITORY_BUCKET}","client": "default","region": "${SCW_REGION}","endpoint": "${SCW_ENDPOINT}","path_style_access": true,"protocol": "https"}}' > /tmp/repo.json ;
+            cat /tmp/repo.json;
+            cat /tmp/repo.json | grep -q '"acknowledged":true' || (echo "\nFailed" && exit 1);
+            echo -e "\nList of available snapshots in S3 bucket ${REPOSITORY_BUCKET}";
+            curl -s -XGET localhost:9200/_snapshot/${APP_GROUP}/_all ;
+            echo -e "\nRestoring snapshot ${ES_BACKUP_NAME} from S3 bucket";
+            curl -s -XPOST localhost:9200/_snapshot/${APP_GROUP}/${ES_BACKUP_NAME}/_restore -H 'Content-Type: application/json' -d '{"indices": "${ES_INDEX}","ignore_unavailable": true,"include_global_state": false}' > /tmp/snapshot.json ;
+            cat /tmp/snapshot.json;
+            cat /tmp/snapshot.json | grep -q '"accepted":true' || (echo -e "\nFailed" && exit 1);
+            echo;
+            timeout=${ES_RESTORE_TIMEOUT} ;
+            ret=1 ; until [ "$timeout" -le 0 -o "$ret" -eq "0"  ] ;
+              do (curl -s --fail -XGET localhost:9200/_cat/indices | grep ${ES_INDEX} | grep -q green > /dev/null) ;
+              ret=$? ;
+              if [ "$$ret" -ne "0" ] ; then
+                INDEX_SIZE=$(du -sh /usr/share/elasticsearch/data | awk '{print $1}');
+                echo "Waiting for elasticsearch index ${ES_INDEX} (${INDEX_SIZE}) to be green $timeout" ;
+              fi ;
+              ((timeout--));
+              sleep 1 ;
+            done ;
+            if [ "$ret" -ne "0" ] ;
+              then echo "Failed to restore snapshot" && exit 1 ;
+            fi ;
+            echo "Restored snapshot with success";
+            echo "Terminating elasticsearch process PID ${PID}";
+            kill ${PID};
+            rm -f /usr/share/elasticsearch/data/**/node.lock;
       containers:
-      - name: elasticsearch
-        image: docker.elastic.co/elasticsearch/elasticsearch:${ES_VERSION}
-        ports:
-        - containerPort: ${ES_PORT}
-        env:
-        - name: ES_JAVA_OPTS
-          value: -Xms${ES_MEM} -Xmx${ES_MEM}
-        - name: discovery.type
-          value: single-node
-        resources:
-          requests:
-            memory: ${ES_MEM_KUBE}
+        - name: elasticsearch
+          image: docker.elastic.co/elasticsearch/elasticsearch:${ES_VERSION}
+          ports:
+          - containerPort: ${ES_PORT}
+          env:
+            - name: ES_JAVA_OPTS
+              value: -Xms${ES_MEM} -Xmx${ES_MEM}
+            - name: discovery.type
+              value: single-node
+            - name: xpack.security.enabled
+              value: "false"
+            - name: LOG4J2_FORMAT_MSG_NO_LOOKUPS
+              value: "true"
+            - name: bootstrap.memory_lock
+              value: "true"
+          resources:
+            requests:
+              memory: ${ES_MEM_KUBE}
+          volumeMounts:
+          - name: elasticsearch-data
+            mountPath: /usr/share/elasticsearch/data
+      volumes:
+        - name: elasticsearch-data
+          persistentVolumeClaim:
+            claimName: elasticsearch-data
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: ${APP}-es-svc
+  name: elasticsearch
   namespace: ${KUBE_NAMESPACE}
 spec:
   ports:
@@ -80,4 +193,19 @@ spec:
     protocol: TCP
     name: http
   selector:
-    app: ${APP}-es
+    app: elasticsearch
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: elasticsearch-data
+  namespace: ${KUBE_NAMESPACE}
+  labels:
+    app: elasticsearch
+spec:
+  storageClassName: local-path
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 30Gi

@@ -1,0 +1,78 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nfs-server
+  namespace: ${KUBE_NAMESPACE}
+spec:
+  selector:
+    matchLabels:
+      app: nfs-server
+  template:
+    metadata:
+      labels:
+        app: nfs-server
+    spec:
+      containers:
+      - name: nfs-server
+        image: ghcr.io/openebs/nfs-server-alpine:ci
+        env:
+        - name: SHARED_DIRECTORY
+          value: /nfsshare
+        - name: FILEPERMISSIONS_UID
+          value: "0"
+        - name: FILEPERMISSIONS_GID
+          value: "0"
+        - name: FILEPERMISSIONS_MODE
+          value: "0755"
+        ports:
+        - name: nfs
+          containerPort: 2049
+        - name: mountd
+          containerPort: 20048
+        - name: rpcbind
+          containerPort: 111
+        securityContext:
+          capabilities:
+            add: ["SYS_ADMIN", "SETPCAP"]
+        lifecycle:
+          postStart:
+            exec:
+              command: ["/bin/sh", "-c", "mkdir /nfsshare/jobs /nfsshare/proofs"]
+        volumeMounts:
+        - name: nfs-storage
+          mountPath: /nfsshare
+      volumes:
+        - name: nfs-storage
+          persistentVolumeClaim:
+            claimName: nfs-storage
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nfs-service
+  namespace: ${KUBE_NAMESPACE}
+spec:
+  ports:
+  - name: nfs
+    port: 2049
+  - name: mountd
+    port: 20048
+  - name: rpcbind
+    port: 111
+  selector:
+    app: nfs-server
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: nfs-storage
+  namespace: ${KUBE_NAMESPACE}
+  labels:
+    app: nfs-server
+spec:
+  storageClassName: local-path
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
