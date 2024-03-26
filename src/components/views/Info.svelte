@@ -7,6 +7,8 @@
           <input bind:value={search} class="rf-input" placeholder="Rechercher dans les questions" type="search" id="search-input-input" name="search-input-input">
         </div>
       </div>
+
+truc qui marche pas
       <div class="rf-col-xl-4 rf-col-lg-4 rf-col-md-3 rf-col-sm-12 rf-col-xs-12"></div>
     {/if}
     {#each filteredPages as page, index}
