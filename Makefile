@@ -161,7 +161,7 @@ export SCW_VOLUME_SIZE=20000000000
 export SCW_VOLUME_TYPE=l_ssd
 
 #prebuild image with docker and nginx-node-elasticsearch docker images
-export SCW_IMAGE_ID=7a1d4022-766c-42b0-866e-d9c3cbd9d3b4
+export SCW_IMAGE_ID=d48f33cd-127d-4315-be8e-083978c9be63
 
 -include ${APP_PATH}/${GIT_TOOLS}/artifacts.SCW
 dummy		    := $(shell touch artifacts)
