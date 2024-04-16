@@ -101,7 +101,7 @@ jobs:
               GIT_BRANCH=$GIT_BRANCH \
               FILES_TO_PROCESS=$FILES_TO_PROCESS_DEV REPOSITORY_BUCKET=$REPOSITORY_BUCKET_DEV \
               NGINX_USER=$NGINX_USER NGINX_HOST=$NGINX_HOST \
-              SMTP_TLS_SELFSIGNED=$SMTP_TLS_SELFSIGNED SMTP_HOST=$SMTP_HOST SMTP_PORT=$SMTP_PORT \
+              SMTP_TLS_SELFSIGNED=$SMTP_TLS_SELFSIGNED SMTP_HOST=$SMTP_HOST SMTP_PORT=$SMTP_PORT SMTP_USER=$SMTP_USER SMTP_PWD=$SMTP_PWD\
               remote_http_proxy=$remote_http_proxy remote_https_proxy=$remote_https_proxy remote_no_proxy=$remote_no_proxy \
               GOOGLE_ANALYTICS_ID=$GOOGLE_ANALYTICS_ID GOOGLE_ADSENSE_ID=$GOOGLE_ADSENSE_ID \
               LOG_BAN_IP=$LOG_BAN_IP \
@@ -162,6 +162,8 @@ jobs:
           SMTP_TLS_SELFSIGNED: ${{ secrets.SMTP_TLS_SELFSIGNED }}
           SMTP_HOST: ${{ secrets.SMTP_HOST }}
           SMTP_PORT: ${{ secrets.SMTP_PORT }}
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PWD: ${{ secrets.SMTP_PWD }}
           LOG_BAN_IP: ${{ secrets.LOG_BAN_IP }}
           MMDB_TOKEN: ${{ secrets.MMDB_TOKEN }}
           CDN_ZONE_ID: ${{ secrets.CDN_ZONE_ID }}
