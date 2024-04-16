@@ -17,14 +17,16 @@ spec:
       - name: ${DC_PREFIX}
         image: ${DOCKER_USERNAME}/${DC_PREFIX}:${APP_VERSION}
         ports:
-        - containerPort: 80
+        - containerPort: ${PORT}
         env:
+          - name: PORT
+            value: "${PORT}"
           - name: APP
             value: "${APP}"
           - name: ES_PROXY_PATH
             value: "${ES_PROXY_PATH}"
           - name: ES_HOST
-            value: "${APP}-es-svc"
+            value: "elasticsearch"
           - name: ES_INDEX
             value: "${ES_INDEX}"
           - name: ES_PORT
@@ -94,7 +96,7 @@ metadata:
 spec:
   ports:
   - port: 80
-    targetPort: 80
+    targetPort: ${PORT}
     protocol: TCP
     name: ui
   selector:
