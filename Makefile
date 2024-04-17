@@ -448,12 +448,11 @@ elasticsearch-restore-async: elasticsearch-repository-config ${DATAPREP_VERSION_
 	DATA_VERSION=$$(cat ${DATA_VERSION_FILE});\
 	ES_BACKUP_NAME=${ES_BACKUP_BASENAME}_$${DATAPREP_VERSION}_$${DATA_VERSION};\
 	echo restoring snapshot $${ES_BACKUP_NAME} from elasticsearch repository;\
-	(\
+	STATUS=$$(\
 		docker exec -i ${USE_TTY} ${DC_PREFIX}-elasticsearch \
-			curl -s -XPOST localhost:9200/_snapshot/${APP_GROUP}/$${ES_BACKUP_NAME}/_restore -H 'Content-Type: application/json'\
+			curl -s --fail -w '%{http_code}' -XPOST localhost:9200/_snapshot/${APP_GROUP}/$${ES_BACKUP_NAME}/_restore -H 'Content-Type: application/json'\
 			-d '{"indices": "${ES_INDEX}","ignore_unavailable": true,"include_global_state": false}' \
-		> /dev/null 2>&1\
-	) && echo "snapshot $${ES_BACKUP_NAME} restore initiated from elasticsearch repository" && touch elasticsearch-repository-restore
+	) && (echo "snapshot $${ES_BACKUP_NAME} restore initiated from elasticsearch repository" && touch elasticsearch-repository-restore) || (echo "snapshot $${ES_BACKUP_NAME} restore from elasticsearch repository failed with error $$STATUS" && echo  && exit 1)
 
 
 
