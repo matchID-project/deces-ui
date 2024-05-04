@@ -23,7 +23,7 @@
                                 alt={ result.sex }
                                 src={ result.sex === 'M' ? '/male.svg' : '/female.svg' }
                             />
-                            {#if result.correction || ($alphaFeatures && result.modifications && modificationsValidated && !editListMode)}
+                            {#if (result.correction && result.correction.change !== "wikilink") || ($alphaFeatures && result.modifications && modificationsValidated && !editListMode)}
                                 <div
                                     style="position:absolute;top:{expand ? '14' : '6'}px;left:{expand ? '14' : '6'}px"
                                     title="erreur de donnée signalée"
@@ -81,7 +81,7 @@
                 {#if expand}
                     <div class="rf-col-12" transition:slide|local>
                         <div class="rf-callout rf-background--white">
-                            {#if result.correction}
+                            {#if result.correction && result.correction.change !== "wikilink"}
                                 <span style="display: flex" class="rf-color--rm">
                                     <Icon icon='ri:alert-line' class="rf-color--rm rf-fi--md rf-margin-right-1N" title="erreur de donnée signalée"/>
                                     {#if result.correction.change === "remove"}
@@ -1137,6 +1137,9 @@
     };
 
     $: if (result.links) {
+        if (result.correction && result.correction.change === "wikilink") {
+            result.links = [];
+        }
         wikilinks = Object.keys(result.links).filter(x => ['wikipedia','wikidata'].includes(x))
     };
 
