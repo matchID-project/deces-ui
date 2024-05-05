@@ -144,4 +144,12 @@ export const dataCorrections = {
     "proofs":["none"],
     "anonymize": true
   },
+  "W9I0OrzJrcwd": {
+    "permalink": "/id/W9I0OrzJrcwd",
+    "change": "wikilink",
+    "reason": "wikidata legal problem",
+    "request": "child",
+    "proofs":["none"],
+    "anonymize": false
+  },
 };
