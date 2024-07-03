@@ -147,9 +147,17 @@ export const dataCorrections = {
   "W9I0OrzJrcwd": {
     "permalink": "/id/W9I0OrzJrcwd",
     "change": "wikilink",
+    "reason": "cnil-art-85",
+    "request": "grand child",
+    "proofs":["none"],
+    "anonymize": false
+  },
+  "0ZgjZJBLQoMk": {
+    "permalink": "/id/0ZgjZJBLQoMk",
+    "change": "remove",
     "reason": "wikidata legal problem",
     "request": "child",
     "proofs":["none"],
-    "anonymize": false
+    "anonymize": true
   },
 };
