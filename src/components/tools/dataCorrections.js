@@ -147,17 +147,25 @@ export const dataCorrections = {
   "W9I0OrzJrcwd": {
     "permalink": "/id/W9I0OrzJrcwd",
     "change": "wikilink",
-    "reason": "cnil-art-85",
-    "request": "grand child",
+    "reason": "wikidata legal problem",
+    "request": "other",
     "proofs":["none"],
     "anonymize": false
   },
   "0ZgjZJBLQoMk": {
     "permalink": "/id/0ZgjZJBLQoMk",
     "change": "remove",
-    "reason": "wikidata legal problem",
-    "request": "child",
+    "reason": "cnil-art-85",
+    "request": "grand child",
     "proofs":["none"],
+    "anonymize": true
+  },
+  "GVFnOQa2r3iL": {
+    "permalink": "/id/GVFnOQa2r3iL",
+    "change": "remove",
+    "reason": "cnil-art-85",
+    "request": "parent+legal",
+    "proofs":["birth act"],
     "anonymize": true
   },
 };
