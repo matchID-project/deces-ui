@@ -168,4 +168,12 @@ export const dataCorrections = {
     "proofs":["birth act"],
     "anonymize": true
   },
+  "7dSQjhBYl7Hp": {
+    "permalink": "/id/7dSQjhBYl7Hp",
+    "change": "remove",
+    "reason": "cnil-art-85",
+    "request": "husband",
+    "proofs":["none"],
+    "anonymize": true
+  },    
 };
