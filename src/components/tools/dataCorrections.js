@@ -175,5 +175,13 @@ export const dataCorrections = {
     "request": "husband",
     "proofs":["none"],
     "anonymize": true
-  },    
+  },
+  "nR97B7tBlHCQ": {
+    "permalink": "/id/nR97B7tBlHCQ",
+    "change": "remove",
+    "reason": "cnil-art-85",
+    "request": "child",
+    "proofs":["none"],
+    "anonymize": true
+  },
 };
