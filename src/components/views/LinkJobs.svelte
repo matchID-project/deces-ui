@@ -1,4 +1,4 @@
-{#if $admin && ready}
+{#if ready}
     <div class="rf-container rf-padding-top-2N">
         <div class="rf-grid-row">
             <div class="rf-col-xl-2 rf-col-lg-2 rf-col-md-12 rf-col-sm-12 rf-col-xs-12">
@@ -31,7 +31,7 @@
                                     Math.floor(
                                         jobs.filter(j => j.status === 'completed').map(j =>j.rows).reduce((a,b) => a+b)
                                         /
-                                        jobs.filter(j => j.status === 'completed').map(j =>j.delay).reduce((a,b) => a+b)
+                                        jobs.filter(j => j.status === 'completed').map(j =>j.processing_time).reduce((a,b) => a+b)
                                     )
                                 }
                                 label="Lignes / Seconde"/>
@@ -117,7 +117,7 @@
     import axios from 'axios';
     import Icon from './Icon.svelte';
 
-    import { admin, accessToken } from '../tools/stores.js';
+    import { accessToken } from '../tools/stores.js';
     let jobs = [];
     let ready = false;
     let headers;
@@ -152,6 +152,12 @@
 
 
     const getJobsData = async () => {
+        headers = {
+          headers: {
+            Authorization: `Bearer ${$accessToken}`
+          }
+        };
+
         let response = await fetch('__BACKEND_PROXY_PATH__/queue/jobs', headers);
         const tmpJobs = [];
         const list = (await response.json()).jobs || [];
@@ -191,9 +197,7 @@
       }
     }
 
-    $: if ($admin) {
-        getJobsData();
-    }
+    $: getJobsData()
 
 </script>
 

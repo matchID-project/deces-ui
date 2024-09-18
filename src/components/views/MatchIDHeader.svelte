@@ -220,8 +220,6 @@
                                                 API Key
                                             </a>
                                         </li>
-                                    {/if}
-                                    {#if $admin}
                                         <li
                                             class="rf-menu__item rf-href"
                                             class:rf-menu__item--active={!modal && ($route.path === '/jobs')}
@@ -235,6 +233,8 @@
                                                 Appariements
                                             </a>
                                         </li>
+                                    {/if}
+                                    {#if $admin}
                                         <li
                                             class="rf-menu__item rf-href"
                                             class:rf-menu__item--active={!modal && ($route.path === '/stats')}
