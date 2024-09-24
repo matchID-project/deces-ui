@@ -54,7 +54,7 @@
                             <thead>
                                 <tr>
                                     <th>creation date</th>
-                                    <th>creation date</th>
+                                    <th>deletion date</th>
                                     <th>id</th>
                                     <th>statut</th>
                                     <th>lignes</th>
@@ -66,6 +66,7 @@
                                 {#each jobs as job, idx}
                                     <tr>
                                         <td>{job.date}</td>
+                                        <td>{job.deletionTime}</td>
                                         <td>{job.user || job.id.substring(0,10) + '...'}</td>
                                         <td>
                                             <div style="display: flex;align-items:center">
@@ -154,6 +155,9 @@
         'lastSeenAliveDate'
     ];
 
+    const dateTostr = (_date) => {
+       return `${_date.getFullYear()}-${_date.getMonth() + 1}-${_date.getDate()} ${(_date.getHours() < 10 ? '0' : '') + _date.getHours()}:${ (_date.getMinutes() < 10 ? '0' : '') + _date.getMinutes()}`;
+    }
 
     const getJobsData = async () => {
         let response = await fetch('__BACKEND_PROXY_PATH__/queue/jobs', headers);
@@ -177,10 +181,11 @@
                 processing_time: delay,
                 columns: validColumns.filter(c => j.data && j.data[c]),
                 processing_rate: j.processedOn && Math.floor((progress / 100) * (j.data.totalRows / delay)),
+                deletionTime: dateTostr(new Date(j.processedOn + (j.data.tmpfilePersistence))),
                 progress: progress
             })});
         jobs = tmpJobs.sort((a,b) => (b.date - a.date)).map(j => {
-            j.date=`${new Date(j.date).getFullYear()}-${new Date(j.date).getMonth() + 1}-${new Date(j.date).getDate()} ${new Date(j.date).getHours()}:${new Date(j.date).getMinutes()}`;
+            j.date= dateTostr(new Date(j.date));
             return j;
         });
         ready = true;
