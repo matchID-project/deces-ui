@@ -53,7 +53,8 @@
                         <table class="rf-table rf-table--narrow rf-table--striped">
                             <thead>
                                 <tr>
-                                    <th>date</th>
+                                    <th>creation date</th>
+                                    <th>creation date</th>
                                     <th>id</th>
                                     <th>statut</th>
                                     <th>lignes</th>
@@ -122,11 +123,14 @@
     let ready = false;
     let headers;
 
-    $: headers = {
+    $: {
+      headers = {
         headers: {
             Authorization: `Bearer ${$accessToken}`
         }
-    };
+      }
+      getJobsData()
+    }
 
     const statusLabel = {
         completed: 'succès',
@@ -152,12 +156,6 @@
 
 
     const getJobsData = async () => {
-        headers = {
-          headers: {
-            Authorization: `Bearer ${$accessToken}`
-          }
-        };
-
         let response = await fetch('__BACKEND_PROXY_PATH__/queue/jobs', headers);
         const tmpJobs = [];
         const list = (await response.json()).jobs || [];
@@ -182,7 +180,7 @@
                 progress: progress
             })});
         jobs = tmpJobs.sort((a,b) => (b.date - a.date)).map(j => {
-            j.date=new Date(j.date).toISOString();
+            j.date=`${new Date(j.date).getFullYear()}-${new Date(j.date).getMonth() + 1}-${new Date(j.date).getDate()} ${new Date(j.date).getHours()}:${new Date(j.date).getMinutes()}`;
             return j;
         });
         ready = true;
@@ -197,7 +195,6 @@
       }
     }
 
-    $: getJobsData()
 
 </script>
 
