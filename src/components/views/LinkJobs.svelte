@@ -156,7 +156,8 @@
     ];
 
     const dateTostr = (_date) => {
-       return `${_date.getFullYear()}-${_date.getMonth() + 1}-${_date.getDate()} ${(_date.getHours() < 10 ? '0' : '') + _date.getHours()}:${ (_date.getMinutes() < 10 ? '0' : '') + _date.getMinutes()}`;
+        const pad = (num) => num.toString().padStart(2, '0');
+        return `${_date.getFullYear()}-${pad(_date.getMonth() + 1)}-${pad(_date.getDate())} ${pad(_date.getHours())}:${pad(_date.getMinutes())}`;
     }
 
     const getJobsData = async () => {
