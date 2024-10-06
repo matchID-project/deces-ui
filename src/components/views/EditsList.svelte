@@ -112,7 +112,7 @@
 
 <script>
     import { onMount } from 'svelte';
-    import * as animateScroll from 'svelte-scrollto';
+    import { scrollTo } from 'svelte-scrolling'
     import ResultCard from './ResultCard.svelte';
     import Icon from './Icon.svelte';
     import StatsTile from './StatsTile.svelte';
@@ -152,7 +152,7 @@
             location.hash = id;
             $route.hash = location.hash;
             setTimeout(() => {
-                animateScroll.scrollTo({element: `#${id}`, delay: 400});
+                scrollTo({ref: `#${id}`, duration: 400});
             }, 400);
         };
     };

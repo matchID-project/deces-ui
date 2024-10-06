@@ -96,6 +96,7 @@
                 quote: {size:3,label: "Délimiteur", options:[['aucun', undefined],['guillemets doubles (")','"'],["guillemets simples (')","'"]]},
                 skipLines: {label: "Lignes sautées:", options: [['aucune',0],[1,1],[2,2],[3,3],[4,4],[5,5]]},
                 dateFormat: {size: 3,label: "Format des dates", options:[['dd/MM/yyyy','dd/MM/yyyy'],['yyyy-MM-dd','yyyy-MM-dd'],['yyyyMMdd','yyyyMMdd'],['ddMMyyyy','ddMMyyyy'],['dd-MM-yyyy','dd-MM-yyyy'],['yyyy/MM/dd']]},
+                tmpfilePersistence: {size: 2,label: "Temps de persistence du fichier", options:[['1 minute','60000'],['1 heure','3600000'],['4 heures','14400000'],['8 heures','28800000']]},
             }
         },
         api: {
