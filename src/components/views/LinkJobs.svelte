@@ -53,8 +53,9 @@
                         <table class="rf-table rf-table--narrow rf-table--striped">
                             <thead>
                                 <tr>
-                                    <th>creation date</th>
-                                    <th>deletion date</th>
+                                    <th>création</th>
+                                    <th>fin</th>
+                                    <th>suppression</th>
                                     <th>id</th>
                                     <th>statut</th>
                                     <th>lignes</th>
@@ -66,8 +67,9 @@
                                 {#each jobs as job, idx}
                                     <tr>
                                         <td>{job.date}</td>
+                                        <td>{job.finishedOnTime}</td>
                                         <td>{job.deletionTime}</td>
-                                        <td>{job.user || job.id.substring(0,10) + '...'}</td>
+                                        <td>{$admin ? job.user : job.id.substring(0,10) + '...'}</td>
                                         <td>
                                             <div style="display: flex;align-items:center">
                                                 {#if job.status == 'active'}
@@ -118,8 +120,7 @@
     import StatsTile from './StatsTile.svelte';
     import axios from 'axios';
     import Icon from './Icon.svelte';
-
-    import { accessToken } from '../tools/stores.js';
+    import { admin, accessToken } from '../tools/stores.js';
     let jobs = [];
     let ready = false;
     let headers;
@@ -182,7 +183,8 @@
                 processing_time: delay,
                 columns: validColumns.filter(c => j.data && j.data[c]),
                 processing_rate: j.processedOn && Math.floor((progress / 100) * (j.data.totalRows / delay)),
-                deletionTime: dateTostr(new Date(j.processedOn + (j.data.tmpfilePersistence))),
+                finishedOnTime: j.finishedOn ? dateTostr(new Date(j.finishedOn)) : 'job en cours',
+                deletionTime: j.finishedOn ? dateTostr(new Date(j.finishedOn + (j.data.tmpfilePersistence || 3600000))) : 'job en cours',
                 progress: progress
             })});
         jobs = tmpJobs.sort((a,b) => (b.date - a.date)).map(j => {
