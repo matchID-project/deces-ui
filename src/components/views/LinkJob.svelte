@@ -58,9 +58,10 @@
     export let error=false;
 
     import { accessToken, linkWaiter, linkMapping, linkFile, linkFileSize, linkJob, linkStep,
-        linkCompleteResults, linkResults, linkOptions,
+        linkCompleteResults, linkResults, linkOptions, linkFileName, linkSourceHeader,
         linkValidations, themeDnum
     } from '../tools/stores.js';
+    import { validColumns, getJobData } from '../tools/jobs.js';
     let progressUpload = 0;
     let progressJob = 0;
     let progressQueue = 0;
@@ -141,13 +142,16 @@
 
     $: axiosUploadConfig.headers = { Authorization: `Bearer ${$accessToken}` }
 
+    const headers = {};
+
     const axiosDownloadConfig = {
         onDownloadProgress: (progressEvent) => {
-            progressDownload = progressEvent.currentTarget.response.length * 100 / ($linkFileSize * upDownRatio);
-        }
+            progressDownload = progressEvent && progressEvent.currentTarget && progressEvent.currentTarget.response && progressEvent.currentTarget.response.length ? progressEvent.currentTarget.response.length * 100 / (($linkFileSize || 1000) * upDownRatio) : 0;
+        },
+        headers: headers
     };
 
-    $: axiosDownloadConfig.headers = { Authorization: `Bearer ${$accessToken}` }
+    $: headers.Authorization = `Bearer ${$accessToken}`;
 
     const upload = async () =>  {
         progressUpload = 0;
@@ -182,37 +186,65 @@
     }
 
     const watchJob = async () =>  {
-        let res
-        if ($linkJob && !error) {
+        let res;
+        if ($linkJob && $linkJob !== 'failed' && !error) {
+            let res;
             try {
                 res = await axios.get(`__BACKEND_PROXY_PATH__/search/csv/${$linkJob}`, axiosDownloadConfig);
-                if (typeof(res.data) !== 'string') {
-                    if ((res.data.status === 'failed') || (res.data.msg === "job doesn't exists")) {
-                        error = `${res.data && res.data.msg || 'erreur inconnue'}`;
-                    } else {
-                        if (res.data.status === 'active') {
-                            waiting = null;
-                            if (res.data.progress && res.data.progress.percentage) {
-                                progressJob = res.data.progress.percentage;
-                            } else {
-                                progressJob = 0;
-                            }
-                        } else {
-                            waiting = true;
-                            queueSize = res.data.remainingRowsWaiting + res.data.remainingRowsActive;
-                        }
-                    }
-                } else {
-                    progressJob = 100;
-                    parseLinkResults(res.data);
-                }
             } catch(err) {;
                 error = formatError(err);
+            }
+            if (res &&typeof(res.data) !== 'string') {
+                if ((res.data.status === 'failed') || (res.data.msg === "job doesn't exists")) {
+                    error = `${res.data && res.data.msg || 'erreur inconnue'}`;
+                } else {
+                    if (res.data.status === 'active') {
+                        waiting = null;
+                        if (res.data.progress && res.data.progress.percentage) {
+                            progressJob = res.data.progress.percentage;
+                        } else {
+                            progressJob = 0;
+                        }
+                    } else if (res.data.msg === 'Job succeeded but results expired') {
+                        error = 'Les résultats ont expiré, merci de relancer le traitement';
+                    } else {
+                        waiting = true;
+                        queueSize = res.data.remainingRowsWaiting + res.data.remainingRowsActive;
+                    }
+                }
+            } else if (res) {
+                progressJob = 100;
+                if (!$linkMapping || !$linkFileName || !$linkOptions.csv || !$linkSourceHeader) {
+                    const job = await getJobData($accessToken,$linkJob); //.filter(j => j.id === $linkJob)[0];
+                    console.log('Restore job metadata from server');
+                    $linkFileName = `${job.id}.csv`;
+                    $linkOptions.csv = {};
+                    $linkOptions.csv.sep = job.data && job.data.sep ;
+                    $linkOptions.csv.encoding = job.data.encoding;
+                    $linkOptions.csv.skipLines = Number(job.data.skipLines || "0");
+                    $linkOptions.csv.candidateNumber = Number(job.data.candidateNumber || "10");
+                    $linkOptions.csv.pruneScore = job.data.pruneScore;
+                    $linkOptions.csv.dateFormat = job.data.dateFormat;
+                    $linkOptions.csv.tmpfilePersistence = job.data && job.data.tmpfilePersistence;
+                    $linkOptions.type = "csv";
+                    $linkSourceHeader = validColumns.map(k => job.data && job.data[k]).filter(k => k);
+                    $linkMapping = { direct: {}, reverse: {} };
+                    validColumns.forEach(col => {
+                        if (job.data && job.data[col]) {
+                            $linkMapping.reverse[col] = job.data[col];
+                            $linkMapping.direct[job.data[col]] = col;
+                        }
+                    });
+                }
+                parseLinkResults(res.data);
             }
         }
     };
 
-    $: if (error) {$linkJob = 'failed'}
+    $: if (error) {
+        console.log('Error in job', error);
+        $linkJob = 'failed'
+    }
 
     $: if (progressDownload >= 100) { $linkWaiter = 'Préparation de la visualisation des résultats'; }
 
