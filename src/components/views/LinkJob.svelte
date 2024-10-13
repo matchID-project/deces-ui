@@ -253,30 +253,30 @@
     }
 
     const formatError = (err) => {
-        let error;
+        let errorMessage;
         if (err.response) {
-            error = `Erreur ${err.response.status}`;
+            errorMessage = `Erreur ${err.response.status}`;
             if (err.response.data && err.response.data.msg) {
                 if (/column header mismatch/.test(err.response.data.msg)) {
-                    error += `<br>le nombre de colonnes n'est pas conforme à l'entête CSV`;
+                    errorMessage += `<br>le nombre de colonnes n'est pas conforme à l'entête CSV`;
                 } else {
-                    error = error + '<br>' + JSON.stringify(err.response.data.msg);
+                    errorMessage = errorerrorMessage + '<br>' + JSON.stringify(err.response.data.msg);
                 }
             } else {
                 if (err.response.status === 400) {
-                    error += `<br>problème dans le format des données, merci de nous contacter à ${mailTo}`
+                    errorMessage += `<br>problème dans le format des données, merci de nous contacter à ${mailTo}`
                 } else if (err.response.status === 502) {
-                    error += `<br>le serveur est indisponible, veuiller réessayer ultérieurement ou nous contacter à ${mailTo}`
+                    errorMessage += `<br>le serveur est indisponible, veuiller réessayer ultérieurement ou nous contacter à ${mailTo}`
                 } else if (err.response.status === 500) {
-                    error += `<br>le fichier a provoqué une erreur serveur, merci de nous contacter à ${mailTo}`
+                    errorMessage += `<br>le fichier a provoqué une erreur serveur, merci de nous contacter à ${mailTo}`
                 } else {
-                    error += `<br>erreur inconnue, merci de nous contacter à ${mailTo}`
+                    errorMessage += `<br>erreur inconnue, merci de nous contacter à ${mailTo}`
                 }
             }
         } else {
-            error = `${err}`;
+            errorMessage = `${err}`;
         }
-        return error;
+        return errorMessage;
     }
 
     const parseLinkResults = (data) => {
