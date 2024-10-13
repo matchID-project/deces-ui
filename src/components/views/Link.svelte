@@ -271,7 +271,7 @@
 
     $: steps[3].body = LinkCheck;
 
-    const reset = async () => {
+    const reset = async (full = false) => {
         await clearAll();
         steps[0].label = step0Label;
         steps[0].error = false;
@@ -288,7 +288,13 @@
         $linkOptions.csv = undefined;
         $linkSourceHeader = undefined;
         $linkSourceHeaderTypes = undefined;
-        $linkJob = undefined;
+        if (full) {
+            $linkJob = undefined;
+            // clear job param from url
+            const url = new URL(window.location.href);
+            url.searchParams.delete('job');
+            window.history.replaceState({}, document.title, url);
+        }
         $linkCompleteResults = undefined;
         $linkResults = undefined;
         $linkValidations = undefined;
@@ -308,9 +314,15 @@
         await useLocalSync(linkResults, 'linkResults');
         await useLocalSync(linkJob, 'linkJob');
         $linkWaiter = false;
-        if (!$linkMapping || !$linkFileName || !$linkOptions.csv || !$linkSourceHeader || !$linkJob) {
+        const params = new URLSearchParams(window.location.search);
+        const linkJobParam = params.get('job');
+        if (linkJobParam && linkJobParam !== $linkJob) {
+            await reset();
+            $linkJob = linkJobParam;
+            console.log('Set linkJob from url', $linkJob);
+        } else if (!$linkMapping || !$linkFileName || !$linkOptions.csv || !$linkSourceHeader || !$linkJob) {
             console.log('reset');
-            reset();
+            await reset(true);
         }
     })
 
