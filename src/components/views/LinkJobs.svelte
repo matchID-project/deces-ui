@@ -69,7 +69,15 @@
                                         <td>{job.date}</td>
                                         <td>{job.finishedOnTime}</td>
                                         <td>{job.deletionTime}</td>
-                                        <td>{$admin ? job.user : job.id.substring(0,10) + '...'}</td>
+                                        <td>
+                                            {#if $admin}
+                                                {job.user}
+                                            {:else if job.link}
+                                                <a href={job.link}>{job.id.substring(0,10) + '...'}</a>
+                                            {:else}
+                                                {job.id.substring(0,10) + '...'}
+                                            {/if}
+                                        </td>
                                         <td>
                                             <div style="display: flex;align-items:center">
                                                 {#if job.status == 'active'}
@@ -121,17 +129,15 @@
     import axios from 'axios';
     import Icon from './Icon.svelte';
     import { admin, accessToken } from '../tools/stores.js';
+    import { getJobsFilteredData} from '../tools/jobs.js';
     let jobs = [];
     let ready = false;
-    let headers;
 
-    $: {
-      headers = {
-        headers: {
-            Authorization: `Bearer ${$accessToken}`
-        }
-      }
-      getJobsData()
+    $: if (!ready && $accessToken) {
+      getJobsFilteredData($accessToken).then(j => {
+        jobs = j;
+        ready = true;
+      });
     }
 
     const statusLabel = {
@@ -140,61 +146,6 @@
         cancelled: 'interrompu',
         created: 'en cours'
     }
-
-    const validColumns = [
-        'lastName',
-        'legalName',
-        'sex',
-        'birthDate',
-        'birthCity',
-        'birthDepartment',
-        'birthCountry',
-        'deathDate',
-        'deathCity',
-        'deathDepartment',
-        'deathCountry',
-        'lastSeenAliveDate'
-    ];
-
-    const dateTostr = (_date) => {
-        const pad = (num) => num.toString().padStart(2, '0');
-        return `${_date.getFullYear()}-${pad(_date.getMonth() + 1)}-${pad(_date.getDate())} ${pad(_date.getHours())}:${pad(_date.getMinutes())}`;
-    }
-
-    const getJobsData = async () => {
-        let response = await fetch('__BACKEND_PROXY_PATH__/queue/jobs', headers);
-        const tmpJobs = [];
-        const list = (await response.json()).jobs || [];
-        list.forEach(j => {
-            const delay = (
-                (j.finishedOn ? j.finishedOn : Math.floor(Date.now()))
-                - j.processedOn
-            ) / 1000;
-            const progress = j.status && j.status === "completed" ?
-                "100" : j.progress && j.progress.percentage ?
-                    Math.round(j.progress.percentage) : 0
-            tmpJobs.push({
-                rows: j.data.totalRows,
-                id: j.id,
-                user: j.data && j.data.user,
-                date: j.timestamp,
-                status: j.status,
-                waiting_time: j.processedOn && (j.processedOn - j.timestamp) / 1000,
-                processing_time: delay,
-                columns: validColumns.filter(c => j.data && j.data[c]),
-                processing_rate: j.processedOn && Math.floor((progress / 100) * (j.data.totalRows / delay)),
-                finishedOnTime: j.finishedOn ? dateTostr(new Date(j.finishedOn)) : 'job en cours',
-                deletionTime: j.finishedOn ? dateTostr(new Date(j.finishedOn + (j.data.tmpfilePersistence || 3600000))) : 'job en cours',
-                progress: progress
-            })});
-        jobs = tmpJobs.sort((a,b) => (b.date - a.date)).map(j => {
-            j.date= dateTostr(new Date(j.date));
-            return j;
-        });
-        ready = true;
-    }
-
-
 
     const deleteJob = async (job, idx) => {
       const res = await axios.delete(`__BACKEND_PROXY_PATH__/search/csv/${job.id}`, headers)
