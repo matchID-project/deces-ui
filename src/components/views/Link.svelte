@@ -320,7 +320,7 @@
             await reset();
             $linkJob = linkJobParam;
             console.log('Set linkJob from url', $linkJob);
-        } else if (!$linkMapping || !$linkFileName || !$linkOptions.csv || !$linkSourceHeader || !$linkJob) {
+        } else if ($linkJob === 'failed' || !$linkMapping || !$linkFileName || !$linkOptions.csv || !$linkSourceHeader || !$linkJob) {
             console.log('reset');
             await reset(true);
         }
