@@ -60,7 +60,7 @@
 
 <script>
   import { onMount } from 'svelte';
-  import * as animateScroll from 'svelte-scrollto';
+  import { scrollTo } from 'svelte-scrolling'
   import { slide } from 'svelte/transition';
   import { version, themeDnum, route } from '../tools/stores.js';
   import Icon from './Icon.svelte';
@@ -499,7 +499,7 @@
       $route.hash = location.hash;
       if(navigator.userAgent.toLowerCase().indexOf('firefox') > -1){
         setTimeout(() => {
-          animateScroll.scrollTo({element: `#${id}`, duration: 400});
+          scrollTo({ref: `#${id}`, duration: 400});
         }, 400);
       };
     };

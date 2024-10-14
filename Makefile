@@ -31,7 +31,7 @@ export APP = deces-ui
 export DATASET=fichier-des-personnes-decedees
 export APP_GROUP = matchID
 export APP_PATH := $(shell pwd)
-export APP_DNS=deces.matchid.io
+export APP_DNS?=deces.matchid.io
 export API_EMAIL?=matchid.project@gmail.com
 export FRONTEND := ${APP_PATH}
 export FRONTEND_DEV_HOST = frontend-development
@@ -110,7 +110,7 @@ export BACKEND_APP=${GIT_BACKEND}
 export GIT_BACKEND_BRANCH ?= dev
 export GIT_ROOT = https://github.com/matchid-project
 export GIT_TOOLS = tools
-export API_URL?=${APP_DNS}
+export APP_URL?=https://${APP_DNS}
 export API_SSL?=1
 export APP_NODES=1
 export KUBE_NAMESPACE:=$(shell echo -n ${APP_GROUP}-${APP}-${GIT_BRANCH} | tr '[:upper:]' '[:lower:]' | tr '_/' '-')
@@ -279,7 +279,7 @@ backend-config:
 backend-dev: backend-config
 	@echo docker-compose up backend dev
 	@${MAKE} -C ${APP_PATH}/${GIT_BACKEND} dev DC_NETWORK=${DC_NETWORK} GIT_BRANCH=${GIT_BACKEND_BRANCH}\
-		API_URL=${API_URL} API_EMAIL=${API_EMAIL} API_SSL=${API_SSL}\
+		APP_URL=http://localhost:${PORT} API_URL=http://localhost:${PORT} API_EMAIL=${API_EMAIL} API_SSL=${API_SSL}\
 		BACKEND_JOB_CONCURRENCY=${BACKEND_JOB_CONCURRENCY} BACKEND_CHUNK_CONCURRENCY=${BACKEND_CHUNK_CONCURRENCY}\
 		BACKEND_TOKEN_USER=${BACKEND_TOKEN_USER} BACKEND_TOKEN_KEY=${BACKEND_TOKEN_KEY} BACKEND_TOKEN_PASSWORD=${BACKEND_TOKEN_PASSWORD}\
 		BACKEND_TMP_MAX=${BACKEND_TMP_MAX} BACKEND_TMP_DURATION=${BACKEND_TMP_DURATION} BACKEND_TMP_WINDOW=${BACKEND_TMP_WINDOW}
@@ -297,7 +297,7 @@ backend-docker-check: backend-config
 backend: backend-config backend-docker-check proofs-mount elasticsearch-index-readiness
 	@BACKEND_APP_VERSION=$(shell cd ${APP_PATH}/${GIT_BACKEND} && git describe --tags);\
 	${MAKE} -C ${APP_PATH}/${GIT_BACKEND} backend-start APP=deces-backend DC_NETWORK=${DC_NETWORK} APP_VERSION=$$BACKEND_APP_VERSION GIT_BRANCH=${GIT_BACKEND_BRANCH}\
-		API_URL=${API_URL} API_EMAIL=${API_EMAIL} API_SSL=${API_SSL}\
+		APP_URL=${APP_URL} API_URL=${API_URL} API_EMAIL=${API_EMAIL} API_SSL=${API_SSL}\
                 BACKEND_JOB_CONCURRENCY=${BACKEND_JOB_CONCURRENCY} BACKEND_CHUNK_CONCURRENCY=${BACKEND_CHUNK_CONCURRENCY}\
                 BACKEND_TOKEN_USER=${BACKEND_TOKEN_USER} BACKEND_TOKEN_KEY=${BACKEND_TOKEN_KEY} BACKEND_TOKEN_PASSWORD=${BACKEND_TOKEN_PASSWORD}\
                 BACKEND_TMP_MAX=${BACKEND_TMP_MAX} BACKEND_TMP_DURATION=${BACKEND_TMP_DURATION} BACKEND_TMP_WINDOW=${BACKEND_TMP_WINDOW}
