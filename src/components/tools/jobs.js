@@ -45,9 +45,9 @@ export const getJobsFilteredData = async (accessToken) => {
             processing_time: delay,
             columns: validColumns.filter(c => j.data && j.data[c]),
             processing_rate: j.processedOn && Math.floor((progress / 100) * (j.data.totalRows / delay)),
-            finishedOnTime: j.finishedOn ? dateTostr(new Date(j.finishedOn)) : 'job en cours',
-            deletionTime: j.finishedOn ? dateTostr(new Date(j.finishedOn + (j.data.tmpfilePersistence || 3600000))) : 'job en cours',
-            link: j.finishedOn && (Date.now() < new Date(j.finishedOn + (j.data.tmpfilePersistence || 3600000))) ? `/link?job=${j.data.randomKey}` : undefined,
+            finishedOnTime: j.finishedOn ? dateTostr(new Date(j.finishedOn)) : 'en cours',
+            deletionTime: j.status === 'completed' ? dateTostr(new Date(j.finishedOn + (j.data.tmpfilePersistence || 3600000))) : (j.status === 'failed' ? dateTostr(new Date(j.finishedOn)) : 'en cours'),
+            link: (['active', 'created', 'waiting', 'wait'].includes(j.status) || j.status === 'completed' && j.finishedOn && (Date.now() < new Date(j.finishedOn + (j.data.tmpfilePersistence || 3600000)))) ? `/link?job=${j.data.randomKey}` : undefined,
             progress: progress
         })});
     return tmpJobs.sort((a,b) => (b.date - a.date)).map(j => {

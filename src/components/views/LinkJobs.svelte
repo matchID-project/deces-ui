@@ -143,7 +143,10 @@
     const statusLabel = {
         completed: 'succès',
         failed: 'échec',
-        cancelled: 'interrompu',
+        cancelled: 'annulé',
+        active: 'en cours',
+        wait: 'en attente',
+        waiting: 'en attente',
         created: 'en cours'
     }
 
