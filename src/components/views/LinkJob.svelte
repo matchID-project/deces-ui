@@ -254,13 +254,18 @@
 
     const formatError = (err) => {
         let errorMessage;
+        console.log(err);
         if (err.response) {
+            console.log(err.response);
             errorMessage = `Erreur ${err.response.status}`;
             if (err.response.data && err.response.data.msg) {
+                console.log(err.response.data.msg);
                 if (/column header mismatch/.test(err.response.data.msg)) {
                     errorMessage += `<br>le nombre de colonnes n'est pas conforme à l'entête CSV`;
+                } else if (err.response.status === 429 && /There is already \d+ running or waiting jobs/.test(err.response.data.msg)) {
+                    errorMessage += `<br>vous avez déja un traitement en cours - <a href="/jobs">consulter les traitements</a>`;
                 } else {
-                    errorMessage = errorerrorMessage + '<br>' + JSON.stringify(err.response.data.msg);
+                    errorMessage = errorMessage + '<br>' + JSON.stringify(err.response.data.msg);
                 }
             } else {
                 if (err.response.status === 400) {
@@ -269,6 +274,8 @@
                     errorMessage += `<br>le serveur est indisponible, veuiller réessayer ultérieurement ou nous contacter à ${mailTo}`
                 } else if (err.response.status === 500) {
                     errorMessage += `<br>le fichier a provoqué une erreur serveur, merci de nous contacter à ${mailTo}`
+                } else if (err.response.status === 429) {
+                    errorMessage += `<br>trop de requêtes, merci de recommencer ultérieurement`
                 } else {
                     errorMessage += `<br>erreur inconnue, merci de nous contacter à ${mailTo}`
                 }
