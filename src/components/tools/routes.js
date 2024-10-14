@@ -41,7 +41,7 @@ export const routes = {
     },
     '/about': { component: Default, props: {title: 'À propos'}, title: 'À propos', desc: 'À propos de matchID: conditions légales données et code opensource, foire aux questions, documentation de l\'API, statistiques de consultation, ...'},
     '/link': { component: Link, title: 'Appariement', desc: 'matchID permet l\'appariement de votre fichier client, jusque 1 million d\'enregistrements, au fichier des décès de l`INSEE' },
-    '/jobs': { auth: true, component: LinkJobs, title: 'Traitements', desc: 'page d\'administration des traitements' },
+    '/jobs': { component: LinkJobs, title: 'Traitements', desc: 'page d\'administration des traitements' },
     '/edits': { auth: true, component: EditsList, title: 'Modifications', desc: 'page d\'administration des modifications' },
     '/stats': { component: Stats, title: 'statistiques de fréquentation', desc: 'statistiques de consultation de deces.matchid.io: visiteurs uniques, appels API, ... historique depuis début 2020' },
     '/explain': { component: AlgoDetails, title: 'Explication de l\'algorithme', desc: 'détails sur l\'algorithme d\'appariement' },

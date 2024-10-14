@@ -1,4 +1,4 @@
-{#if $admin && ready}
+{#if ready}
     <div class="rf-container rf-padding-top-2N">
         <div class="rf-grid-row">
             <div class="rf-col-xl-2 rf-col-lg-2 rf-col-md-12 rf-col-sm-12 rf-col-xs-12">
@@ -31,7 +31,7 @@
                                     Math.floor(
                                         jobs.filter(j => j.status === 'completed').map(j =>j.rows).reduce((a,b) => a+b)
                                         /
-                                        jobs.filter(j => j.status === 'completed').map(j =>j.delay).reduce((a,b) => a+b)
+                                        jobs.filter(j => j.status === 'completed').map(j =>j.processing_time).reduce((a,b) => a+b)
                                     )
                                 }
                                 label="Lignes / Seconde"/>
@@ -53,7 +53,9 @@
                         <table class="rf-table rf-table--narrow rf-table--striped">
                             <thead>
                                 <tr>
-                                    <th>date</th>
+                                    <th>création</th>
+                                    <th>fin</th>
+                                    <th>suppression</th>
                                     <th>id</th>
                                     <th>statut</th>
                                     <th>lignes</th>
@@ -65,7 +67,17 @@
                                 {#each jobs as job, idx}
                                     <tr>
                                         <td>{job.date}</td>
-                                        <td>{job.user || job.id.substring(0,10) + '...'}</td>
+                                        <td>{job.finishedOnTime}</td>
+                                        <td>{job.deletionTime}</td>
+                                        <td>
+                                            {#if $admin}
+                                                {job.user}
+                                            {:else if job.link}
+                                                <a href={job.link}>{job.id.substring(0,10) + '...'}</a>
+                                            {:else}
+                                                {job.id.substring(0,10) + '...'}
+                                            {/if}
+                                        </td>
                                         <td>
                                             <div style="display: flex;align-items:center">
                                                 {#if job.status == 'active'}
@@ -116,73 +128,27 @@
     import StatsTile from './StatsTile.svelte';
     import axios from 'axios';
     import Icon from './Icon.svelte';
-
     import { admin, accessToken } from '../tools/stores.js';
+    import { getJobsFilteredData} from '../tools/jobs.js';
     let jobs = [];
     let ready = false;
-    let headers;
 
-    $: headers = {
-        headers: {
-            Authorization: `Bearer ${$accessToken}`
-        }
-    };
+    $: if (!ready && $accessToken) {
+      getJobsFilteredData($accessToken).then(j => {
+        jobs = j;
+        ready = true;
+      });
+    }
 
     const statusLabel = {
         completed: 'succès',
         failed: 'échec',
-        cancelled: 'interrompu',
+        cancelled: 'annulé',
+        active: 'en cours',
+        wait: 'en attente',
+        waiting: 'en attente',
         created: 'en cours'
     }
-
-    const validColumns = [
-        'lastName',
-        'legalName',
-        'sex',
-        'birthDate',
-        'birthCity',
-        'birthDepartment',
-        'birthCountry',
-        'deathDate',
-        'deathCity',
-        'deathDepartment',
-        'deathCountry',
-        'lastSeenAliveDate'
-    ];
-
-
-    const getJobsData = async () => {
-        let response = await fetch('__BACKEND_PROXY_PATH__/queue/jobs', headers);
-        const tmpJobs = [];
-        const list = (await response.json()).jobs || [];
-        list.forEach(j => {
-            const delay = (
-                (j.finishedOn ? j.finishedOn : Math.floor(Date.now()))
-                - j.processedOn
-            ) / 1000;
-            const progress = j.status && j.status === "completed" ?
-                "100" : j.progress && j.progress.percentage ?
-                    Math.round(j.progress.percentage) : 0
-            tmpJobs.push({
-                rows: j.data.totalRows,
-                id: j.id,
-                user: j.data && j.data.user,
-                date: j.timestamp,
-                status: j.status,
-                waiting_time: j.processedOn && (j.processedOn - j.timestamp) / 1000,
-                processing_time: delay,
-                columns: validColumns.filter(c => j.data && j.data[c]),
-                processing_rate: j.processedOn && Math.floor((progress / 100) * (j.data.totalRows / delay)),
-                progress: progress
-            })});
-        jobs = tmpJobs.sort((a,b) => (b.date - a.date)).map(j => {
-            j.date=new Date(j.date).toISOString();
-            return j;
-        });
-        ready = true;
-    }
-
-
 
     const deleteJob = async (job, idx) => {
       const res = await axios.delete(`__BACKEND_PROXY_PATH__/search/csv/${job.id}`, headers)
@@ -191,9 +157,6 @@
       }
     }
 
-    $: if ($admin) {
-        getJobsData();
-    }
 
 </script>
 
