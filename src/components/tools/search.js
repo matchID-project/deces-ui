@@ -240,12 +240,12 @@ const correct = (person) => {
         }
         if (person.correction.change === "remove") {
             person.name = { first: ["INCONNU"], last: "INCONNU"};
-            person.birth.sex = undefined;
+            person.sex = undefined;
             person.birth.date = "XXXX";
             person.birth.location = {
-                departmentCode: "",
-                country: person.birth.location.country,
-                countryCode: person.birth.location.countryCode
+                departmentCode: undefined,
+                country: undefined,
+                countryCode: undefined
             }
             person.death = undefined;
         }
