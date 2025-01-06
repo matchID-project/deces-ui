@@ -200,4 +200,12 @@ export const dataCorrections = {
     "proofs":["none"],
     "anonymize": true
   },
+  "RSVaGSNRkAfm": {
+    "permalink": "/id/RSVaGSNRkAfm",
+    "change": "remove",
+    "reason": "cnil-art-85",
+    "request": "child",
+    "proofs":["none"],
+    "anonymize": true
+  },
 };
