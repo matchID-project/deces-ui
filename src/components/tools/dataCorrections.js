@@ -216,4 +216,12 @@ export const dataCorrections = {
     "proofs": ["none"],
     "anonymize": true
   },
+  "LibqfPint-0f": {
+    "permalink": "/id/LibqfPint-0f",
+    "change": "remove",
+    "request": "child",
+    "reason": "cnil-art-85",
+    "proofs": ["none"],
+    "anonymize": true
+  },
 };
