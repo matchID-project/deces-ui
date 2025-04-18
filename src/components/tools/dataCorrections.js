@@ -208,4 +208,28 @@ export const dataCorrections = {
     "proofs":["none"],
     "anonymize": true
   },
+  "vUOh-QllZ9f6": {
+    "permalink": "/id/vUOh-QllZ9f6",
+    "change": "remove",
+    "request": "child",
+    "reason": "cnil-art-85",
+    "proofs": ["none"],
+    "anonymize": true
+  },
+  "LibqfPint-0f": {
+    "permalink": "/id/LibqfPint-0f",
+    "change": "remove",
+    "request": "child",
+    "reason": "cnil-art-85",
+    "proofs": ["none"],
+    "anonymize": true
+  },
+  "g5VPwLygUrrx": {
+    "permalink": "/id/g5VPwLygUrrx",
+    "change": "remove",
+    "request": "child",
+    "reason": "cnil-art-85",
+    "proofs": ["none"],
+    "anonymize": true
+  },
 };
