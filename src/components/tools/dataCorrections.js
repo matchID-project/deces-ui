@@ -232,4 +232,12 @@ export const dataCorrections = {
     "proofs": ["none"],
     "anonymize": true
   },
+  "haDZltYM3AHZ": {
+    "permalink": "/id/haDZltYM3AHZ",
+    "change": "remove",
+    "request": "child",
+    "reason": "cnil-art-85",
+    "proofs": ["none"],
+    "anonymize": true
+  },
 };
