@@ -1,4 +1,3 @@
-
 # Conditions d'usage et garanties
 
 Ce service a éte développé partiellement avec le ministère de l'Intérieur, et est maintenant 100% en maintenance bénévole.
@@ -82,3 +81,80 @@ Aucun cookie n'est utilisé par ailleurs par l'application matchID.
 ## Données de statistiques
 
 L'application matchID conserve 12 mois les données de log pour des raisons de sécurité du traitement. 
+
+# Développement
+
+## Prérequis
+
+- Docker et Docker Compose
+- Node.js (version spécifiée dans package.json)
+- Make
+- Git
+
+## Stack technique
+
+- Frontend : Svelte 3.x avec Rollup pour le bundling
+- Backend : TypeScript
+- Tests : Playwright
+- Base de données : Elasticsearch
+- Reverse Proxy : Nginx
+- CI/CD : GitHub Actions
+
+## Structure du projet
+
+Le projet est composé de plusieurs parties :
+- Frontend (Svelte) : `src/`
+- Backend (TypeScript) : `deces-backend/`
+- Configuration Nginx : `nginx/`
+- Tests (Playwright) : `ui-test/`
+- Préparation des données : `deces-dataprep/`
+
+## Commandes de développement
+
+Les commandes principales sont disponibles via le Makefile :
+
+```bash
+# Configuration initiale
+make config
+
+# Démarrage de l'environnement de développement
+make dev
+
+# Construction des images Docker
+make build
+
+# Tests
+make test
+```
+
+## Environnement de développement
+
+L'environnement de développement utilise Docker Compose avec la configuration `docker-compose-dev.yml`. Il inclut :
+- Un serveur Nginx pour le reverse proxy
+- Un conteneur frontend pour le développement Svelte
+- Un conteneur backend (optionnel)
+- Elasticsearch pour la base des décès (indexé via le projet deces-dataprep)
+
+## CI/CD
+
+Le projet utilise GitHub Actions pour la CI/CD avec les workflows suivants :
+- `push.yml` : Build et déploiement sur push
+- `pr.yml` : Vérifications sur les pull requests
+- `build.yml` : Construction des images Docker
+- `logs-*.yml` : Gestion des logs
+
+## Variables d'environnement
+
+Les variables d'environnement importantes sont :
+- `PORT` : Port du serveur de développement (défaut: 8083)
+- `BACKEND_PORT` : Port du backend (défaut: 8080)
+- `ES_HOST` : Hôte Elasticsearch (défaut: elasticsearch)
+- `ES_PORT` : Port Elasticsearch (défaut: 9200)
+
+## Bonnes pratiques
+
+1. Toujours exécuter les tests avant de pousser du code
+2. Suivre les conventions de style Svelte
+3. Documenter les changements majeurs
+4. Utiliser les branches feature pour le développement
+5. Maintenir la compatibilité avec les versions spécifiées dans package.json
