@@ -504,7 +504,13 @@ show-env:
 
 deploy-local: config show-env stats-background elasticsearch-restore-async docker-check up local-test-api
 
-frontend-test:
+smtp:
+	@${MAKE} -C ${APP_PATH}/${GIT_BACKEND} smtp DC_NETWORK=${DC_NETWORK}
+
+smtp-stop:
+	@${MAKE} -C ${APP_PATH}/${GIT_BACKEND} smtp-stop
+
+frontend-test: smtp
 	${DC} -f ${DC_FILE}-test.yml run ui-test sh -c "yarn install && node runAllTests.js"
 
 backend-test:
