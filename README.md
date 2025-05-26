@@ -1,3 +1,4 @@
+
 # Conditions d'usage et garanties
 
 Ce service a éte développé partiellement avec le ministère de l'Intérieur, et est maintenant 100% en maintenance bénévole.
@@ -91,30 +92,20 @@ L'application matchID conserve 12 mois les données de log pour des raisons de s
 - Make
 - Git
 
-## Stack technique
-
-- Frontend : Svelte 3.x avec Rollup pour le bundling
-- Backend : TypeScript
-- Tests : Playwright
-- Base de données : Elasticsearch
-- Reverse Proxy : Nginx
-- CI/CD : GitHub Actions
-
 ## Structure du projet
 
 Le projet est composé de plusieurs parties :
 - Frontend (Svelte) : `src/`
-- Backend (TypeScript) : `deces-backend/`
+- Backend (Typescript) : `deces-backend/`
 - Configuration Nginx : `nginx/`
-- Tests (Playwright) : `ui-test/`
-- Préparation des données : `deces-dataprep/`
+- Tests (playwright) : `ui-test/`
 
 ## Commandes de développement
 
 Les commandes principales sont disponibles via le Makefile :
 
 ```bash
-# Configuration initiale
+# Installation des dépendances
 make config
 
 # Démarrage de l'environnement de développement
@@ -125,6 +116,7 @@ make build
 
 # Tests
 make test
+
 ```
 
 ## Environnement de développement
@@ -154,7 +146,7 @@ Les variables d'environnement importantes sont :
 ## Bonnes pratiques
 
 1. Toujours exécuter les tests avant de pousser du code
-2. Suivre les conventions de style Svelte
+2. Suivre les conventions de style définies dans `.eslintrc.js`
 3. Documenter les changements majeurs
 4. Utiliser les branches feature pour le développement
 5. Maintenir la compatibilité avec les versions spécifiées dans package.json
