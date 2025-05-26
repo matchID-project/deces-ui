@@ -13,6 +13,7 @@ export OS_TYPE := $(shell cat /etc/os-release | grep -E '^NAME=' | sed 's/^.*deb
 
 #search-ui
 export PORT=8083
+export TEST_HOST=nginx
 
 #AB-switch (in percent)
 #currently used for backend / no backend test
@@ -504,10 +505,7 @@ show-env:
 deploy-local: config show-env stats-background elasticsearch-restore-async docker-check up local-test-api
 
 frontend-test:
-	${DC} -f ${DC_FILE}-test.yml run ui-test yarn install
-	${DC} -f ${DC_FILE}-test.yml run ui-test yarn run simpleSearch
-	${DC} -f ${DC_FILE}-test.yml run ui-test yarn run advancedSearch
-	${DC} -f ${DC_FILE}-test.yml run ui-test yarn run linkage
+	${DC} -f ${DC_FILE}-test.yml run ui-test sh -c "yarn install && node runAllTests.js"
 
 backend-test:
 	@${MAKE} -C ${APP_PATH}/${GIT_BACKEND} backend-test

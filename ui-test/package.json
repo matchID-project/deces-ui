@@ -1,11 +1,14 @@
 {
-  "name": "my-package",
+  "name": "deces-ui-test",
+  "version": "1.0.0",
+  "description": "Test UI for Deces",
+  "license": "LGPL-3.0-or-later",
   "scripts": {
     "simpleSearch": "node simpleSearch.js",
     "advancedSearch": "node advancedSearch.js",
     "linkage": "node linkWikidata.js"
   },
   "dependencies": {
-    "playwright": "^1.10.0"
+    "playwright": "^1.52.0"
   }
 }
