@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
-      - name: extract branch name
+      - name: Extract branch name
         shell: bash
         run: |
           if [ -z "${GIT_BRANCH_REF}" ]; then

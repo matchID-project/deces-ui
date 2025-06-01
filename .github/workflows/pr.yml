@@ -13,7 +13,7 @@ jobs:
         run: echo "##[set-output name=branch;]$(echo ${GITHUB_BASE_REF} | sed 's|^refs/heads/||;' | sed 's/[^a-zA-Z0-9]/-/g')"
         id: extract_branch
       - name: config
-        run: make version config
+        run: echo "GIT_BRANCH=${GIT_BRANCH}" && make version config
         env:
           GIT_BRANCH: ${{ steps.extract_branch.outputs.branch }}
       - name: build
@@ -23,8 +23,7 @@ jobs:
           GIT_BRANCH: ${{ steps.extract_branch.outputs.branch }}
       - name: test
         if: success()
-        run: |
-          make deploy-local backend-test frontend-test
+        run: make deploy-local backend-test frontend-test
         env:
           FILES_TO_PROCESS: deces-2020-m01.txt.gz
           REPOSITORY_BUCKET: fichier-des-personnes-decedees-elasticsearch-dev
