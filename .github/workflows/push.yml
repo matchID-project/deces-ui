@@ -57,6 +57,9 @@ jobs:
           MONITOR_BUCKET: ${{ secrets.MONITOR_BUCKET }}
           BACKEND_TOKEN_KEY: ${{ secrets.BACKEND_TOKEN_KEY }}
           BACKEND_TOKEN_PASSWORD: ${{ secrets.BACKEND_TOKEN_PASSWORD }}
+          SMTP_TLS_SELFSIGNED: true
+          SMTP_HOST: smtp
+          SMTP_PORT: 1025
       - name: publish
         if: success()
         run: make docker-push GIT_BRANCH=$GIT_BRANCH;
