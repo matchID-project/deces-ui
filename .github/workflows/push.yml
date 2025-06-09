@@ -38,7 +38,7 @@ jobs:
           GIT_BRANCH: ${{ steps.extract_branch.outputs.branch }}
       - name: test
         if: success()
-        run: make deploy-local backend-test
+        run: make deploy-local backend-test frontend-test
         env:
           FILES_TO_PROCESS: deces-2020-m01.txt.gz
           REPOSITORY_BUCKET: fichier-des-personnes-decedees-elasticsearch-dev
