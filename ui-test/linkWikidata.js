@@ -51,7 +51,22 @@ const { chromium } = require('playwright');
   console.log('📝 Étape 4: Récupération du code de validation');
   const mailPage = await context.newPage();
   await mailPage.goto(maildevUrl);
-  await mailPage.waitForSelector('a[href^="#/email/"]');
+  // Attendre jusqu'à 15 s l'arrivée de l'email, avec rafraîchissement toutes les 5 s
+  const maxRetries = 3;
+  let found = false;
+  for (let i = 0; i < maxRetries; i++) {
+    try {
+      await mailPage.waitForSelector('a[href^="#/email/"]', { timeout: 5000 });
+      found = true;
+      break;
+    } catch (_) {
+      // email pas encore présent, on rafraîchit la page MailDev et on ré-essaie
+      await mailPage.reload();
+    }
+  }
+  if (!found) {
+    throw new Error('Email de validation non reçu dans MailDev après 15 secondes');
+  }
   await mailPage.click('a[href^="#/email/"]');
   console.log('✅ Email reçu dans MailDev');
   await mailPage.screenshot({ path: 'linkStep5.png' })
