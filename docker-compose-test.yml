@@ -2,7 +2,7 @@ version: '3.4'
 
 services:
   ui-test:
-    image: mcr.microsoft.com/playwright:v1.54.1
+    image: mcr.microsoft.com/playwright:v${PLAYWRIGHT_VERSION}
     container_name: ${DC_PREFIX}
     ipc: host
     working_dir: /ui-test

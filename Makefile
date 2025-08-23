@@ -511,7 +511,7 @@ smtp-stop:
 	@${MAKE} -C ${APP_PATH}/${GIT_BACKEND} smtp-stop
 
 frontend-test: smtp
-	${DC} -f ${DC_FILE}-test.yml run ui-test sh -c "yarn install && node runAllTests.js"
+	PLAYWRIGHT_VERSION=$$(curl -s https://mcr.microsoft.com/v2/playwright/tags/list | jq -r '.tags | map(select(test("^v[0-9]+\\.[0-9]+\\.[0-9]+$$"))) | .[]' | sort -V | tail -1 | sed 's/^v//') ${DC} -f ${DC_FILE}-test.yml run ui-test sh -c "yarn install && node runAllTests.js"
 
 backend-test:
 	@${MAKE} -C ${APP_PATH}/${GIT_BACKEND} backend-test
