@@ -247,5 +247,13 @@ export const dataCorrections = {
     "reason": "cnil-art-85",
     "proofs": ["none"],
     "anonymize": true
+  },
+  "mT1w6N7tI4wY": {
+    "permalink": "/id/mT1w6N7tI4wY",
+    "change": "remove",
+    "request": "unknown",
+    "reason": "cnil-art-85",
+    "proofs": ["none"],
+    "anonymize": true
   }
 };
