@@ -16,6 +16,36 @@
           title="Recherche"
           on:click|preventDefault={() => goTo({path: '/search'})}
         >
+        </a>
+      </p>
+    </div>
+
+    <div class="rf-col-12">
+      {#if $version && $version.data && $version.data.todayDeces && $version.data.todayDeces.length > 0}
+        <p class="rf-text--lead">
+          Quelques décès marquants du {dateStringify($version.data.todayDeces[0].death.date)}
+        </p>
+
+
+        <div class="rf-container-fluid rf-margin-top-1N rf-padding-left-2N--desktop rf-padding-left-1N--mobile rf-padding-right-1N--mobile">
+          <div class="rf-grid-row is-vcentered">
+            {#if $version.data.todayDeces.length !== 2}
+              <div class="rf-col-xs-0 rf-col-md-3"></div>
+            {/if}
+            {#each $version.data.todayDeces as result, index}
+              <ResultCard result={result} index={index}/>
+            {/each}
+          </div>
+        </div>
+      {/if}
+
+      <p class="rf-text--lead">
+        <a
+          href="/search"
+          class="rf-href"
+          title="Recherche"
+          on:click|preventDefault={() => goTo({path: '/search'})}
+          >
           {#if $themeDnum}
             <strong>DNUM</strong> - Sous direction de l'innovation et de la transformation numérique
           {:else}
@@ -47,6 +77,9 @@
 <script>
   import { version, themeDnum } from '../tools/stores.js'
   import { goTo } from '../tools/routes.js'
+  import ResultCard from "./ResultCard.svelte";
+  import { dateStringify   } from '../tools/masks.js';
+
 </script>
 
 <style>
