@@ -255,5 +255,21 @@ export const dataCorrections = {
     "reason": "cnil-art-85",
     "proofs": ["none"],
     "anonymize": true
+  },
+  "0ur3mZgMbiDG": {
+    "permalink": "/id/0ur3mZgMbiDG",
+    "change": "remove",
+    "request": "child",
+    "reason": "cnil-art-85",
+    "proofs": ["none"],
+    "anonymize": true
+  },
+  "g-nMz_DbH-kL": {
+    "permalink": "/id/g-nMz_DbH-kL",
+    "change": "remove",
+    "request": "spouse",
+    "reason": "cnil-art-85",
+    "proofs": ["none"],
+    "anonymize": true
   }
 };
