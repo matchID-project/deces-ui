@@ -271,5 +271,13 @@ export const dataCorrections = {
     "reason": "cnil-art-85",
     "proofs": ["none"],
     "anonymize": true
+  },
+  "L0BLn7Sw6ywP": {
+    "permalink": "/id/L0BLn7Sw6ywP",
+    "change": "remove",
+    "request": "third party",
+    "reason": "cnil-art-85",
+    "proofs": ["none"],
+    "anonymize": true
   }
 };
