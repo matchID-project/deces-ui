@@ -5,7 +5,7 @@ Ce service a éte développé partiellement avec le ministère de l'Intérieur, 
 La mise en ligne de service est financé sur fonds personnels et est donc offert sans garantie.
 L'usage est limité à une requête par seconde afin de préserver un service pour tous. Selon
 l'affluence et les retours, nous envisagerons de le consolider. Contactez nous
-sur <a href="mailto:matchid.project@gmail.com">matchid-project@gmail.com</a> pour
+sur <a href="mailto:contact@matchid.io">contact@matchid.io</a> pour
 toute question ou signaler un problème.
 
 # Fichier des personnes décédées
