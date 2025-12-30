@@ -167,11 +167,13 @@ const checkJwt = async () => {
                     setTimeout(() => refresh = true, 3600000)
                 }
             }
+            // for other errors, 401, 403, 404, 500, 502, 503, 504, etc.
+            // try again in 1 minute
             await sleep(60000);
         } catch(e) {
-            $user = '';
-            $accessToken = '';
-            $accessTokenInfos = {};
+            // Do nothing - probable browser side network error
+            // try again in 1 minute
+            await sleep(60000);
         }
     }
 };
