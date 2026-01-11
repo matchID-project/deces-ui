@@ -73,7 +73,8 @@ const { chromium } = require('playwright');
   
   // Extraire le code à 6 chiffres
   const mailContent = await mailPage.textContent('.email-content-view .plain-text');
-  const codeMatch = mailContent.match(/Votre code, valide 10 minutes: (\d{6})/);
+  // Accepte "10 minutes", "6 heures", etc.
+  const codeMatch = mailContent.match(/Votre code,\s*valide\s+\d+\s+\S+\s*:\s*(\d{6})/);
   if (!codeMatch) throw new Error('Code de validation non trouvé dans l\'email');
   const code = codeMatch[1];
   console.log('✅ Code de validation extrait:', code);
