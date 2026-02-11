@@ -1,8 +1,8 @@
 <svelte:window on:keydown={handleKeydown}/>
-{#if !$themeDnum && $liveConfig && $liveConfig.googleAnalyticsId}
+{#if !$themeDnum && $liveConfig && false && $liveConfig.googleAnalyticsId}
 	<GoogleAnalytics properties={[ $liveConfig.googleAnalyticsId ]} />
 {/if}
-{#if !$themeDnum && $liveConfig && $liveConfig.googleAdsenseId}
+{#if !$themeDnum && $liveConfig && false && $liveConfig.googleAdsenseId}
 	<GoogleAdsense id={$liveConfig.googleAdsenseId} />
 {/if}
 <MatchIDHeader/>
