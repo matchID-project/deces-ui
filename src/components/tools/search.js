@@ -378,10 +378,11 @@ export const toggleFuzzySearch = async () => {
     });
     searchSubmit();
     searchURLUpdate();
-    gtag('event', 'button', {
-        event_category: 'recherche',
-        event_label: searchString(mySearchInput)
-      });
+    // // reactivate to use google analytics
+    // gtag('event', 'button', {
+    //     event_category: 'recherche',
+    //     event_label: searchString(mySearchInput)
+    //   });
 };
 
 export const URLSearchSubmit = async (urlParams) => {
