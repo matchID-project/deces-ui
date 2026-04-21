@@ -295,5 +295,13 @@ export const dataCorrections = {
     "reason": "cnil-art-85",
     "proofs": ["none"],
     "anonymize": true
-  }
+  },
+  "sc92Si15N-ef": {
+    "permalink": "/id/sc92Si15N-ef",
+    "change": "remove",
+    "request": "husband",
+    "reason": "cnil-art-85",
+    "proofs": ["id card"],
+    "anonymize": true
+  },
 };

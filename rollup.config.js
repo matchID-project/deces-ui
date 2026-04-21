@@ -4,7 +4,7 @@ import json from "@rollup/plugin-json";
 import resolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import livereload from 'rollup-plugin-livereload';
-import { terser } from 'rollup-plugin-terser';
+import terser from '@rollup/plugin-terser';
 import iconifySvg from 'rollup-plugin-iconify-svg';
 import { generateSW } from 'rollup-plugin-workbox';
 
