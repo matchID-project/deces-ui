@@ -304,4 +304,20 @@ export const dataCorrections = {
     "proofs": ["id card"],
     "anonymize": true
   },
+  "TaxA22aDjL3o": {
+    "permalink": "/id/TaxA22aDjL3o",
+    "change": "remove",
+    "request": "grand child",
+    "reason": "cnil-art-85",
+    "proofs": ["none"],
+    "anonymize": true
+  },
+  "vxX6P_-Z72R4": {
+    "permalink": "/id/vxX6P_-Z72R4",
+    "change": "remove",
+    "request": "grand child",
+    "reason": "cnil-art-85",
+    "proofs": ["none"],
+    "anonymize": true
+  },
 };
